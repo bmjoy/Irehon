@@ -1,0 +1,4 @@
+find . -size +1G | sed 's|^./||g' | cat >> .gitignore
+git add .
+git commit -m " "
+git push -f
