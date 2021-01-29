@@ -3,16 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class Player : NetworkBehaviour
+public class Player : Entity
 {
-    [SerializeField]
-    private string startClassName;
-
-    private PlayerController controll;
     private void Start()
     {
-        controll = GetComponent<PlayerController>();
-        controll.Init();
-        controll.EnableClass(startClassName);
+        
+    }
+
+    [Server]
+    public override void TakeDamageOnServer(int damage)
+    {
+        base.TakeDamageOnServer(damage);
+        if (!isClient)
+            TakeDamageOnClient(connectionToClient, damage, health);
+    }
+
+    [TargetRpc]
+    public virtual void TakeDamageOnClient(NetworkConnection con, int damage, int currentHealth)
+    {
+        health -= currentHealth;
+        if (health < 0)
+            health = 0;
+        if (health != currentHealth)
+            health = currentHealth;
     }
 }

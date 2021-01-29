@@ -27,9 +27,6 @@ public class StandardizedBow : MonoBehaviour
     #endregion
 
     #region Public Values
-
-    public Transform projectileSpawnPoint;
-
     // PUBLIC VALUES
     [Header("     Bow Skeleton Parts")]
     [Tooltip("Upper bow transform. It must be right above the center position.")]
@@ -497,7 +494,14 @@ public class StandardizedBow : MonoBehaviour
             lastProjectileTransform = lastProjectile.transform;
             //lastProjectileRigidbody = lastProjectile.GetComponent<Rigidbody>();  // DONE INSIDE THE ADD METHOD
             lastProjectileTransform.parent = bowStringPoint; // Parent projectile to string so it follows the string
-            lastProjectileTransform.position = projectileSpawnPoint.position;
+            if (isPosOffsetLocal)
+            {
+                lastProjectileTransform.localPosition = bowStringPoint.localPosition + projectileHoldPosOffset; // Local Pos offset
+            }
+            else
+            {
+                lastProjectileTransform.position = bowStringPoint.position + projectileHoldPosOffset; // World Pos offset
+            }
             lastProjectileTransform.localEulerAngles = projectileHoldRotOffset; // Rot offset
             lastProjectile.SetActive(true);
         }
@@ -508,7 +512,14 @@ public class StandardizedBow : MonoBehaviour
             lastProjectileTransform = lastProjectile.transform;
             lastProjectileRigidbody = lastProjectile.GetComponent<Rigidbody>(); // Can't avoid this one :(
             lastProjectileTransform.parent = bowStringPoint; // Parent projectile to string so it follows the string
-            lastProjectileTransform.position = projectileSpawnPoint.position;
+            if (isPosOffsetLocal)
+            {
+                lastProjectileTransform.localPosition = bowStringPoint.localPosition + projectileHoldPosOffset; // Local Pos offset
+            }
+            else
+            {
+                lastProjectileTransform.position = bowStringPoint.position + projectileHoldPosOffset; // World Pos offset
+            }
             lastProjectileTransform.localEulerAngles = projectileHoldRotOffset; // Rot offset
             lastProjectile.SetActive(true);
         }        

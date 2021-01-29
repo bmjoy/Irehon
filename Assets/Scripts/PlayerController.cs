@@ -5,13 +5,6 @@ using Mirror;
 
 public class PlayerController : NetworkBehaviour
 {
-    private List<InputState> sendedInputs = new List<InputState>();
-
-    private const float MOVEMENT_SPEED = 0.05f;
-
-    private InputState previousInput;
-
-    private int currentFrame;
 
     public struct InputState
     {
@@ -50,48 +43,32 @@ public class PlayerController : NetworkBehaviour
             return moveVector;
         }
     };
-
-    private InputState GetInput()
-    {
-        InputState currentInput = new InputState();
-        currentInput.currentRotation = transform.rotation.eulerAngles.y;
-        currentInput.ForwardKeyDown = Input.GetKey(KeyCode.W);
-        currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
-        currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
-        currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
-        currentInput.frame = currentFrame;
-        return currentInput;
-    }
-
-    #region
-    public static PlayerController instance;
-
     private enum MouseClickType { Down = 0, Up};
-
-    [SerializeField]
-    private Transform shoulder;
-
-    [SerializeField]
-    private Transform spine;
-
-    [SerializeField]
-    private PlayerClass[] classPool;
-
-    private PlayerClass currentClass;
-    private Animator animator;
-    private PlayerMovement movement;
-
 
     [SyncVar]
     private float lastXSpineAxis = 0f;
+    [SerializeField]
+    private Transform shoulder;
+    [SerializeField]
+    private GameObject currentWeapon;
+    [SerializeField]
+    private ClassData currentClass;
+    private PlayerMovement movement;
+    private List<InputState> sendedInputs = new List<InputState>();
+    private InputState previousInput;
+    private int currentFrame;
+    public PlayerAnimatorController animatorController { get; private set; }
+    public static PlayerController instance;
 
-    [SyncVar]
-    private bool aiming;
+    #region
 
-    private Vector3 previousMovementVector;
-
-
-
+    [Command]
+    private void SendMove(InputState input)
+    {
+        movement.ApplyTransformInput(input);
+        animatorController.ApplyAnimatorInput(input);
+        CheckPrediction(connectionToClient, input, transform.position);
+    }
 
     [Command]
     public void UpdateXRotation(float newX)
@@ -109,183 +86,119 @@ public class PlayerController : NetworkBehaviour
         transform.rotation = Quaternion.Euler(0f, newY, 0f);
     }
 
-    public bool IsAiming()
-    {
-        return aiming;
-    }
-
-    public void StartAiming()
-    {
-        aiming = true;
-        if (!isServerOnly)
-            CameraController.instance.EnableAimCamera();
-        animator.SetBool("Aiming", true);
-    }
-
-    private void LateUpdate()
-    {
-        if (!isLocalPlayer)
-        {
-            if (aiming)
-                spine.Rotate(0f, -lastXSpineAxis, 0f);
-            return;
-        }
-        if (aiming && isLocalPlayer)
-        {
-            spine.Rotate(0f, -CameraController.instance.GetPlayerYAxis(), 0f);
-        }
-    }
-
-    public void StopAiming()
-    {
-        aiming = false;
-        if (!isServerOnly)
-            CameraController.instance.DisableAimCamera();
-        animator.SetBool("Aiming", false);
-    }
-
-    public void ResetMovementAnimation()
-    {
-        animator.SetFloat("xMove", 0);
-        animator.SetFloat("zMove", 0);
-        animator.SetBool("Walking", false);
-
-        aiming = false;
-        animator.SetBool("Aiming", false);
-
-        SendedResetMovementAnimation();
-    }
-
-    [Command]
-    private void SendedResetMovementAnimation()
-    {
-        if (isLocalPlayer)
-            return;
-        animator.SetFloat("xMove", 0);
-        animator.SetFloat("zMove", 0);
-        animator.SetBool("Walking", false);
-
-        aiming = false;
-        animator.SetBool("Aiming", false);
-    }
-
-    public void Init()
-    {
-        currentClass = null;
-        if (isLocalPlayer)
-        {
-            instance = this;
-            CameraController.instance.SetTarget(shoulder, transform);
-        }
-        previousInput = GetInput();
-        animator = GetComponent<Animator>();
-        movement = GetComponent<PlayerMovement>();
-    }
-
-    public void EnableClass(string className)
-    {
-        PlayerClass temp = FindClassByName(className);
-        if (temp == null)
-        {
-            Debug.Log(className + " class not founded");
-            return;
-        }
-        if (currentClass != null)
-            currentClass.DisableArmorParts();
-        currentClass = temp;
-        currentClass.EnableArmorParts(transform);
-        currentClass.SetAnimationOverride(animator);
-    }
-
-    private PlayerClass FindClassByName(string className)
-    {
-        foreach (PlayerClass playerClass in classPool)
-            if (className == playerClass.GetClassName())
-                return playerClass;
-        return null;
-    }
-
     [Command]
     private void MouseEvent(KeyCode mouseButton, MouseClickType type)
     {
+        if (isClient)
+            return;
         if (mouseButton == KeyCode.Mouse0)
         {
             if (type == MouseClickType.Down)
-                currentClass.LMBDown();
+                currentClass.LeftMouseButtonDown();
             else if (type == MouseClickType.Up)
-                currentClass.LMBUp();
+                currentClass.LeftMouseButtonUp();
         }
         else if (mouseButton == KeyCode.Mouse1)
         {
             if (type == MouseClickType.Down)
-                currentClass.RMBDown();
+                currentClass.RightMouseButtonDown();
             else if (type == MouseClickType.Up)
-                currentClass.RMBUp();
+                currentClass.RightMouseButtonUp();
         }
-    }
-
-    #endregion
-
-    private void Update()
-    {
-        if (!isLocalPlayer)
-            return;
-        if (Input.GetKeyDown(KeyCode.Space) && !aiming)
-            movement.Jump();
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            MouseEvent(KeyCode.Mouse0, MouseClickType.Down);
-            currentClass.LMBDown();
-        }
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            MouseEvent(KeyCode.Mouse0, MouseClickType.Up);
-            currentClass.LMBUp();
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            MouseEvent(KeyCode.Mouse1, MouseClickType.Down);
-            currentClass.RMBDown();
-        }
-        if (Input.GetKeyUp(KeyCode.Mouse1)) 
-        {
-            MouseEvent(KeyCode.Mouse1, MouseClickType.Up);
-            currentClass.RMBUp();
-        }
-    }
-
-    public void Move(InputState input)
-    {
-        movement.ApplyTransformInput(input);
-        movement.ApplyAnimatorInput(input);
-        if (isClientOnly)
-            SendMove(input);
-    }
-
-    [Command]
-    private void SendMove(InputState input)
-    {
-        movement.ApplyTransformInput(input);
-        movement.ApplyAnimatorInput(input);
-        CheckPrediction(connectionToClient, input, transform.position);
     }
 
     [TargetRpc]
     private void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
     {
-        Vector3 temp = transform.position;
+        Quaternion rot = transform.rotation;
         transform.position = pos;
         sendedInputs.Remove(input);
         sendedInputs.ForEach(movement.ApplyTransformInput);
+        transform.rotation = rot;
+    }
+
+    [TargetRpc]
+    public void HitConfirmed(NetworkConnection con)
+    {
+        print("confirmed hit");
+    }
+    #endregion
+
+    public void SetWeapon(GameObject weapon) => currentWeapon = weapon;
+
+    public bool isOwner()
+    {
+        return isLocalPlayer;
+    }
+
+    public GameObject GetWeapon() => currentWeapon;
+
+    private InputState GetInput()
+    {
+        InputState currentInput = new InputState();
+        currentInput.currentRotation = transform.rotation.eulerAngles.y;
+        currentInput.ForwardKeyDown = Input.GetKey(KeyCode.W);
+        currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
+        currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
+        currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
+        currentInput.frame = currentFrame;
+        return currentInput;
+    }
+    public void Move(InputState input)
+    {
+        movement.ApplyTransformInput(input);
+        animatorController.ApplyAnimatorInput(input);
+        if (isClientOnly)
+            SendMove(input);
+    }
+
+    public void Start()
+    {
+        currentClass = null;
+        if (isLocalPlayer)
+        {
+            instance = this;
+            previousInput = GetInput();
+            CameraController.instance.SetTarget(shoulder, transform);
+        }
+        currentClass = GetComponent<ClassData>();
+        animatorController = GetComponent<PlayerAnimatorController>();
+        movement = GetComponent<PlayerMovement>();
+    }
+
+    private void Update()
+    {
+        if (!isLocalPlayer)
+            return;
+        if (Input.GetKeyDown(KeyCode.Space))
+            movement.Jump();
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            MouseEvent(KeyCode.Mouse0, MouseClickType.Down);
+            currentClass.LeftMouseButtonDown();
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            MouseEvent(KeyCode.Mouse0, MouseClickType.Up);
+            currentClass.LeftMouseButtonUp();
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            MouseEvent(KeyCode.Mouse1, MouseClickType.Down);
+            currentClass.RightMouseButtonDown();
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            MouseEvent(KeyCode.Mouse1, MouseClickType.Up);
+            currentClass.RightMouseButtonUp();
+        }
     }
 
     private void FixedUpdate()
     {
         if (!isLocalPlayer)
-            return;
-        if (aiming)
         {
-            animator.SetFloat("XAim", CameraController.instance.GetPlayerYAxis());
+            shoulder.localRotation = Quaternion.Euler(lastXSpineAxis, -3.5f, 0f); ;
             return;
         }
         InputState currentInput = GetInput();

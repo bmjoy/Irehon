@@ -387,7 +387,7 @@ public class StandardizedBowForHandBool : MonoBehaviour
         }
         else
         {
-            // UPDATE STATE 4 - Just released the string
+            //// UPDATE STATE 4 - Just released the string
             if (!justStoppedPulling)
             {
                 currentTime = 0;
@@ -435,6 +435,32 @@ public class StandardizedBowForHandBool : MonoBehaviour
             }
         }
 
+    }
+
+    public void ReleaseProjectile()
+    {
+        currentTime = 0;
+        stringLastPos = bowStringPoint.position;
+        firstLastUpJointRot1 = bowUpJoint1.localEulerAngles;
+        firstLastUpJointRot2 = bowUpJoint2.localEulerAngles;
+        firstLastUpJointRot3 = bowUpJoint3.localEulerAngles;
+        firstLastDownJointRot1 = bowDownJoint1.localEulerAngles;
+        firstLastDownJointRot2 = bowDownJoint2.localEulerAngles;
+        firstLastDownJointRot3 = bowDownJoint3.localEulerAngles;
+        justPulledString = true;
+        justLeftString = true;
+        justStoppedPulling = true;
+        ShootProjectile(currentStressOnString);
+        if (stressEffectOnSound)
+        {
+            audioSource.pitch = audioSource.pitch / 2 + (currentStressOnString / maxStringStrength) * audioSource.pitch / 2;
+        }
+        currentStressOnString = 0;
+        audioSource.Stop();
+        if (retractSound != null)
+        {
+            audioSource.PlayOneShot(retractSound);
+        }
     }
 
     #region STRING RELATED
@@ -748,7 +774,6 @@ public class StandardizedBowForHandBool : MonoBehaviour
             lastProjectileScript = lastProjectile.GetComponent<StandardizedProjectileForHandBool>();
             lastProjectileScript.bowScript = this;
             lastProjectileScript.quiver = poolHolderTrans;
-            lastProjectileScript.PoolTheParticles();
             lastProjectileScript.rigid = lastProjectile.GetComponent<Rigidbody>();
             lastProjectile.SetActive(false);
             projectilePool.Enqueue(lastProjectile);
@@ -761,7 +786,6 @@ public class StandardizedBowForHandBool : MonoBehaviour
         lastProjectileScript = lastProjectile.GetComponent<StandardizedProjectileForHandBool>();
         lastProjectileScript.bowScript = this;
         lastProjectileScript.quiver = poolHolderTrans;
-        lastProjectileScript.PoolTheParticles();
         lastProjectileScript.rigid = lastProjectile.GetComponent<Rigidbody>();
         lastProjectileRigidbody = lastProjectileScript.rigid;
         lastProjectile.SetActive(false);

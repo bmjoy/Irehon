@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ClassData : ScriptableObject
+public abstract class ClassData : MonoBehaviour
 {
-    public string ClassName;
     public AnimatorOverrideController classAnimator;
-    public abstract void RightMouseButtonDown(Transform player);
-    public abstract void RightMouseButtonUp(Transform player);
-    public abstract void LeftMouseButtonDown(Transform player);
-    public abstract void LeftMouseButtonUp(Transform player);
+
+    private void Start()
+    {
+        IntializeClass();
+    }
+
+    public abstract void IntializeClass();
+
+    public abstract void RightMouseButtonDown();
+    public abstract void RightMouseButtonUp();
+    public abstract void LeftMouseButtonDown();
+    public abstract void LeftMouseButtonUp();
 }

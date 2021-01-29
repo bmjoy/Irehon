@@ -238,38 +238,4 @@ public class StandardizedProjectileForHandBool : MonoBehaviour
             }
         }
     }
-
-    // Particles are pooled too - The starting projectile pool size in Standardize Bows is important. Make it high enough that, 
-    // the script never have to Instantiate anything in runtime( Depends on your fire rate - [10,30] ).
-    public void PoolTheParticles()
-    {
-        if (projectileHitParticleFlesh != null)
-        {
-            fleshParticleInstance = Instantiate<GameObject>(projectileHitParticleFlesh, transform);
-            fleshHitPS = fleshParticleInstance.GetComponent<ParticleSystem>();
-            fleshParticleTransform = fleshParticleInstance.transform;
-            fleshParticleInstance.SetActive(false);
-        }
-        if (projectileHitParticleStone != null)
-        {
-            woodParticleInstance = Instantiate<GameObject>(projectileHitParticleWood, transform);
-            woodHitPS = woodParticleInstance.GetComponent<ParticleSystem>();
-            woodParticleTransform = woodParticleInstance.transform;
-            woodParticleInstance.SetActive(false);
-        }
-        if (projectileHitParticleStone != null)
-        {
-            stoneParticleInstance = Instantiate<GameObject>(projectileHitParticleStone, transform);
-            stoneHitPS = stoneParticleInstance.GetComponent<ParticleSystem>();
-            stoneParticleTransform = stoneParticleInstance.transform;
-            stoneParticleInstance.SetActive(false);
-        }
-        if (projectileHitParticleMetal != null)
-        {
-            metalParticleInstance = Instantiate<GameObject>(projectileHitParticleMetal, transform);
-            metalHitPS = metalParticleInstance.GetComponent<ParticleSystem>();
-            metalParticleTransform = metalParticleInstance.transform;
-            metalParticleInstance.SetActive(false);
-        }
-    }
 }
