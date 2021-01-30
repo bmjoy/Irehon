@@ -3,51 +3,36 @@
 public class ArcherClass : ClassData
 {
     protected Bow currentWeapon;
-    private bool isAiming;
-
-    PlayerController playerController;
-    ArcherAnimatorController animatorController;
-    Cinemachine.CinemachineImpulseSource impulseSource;
-
-
-
+    protected ArcherController archerController;
     public override void IntializeClass()
     {
         GetComponent<Animator>().runtimeAnimatorController = classAnimator;
-        playerController = GetComponent<PlayerController>();
+        archerController = GetComponent<ArcherController>();
         currentWeapon = GetComponent<Bow>();
-        animatorController = GetComponent<ArcherAnimatorController>();
-        isAiming = false;
     }
 
     public override void LeftMouseButtonDown()
     {
         if (!currentWeapon.ReleaseProjectile(CameraController.instance.GetLookingTargetPosition()))
             return;
-        animatorController.ShootAnimator();
-        animatorController.StopAiming();
+        archerController.Shoot();
+        archerController.StopAim();
         currentWeapon.InterruptAiming();
         UIController.instance.EnableDefaultCrosshair();
-        isAiming = false;
     }
     public override void RightMouseButtonDown()
     {
         currentWeapon.StartAim();
-        animatorController.StartAiming();
+        archerController.StartAim();
         UIController.instance.EnableTriangleCrosshair();
-        isAiming = true;
     }
     public override void RightMouseButtonUp()
     {
         currentWeapon.InterruptAiming();
-        animatorController.StopAiming();
+        archerController.StopAim();
         UIController.instance.EnableDefaultCrosshair();
-        isAiming = false;
     }
     public override void LeftMouseButtonUp()
     {
-        
     }
-
-    public bool IsAiming() => isAiming;
 }

@@ -6,21 +6,21 @@ public class ArcherAnimatorController : PlayerAnimatorController
     [SerializeField]
     private Vector3 aimingOffset;
     [SyncVar]
-    private bool aiming;
+    private bool isAiming;
     private const float POST_AIM_ROTATION_DURATION = 0.14f;
     private Transform chest;
     private float postAimRotation = 0;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         head = animator.GetBoneTransform(HumanBodyBones.Head);
         chest = animator.GetBoneTransform(HumanBodyBones.Chest);
 }
 
     public void StartAiming()
     {
-        aiming = true;
+        isAiming = true;
         if (!isServerOnly)
             CameraController.instance.EnableAimCamera();
         animator.SetBool("Aiming", true);
@@ -29,7 +29,7 @@ public class ArcherAnimatorController : PlayerAnimatorController
 
     public void StopAiming()
     {
-        aiming = false;
+        isAiming = false;
         postAimRotation = POST_AIM_ROTATION_DURATION;
         if (!isServerOnly)
             CameraController.instance.DisableAimCamera();
@@ -37,7 +37,33 @@ public class ArcherAnimatorController : PlayerAnimatorController
         animator.ResetTrigger("Shoot");
     }
 
-    public void ShootAnimator()
+    protected override void Sprint(bool isSprint)
+    {
+        if (!isAiming)
+            base.Sprint(isSprint);
+    }
+
+    public override void ApplyAnimatorInput(PlayerController.InputState input)
+    {
+        Vector2 moveVerticals = input.GetMoveVector();
+
+        if (moveVerticals != Vector2.zero)
+        {
+            if (input.SprintKeyDown && moveVerticals.x == 0 && moveVerticals.y > 0 && !isAiming)
+                SetSprintState(true);
+            else
+                SetSprintState(false);
+        }
+        else
+        {
+            animator.SetBool("Sprint", false);
+            animator.SetBool("Walking", false);
+        }
+        animator.SetFloat("xMove", moveVerticals.x);
+        animator.SetFloat("zMove", moveVerticals.y);
+    }
+
+    public void PlayShootAnimation()
     {
         animator.SetTrigger("Shoot");
     }
@@ -45,7 +71,7 @@ public class ArcherAnimatorController : PlayerAnimatorController
     protected override void LateUpdate()
     {
         base.LateUpdate();
-        if (aiming || postAimRotation > 0)
+        if (isAiming || postAimRotation > 0)
         {
             postAimRotation -= Time.deltaTime;
             chest.LookAt(shoulderLookTarget);

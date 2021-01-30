@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using Mirror;
 
-public class PlayerAnimatorController : AnimatorController
+public class PlayerAnimatorController : EntityAnimatorController
 {
     [SerializeField]
     protected Transform shoulderLookTarget;
     protected Transform head;
+    protected Player player;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
+        player = GetComponent<Player>();
         head = animator.GetBoneTransform(HumanBodyBones.Head);
     }
 
@@ -19,34 +21,44 @@ public class PlayerAnimatorController : AnimatorController
         head.LookAt(shoulderLookTarget);
     }
 
-    public void ResetMovementAnimation()
+    public void SetFallingState(bool isFalling)
     {
-        animator.SetFloat("xMove", 0);
-        animator.SetFloat("zMove", 0);
-        animator.SetBool("Walking", false);
-
-        SendedResetMovementAnimation();
+        animator.SetBool("Falling", isFalling);
     }
 
-    public void ApplyAnimatorInput(PlayerController.InputState input)
+    public void PlayJump()
+    {
+        animator.SetTrigger("Jump");
+    }
+
+    protected virtual void Sprint(bool isSprint)
+    {
+        animator.SetBool("Sprint", isSprint);
+    }
+
+    protected void SetSprintState(bool isSprint)
+    {
+        animator.SetBool("Sprint", isSprint);
+        animator.SetBool("Walking", !isSprint);
+    }
+
+    public virtual void ApplyAnimatorInput(PlayerController.InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
 
         if (moveVerticals != Vector2.zero)
-            animator.SetBool("Walking", true);
+        {
+            if (input.SprintKeyDown && moveVerticals.x == 0 && moveVerticals.y > 0)
+                SetSprintState(true);
+            else
+                SetSprintState(false);
+        }
         else
+        {
+            animator.SetBool("Sprint", false);
             animator.SetBool("Walking", false);
+        }
         animator.SetFloat("xMove", moveVerticals.x);
         animator.SetFloat("zMove", moveVerticals.y);
-    }
-
-    [Command]
-    private void SendedResetMovementAnimation()
-    {
-        if (isLocalPlayer)
-            return;
-        animator.SetFloat("xMove", 0);
-        animator.SetFloat("zMove", 0);
-        animator.SetBool("Walking", false);
     }
 }

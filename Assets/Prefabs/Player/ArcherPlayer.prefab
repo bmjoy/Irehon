@@ -61771,7 +61771,6 @@ GameObject:
   - component: {fileID: 6034578697413702424}
   - component: {fileID: 3199751937564902797}
   - component: {fileID: 7846204401776477249}
-  - component: {fileID: -7331203551417538981}
   - component: {fileID: 7223648354211534762}
   - component: {fileID: 8867749927943114589}
   - component: {fileID: 7349229035227959283}
@@ -61779,6 +61778,7 @@ GameObject:
   - component: {fileID: 1679783180303584070}
   - component: {fileID: 481381308375903423}
   - component: {fileID: 3966619973931370720}
+  - component: {fileID: 6345799612352186566}
   m_Layer: 11
   m_Name: ArcherPlayer
   m_TagString: Player
@@ -61896,7 +61896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  health: 100
+  respawnTime: 5
   maxHealth: 100
   hitboxColliders:
   - {fileID: 7532802368113654022}
@@ -61909,23 +61909,6 @@ MonoBehaviour:
   - {fileID: 8989108642703038888}
   - {fileID: 1594556833930027049}
   - {fileID: 2183041787852971723}
---- !u!114 &-7331203551417538981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b681ecfad27dbe4083ecbad75c53781, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  shoulder: {fileID: 7066463827737571305}
-  currentWeapon: {fileID: 8781352560705552147}
-  currentClass: {fileID: 5433438316360168440}
 --- !u!114 &7223648354211534762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62087,6 +62070,22 @@ MonoBehaviour:
     m_DissipationMode: 2
     m_DissipationDistance: 1000
     m_PropagationSpeed: 343
+--- !u!114 &6345799612352186566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ca35676b36712d4fa559277dff578a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  shoulder: {fileID: 7066463827737571305}
+  currentClass: {fileID: 5433438316360168440}
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0
@@ -82081,12 +82080,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8a012f139f108f4793732130e203384, type: 3}
---- !u!1 &8781352560705552147 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2141836033115155184, guid: c8a012f139f108f4793732130e203384,
-    type: 3}
-  m_PrefabInstance: {fileID: 7234176448991843811}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8256911264373171625 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1653529331978580042, guid: c8a012f139f108f4793732130e203384,

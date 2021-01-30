@@ -11,7 +11,14 @@ public class Server : NetworkManager
     public override void Start()
     {
         manager = GetComponent<NetworkManager>();
-        manager.StartClient();
+        if (GetComponent<NetworkManagerHUD>() != null)
+            return;
+#if UNITY_EDITOR
+        manager.networkAddress = "localhost";
+        manager.StartHost();
+#elif UNITY_WEBGL
+        manager.StopClient();
+#endif
     }
 
     public override void OnClientConnect(NetworkConnection conn)

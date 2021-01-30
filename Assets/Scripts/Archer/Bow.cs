@@ -22,9 +22,8 @@ public class Bow : NetworkBehaviour
     private GameObject projectileInHand;
     private float holdingTime;
     private float lastServerHoldingTime;
-    private float previousSize;
+    private float previousPull;
     private Player player;
-    private PlayerController playerController;
     private GameObject quiver;
     private Queue<Arrow> arrowsInQuiver = new Queue<Arrow>();
 
@@ -36,7 +35,6 @@ public class Bow : NetworkBehaviour
     private void Start()
     {
         stringStartPosition = stringBone.localPosition;
-        playerController = GetComponent<PlayerController>();
         player = GetComponent<Player>();
         quiver = new GameObject("Quiver");
         quiver.transform.parent = transform;
@@ -59,12 +57,12 @@ public class Bow : NetworkBehaviour
             holdingTime += Time.deltaTime;
             if (holdingTime > MIN_HOLDING_TIME) 
             {
-                float size = (holdingTime - MIN_HOLDING_TIME) / MAX_HOLDING_TIME;
-                if (size > 1)
-                    size = 1;
-                if (isLocalPlayer && size != previousSize)
-                    UIController.instance.ChangeTriangleAimSize(size);
-                previousSize = size;
+                float pull = (holdingTime - MIN_HOLDING_TIME) / MAX_HOLDING_TIME;
+                if (pull > 1)
+                    pull = 1;
+                if (isLocalPlayer && pull != previousPull)
+                    UIController.instance.ChangeTriangleAimSize(pull);
+                previousPull = pull;
             }
             if (holdingTime > HOLD_DELAY)
                 stringBone.position = rightHand.position;
@@ -78,11 +76,14 @@ public class Bow : NetworkBehaviour
     [Command]
     private void SpawnProjectileOnServer(Vector3 target)
     {
-        if (isLocalPlayer)
-            return;
         holdingTime = lastServerHoldingTime;
-        PullAndShootArrow(target);
-        SpawnProjectileOnPlayers(target, projectileInHand.transform.position, holdingTime);
+        if (holdingTime < MIN_HOLDING_TIME)
+            return;
+        if (!isLocalPlayer)
+        {
+            PullAndShootArrow(target);
+            SpawnProjectileOnPlayers(target, projectileInHand.transform.position, holdingTime);
+        }
     }
 
     [ClientRpc(excludeOwner = true)]
@@ -96,7 +97,7 @@ public class Bow : NetworkBehaviour
         aiming = true;
         holdingTime = 0;
         projectileInHand.SetActive(true);
-        previousSize = 0;
+        previousPull = 0;
         if (!isLocalPlayer) //host
             StartAimOtherPlayers();
     }
@@ -106,8 +107,7 @@ public class Bow : NetworkBehaviour
     {
         if (collider.CompareTag("Entity"))
         {
-            collider.GetComponent<EntityCollider>().GetParentEntityComponent().TakeDamageOnServer(arrow.GetDamage());
-            playerController.HitConfirmed(connectionToClient);
+            player.DoDamage(collider.GetComponent<EntityCollider>().GetParentEntityComponent(), arrow.GetDamage());
         }
     }
 
@@ -132,7 +132,7 @@ public class Bow : NetworkBehaviour
     {
         if (holdingTime < MIN_HOLDING_TIME)
             return false;
-        if (playerController.isOwner())
+        if (isLocalPlayer)
         {
             PullAndShootArrow(target);
             SpawnProjectileOnServer(target);
@@ -149,6 +149,7 @@ public class Bow : NetworkBehaviour
         releasedProjectile.transform.LookAt(target);
         if (holdingTime > MAX_HOLDING_TIME)
             holdingTime = MAX_HOLDING_TIME;
+        releasedProjectile.SetPower(previousPull);
         releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * (HOLDING_ARROW_BONUS_IN_SECOND * holdingTime + BASE_ARROW_IMPULSE);
         if (isLocalPlayer)
             releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>().GenerateImpulse(CameraController.instance.transform.forward);

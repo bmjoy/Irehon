@@ -14,6 +14,7 @@ public class CameraController : MonoBehaviour
     private Cinemachine.CinemachineVirtualCamera aimCamera;
     [SerializeField]
     private Cinemachine.CinemachineVirtualCamera mainCamera;
+    private PlayerController player;
     private Transform playerTransform;
     private Transform shoulderTransform;
     private bool cursorAiming;
@@ -48,9 +49,9 @@ public class CameraController : MonoBehaviour
         if (playerTransform == null)
             return;
         if (needToSendY)
-            PlayerController.instance.UpdateYRotation(playerTransform.rotation.eulerAngles.y);
+            player.UpdateYRotation(playerTransform.rotation.eulerAngles.y);
         if (needToSendX)
-            PlayerController.instance.UpdateXRotation(xRotation);
+            player.UpdateXRotation(xRotation);
         needToSendX = false;
         needToSendY = false;
     }
@@ -93,6 +94,7 @@ public class CameraController : MonoBehaviour
         this.playerTransform = playerTransform;
         mainCamera.Follow = shoulderTarget;
         aimCamera.Follow = shoulderTarget;
+        player = playerTransform.GetComponent<PlayerController>();
     }
 
     public void UpdateTarget()
@@ -137,7 +139,7 @@ public class CameraController : MonoBehaviour
         if (playerTransform == null)
             return;
 
-        if (!cursorAiming)
+        if (!cursorAiming || !player.IsControllAllowed())
             return;
 
         UpdateTarget();

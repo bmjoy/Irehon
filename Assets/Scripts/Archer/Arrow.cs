@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class Arrow : MonoBehaviour
     private HitEffect hitEffect;
     [SerializeField]
     private Rigidbody rigidBody;
+    private float power;
     private bool flying = true;
     private float time = 0f;
     private Bow parentBow;
@@ -25,7 +27,7 @@ public class Arrow : MonoBehaviour
 
     public int GetDamage()
     {
-        return hitDamage;
+        return Convert.ToInt32(hitDamage * 0.5f + hitDamage * power);
     }
 
     void Update()
@@ -57,6 +59,11 @@ public class Arrow : MonoBehaviour
     public void SetParentBow(Bow parent)
     {
         parentBow = parent;
+    }
+
+    public void SetPower(float power)
+    {
+        this.power = power;
     }
 
     public void SetRegisteredColliders(List<Collider> selfColliders)

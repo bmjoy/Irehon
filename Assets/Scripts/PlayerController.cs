@@ -20,6 +20,8 @@ public class PlayerController : NetworkBehaviour
         public bool BackKeyDown;
         public bool RightKeyDown;
         public bool LeftKeyDown;
+        public bool SprintKeyDown;
+        public bool JumpKeyDown;
 
         public float currentRotation;
 
@@ -28,15 +30,15 @@ public class PlayerController : NetworkBehaviour
         public static bool operator !=(InputState c1, InputState c2)
         {
             if (c1.ForwardKeyDown != c2.ForwardKeyDown || c1.BackKeyDown != c2.BackKeyDown
-                || c1.RightKeyDown != c2.RightKeyDown || c1.LeftKeyDown != c2.LeftKeyDown)
+                || c1.RightKeyDown != c2.RightKeyDown || c1.LeftKeyDown != c2.LeftKeyDown || 
+                c1.JumpKeyDown != c2.JumpKeyDown || c1.SprintKeyDown != c2.SprintKeyDown)
                 return true;
             return false;
         }
 
         public static bool operator ==(InputState c1, InputState c2)
         {
-            if (c1.ForwardKeyDown != c2.ForwardKeyDown || c1.BackKeyDown != c2.BackKeyDown
-                || c1.RightKeyDown != c2.RightKeyDown || c1.LeftKeyDown != c2.LeftKeyDown)
+            if (c1 != c2)
                 return false;
             return true;
         }
@@ -51,43 +53,47 @@ public class PlayerController : NetworkBehaviour
             return moveVector;
         }
     };
-    private enum MouseClickType { Down = 0, Up};
+    protected enum MouseClickType { Down = 0, Up};
 
     [SyncVar]
-    private float lastXSpineAxis = 0f;
+    protected float lastXSpineAxis = 0f;
     [SerializeField]
-    private Transform shoulder;
+    protected Transform shoulder;
     [SerializeField]
-    private GameObject currentWeapon;
-    [SerializeField]
-    private ClassData currentClass;
-    private PlayerMovement movement;
-    private Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
-    private InputState previousInput;
-    private int currentFrame;
-    public PlayerAnimatorController animatorController { get; private set; }
-    public static PlayerController instance;
+    protected ClassData currentClass;
+    protected PlayerMovement movement;
+    protected Rigidbody rigidBody;
+    protected Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
+    protected InputState previousInput;
+    protected int currentFrame;
+    protected int gettedInputs;
+    protected bool isControllAllow;
+    protected Player player;
+    protected PlayerAnimatorController animator;
+    protected bool isGrounded;
 
-    public void Start()
+    protected virtual void Start()
     {
-        currentClass = null;
         if (isLocalPlayer)
         {
-            instance = this;
             previousInput = GetInput();
             CameraController.instance.SetTarget(shoulder, transform);
         }
+        rigidBody = GetComponent<Rigidbody>();
+        isGrounded = true;
+        player = GetComponent<Player>();
         currentClass = GetComponent<ClassData>();
-        animatorController = GetComponent<PlayerAnimatorController>();
+        animator = GetComponent<PlayerAnimatorController>();
         movement = GetComponent<PlayerMovement>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
+
         if (!isLocalPlayer)
             return;
-        if (Input.GetKeyDown(KeyCode.Space))
-            movement.Jump();
+        if (!isControllAllow) //нужно защитить серверные вызовы
+            return;
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             MouseEvent(KeyCode.Mouse0, MouseClickType.Down);
@@ -110,37 +116,75 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    private void FixedUpdate()
+    protected void FixedUpdate()
     {
+        currentFrame++;
+
+        if (isServer)
+        {
+            if (transform.position.y < -5)
+                player.Kill();
+        }
+
         if (!isLocalPlayer)
         {
             shoulder.localRotation = Quaternion.Euler(lastXSpineAxis, -3.5f, 0f); ;
             return;
         }
-        InputState currentInput = GetInput();
-        /*if (currentInput.GetMoveVector() != Vector2.zero || previousInput != currentInput)*/ //Вернуть, только для теста
+        if (isControllAllow)
         {
-            sendedInputs.Enqueue(PackageSendedInput(currentInput));
-            Move(currentInput);
+            InputState currentInput = GetInput();
+            if (currentInput.GetMoveVector() != Vector2.zero || previousInput != currentInput) //Вернуть, только для теста
+            {
+                sendedInputs.Enqueue(PackageSendedInput(currentInput));
+                Move(currentInput);
+            }
+            previousInput = currentInput;
         }
-        previousInput = currentInput;
-        currentFrame++;
+    }
+
+    protected void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetFallingState(true);
+            isGrounded = false;
+        }
+    }
+
+    protected void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetFallingState(false);
+            isGrounded = true;
+        }
+    }
+
+    protected void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetFallingState(false);
+            isGrounded = true;
+        }
     }
 
     #region
 
     [Command]
-    private void SendMove(InputState input)
+    protected void SendMove(InputState input)
     {
-        movement.ApplyTransformInput(input);
-        animatorController.ApplyAnimatorInput(input);
+        if (!isControllAllow || gettedInputs > currentFrame)
+            return;
+        ProcessInputState(input);
         CheckPrediction(connectionToClient, input, transform.position);
     }
 
     [Command]
     public void UpdateXRotation(float newX)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !isControllAllow)
             return;
         lastXSpineAxis = newX;
     }
@@ -148,15 +192,15 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void UpdateYRotation(float newY)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !isControllAllow)
             return;
         transform.rotation = Quaternion.Euler(0f, newY, 0f);
     }
 
     [Command]
-    private void MouseEvent(KeyCode mouseButton, MouseClickType type)
+    protected void MouseEvent(KeyCode mouseButton, MouseClickType type)
     {
-        if (isClient)
+        if (isClient || !isControllAllow || !player.IsAlive())
             return;
         if (mouseButton == KeyCode.Mouse0)
         {
@@ -175,7 +219,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
+    protected void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
     {
         TimeSpan ping = DateTime.Now - sendedInputs.Dequeue().inputSendedTime;
         DebugNetwork.instance.ShowPing(Convert.ToInt32(ping.TotalMilliseconds));
@@ -191,6 +235,8 @@ public class PlayerController : NetworkBehaviour
         if (sendedInputs.Count > 0)
         {
             float delta = pos.y - sendedInputs.Peek().position.y;
+            if (delta > 1f)
+                yPosition += delta;
             if (delta > .00001f)
                 yPosition = Mathf.Lerp(yPosition, yPosition + (delta), 0.1f);
         }
@@ -204,16 +250,36 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
-    public void SetWeapon(GameObject weapon) => currentWeapon = weapon;
-
-    public bool isOwner()
+    protected virtual void Jump()
     {
-        return isLocalPlayer;
+        movement.Jump();
+        isGrounded = false;
+        animator.PlayJump();
     }
 
-    public GameObject GetWeapon() => currentWeapon;
+    protected virtual void JumpInput()
+    {
+        if (isGrounded && rigidBody.velocity.y < 1)
+        {
+            movement.Jump();
+            if (isServer && !isLocalPlayer)
+                JumpRPC();
+        }
+    }
 
-    private InputState GetInput()
+    [ClientRpc(excludeOwner = true)]
+    protected virtual void JumpRPC()
+    {
+        Jump();
+    }
+
+    public void BlockControll() => isControllAllow = false;
+    
+    public void AllowControll() => isControllAllow = true;
+
+    public bool IsControllAllowed() => isControllAllow;
+
+    protected InputState GetInput()
     {
         InputState currentInput = new InputState();
         currentInput.currentRotation = transform.rotation.eulerAngles.y;
@@ -221,10 +287,12 @@ public class PlayerController : NetworkBehaviour
         currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
         currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
         currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
+        currentInput.SprintKeyDown = Input.GetKey(KeyCode.LeftShift);
+        currentInput.JumpKeyDown = Input.GetKey(KeyCode.Space);
         return currentInput;
     }
 
-    private SendInputState PackageSendedInput(InputState input)
+    protected SendInputState PackageSendedInput(InputState input)
     {
         SendInputState sendInputState = new SendInputState();
         sendInputState.input = input;
@@ -234,10 +302,17 @@ public class PlayerController : NetworkBehaviour
         return sendInputState;
     }
 
-    public void Move(InputState input)
+    public void ProcessInputState(InputState input)
     {
         movement.ApplyTransformInput(input);
-        animatorController.ApplyAnimatorInput(input);
+        animator.ApplyAnimatorInput(input);
+        if (input.JumpKeyDown)
+            JumpInput();
+    }
+
+    public void Move(InputState input)
+    {
+        ProcessInputState(input);
         if (isClientOnly)
             SendMove(input);
     }

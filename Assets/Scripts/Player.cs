@@ -2,27 +2,73 @@
 
 public class Player : Entity
 {
-    private void Start()
+    PlayerController controller;
+
+    protected override void Awake()
     {
-        UIController.instance.SetHealthBarValue(1f * (health / maxHealth));
+        base.Awake();
+        controller = GetComponent<PlayerController>();
+    }
+
+    protected override void SetDefaultState()
+    {
+        base.SetDefaultState();
+        controller.AllowControll();
+    }
+
+    protected override void Death()
+    {
+        base.Death();
+        controller.BlockControll();
+        DeathOnClient(connectionToClient);
+    }
+
+    protected override void Respawn()
+    {
+        base.Respawn();
+        controller.AllowControll();
+        RespawnOnClient(connectionToClient);
     }
 
     [Server]
-    public override void TakeDamageOnServer(int damage)
+    protected override void SetHealth(int health)
     {
-        base.TakeDamageOnServer(damage);
-        if (!isClient)
-            TakeDamageOnClient(connectionToClient, damage, health);
+        base.SetHealth(health);
+        SetHealthOnClient(connectionToClient, health);
+    }
+
+    [Server]
+    public override void TakeDamage(int damage)
+    {
+        base.TakeDamage(damage);
+        SetHealthOnClient(connectionToClient, health);
     }
 
     [TargetRpc]
-    public virtual void TakeDamageOnClient(NetworkConnection con, int damage, int currentHealth)
+    public virtual void SetHealthOnClient(NetworkConnection con, int currentHealth)
     {
-        health -= currentHealth;
-        if (health < 0)
-            health = 0;
-        if (health != currentHealth)
-            health = currentHealth;
+        health = currentHealth;
         UIController.instance.SetHealthBarValue(1f * health / maxHealth);
+    }
+
+    [TargetRpc]
+    public virtual void DeathOnClient(NetworkConnection con)
+    {
+        base.Death();
+        controller.BlockControll();
+    }
+
+    [TargetRpc]
+    public virtual void RespawnOnClient(NetworkConnection con)
+    {
+        base.Respawn();
+        controller.AllowControll();
+    }
+
+    [Server]
+    public void DoDamage(Entity target, int damage)
+    {
+        target.TakeDamage(damage);
+        controller.HitConfirmed(connectionToClient);
     }
 }
