@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +8,10 @@ public class UIController : MonoBehaviour
 
     private float defaultTriangleSize = 150;
     private float minimumTriangleSize = 80f;
+    [SerializeField]
+    private Slider health;
+    [SerializeField]
+    private Image hitMarker;
     [SerializeField]
     private RectTransform triangleAimingRectangle;
     [SerializeField]
@@ -37,5 +40,30 @@ public class UIController : MonoBehaviour
         float sizeDelta = (defaultTriangleSize - minimumTriangleSize) * newSize;
         float size = defaultTriangleSize - sizeDelta;
         triangleAimingRectangle.sizeDelta = new Vector2(size, size);
+    }
+
+    public void ShowHitMarker()
+    {
+        StopAllCoroutines();
+        Color newColor = hitMarker.color;
+        newColor.a = 1;
+        hitMarker.color = newColor;
+        StartCoroutine(DisappearHitMarker());
+    }
+
+    private IEnumerator DisappearHitMarker()
+    {
+        while (hitMarker.color.a > 0)
+        {
+            Color newColor = hitMarker.color;
+            newColor.a -= .01f;
+            hitMarker.color = newColor;
+            yield return new WaitForSeconds(.01f);
+        }
+    }
+
+    public void SetHealthBarValue(float value)
+    {
+        health.value = value;
     }
 }

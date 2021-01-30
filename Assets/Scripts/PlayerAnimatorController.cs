@@ -1,12 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 
 public class PlayerAnimatorController : AnimatorController
 {
     [SerializeField]
     protected Transform shoulderLookTarget;
+    protected Transform head;
+
+    protected override void Start()
+    {
+        base.Start();
+        head = animator.GetBoneTransform(HumanBodyBones.Head);
+    }
+
+    protected override void LateUpdate()
+    {
+        base.LateUpdate();
+        head.LookAt(shoulderLookTarget);
+    }
 
     public void ResetMovementAnimation()
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 
 public class AnimatorController : NetworkBehaviour
@@ -9,5 +7,10 @@ public class AnimatorController : NetworkBehaviour
     protected virtual void Start()
     {
         animator = GetComponent<Animator>();
+    }
+
+    protected virtual void LateUpdate()
+    {
+        
     }
 }

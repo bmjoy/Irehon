@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Mirror;
+﻿using Mirror;
 
 public class Player : Entity
 {
     private void Start()
     {
-        
+        UIController.instance.SetHealthBarValue(1f * (health / maxHealth));
     }
 
     [Server]
@@ -26,5 +23,6 @@ public class Player : Entity
             health = 0;
         if (health != currentHealth)
             health = currentHealth;
+        UIController.instance.SetHealthBarValue(1f * health / maxHealth);
     }
 }

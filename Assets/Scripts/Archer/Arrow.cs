@@ -14,10 +14,13 @@ public class Arrow : MonoBehaviour
     private bool flying = true;
     private float time = 0f;
     private Bow parentBow;
+    private List<Collider> selfColliders;
 
-    public void ResetTime()
+    public void ResetArrow()
     {
         time = 0;
+        flying = true;
+        rigidBody.useGravity = true;
     }
 
     public int GetDamage()
@@ -38,15 +41,26 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player") || !flying)
+            return;
+        if (selfColliders.Contains(other))
+            return;
         flying = false;
         rigidBody.useGravity = false;
         rigidBody.velocity = Vector3.zero;
         hitEffect.ReleaseEffect();
         parentBow.HittedColliderProcess(other, this);
+        if (other.CompareTag("Entity"))
+            parentBow.ReturnArrowInQuiver(this);
     }
 
     public void SetParentBow(Bow parent)
     {
         parentBow = parent;
+    }
+
+    public void SetRegisteredColliders(List<Collider> selfColliders)
+    {
+        this.selfColliders = selfColliders;
     }
 }

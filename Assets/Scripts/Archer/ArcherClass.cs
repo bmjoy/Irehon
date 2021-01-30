@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ArcherClass : ClassData
 {
@@ -19,7 +17,6 @@ public class ArcherClass : ClassData
         playerController = GetComponent<PlayerController>();
         currentWeapon = GetComponent<Bow>();
         animatorController = GetComponent<ArcherAnimatorController>();
-        impulseSource = GetComponent<Cinemachine.CinemachineImpulseSource>();
         isAiming = false;
     }
 
@@ -31,7 +28,6 @@ public class ArcherClass : ClassData
         animatorController.StopAiming();
         currentWeapon.InterruptAiming();
         UIController.instance.EnableDefaultCrosshair();
-        impulseSource.GenerateImpulse(CameraController.instance.transform.forward);
         isAiming = false;
     }
     public override void RightMouseButtonDown()

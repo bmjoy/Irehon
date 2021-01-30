@@ -1,21 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
 public class Bow : NetworkBehaviour
 {
-    [SerializeField]
-    private float BASE_ARROW_IMPULSE = 10f;
-    [SerializeField]
-    private float HOLDING_ARROW_BONUS_IN_SECOND = 30f;
     private const int ARROWS_IN_QUIVER_QUANTITY = 10;
-    private const float HOLD_DELAY = 0.8f;
+    private const float HOLD_DELAY = 1f;
     private const float MIN_HOLDING_TIME = 1f;
     private const float MAX_HOLDING_TIME = 1.5f;
-    private float holdingTime;
-    private float lastServerHoldingTime;
-
+    private const float BASE_ARROW_IMPULSE = 10f;
+    private const float HOLDING_ARROW_BONUS_IN_SECOND = 30f;
     [SerializeField]
     private Transform bowTransform;
     [SerializeField]
@@ -26,7 +20,10 @@ public class Bow : NetworkBehaviour
     private GameObject projectile;
     [SerializeField]
     private GameObject projectileInHand;
+    private float holdingTime;
+    private float lastServerHoldingTime;
     private float previousSize;
+    private Player player;
     private PlayerController playerController;
     private GameObject quiver;
     private Queue<Arrow> arrowsInQuiver = new Queue<Arrow>();
@@ -40,6 +37,7 @@ public class Bow : NetworkBehaviour
     {
         stringStartPosition = stringBone.localPosition;
         playerController = GetComponent<PlayerController>();
+        player = GetComponent<Player>();
         quiver = new GameObject("Quiver");
         quiver.transform.parent = transform;
         for (int i = 0; i < ARROWS_IN_QUIVER_QUANTITY; i++)
@@ -49,6 +47,7 @@ public class Bow : NetworkBehaviour
             Arrow arrow = arrowObject.GetComponent<Arrow>();
             arrow.SetParentBow(this);
             arrow.gameObject.SetActive(false);
+            arrow.SetRegisteredColliders(player.GetHitBoxColliderList());
             arrowsInQuiver.Enqueue(arrow);
         }
     }
@@ -108,7 +107,7 @@ public class Bow : NetworkBehaviour
         if (collider.CompareTag("Entity"))
         {
             collider.GetComponent<EntityCollider>().GetParentEntityComponent().TakeDamageOnServer(arrow.GetDamage());
-            playerController.HitConfirmed(connectionToServer);
+            playerController.HitConfirmed(connectionToClient);
         }
     }
 
@@ -151,6 +150,8 @@ public class Bow : NetworkBehaviour
         if (holdingTime > MAX_HOLDING_TIME)
             holdingTime = MAX_HOLDING_TIME;
         releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * (HOLDING_ARROW_BONUS_IN_SECOND * holdingTime + BASE_ARROW_IMPULSE);
+        if (isLocalPlayer)
+            releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>().GenerateImpulse(CameraController.instance.transform.forward);
     }
 
     private void PullAndShootArrow(Vector3 target, Vector3 releasingPosition, float power)
@@ -185,7 +186,7 @@ public class Bow : NetworkBehaviour
             Arrow arrow = arrowsInQuiver.Dequeue();
             arrow.transform.SetParent(null);
             arrow.gameObject.SetActive(true);
-            arrow.ResetTime();
+            arrow.ResetArrow();
             return arrow;
         }
         return null;

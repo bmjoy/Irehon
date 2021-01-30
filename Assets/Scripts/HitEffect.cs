@@ -7,6 +7,7 @@ public class HitEffect : MonoBehaviour
     [SerializeField]
     private float hitEffectDuration = 1.5f;
     private ParticleSystem particle;
+    private Vector3 originalLocalPosition;
     private Transform originalParent;
 
     private void Start()
@@ -16,6 +17,7 @@ public class HitEffect : MonoBehaviour
 
     public void ReleaseEffect()
     {
+        originalLocalPosition = transform.localPosition;
         originalParent = transform.parent;
         transform.SetParent(null);
         particle.Play();
@@ -25,5 +27,6 @@ public class HitEffect : MonoBehaviour
     private void EndHitEffect()
     {
         transform.parent = originalParent;
+        transform.localPosition = originalLocalPosition;
     }
 }

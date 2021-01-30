@@ -1,22 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 
 public class PlayerMovement : NetworkBehaviour
 {
     protected const float MOVEMENT_SPEED = 0.125f;
     protected const float JUMP_FORCE = 7f;
-
     protected bool isGrounded = true;
-
     protected Animator animator;
     protected Rigidbody rigidBody;
     protected PlayerController controller;
 
+    protected virtual void Awake()
+    {
+        animator = GetComponent<Animator>();
+        controller = GetComponent<PlayerController>();
+        rigidBody = GetComponent<Rigidbody>();
+    }
+
     protected void OnTriggerExit(Collider other)
     {
-        //if (other.tag == "Floor")
+        if (other.CompareTag("Walkable"))
         {
             animator.SetBool("Falling", true);
             isGrounded = false;
@@ -25,7 +28,16 @@ public class PlayerMovement : NetworkBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
-        //if (other.tag == "Floor")
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetBool("Falling", false);
+            isGrounded = true;
+        }
+    }
+
+    protected void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
         {
             animator.SetBool("Falling", false);
             isGrounded = true;
@@ -37,7 +49,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (isLocalPlayer)
             return;
-
         if (isGrounded && rigidBody.velocity.y < 1)
         {
             isGrounded = false;
@@ -54,6 +65,7 @@ public class PlayerMovement : NetworkBehaviour
         animator.SetTrigger("Jump");
         rigidBody.AddForce(Vector3.up * JUMP_FORCE, ForceMode.Impulse);
     }
+
     public virtual void ApplyTransformInput(PlayerController.InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
@@ -86,10 +98,5 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    protected virtual void Awake()
-    {
-        animator = GetComponent<Animator>();
-        controller = GetComponent<PlayerController>();
-        rigidBody = GetComponent<Rigidbody>();
-    }
+    public bool IsGrounded() => isGrounded;
 }

@@ -14332,6 +14332,7 @@ GameObject:
   - component: {fileID: 5617014799285287062}
   - component: {fileID: 2587619711926577841}
   - component: {fileID: -4447190017515430792}
+  - component: {fileID: 4854666215121452362}
   m_Layer: 0
   m_Name: ArrowForPractice
   m_TagString: Arrow
@@ -14368,8 +14369,8 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 2
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!65 &2587619711926577841
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14381,8 +14382,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 0.05, z: 0.32210064}
-  m_Center: {x: 0, y: 0, z: 0.8476963}
+  m_Size: {x: 0.05, y: 0.05, z: 0.90636134}
+  m_Center: {x: 0, y: 0, z: 0.55556595}
 --- !u!114 &-4447190017515430792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14398,6 +14399,48 @@ MonoBehaviour:
   hitDamage: 15
   hitEffect: {fileID: 7483773154929676225}
   rigidBody: {fileID: 5617014799285287062}
+--- !u!114 &4854666215121452362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6015331266736071183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: -1
+    m_RawSignal: {fileID: 11400000, guid: 80540e23e509b364b85a6d8f33b714b5, type: 2}
+    m_AmplitudeGain: 0.2
+    m_FrequencyGain: 0.3
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.48
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 1000
+    m_PropagationSpeed: 343
 --- !u!1 &8151614117718644934
 GameObject:
   m_ObjectHideFlags: 0

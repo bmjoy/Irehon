@@ -2,9 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System;
 
 public class PlayerController : NetworkBehaviour
 {
+    public struct SendInputState
+    {
+        public InputState input;
+        public int frame;
+        public Vector3 position;
+        public System.DateTime inputSendedTime;
+    };
 
     public struct InputState
     {
@@ -15,7 +23,7 @@ public class PlayerController : NetworkBehaviour
 
         public float currentRotation;
 
-        public int frame;
+        public int frame; //убрать
 
         public static bool operator !=(InputState c1, InputState c2)
         {
@@ -54,103 +62,11 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private ClassData currentClass;
     private PlayerMovement movement;
-    private List<InputState> sendedInputs = new List<InputState>();
+    private Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
     private InputState previousInput;
     private int currentFrame;
     public PlayerAnimatorController animatorController { get; private set; }
     public static PlayerController instance;
-
-    #region
-
-    [Command]
-    private void SendMove(InputState input)
-    {
-        movement.ApplyTransformInput(input);
-        animatorController.ApplyAnimatorInput(input);
-        CheckPrediction(connectionToClient, input, transform.position);
-    }
-
-    [Command]
-    public void UpdateXRotation(float newX)
-    {
-        if (isLocalPlayer)
-            return;
-        lastXSpineAxis = newX;
-    }
-
-    [Command]
-    public void UpdateYRotation(float newY)
-    {
-        if (isLocalPlayer)
-            return;
-        transform.rotation = Quaternion.Euler(0f, newY, 0f);
-    }
-
-    [Command]
-    private void MouseEvent(KeyCode mouseButton, MouseClickType type)
-    {
-        if (isClient)
-            return;
-        if (mouseButton == KeyCode.Mouse0)
-        {
-            if (type == MouseClickType.Down)
-                currentClass.LeftMouseButtonDown();
-            else if (type == MouseClickType.Up)
-                currentClass.LeftMouseButtonUp();
-        }
-        else if (mouseButton == KeyCode.Mouse1)
-        {
-            if (type == MouseClickType.Down)
-                currentClass.RightMouseButtonDown();
-            else if (type == MouseClickType.Up)
-                currentClass.RightMouseButtonUp();
-        }
-    }
-
-    [TargetRpc]
-    private void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
-    {
-        Quaternion rot = transform.rotation;
-        transform.position = pos;
-        sendedInputs.Remove(input);
-        sendedInputs.ForEach(movement.ApplyTransformInput);
-        transform.rotation = rot;
-    }
-
-    [TargetRpc]
-    public void HitConfirmed(NetworkConnection con)
-    {
-        print("confirmed hit");
-    }
-    #endregion
-
-    public void SetWeapon(GameObject weapon) => currentWeapon = weapon;
-
-    public bool isOwner()
-    {
-        return isLocalPlayer;
-    }
-
-    public GameObject GetWeapon() => currentWeapon;
-
-    private InputState GetInput()
-    {
-        InputState currentInput = new InputState();
-        currentInput.currentRotation = transform.rotation.eulerAngles.y;
-        currentInput.ForwardKeyDown = Input.GetKey(KeyCode.W);
-        currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
-        currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
-        currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
-        currentInput.frame = currentFrame;
-        return currentInput;
-    }
-    public void Move(InputState input)
-    {
-        movement.ApplyTransformInput(input);
-        animatorController.ApplyAnimatorInput(input);
-        if (isClientOnly)
-            SendMove(input);
-    }
 
     public void Start()
     {
@@ -202,11 +118,127 @@ public class PlayerController : NetworkBehaviour
             return;
         }
         InputState currentInput = GetInput();
-        if (currentInput.GetMoveVector() != Vector2.zero || previousInput != currentInput)
+        /*if (currentInput.GetMoveVector() != Vector2.zero || previousInput != currentInput)*/ //Вернуть, только для теста
         {
+            sendedInputs.Enqueue(PackageSendedInput(currentInput));
             Move(currentInput);
         }
         previousInput = currentInput;
         currentFrame++;
+    }
+
+    #region
+
+    [Command]
+    private void SendMove(InputState input)
+    {
+        movement.ApplyTransformInput(input);
+        animatorController.ApplyAnimatorInput(input);
+        CheckPrediction(connectionToClient, input, transform.position);
+    }
+
+    [Command]
+    public void UpdateXRotation(float newX)
+    {
+        if (isLocalPlayer)
+            return;
+        lastXSpineAxis = newX;
+    }
+
+    [Command]
+    public void UpdateYRotation(float newY)
+    {
+        if (isLocalPlayer)
+            return;
+        transform.rotation = Quaternion.Euler(0f, newY, 0f);
+    }
+
+    [Command]
+    private void MouseEvent(KeyCode mouseButton, MouseClickType type)
+    {
+        if (isClient)
+            return;
+        if (mouseButton == KeyCode.Mouse0)
+        {
+            if (type == MouseClickType.Down)
+                currentClass.LeftMouseButtonDown();
+            else if (type == MouseClickType.Up)
+                currentClass.LeftMouseButtonUp();
+        }
+        else if (mouseButton == KeyCode.Mouse1)
+        {
+            if (type == MouseClickType.Down)
+                currentClass.RightMouseButtonDown();
+            else if (type == MouseClickType.Up)
+                currentClass.RightMouseButtonUp();
+        }
+    }
+
+    [TargetRpc]
+    private void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
+    {
+        TimeSpan ping = DateTime.Now - sendedInputs.Dequeue().inputSendedTime;
+        DebugNetwork.instance.ShowPing(Convert.ToInt32(ping.TotalMilliseconds));
+
+        float yPosition = transform.position.y;
+    
+        Quaternion rot = transform.rotation;
+        transform.position = pos;
+        
+        foreach (SendInputState sendedInput in sendedInputs)
+            movement.ApplyTransformInput(sendedInput.input);
+        transform.rotation = rot;
+        if (sendedInputs.Count > 0)
+        {
+            float delta = pos.y - sendedInputs.Peek().position.y;
+            if (delta > .00001f)
+                yPosition = Mathf.Lerp(yPosition, yPosition + (delta), 0.1f);
+        }
+        transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);
+    }
+
+    [TargetRpc]
+    public void HitConfirmed(NetworkConnection con)
+    {
+        UIController.instance.ShowHitMarker();
+    }
+    #endregion
+
+    public void SetWeapon(GameObject weapon) => currentWeapon = weapon;
+
+    public bool isOwner()
+    {
+        return isLocalPlayer;
+    }
+
+    public GameObject GetWeapon() => currentWeapon;
+
+    private InputState GetInput()
+    {
+        InputState currentInput = new InputState();
+        currentInput.currentRotation = transform.rotation.eulerAngles.y;
+        currentInput.ForwardKeyDown = Input.GetKey(KeyCode.W);
+        currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
+        currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
+        currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
+        return currentInput;
+    }
+
+    private SendInputState PackageSendedInput(InputState input)
+    {
+        SendInputState sendInputState = new SendInputState();
+        sendInputState.input = input;
+        sendInputState.frame = currentFrame;
+        sendInputState.position = transform.position;
+        sendInputState.inputSendedTime = DateTime.Now;
+        return sendInputState;
+    }
+
+    public void Move(InputState input)
+    {
+        movement.ApplyTransformInput(input);
+        animatorController.ApplyAnimatorInput(input);
+        if (isClientOnly)
+            SendMove(input);
     }
 }

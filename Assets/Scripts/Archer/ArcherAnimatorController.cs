@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 
 public class ArcherAnimatorController : PlayerAnimatorController
@@ -11,7 +9,6 @@ public class ArcherAnimatorController : PlayerAnimatorController
     private bool aiming;
     private const float POST_AIM_ROTATION_DURATION = 0.14f;
     private Transform chest;
-    private Transform head;
     private float postAimRotation = 0;
 
     protected override void Start()
@@ -27,6 +24,7 @@ public class ArcherAnimatorController : PlayerAnimatorController
         if (!isServerOnly)
             CameraController.instance.EnableAimCamera();
         animator.SetBool("Aiming", true);
+        animator.ResetTrigger("Shoot");
     }
 
     public void StopAiming()
@@ -36,6 +34,7 @@ public class ArcherAnimatorController : PlayerAnimatorController
         if (!isServerOnly)
             CameraController.instance.DisableAimCamera();
         animator.SetBool("Aiming", false);
+        animator.ResetTrigger("Shoot");
     }
 
     public void ShootAnimator()
@@ -43,14 +42,14 @@ public class ArcherAnimatorController : PlayerAnimatorController
         animator.SetTrigger("Shoot");
     }
 
-    private void LateUpdate()
+    protected override void LateUpdate()
     {
+        base.LateUpdate();
         if (aiming || postAimRotation > 0)
         {
             postAimRotation -= Time.deltaTime;
             chest.LookAt(shoulderLookTarget);
             chest.rotation = chest.rotation * Quaternion.Euler(aimingOffset);
-            head.LookAt(shoulderLookTarget);
         }
     }
 }
