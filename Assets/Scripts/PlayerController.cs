@@ -25,7 +25,7 @@ public class PlayerController : NetworkBehaviour
 
         public float currentRotation;
 
-        public int frame; //убрать
+        public int frame;
 
         public static bool operator !=(InputState c1, InputState c2)
         {
@@ -87,9 +87,15 @@ public class PlayerController : NetworkBehaviour
         movement = GetComponent<PlayerMovement>();
     }
 
+    public virtual void InvokeAttackEvent()
+    {
+        currentClass.AttackEvent();
+    }
+
     protected virtual void Update()
     {
-
+        if (!isGrounded)
+            movement.IncreaseJumpGravityForce();
         if (!isLocalPlayer)
             return;
         if (!isControllAllow) //нужно защитить серверные вызовы
@@ -128,7 +134,8 @@ public class PlayerController : NetworkBehaviour
 
         if (!isLocalPlayer)
         {
-            shoulder.localRotation = Quaternion.Euler(lastXSpineAxis, -3.5f, 0f); ;
+            float newX = Mathf.Lerp(shoulder.localRotation.eulerAngles.x, lastXSpineAxis, 10);
+            shoulder.localRotation = Quaternion.Euler(newX, -3.5f, 0f);
             return;
         }
         if (isControllAllow)
@@ -261,6 +268,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (isGrounded && rigidBody.velocity.y < 1)
         {
+            animator.PlayJump();
             movement.Jump();
             if (isServer && !isLocalPlayer)
                 JumpRPC();

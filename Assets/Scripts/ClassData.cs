@@ -15,4 +15,6 @@ public abstract class ClassData : MonoBehaviour
     public abstract void RightMouseButtonUp();
     public abstract void LeftMouseButtonDown();
     public abstract void LeftMouseButtonUp();
+
+    public abstract void AttackEvent();
 }

@@ -23,8 +23,8 @@ public class ArcherAnimatorController : PlayerAnimatorController
         isAiming = true;
         if (!isServerOnly)
             CameraController.instance.EnableAimCamera();
-        animator.SetBool("Aiming", true);
         animator.ResetTrigger("Shoot");
+        animator.SetBool("Aiming", true);
     }
 
     public void StopAiming()
@@ -64,6 +64,14 @@ public class ArcherAnimatorController : PlayerAnimatorController
     }
 
     public void PlayShootAnimation()
+    {
+        animator.SetTrigger("Shoot");
+        if (isServer)
+            PlayShootAnimationOnOthers();
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    public void PlayShootAnimationOnOthers()
     {
         animator.SetTrigger("Shoot");
     }

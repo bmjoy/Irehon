@@ -10,12 +10,14 @@ public class Arrow : MonoBehaviour
     private int hitDamage;
     [SerializeField]
     private HitEffect hitEffect;
-    [SerializeField]
-    private Rigidbody rigidBody;
+    public Rigidbody rigidBody;
     private float power;
     private bool flying = true;
     private float time = 0f;
-    private Bow parentBow;
+    [SerializeField]
+    private SniperArrowParticle particle;
+    private Player arrowOwner;
+    private Bow.Quiver quiver;
     private List<Collider> selfColliders;
 
     public void ResetArrow()
@@ -25,9 +27,9 @@ public class Arrow : MonoBehaviour
         rigidBody.useGravity = true;
     }
 
-    public int GetDamage()
+    private int GetDamage()
     {
-        return Convert.ToInt32(hitDamage * 0.5f + hitDamage * power);
+        return Convert.ToInt32(hitDamage * .3f + hitDamage * power);
     }
 
     void Update()
@@ -37,7 +39,7 @@ public class Arrow : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(rigidBody.velocity);
         if (time > TIME_TO_DESPAWN)
         {
-            parentBow.ReturnArrowInQuiver(this);
+            quiver.ReturnArrowInQuiver(this);
         }
     }
 
@@ -51,23 +53,30 @@ public class Arrow : MonoBehaviour
         rigidBody.useGravity = false;
         rigidBody.velocity = Vector3.zero;
         hitEffect.ReleaseEffect();
-        parentBow.HittedColliderProcess(other, this);
+        HittedColliderProcess(other);
         if (other.CompareTag("Entity"))
-            parentBow.ReturnArrowInQuiver(this);
+            quiver.ReturnArrowInQuiver(this);
     }
 
-    public void SetParentBow(Bow parent)
+    public void HittedColliderProcess(Collider collider)
     {
-        parentBow = parent;
+        if (collider.CompareTag("Entity"))
+        {
+            arrowOwner.DoDamage(collider.GetComponent<EntityCollider>().GetParentEntityComponent(), GetDamage());
+        }
+    }
+
+    public void SetParent(Player arrowOwner, List<Collider> selfColliders, Bow.Quiver quiver)
+    {
+        this.arrowOwner = arrowOwner;
+        this.selfColliders = selfColliders;
+        this.quiver = quiver;
     }
 
     public void SetPower(float power)
     {
         this.power = power;
-    }
-
-    public void SetRegisteredColliders(List<Collider> selfColliders)
-    {
-        this.selfColliders = selfColliders;
+        if (particle != null)
+            particle.SetWaveSize(power);
     }
 }

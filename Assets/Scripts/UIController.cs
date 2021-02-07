@@ -11,7 +11,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Slider health;
     [SerializeField]
-    private Image hitMarker;
+    private CanvasGroup hitMarker;
     [SerializeField]
     private RectTransform triangleAimingRectangle;
     [SerializeField]
@@ -45,20 +45,16 @@ public class UIController : MonoBehaviour
     public void ShowHitMarker()
     {
         StopAllCoroutines();
-        Color newColor = hitMarker.color;
-        newColor.a = 1;
-        hitMarker.color = newColor;
+        hitMarker.alpha = 1;
         StartCoroutine(DisappearHitMarker());
     }
 
     private IEnumerator DisappearHitMarker()
     {
-        while (hitMarker.color.a > 0)
+        while (hitMarker.alpha > 0)
         {
-            Color newColor = hitMarker.color;
-            newColor.a -= .01f;
-            hitMarker.color = newColor;
-            yield return new WaitForSeconds(.01f);
+            hitMarker.alpha -= .1f;
+            yield return new WaitForSeconds(.1f);
         }
     }
 

@@ -4,12 +4,57 @@ using Mirror;
 
 public class Bow : NetworkBehaviour
 {
-    private const int ARROWS_IN_QUIVER_QUANTITY = 10;
+    public enum ArrowType { snipe, common};
     private const float HOLD_DELAY = 1f;
     private const float MIN_HOLDING_TIME = 1f;
     private const float MAX_HOLDING_TIME = 1.5f;
-    private const float BASE_ARROW_IMPULSE = 10f;
-    private const float HOLDING_ARROW_BONUS_IN_SECOND = 30f;
+    private const float BASE_ARROW_IMPULSE = 20;
+    private const float HOLDING_ARROW_BONUS_IN_SECOND = 45;
+
+    public struct Quiver
+    {
+        public ArrowType type { get; private set; }
+        private Transform quiverTransform;
+        private Queue<Arrow> arrowsInQuiever;
+        public Quiver(Bow quiverParent, ArrowType arrowType, int arrowQuantityInQuiver, GameObject arrowPrefab)
+        {
+            arrowsInQuiever = new Queue<Arrow>();
+            quiverTransform = new GameObject("quiver").transform;
+            quiverTransform.parent = quiverParent.transform;
+            type = arrowType;
+            for (int i = 0; i < arrowQuantityInQuiver; i++)
+            {
+                GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
+                Arrow arrow = arrowObj.GetComponent<Arrow>();
+                arrow.SetParent(quiverParent.player, quiverParent.GetPlayerColliderList(), this);
+                arrow.gameObject.SetActive(false);
+                arrowsInQuiever.Enqueue(arrow);
+            }
+
+        }
+
+        public void ReturnArrowInQuiver(Arrow arrow)
+        {
+            if (!arrowsInQuiever.Contains(arrow))
+                arrowsInQuiever.Enqueue(arrow);
+            arrow.transform.parent = quiverTransform;
+            arrow.gameObject.SetActive(false);
+        }
+
+        public Arrow GetArrowFromQuiver()
+        {
+            if (arrowsInQuiever.Count > 0)
+            {
+                Arrow arrow = arrowsInQuiever.Dequeue();
+                arrow.transform.SetParent(null);
+                arrow.gameObject.SetActive(true);
+                arrow.ResetArrow();
+                return arrow;
+            }
+            return null;
+        }
+    };
+
     [SerializeField]
     private Transform bowTransform;
     [SerializeField]
@@ -17,16 +62,18 @@ public class Bow : NetworkBehaviour
     [SerializeField]
     private Transform rightHand;
     [SerializeField]
-    private GameObject projectile;
+    private GameObject snipeProjectile;
+    [SerializeField]
+    private GameObject commonProjectile;
     [SerializeField]
     private GameObject projectileInHand;
+    private SniperArrowParticle sniperArrowParticle;
     private float holdingTime;
-    private float lastServerHoldingTime;
     private float previousPull;
-    private Player player;
-    private GameObject quiver;
-    private Queue<Arrow> arrowsInQuiver = new Queue<Arrow>();
-
+    private ArrowType currentArrowType;
+    public Player player { get; private set; }
+    private List<Quiver> avaliableQuivers = new List<Quiver>();
+    private AudioSource audioSource;
 
     private bool aiming;
 
@@ -36,18 +83,10 @@ public class Bow : NetworkBehaviour
     {
         stringStartPosition = stringBone.localPosition;
         player = GetComponent<Player>();
-        quiver = new GameObject("Quiver");
-        quiver.transform.parent = transform;
-        for (int i = 0; i < ARROWS_IN_QUIVER_QUANTITY; i++)
-        {
-            GameObject arrowObject = Instantiate(projectile);
-            arrowObject.transform.parent = quiver.transform;
-            Arrow arrow = arrowObject.GetComponent<Arrow>();
-            arrow.SetParentBow(this);
-            arrow.gameObject.SetActive(false);
-            arrow.SetRegisteredColliders(player.GetHitBoxColliderList());
-            arrowsInQuiver.Enqueue(arrow);
-        }
+        audioSource = new AudioSource();
+        sniperArrowParticle = projectileInHand.GetComponent<SniperArrowParticle>();
+        avaliableQuivers.Add(new Quiver(this, ArrowType.snipe, 5, snipeProjectile));
+        avaliableQuivers.Add(new Quiver(this, ArrowType.common, 10, commonProjectile));
     }
 
     private void Update()
@@ -61,7 +100,10 @@ public class Bow : NetworkBehaviour
                 if (pull > 1)
                     pull = 1;
                 if (isLocalPlayer && pull != previousPull)
+                {
                     UIController.instance.ChangeTriangleAimSize(pull);
+                    sniperArrowParticle.SetWaveSize(pull);
+                }
                 previousPull = pull;
             }
             if (holdingTime > HOLD_DELAY)
@@ -73,23 +115,21 @@ public class Bow : NetworkBehaviour
         }
     }
 
+    public void SetCurrentArrowType(ArrowType currentType)
+    {
+        currentArrowType = currentType;
+    }
+
     [Command]
     private void SpawnProjectileOnServer(Vector3 target)
     {
-        holdingTime = lastServerHoldingTime;
-        if (holdingTime < MIN_HOLDING_TIME)
+        if (currentArrowType == ArrowType.snipe && holdingTime < MIN_HOLDING_TIME)
             return;
         if (!isLocalPlayer)
         {
-            PullAndShootArrow(target);
-            SpawnProjectileOnPlayers(target, projectileInHand.transform.position, holdingTime);
+            float power = PullAndShootArrow(target, currentArrowType);
+            PullAndShootArrow(target, projectileInHand.transform.position, currentArrowType, power);
         }
-    }
-
-    [ClientRpc(excludeOwner = true)]
-    private void SpawnProjectileOnPlayers(Vector3 target, Vector3 pos, float power)
-    {
-        PullAndShootArrow(target, pos, power);
     }
 
     public void StartAim()
@@ -97,20 +137,11 @@ public class Bow : NetworkBehaviour
         aiming = true;
         holdingTime = 0;
         projectileInHand.SetActive(true);
+        sniperArrowParticle.SetWaveSize(0);
         previousPull = 0;
         if (!isLocalPlayer) //host
             StartAimOtherPlayers();
     }
-
-    [Server]
-    public void HittedColliderProcess(Collider collider, Arrow arrow)
-    {
-        if (collider.CompareTag("Entity"))
-        {
-            player.DoDamage(collider.GetComponent<EntityCollider>().GetParentEntityComponent(), arrow.GetDamage());
-        }
-    }
-
 
     [ClientRpc(excludeOwner = true)]
     public void StartAimOtherPlayers()
@@ -130,37 +161,66 @@ public class Bow : NetworkBehaviour
 
     public bool ReleaseProjectile(Vector3 target)
     {
-        if (holdingTime < MIN_HOLDING_TIME)
+        if (currentArrowType == ArrowType.snipe && holdingTime < MIN_HOLDING_TIME)
             return false;
+        print("here");
         if (isLocalPlayer)
         {
-            PullAndShootArrow(target);
+            PullAndShootArrow(target, currentArrowType);
             SpawnProjectileOnServer(target);
         }
-        else
-            lastServerHoldingTime = holdingTime;
         return true;
     }
 
-    private void PullAndShootArrow(Vector3 target)
+    private Quiver FindQuiverWithType(ArrowType arrowType)
     {
-        Arrow releasedProjectile = GetArrowFromQuiver();
-        releasedProjectile.transform.position = projectileInHand.transform.position;
-        releasedProjectile.transform.LookAt(target);
-        if (holdingTime > MAX_HOLDING_TIME)
-            holdingTime = MAX_HOLDING_TIME;
-        releasedProjectile.SetPower(previousPull);
-        releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * (HOLDING_ARROW_BONUS_IN_SECOND * holdingTime + BASE_ARROW_IMPULSE);
-        if (isLocalPlayer)
-            releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>().GenerateImpulse(CameraController.instance.transform.forward);
+        foreach (Quiver quiver in avaliableQuivers)
+            if (quiver.type == arrowType)
+                return quiver;
+        return new Quiver();
     }
 
-    private void PullAndShootArrow(Vector3 target, Vector3 releasingPosition, float power)
+    private float GetPowerFromType(ArrowType arrowType)
     {
-        Arrow releasedProjectile = GetArrowFromQuiver();
+        switch (arrowType)
+        {
+            case ArrowType.common:
+                return 30;
+            case ArrowType.snipe:
+                if (holdingTime > MAX_HOLDING_TIME)
+                    holdingTime = MAX_HOLDING_TIME;
+                return HOLDING_ARROW_BONUS_IN_SECOND * holdingTime + BASE_ARROW_IMPULSE;
+            default:
+                return 0;
+        }
+    }
+
+    private float PullAndShootArrow(Vector3 target, ArrowType arrow)
+    {
+        Arrow releasedProjectile = FindQuiverWithType(arrow).GetArrowFromQuiver();
+        if (!releasedProjectile)
+            return 0;
+        float power = GetPowerFromType(arrow);
+        releasedProjectile.transform.position = projectileInHand.transform.position;
+        releasedProjectile.transform.LookAt(target);
+        releasedProjectile.SetPower(previousPull);
+        releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * power;
+        if (isLocalPlayer)
+            releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>().GenerateImpulse(CameraController.instance.transform.forward);
+        return power;
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    private void PullAndShootArrow(Vector3 target, Vector3 releasingPosition, ArrowType arrow, float power)
+    {
+        if (power == 0)
+            return;
+        Arrow releasedProjectile = FindQuiverWithType(arrow).GetArrowFromQuiver();
+        if (!releasedProjectile)
+            return;
         releasedProjectile.transform.position = releasingPosition;
         releasedProjectile.transform.LookAt(target);
-        releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * (HOLDING_ARROW_BONUS_IN_SECOND * power + BASE_ARROW_IMPULSE);
+        releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * power;
     }
 
     public void InterruptAiming()
@@ -172,24 +232,8 @@ public class Bow : NetworkBehaviour
             InterruptAimingOtherPlayers();
     }
 
-    public void ReturnArrowInQuiver(Arrow arrow)
+    public List<Collider> GetPlayerColliderList()
     {
-        if (!arrowsInQuiver.Contains(arrow))
-            arrowsInQuiver.Enqueue(arrow);
-        arrow.transform.parent = quiver.transform;
-        arrow.gameObject.SetActive(false);
-    }
-
-    private Arrow GetArrowFromQuiver()
-    {
-        if (arrowsInQuiver.Count > 0)
-        {
-            Arrow arrow = arrowsInQuiver.Dequeue();
-            arrow.transform.SetParent(null);
-            arrow.gameObject.SetActive(true);
-            arrow.ResetArrow();
-            return arrow;
-        }
-        return null;
+        return player.GetHitBoxColliderList();
     }
 }

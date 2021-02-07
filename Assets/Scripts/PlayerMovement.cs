@@ -4,7 +4,9 @@ using Mirror;
 public class PlayerMovement : NetworkBehaviour
 {
     protected const float MOVEMENT_SPEED = 0.125f;
-    protected const float JUMP_FORCE = 7f;
+    protected const float JUMP_FORCE = 9f;
+    [SerializeField]
+    protected float velocityJumpIncreasing;
     protected Rigidbody rigidBody;
     protected PlayerController controller;
     protected Player player;
@@ -38,5 +40,11 @@ public class PlayerMovement : NetworkBehaviour
     public void Jump()
     {
         rigidBody.AddForce(Vector3.up * JUMP_FORCE, ForceMode.Impulse);
+    }
+
+    public void IncreaseJumpGravityForce()
+    {
+        if (rigidBody.velocity.y < 0)
+            rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y - (velocityJumpIncreasing * Time.fixedDeltaTime), rigidBody.velocity.z);
     }
 }
