@@ -61,4 +61,24 @@ public class PlayerAnimatorController : EntityAnimatorController
         animator.SetFloat("xMove", moveVerticals.x);
         animator.SetFloat("zMove", moveVerticals.y);
     }
+
+    public virtual void PlaySkillAnimation(int skill)
+    {
+        animator.SetInteger("CurrentSkill", skill);
+        animator.SetTrigger("Skill");
+    }
+
+    public virtual void ResetTriggers()
+    {
+        animator.ResetTrigger("Skill");
+        animator.ResetTrigger("Jump");
+    }
+
+    public virtual void ResetAnimator()
+    {
+        ResetTriggers();
+        animator.SetBool("Sprint", false);
+        animator.SetBool("Walking", false);
+        animator.SetBool("Falling", false);
+    }
 }

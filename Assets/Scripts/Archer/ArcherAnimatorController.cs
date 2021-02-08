@@ -83,7 +83,19 @@ public class ArcherAnimatorController : PlayerAnimatorController
         {
             postAimRotation -= Time.deltaTime;
             chest.LookAt(shoulderLookTarget);
-            chest.rotation = chest.rotation * Quaternion.Euler(aimingOffset);
+            chest.rotation *= Quaternion.Euler(aimingOffset);
         }
+    }
+
+    public override void ResetTriggers()
+    {
+        base.ResetTriggers();
+        animator.ResetTrigger("Shoot");
+    }
+
+    public override void ResetAnimator()
+    {
+        base.ResetAnimator();
+        animator.SetBool("Aiming", false);
     }
 }

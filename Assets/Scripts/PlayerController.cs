@@ -4,55 +4,8 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public class PlayerController : NetworkBehaviour
+public partial class PlayerController : NetworkBehaviour
 {
-    public struct SendInputState
-    {
-        public InputState input;
-        public int frame;
-        public Vector3 position;
-        public System.DateTime inputSendedTime;
-    };
-
-    public struct InputState
-    {
-        public bool ForwardKeyDown;
-        public bool BackKeyDown;
-        public bool RightKeyDown;
-        public bool LeftKeyDown;
-        public bool SprintKeyDown;
-        public bool JumpKeyDown;
-
-        public float currentRotation;
-
-        public int frame;
-
-        public static bool operator !=(InputState c1, InputState c2)
-        {
-            if (c1.ForwardKeyDown != c2.ForwardKeyDown || c1.BackKeyDown != c2.BackKeyDown
-                || c1.RightKeyDown != c2.RightKeyDown || c1.LeftKeyDown != c2.LeftKeyDown || 
-                c1.JumpKeyDown != c2.JumpKeyDown || c1.SprintKeyDown != c2.SprintKeyDown)
-                return true;
-            return false;
-        }
-
-        public static bool operator ==(InputState c1, InputState c2)
-        {
-            if (c1 != c2)
-                return false;
-            return true;
-        }
-
-        public Vector2 GetMoveVector()
-        {
-            Vector2 moveVector = Vector2.zero;
-            moveVector.x += RightKeyDown ? 1 : 0;
-            moveVector.x += LeftKeyDown ? -1 : 0;
-            moveVector.y += ForwardKeyDown ? 1 : 0;
-            moveVector.y += BackKeyDown ? -1 : 0;
-            return moveVector;
-        }
-    };
     protected enum MouseClickType { Down = 0, Up};
 
     [SyncVar]
@@ -61,6 +14,7 @@ public class PlayerController : NetworkBehaviour
     protected Transform shoulder;
     [SerializeField]
     protected ClassData currentClass;
+    protected AudioSource audioSource;
     protected PlayerMovement movement;
     protected Rigidbody rigidBody;
     protected Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
@@ -79,6 +33,7 @@ public class PlayerController : NetworkBehaviour
             previousInput = GetInput();
             CameraController.instance.SetTarget(shoulder, transform);
         }
+        audioSource = GetComponent<AudioSource>();
         rigidBody = GetComponent<Rigidbody>();
         isGrounded = true;
         player = GetComponent<Player>();
@@ -94,13 +49,11 @@ public class PlayerController : NetworkBehaviour
 
     protected virtual void Update()
     {
-        if (!isGrounded)
-            movement.IncreaseJumpGravityForce();
         if (!isLocalPlayer)
             return;
         if (!isControllAllow) //нужно защитить серверные вызовы
             return;
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             MouseEvent(KeyCode.Mouse0, MouseClickType.Down);
             currentClass.LeftMouseButtonDown();
@@ -131,6 +84,9 @@ public class PlayerController : NetworkBehaviour
             if (transform.position.y < -5)
                 player.Kill();
         }
+
+        if (!isGrounded)
+            movement.IncreaseJumpGravityForce();
 
         if (!isLocalPlayer)
         {
@@ -185,7 +141,7 @@ public class PlayerController : NetworkBehaviour
         if (!isControllAllow || gettedInputs > currentFrame)
             return;
         ProcessInputState(input);
-        CheckPrediction(connectionToClient, input, transform.position);
+        CheckPrediction(connectionToClient, transform.position);
     }
 
     [Command]
@@ -226,7 +182,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    protected void CheckPrediction(NetworkConnection con, InputState input, Vector3 pos)
+    protected void CheckPrediction(NetworkConnection con, Vector3 pos)
     {
         TimeSpan ping = DateTime.Now - sendedInputs.Dequeue().inputSendedTime;
         DebugNetwork.instance.ShowPing(Convert.ToInt32(ping.TotalMilliseconds));
@@ -289,28 +245,32 @@ public class PlayerController : NetworkBehaviour
 
     protected InputState GetInput()
     {
-        InputState currentInput = new InputState();
-        currentInput.currentRotation = transform.rotation.eulerAngles.y;
-        currentInput.ForwardKeyDown = Input.GetKey(KeyCode.W);
-        currentInput.BackKeyDown = Input.GetKey(KeyCode.S);
-        currentInput.RightKeyDown = Input.GetKey(KeyCode.D);
-        currentInput.LeftKeyDown = Input.GetKey(KeyCode.A);
-        currentInput.SprintKeyDown = Input.GetKey(KeyCode.LeftShift);
-        currentInput.JumpKeyDown = Input.GetKey(KeyCode.Space);
+        InputState currentInput = new InputState
+        {
+            currentRotation = transform.rotation.eulerAngles.y,
+            ForwardKeyDown = Input.GetKey(KeyCode.W),
+            BackKeyDown = Input.GetKey(KeyCode.S),
+            RightKeyDown = Input.GetKey(KeyCode.D),
+            LeftKeyDown = Input.GetKey(KeyCode.A),
+            SprintKeyDown = Input.GetKey(KeyCode.LeftShift),
+            JumpKeyDown = Input.GetKey(KeyCode.Space)
+        };
         return currentInput;
     }
 
     protected SendInputState PackageSendedInput(InputState input)
     {
-        SendInputState sendInputState = new SendInputState();
-        sendInputState.input = input;
-        sendInputState.frame = currentFrame;
-        sendInputState.position = transform.position;
-        sendInputState.inputSendedTime = DateTime.Now;
+        SendInputState sendInputState = new SendInputState
+        {
+            input = input,
+            frame = currentFrame,
+            position = transform.position,
+            inputSendedTime = DateTime.Now
+        };
         return sendInputState;
     }
 
-    public void ProcessInputState(InputState input)
+    protected void ProcessInputState(InputState input)
     {
         movement.ApplyTransformInput(input);
         animator.ApplyAnimatorInput(input);
@@ -318,10 +278,61 @@ public class PlayerController : NetworkBehaviour
             JumpInput();
     }
 
-    public void Move(InputState input)
+    protected void Move(InputState input)
     {
         ProcessInputState(input);
         if (isClientOnly)
             SendMove(input);
+    }
+
+    public void SetVelocity(Vector3 velocity)
+    {
+        rigidBody.velocity = transform.TransformDirection(velocity);
+        if (isServer)
+            SetVelocityOnOthers(velocity);
+    }
+
+    public void ResetHorizontalVelocty()
+    {
+        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
+        if (isServer)
+            ResetHorizontalVeloctyOnOthers();
+    }
+    [ClientRpc(excludeOwner = true)]
+    private void ResetHorizontalVeloctyOnOthers()
+    {
+        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
+    }
+
+    public void ResetState()
+    {
+        animator.ResetTriggers();
+        currentClass.ResetClassState();
+    }
+
+    public void ResetControll()
+    {
+        AllowControll();
+        animator.ResetAnimator();
+        currentClass.ResetClassState();
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    private void SetVelocityOnOthers(Vector3 velocity)
+    {
+        rigidBody.velocity = velocity;
+    }
+
+        public void AddForce(Vector3 force)
+    {
+        rigidBody.AddRelativeForce(force, ForceMode.Impulse);
+        if (isServer)
+            AddForceOnOthers(force);
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    private void AddForceOnOthers(Vector3 force)
+    {
+        rigidBody.AddRelativeForce(force, ForceMode.VelocityChange);
     }
 }

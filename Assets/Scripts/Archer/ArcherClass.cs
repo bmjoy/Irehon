@@ -3,8 +3,25 @@ using UnityEngine;
 
 public class ArcherClass : ClassData
 {
-    protected Bow currentWeapon;
-    protected ArcherController archerController;
+    [SerializeField]
+    private float skillRecoilPower = 9f;
+    [SerializeField]
+    private float skillRecoilCooldown = 9f;
+    [SerializeField]
+    private float recoilReset = 1f;
+    private float currentRecoilCooldown = 0f;
+    private enum Skill { None, RecoilShot}
+
+    private Bow currentWeapon;
+    private ArcherController archerController;
+    private Skill playingSkill;
+
+    private void FixedUpdate()
+    {
+        if (currentRecoilCooldown > 0)
+            currentRecoilCooldown -= Time.fixedDeltaTime;
+    }
+
     public override void IntializeClass()
     {
         GetComponent<Animator>().runtimeAnimatorController = classAnimator;
@@ -14,35 +31,37 @@ public class ArcherClass : ClassData
 
     public override void LeftMouseButtonDown()
     {
+        if (playingSkill != Skill.None)
+            return;
         if (archerController.IsAiming())
         {
             if (!currentWeapon.ReleaseProjectile(CameraController.instance.GetLookingTargetPosition()))
                 return;
             archerController.Shoot();
-            currentWeapon.SetCurrentArrowType(Bow.ArrowType.common);
-            archerController.StopAim();
-            currentWeapon.InterruptAiming();
-            UIController.instance.EnableDefaultCrosshair();
+            archerController.ResetState();
         }
         else
         {
+            ResetClassState();
             archerController.Shoot();
         }
     }
+
     public override void RightMouseButtonDown()
     {
-        currentWeapon.SetCurrentArrowType(Bow.ArrowType.snipe);
+        if (playingSkill != Skill.None)
+            return;
+        currentWeapon.SetCurrentArrowType(Bow.ArrowType.Snipe);
         currentWeapon.StartAim();
         archerController.StartAim();
         UIController.instance.EnableTriangleCrosshair();
     }
+
     public override void RightMouseButtonUp()
     {
-        currentWeapon.SetCurrentArrowType(Bow.ArrowType.common);
-        currentWeapon.InterruptAiming();
-        archerController.StopAim();
-        UIController.instance.EnableDefaultCrosshair();
+        archerController.ResetState();
     }
+
     public override void LeftMouseButtonUp()
     {
 
@@ -50,6 +69,49 @@ public class ArcherClass : ClassData
 
     public override void AttackEvent()
     {
-        currentWeapon.ReleaseProjectile(CameraController.instance.GetLookingTargetPosition());
+        if (!currentWeapon.ReleaseProjectile(CameraController.instance.GetLookingTargetPosition()))
+            return;
+        if (playingSkill != Skill.None)
+        {
+            switch (playingSkill)
+            {
+                case Skill.RecoilShot:
+                    archerController.SetVelocity(Vector3.Normalize(-Vector3.forward + Vector3.up * CameraController.instance.GetPlayerYAxis() / 45) * skillRecoilPower);
+                    Invoke(nameof(ResetVelocity), recoilReset);
+                    archerController.ResetControll();
+                    break;
+            }
+        }
+        else
+            archerController.ResetState();
+    }
+
+    public void RecoilShot()
+    {
+        if (currentRecoilCooldown > 0)
+            return;
+        archerController.ResetState();
+        currentWeapon.SetCurrentArrowType(Bow.ArrowType.Recoil);
+        playingSkill = Skill.RecoilShot;
+        archerController.Shoot((int)Skill.RecoilShot);
+        currentRecoilCooldown = skillRecoilCooldown;
+        archerController.BlockControll();
+    }
+
+    public void ResetVelocity()
+    {
+        archerController.SetVelocity(Vector3.zero);
+    }
+
+    public override void ResetClassState()
+    {
+        playingSkill = Skill.None;
+        currentWeapon.SetCurrentArrowType(Bow.ArrowType.Common);
+        if (archerController.IsAiming())
+        {
+            currentWeapon.InterruptAiming();
+            archerController.StopAim();
+        }
+        UIController.instance.EnableDefaultCrosshair();
     }
 }

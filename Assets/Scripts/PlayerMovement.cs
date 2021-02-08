@@ -3,8 +3,10 @@ using Mirror;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    protected const float MOVEMENT_SPEED = 0.125f;
-    protected const float JUMP_FORCE = 9f;
+    [SerializeField]
+    protected float MOVEMENT_SPEED = 0.125f;
+    [SerializeField]
+    protected float JUMP_FORCE = 9f;
     [SerializeField]
     protected float velocityJumpIncreasing;
     protected Rigidbody rigidBody;

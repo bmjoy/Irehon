@@ -25,7 +25,7 @@ public class HitEffect : MonoBehaviour
         originalParent = transform.parent;
         transform.SetParent(null);
         particle.Play();
-        releasingEffectSound.Play();
+        releasingEffectSound?.Play();
         Invoke("EndHitEffect", hitEffectDuration);
     }
 

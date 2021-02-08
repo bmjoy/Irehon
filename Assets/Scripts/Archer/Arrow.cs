@@ -10,7 +10,11 @@ public class Arrow : MonoBehaviour
     private int hitDamage;
     [SerializeField]
     private HitEffect hitEffect;
+    [SerializeField]
+    private ParticleSystem releaseEffect;
     public Rigidbody rigidBody;
+    [SerializeField]
+    private AudioSource releaseSound;
     private float power;
     private bool flying = true;
     private float time = 0f;
@@ -25,6 +29,12 @@ public class Arrow : MonoBehaviour
         time = 0;
         flying = true;
         rigidBody.useGravity = true;
+    }
+
+    public void TriggerReleaseEffect()
+    {
+        releaseSound?.Play();
+        releaseEffect?.Play();
     }
 
     private int GetDamage()

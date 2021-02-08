@@ -9,6 +9,8 @@ public abstract class ClassData : MonoBehaviour
         IntializeClass();
     }
 
+    public abstract void ResetClassState();
+
     public abstract void IntializeClass();
 
     public abstract void RightMouseButtonDown();

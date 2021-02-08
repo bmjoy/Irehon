@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
 public class Bow : NetworkBehaviour
 {
-    public enum ArrowType { snipe, common};
+    public enum ArrowType { Snipe, Common, Recoil };
     private const float HOLD_DELAY = 1f;
     private const float MIN_HOLDING_TIME = 1f;
-    private const float MAX_HOLDING_TIME = 1.5f;
+    private const float MAX_HOLDING_TIME = 2f;
     private const float BASE_ARROW_IMPULSE = 20;
     private const float HOLDING_ARROW_BONUS_IN_SECOND = 45;
 
@@ -66,11 +66,14 @@ public class Bow : NetworkBehaviour
     [SerializeField]
     private GameObject commonProjectile;
     [SerializeField]
+    private GameObject recoilProjectile;
+    [SerializeField]
     private GameObject projectileInHand;
     private SniperArrowParticle sniperArrowParticle;
     private float holdingTime;
     private float previousPull;
     private ArrowType currentArrowType;
+    public int x { get; set; }
     public Player player { get; private set; }
     private List<Quiver> avaliableQuivers = new List<Quiver>();
     private AudioSource audioSource;
@@ -83,10 +86,10 @@ public class Bow : NetworkBehaviour
     {
         stringStartPosition = stringBone.localPosition;
         player = GetComponent<Player>();
-        audioSource = new AudioSource();
         sniperArrowParticle = projectileInHand.GetComponent<SniperArrowParticle>();
-        avaliableQuivers.Add(new Quiver(this, ArrowType.snipe, 5, snipeProjectile));
-        avaliableQuivers.Add(new Quiver(this, ArrowType.common, 10, commonProjectile));
+        avaliableQuivers.Add(new Quiver(this, ArrowType.Snipe, 5, snipeProjectile));
+        avaliableQuivers.Add(new Quiver(this, ArrowType.Common, 10, commonProjectile));
+        avaliableQuivers.Add(new Quiver(this, ArrowType.Recoil, 2, recoilProjectile));
     }
 
     private void Update()
@@ -94,9 +97,9 @@ public class Bow : NetworkBehaviour
         if (aiming)
         {
             holdingTime += Time.deltaTime;
-            if (holdingTime > MIN_HOLDING_TIME) 
+            if (holdingTime > MIN_HOLDING_TIME)
             {
-                float pull = (holdingTime - MIN_HOLDING_TIME) / MAX_HOLDING_TIME;
+                float pull = (holdingTime - MIN_HOLDING_TIME) / (MAX_HOLDING_TIME - MIN_HOLDING_TIME);
                 if (pull > 1)
                     pull = 1;
                 if (isLocalPlayer && pull != previousPull)
@@ -123,12 +126,13 @@ public class Bow : NetworkBehaviour
     [Command]
     private void SpawnProjectileOnServer(Vector3 target)
     {
-        if (currentArrowType == ArrowType.snipe && holdingTime < MIN_HOLDING_TIME)
+        if (currentArrowType == ArrowType.Snipe && holdingTime < MIN_HOLDING_TIME)
             return;
         if (!isLocalPlayer)
         {
             float power = PullAndShootArrow(target, currentArrowType);
-            PullAndShootArrow(target, projectileInHand.transform.position, currentArrowType, power);
+            if (power != 0)
+                PullAndShootArrow(target, projectileInHand.transform.position, currentArrowType, power);
         }
     }
 
@@ -161,12 +165,12 @@ public class Bow : NetworkBehaviour
 
     public bool ReleaseProjectile(Vector3 target)
     {
-        if (currentArrowType == ArrowType.snipe && holdingTime < MIN_HOLDING_TIME)
+        if (currentArrowType == ArrowType.Snipe && holdingTime < MIN_HOLDING_TIME)
             return false;
-        print("here");
         if (isLocalPlayer)
         {
-            PullAndShootArrow(target, currentArrowType);
+            if (PullAndShootArrow(target, currentArrowType) == 0)
+                return false;
             SpawnProjectileOnServer(target);
         }
         return true;
@@ -184,12 +188,14 @@ public class Bow : NetworkBehaviour
     {
         switch (arrowType)
         {
-            case ArrowType.common:
-                return 30;
-            case ArrowType.snipe:
+            case ArrowType.Common:
+                return 45;
+            case ArrowType.Snipe:
                 if (holdingTime > MAX_HOLDING_TIME)
                     holdingTime = MAX_HOLDING_TIME;
                 return HOLDING_ARROW_BONUS_IN_SECOND * holdingTime + BASE_ARROW_IMPULSE;
+            case ArrowType.Recoil:
+                return 70;
             default:
                 return 0;
         }
@@ -204,22 +210,22 @@ public class Bow : NetworkBehaviour
         releasedProjectile.transform.position = projectileInHand.transform.position;
         releasedProjectile.transform.LookAt(target);
         releasedProjectile.SetPower(previousPull);
+        releasedProjectile.TriggerReleaseEffect();
         releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * power;
         if (isLocalPlayer)
-            releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>().GenerateImpulse(CameraController.instance.transform.forward);
+            releasedProjectile.GetComponent<Cinemachine.CinemachineImpulseSource>()?.GenerateImpulse(CameraController.instance.transform.forward);
         return power;
     }
 
     [ClientRpc(excludeOwner = true)]
     private void PullAndShootArrow(Vector3 target, Vector3 releasingPosition, ArrowType arrow, float power)
     {
-        if (power == 0)
-            return;
         Arrow releasedProjectile = FindQuiverWithType(arrow).GetArrowFromQuiver();
         if (!releasedProjectile)
             return;
         releasedProjectile.transform.position = releasingPosition;
         releasedProjectile.transform.LookAt(target);
+        releasedProjectile.TriggerReleaseEffect();
         releasedProjectile.GetComponent<Rigidbody>().velocity = releasedProjectile.transform.forward * power;
     }
 

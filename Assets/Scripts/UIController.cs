@@ -13,6 +13,8 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private CanvasGroup hitMarker;
     [SerializeField]
+    private AudioSource hitMarkerSound;
+    [SerializeField]
     private RectTransform triangleAimingRectangle;
     [SerializeField]
     private RectTransform defaultAimingRectangle;
@@ -47,6 +49,7 @@ public class UIController : MonoBehaviour
         StopAllCoroutines();
         hitMarker.alpha = 1;
         StartCoroutine(DisappearHitMarker());
+        hitMarkerSound.Play();
     }
 
     private IEnumerator DisappearHitMarker()

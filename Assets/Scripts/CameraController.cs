@@ -71,7 +71,9 @@ public class CameraController : MonoBehaviour
 
     public float GetPlayerYAxis()
     {
-        return shoulderTransform.eulerAngles.x;
+        float angle = shoulderTransform.eulerAngles.x;
+        angle = (angle > 180) ? angle - 360 : angle;
+        return angle;
     }
 
     float xRotation = 0f;
