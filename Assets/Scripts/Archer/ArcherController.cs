@@ -7,12 +7,10 @@ public class ArcherController : PlayerController
     private bool isAiming;
     private bool aimingMovement;
     private new ArcherAnimatorController animator;
-    private new ArcherClass currentClass;
 
     protected override void Start()
     {
         base.Start();
-        currentClass = GetComponent<ArcherClass>();
         animator = GetComponent<ArcherAnimatorController>();
     }
 
@@ -27,7 +25,7 @@ public class ArcherController : PlayerController
             return;
         if (Input.GetKeyDown(KeyCode.E))
         {
-            currentClass.RecoilShot();
+            KeyPressed(KeyCode.E, CameraController.instance.GetLookingTargetPosition());
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 
-public class PlayerMovement : NetworkBehaviour
+public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
 {
     [SerializeField]
     protected float MOVEMENT_SPEED = 0.125f;
@@ -10,17 +10,49 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField]
     protected float velocityJumpIncreasing;
     protected Rigidbody rigidBody;
-    protected PlayerController controller;
-    protected Player player;
+    protected Animator animator;
+    protected bool isGrounded;
 
     protected virtual void Awake()
     {
-        player = GetComponent<Player>();
-        controller = GetComponent<PlayerController>();
+        isGrounded = true;
+        animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
     }
+    public void FixedUpdate()
+    {
+        if (!isGrounded && rigidBody.velocity.y < 0)
+            rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y - (velocityJumpIncreasing * Time.fixedDeltaTime), rigidBody.velocity.z);
+    }
 
-    public virtual void ApplyTransformInput(PlayerController.InputState input)
+    protected void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetBool("Falling", false);
+            isGrounded = true;
+        }
+    }
+
+    protected void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetBool("Falling", false);
+            isGrounded = true;
+        }
+    }
+
+    protected void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Walkable"))
+        {
+            animator.SetBool("Falling", true);
+            isGrounded = false;
+        }
+    }
+
+    public virtual void ProcessMovementInput(PlayerController.InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
         Vector3 moveVector = Vector3.zero;
@@ -37,16 +69,35 @@ public class PlayerMovement : NetworkBehaviour
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);
         transform.Translate(moveVector * MOVEMENT_SPEED);
+
+        ApplyAnimatorInput(input);
+    }
+
+    protected void ApplyAnimatorInput(PlayerController.InputState input)
+    {
+        Vector2 moveVerticals = input.GetMoveVector();
+
+        animator.SetBool("Sprint", input.SprintKeyDown);
+        if (moveVerticals != Vector2.zero)
+        {
+            animator.SetBool("Walking", true);
+        }
+        else
+        {
+            animator.SetBool("Walking", false);
+        }
+        animator.SetFloat("xMove", moveVerticals.x);
+        animator.SetFloat("zMove", moveVerticals.y);
     }
 
     public void Jump()
     {
         rigidBody.AddForce(Vector3.up * JUMP_FORCE, ForceMode.Impulse);
+        animator.SetTrigger("Jump");
     }
 
-    public void IncreaseJumpGravityForce()
+    public bool IsCanJump()
     {
-        if (rigidBody.velocity.y < 0)
-            rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y - (velocityJumpIncreasing * Time.fixedDeltaTime), rigidBody.velocity.z);
+        return isGrounded && rigidBody.velocity.y < 1;
     }
 }

@@ -21,7 +21,7 @@ public class Arrow : MonoBehaviour
     [SerializeField]
     private SniperArrowParticle particle;
     private Player arrowOwner;
-    private Bow.Quiver quiver;
+    private Quiver quiver;
     private List<Collider> selfColliders;
 
     public void ResetArrow()
@@ -77,7 +77,7 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    public void SetParent(Player arrowOwner, List<Collider> selfColliders, Bow.Quiver quiver)
+    public void SetParent(Player arrowOwner, List<Collider> selfColliders, Quiver quiver)
     {
         this.arrowOwner = arrowOwner;
         this.selfColliders = selfColliders;

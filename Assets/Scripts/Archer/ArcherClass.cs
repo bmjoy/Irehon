@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/*
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ArcherClass : ClassData
@@ -121,3 +122,4 @@ public class ArcherClass : ClassData
         UIController.instance.EnableDefaultCrosshair();
     }
 }
+*/

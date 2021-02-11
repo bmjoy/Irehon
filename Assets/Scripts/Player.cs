@@ -26,7 +26,7 @@ public class Player : Entity
     protected override void Respawn()
     {
         base.Respawn();
-        controller.ResetControll();
+        //controller.ResetControll();
         RespawnOnClient(connectionToClient);
     }
 
@@ -62,7 +62,7 @@ public class Player : Entity
     public virtual void RespawnOnClient(NetworkConnection con)
     {
         base.Respawn();
-        controller.ResetControll();
+        //controller.ResetControll();
     }
 
     [Server]

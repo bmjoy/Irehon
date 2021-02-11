@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class ArcherMovement : PlayerMovement
 {
-    private new ArcherController controller;
+    public bool IsAiming;
 
     protected override void Awake()
     {
         base.Awake();
-        controller = GetComponent<ArcherController>();
     }
 
-    public override void ApplyTransformInput(PlayerController.InputState input)
+    public override void ProcessMovementInput(PlayerController.InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
         Vector3 moveVector = Vector3.zero;
@@ -22,16 +21,17 @@ public class ArcherMovement : PlayerMovement
 
         moveVector = Vector3.ClampMagnitude(moveVector, 1);
 
-        if (controller.IsAimingMovement())
+        if (IsAiming)
             moveVector /= 2.5f;
 
         //Walking side slowness
         moveVector = moveVector.x != 0 || moveVector.z < 0 ? moveVector / 1.5f : moveVector;
 
-        if (!controller.IsAimingMovement())
+        if (!IsAiming)
             moveVector = input.SprintKeyDown && moveVector.x == 0 && moveVector.z > 0 ? moveVector * 1.4f : moveVector;
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);
         transform.Translate(moveVector * MOVEMENT_SPEED);
+        ApplyAnimatorInput(input);
     }
 }

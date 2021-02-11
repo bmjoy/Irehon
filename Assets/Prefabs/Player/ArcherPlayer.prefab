@@ -67319,12 +67319,12 @@ GameObject:
   - component: {fileID: 7223648354211534762}
   - component: {fileID: 8867749927943114589}
   - component: {fileID: 7349229035227959283}
-  - component: {fileID: 5433438316360168440}
   - component: {fileID: 1679783180303584070}
   - component: {fileID: 481381308375903423}
   - component: {fileID: 3966619973931370720}
   - component: {fileID: 6345799612352186566}
   - component: {fileID: 1348290686895544046}
+  - component: {fileID: 4074694227585022522}
   m_Layer: 11
   m_Name: ArcherPlayer
   m_TagString: Player
@@ -67539,24 +67539,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 3680576556998462724}
---- !u!114 &5433438316360168440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccb507a9a6416084ea0a8fdb5c35cff1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classAnimator: {fileID: 22100000, guid: 63ecb8ede2145ac45a16c0630ffbb3e5, type: 2}
-  skillRecoilPower: 25
-  skillRecoilCooldown: 4
-  recoilReset: 0.15
-  recoilStartParticle: {fileID: 7748593071449891125}
-  recoilReleaseParticle: {fileID: 7773172461098944074}
 --- !u!114 &1679783180303584070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67591,6 +67573,7 @@ MonoBehaviour:
   MOVEMENT_SPEED: 0.08
   JUMP_FORCE: 6
   velocityJumpIncreasing: 8
+  IsAiming: 0
 --- !u!114 &3966619973931370720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67648,7 +67631,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   shoulder: {fileID: 7066463827737571305}
-  currentClass: {fileID: 5433438316360168440}
 --- !u!114 &1348290686895544046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67674,6 +67656,19 @@ MonoBehaviour:
   - {fileID: 3621639603665630804}
   - {fileID: 3620916516230188422}
   entityBasicCollider: {fileID: 3199751937564902797}
+--- !u!114 &4074694227585022522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca17d2a06d4deab4b917a32855172b1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilitys: []
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0
@@ -88271,12 +88266,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7574483886757426050}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &7773172461098944074 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 198760769590818248, guid: e5114388059eac048bd9348ca0da9a8b,
-    type: 3}
-  m_PrefabInstance: {fileID: 7574483886757426050}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7586704073673581101
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88416,12 +88405,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb4b0fd3b8a81044aabaa29a49ae6ebb, type: 3}
---- !u!198 &7748593071449891125 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 198698727324533528, guid: bb4b0fd3b8a81044aabaa29a49ae6ebb,
-    type: 3}
-  m_PrefabInstance: {fileID: 7586704073673581101}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8207178327536673463
 PrefabInstance:
   m_ObjectHideFlags: 0
