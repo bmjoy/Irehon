@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class PlayerAnimatorController : EntityAnimatorController
 {
     [SerializeField]
     protected Transform shoulderLookTarget;
     protected Transform head;
+    protected Transform leftHand;
     protected Player player;
 
     protected override void Awake()

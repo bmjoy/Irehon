@@ -9,6 +9,10 @@ public class ArcherClass : ClassData
     private float skillRecoilCooldown = 9f;
     [SerializeField]
     private float recoilReset = 1f;
+    [SerializeField]
+    private ParticleSystem recoilStartParticle;
+    [SerializeField]
+    private ParticleSystem recoilReleaseParticle;
     private float currentRecoilCooldown = 0f;
     private enum Skill { None, RecoilShot}
 
@@ -90,7 +94,9 @@ public class ArcherClass : ClassData
     {
         if (currentRecoilCooldown > 0)
             return;
+        recoilStartParticle.Play();
         archerController.ResetState();
+        recoilReleaseParticle.Play();
         currentWeapon.SetCurrentArrowType(Bow.ArrowType.Recoil);
         playingSkill = Skill.RecoilShot;
         archerController.Shoot((int)Skill.RecoilShot);

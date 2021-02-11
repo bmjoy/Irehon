@@ -22,13 +22,13 @@ public class ArcherMovement : PlayerMovement
 
         moveVector = Vector3.ClampMagnitude(moveVector, 1);
 
-        if (controller.IsAiming())
+        if (controller.IsAimingMovement())
             moveVector /= 2.5f;
 
         //Walking side slowness
         moveVector = moveVector.x != 0 || moveVector.z < 0 ? moveVector / 1.5f : moveVector;
 
-        if (!controller.IsAiming())
+        if (!controller.IsAimingMovement())
             moveVector = input.SprintKeyDown && moveVector.x == 0 && moveVector.z > 0 ? moveVector * 1.4f : moveVector;
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);

@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class ArcherAnimatorController : PlayerAnimatorController
 {
     [SerializeField]
     private Vector3 aimingOffset;
+    [SerializeField]
+    private ParticleSystem aimingParticles;
+    private ArcherController controller;
     [SyncVar]
     private bool isAiming;
+    private float aimingDuration;
     private const float POST_AIM_ROTATION_DURATION = 0.14f;
     private Transform chest;
     private float postAimRotation = 0;
@@ -14,26 +19,40 @@ public class ArcherAnimatorController : PlayerAnimatorController
     protected override void Awake()
     {
         base.Awake();
+        controller = GetComponent<ArcherController>();
         head = animator.GetBoneTransform(HumanBodyBones.Head);
         chest = animator.GetBoneTransform(HumanBodyBones.Chest);
 }
 
     public void StartAiming()
     {
+        aimingParticles.gameObject.SetActive(true);
+        aimingParticles.Play();
         isAiming = true;
-        if (!isServerOnly)
-            CameraController.instance.EnableAimCamera();
         animator.ResetTrigger("Shoot");
+        animator.SetTrigger("DrawArrow");
         animator.SetBool("Aiming", true);
+    }
+
+    public void StartLookAtTarget()
+    {
+        isAiming = true;
+    }
+
+    public void StopLookAtTarget()
+    {
+        isAiming = false;
     }
 
     public void StopAiming()
     {
         isAiming = false;
+        aimingParticles.gameObject.SetActive(false);
         postAimRotation = POST_AIM_ROTATION_DURATION;
         if (!isServerOnly)
             CameraController.instance.DisableAimCamera();
         animator.SetBool("Aiming", false);
+        animator.ResetTrigger("DrawArrow");
         animator.ResetTrigger("Shoot");
     }
 
@@ -66,6 +85,7 @@ public class ArcherAnimatorController : PlayerAnimatorController
     public void PlayShootAnimation()
     {
         animator.SetTrigger("Shoot");
+        aimingDuration = 0.8f;
         if (isServer)
             PlayShootAnimationOnOthers();
     }
@@ -84,6 +104,18 @@ public class ArcherAnimatorController : PlayerAnimatorController
             postAimRotation -= Time.deltaTime;
             chest.LookAt(shoulderLookTarget);
             chest.rotation *= Quaternion.Euler(aimingOffset);
+            head.LookAt(shoulderLookTarget);
+        }
+        if (isAiming || aimingDuration > 0)
+        {
+            aimingDuration -= Time.deltaTime;
+            controller.StartAimingMovement();
+            animator.SetBool("Aiming", true);
+        }
+        else
+        {
+            animator.SetBool("Aiming", false);
+            controller.StopAimingMovement();
         }
     }
 
@@ -97,5 +129,15 @@ public class ArcherAnimatorController : PlayerAnimatorController
     {
         base.ResetAnimator();
         animator.SetBool("Aiming", false);
+    }
+
+    private IEnumerable AimingAnimation()
+    {
+        while (aimingDuration > 0)
+        {
+            aimingDuration -= 0.1f;
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield break;
     }
 }

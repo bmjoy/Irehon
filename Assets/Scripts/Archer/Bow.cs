@@ -6,7 +6,7 @@ public class Bow : NetworkBehaviour
 {
     public enum ArrowType { Snipe, Common, Recoil };
     private const float HOLD_DELAY = 1f;
-    private const float MIN_HOLDING_TIME = 1f;
+    private const float MIN_HOLDING_TIME = 1.2f;
     private const float MAX_HOLDING_TIME = 2f;
     private const float BASE_ARROW_IMPULSE = 20;
     private const float HOLDING_ARROW_BONUS_IN_SECOND = 45;

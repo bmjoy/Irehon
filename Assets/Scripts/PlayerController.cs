@@ -16,6 +16,7 @@ public partial class PlayerController : NetworkBehaviour
     protected ClassData currentClass;
     protected AudioSource audioSource;
     protected PlayerMovement movement;
+    protected RagdollController ragdoll;
     protected Rigidbody rigidBody;
     protected Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
     protected InputState previousInput;
@@ -33,6 +34,7 @@ public partial class PlayerController : NetworkBehaviour
             previousInput = GetInput();
             CameraController.instance.SetTarget(shoulder, transform);
         }
+        ragdoll = GetComponent<RagdollController>();
         audioSource = GetComponent<AudioSource>();
         rigidBody = GetComponent<Rigidbody>();
         isGrounded = true;
@@ -49,6 +51,10 @@ public partial class PlayerController : NetworkBehaviour
 
     protected virtual void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+            ragdoll.ActivateRagdoll();
+        if (Input.GetKeyDown(KeyCode.H))
+            ragdoll.DisableRagdoll();
         if (!isLocalPlayer)
             return;
         if (!isControllAllow) //нужно защитить серверные вызовы

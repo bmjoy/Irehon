@@ -34,7 +34,8 @@ public class Arrow : MonoBehaviour
     public void TriggerReleaseEffect()
     {
         releaseSound?.Play();
-        releaseEffect?.Play();
+        if (releaseEffect != null)
+            releaseEffect?.Play();
     }
 
     private int GetDamage()

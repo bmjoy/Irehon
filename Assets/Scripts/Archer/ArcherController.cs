@@ -5,6 +5,7 @@ using UnityEngine;
 public class ArcherController : PlayerController
 {
     private bool isAiming;
+    private bool aimingMovement;
     private new ArcherAnimatorController animator;
     private new ArcherClass currentClass;
 
@@ -32,15 +33,31 @@ public class ArcherController : PlayerController
 
     public bool IsAiming() => isAiming;
 
+    public bool IsAimingMovement() => aimingMovement;
+
     public void StartAim()
     {
         isAiming = true;
+        StartAimingMovement();
+        if (!isServerOnly)
+            CameraController.instance.EnableAimCamera();
         animator.StartAiming();
+    }
+
+    public void StartAimingMovement()
+    {
+        aimingMovement = true;
+    }
+
+    public void StopAimingMovement()
+    {
+        aimingMovement = false;
     }
 
     public void StopAim()
     {
         isAiming = false;
+        StopAimingMovement();
         animator.StopAiming();
     }
 
