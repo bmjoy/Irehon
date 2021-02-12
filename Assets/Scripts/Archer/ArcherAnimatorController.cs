@@ -96,28 +96,28 @@ public class ArcherAnimatorController : PlayerAnimatorController
         animator.SetTrigger("Shoot");
     }
 
-    protected override void LateUpdate()
-    {
-        base.LateUpdate();
-        if (isAiming || postAimRotation > 0)
-        {
-            postAimRotation -= Time.deltaTime;
-            chest.LookAt(shoulderLookTarget);
-            chest.rotation *= Quaternion.Euler(aimingOffset);
-            head.LookAt(shoulderLookTarget);
-        }
-        if (isAiming || aimingDuration > 0)
-        {
-            aimingDuration -= Time.deltaTime;
-            controller.StartAimingMovement();
-            animator.SetBool("Aiming", true);
-        }
-        else
-        {
-            animator.SetBool("Aiming", false);
-            controller.StopAimingMovement();
-        }
-    }
+    //protected override void LateUpdate()
+    //{
+    //    base.LateUpdate();
+    //    if (isAiming || postAimRotation > 0)
+    //    {
+    //        postAimRotation -= Time.deltaTime;
+    //        chest.LookAt(shoulderLookTarget);
+    //        chest.rotation *= Quaternion.Euler(aimingOffset);
+    //        head.LookAt(shoulderLookTarget);
+    //    }
+    //    if (isAiming || aimingDuration > 0)
+    //    {
+    //        aimingDuration -= Time.deltaTime;
+    //        controller.StartAimingMovement();
+    //        animator.SetBool("Aiming", true);
+    //    }
+    //    else
+    //    {
+    //        animator.SetBool("Aiming", false);
+    //        controller.StopAimingMovement();
+    //    }
+    //}
 
     public override void ResetTriggers()
     {

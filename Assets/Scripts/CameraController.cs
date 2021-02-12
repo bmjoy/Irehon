@@ -92,6 +92,7 @@ public class CameraController : MonoBehaviour
 
     public void SetTarget(Transform shoulderTarget, Transform playerTransform)
     {
+        print(shoulderTarget);
         shoulderTransform = shoulderTarget;
         this.playerTransform = playerTransform;
         mainCamera.Follow = shoulderTarget;

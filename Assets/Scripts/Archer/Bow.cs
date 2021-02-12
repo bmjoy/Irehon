@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class Bow : NetworkBehaviour
 {
     public enum ArrowType { Snipe, Common, Recoil };
@@ -11,49 +12,49 @@ public class Bow : NetworkBehaviour
     private const float BASE_ARROW_IMPULSE = 20;
     private const float HOLDING_ARROW_BONUS_IN_SECOND = 45;
 
-    public struct Quiver
-    {
-        public ArrowType type { get; private set; }
-        private Transform quiverTransform;
-        private Queue<Arrow> arrowsInQuiever;
-        public Quiver(Bow quiverParent, ArrowType arrowType, int arrowQuantityInQuiver, GameObject arrowPrefab)
-        {
-            arrowsInQuiever = new Queue<Arrow>();
-            quiverTransform = new GameObject("quiver").transform;
-            quiverTransform.parent = quiverParent.transform;
-            type = arrowType;
-            for (int i = 0; i < arrowQuantityInQuiver; i++)
-            {
-                GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
-                Arrow arrow = arrowObj.GetComponent<Arrow>();
-                arrow.SetParent(quiverParent.player, quiverParent.GetPlayerColliderList(), this);
-                arrow.gameObject.SetActive(false);
-                arrowsInQuiever.Enqueue(arrow);
-            }
+    //public struct Quiver
+    //{
+    //    public ArrowType type { get; private set; }
+    //    private Transform quiverTransform;
+    //    private Queue<Arrow> arrowsInQuiever;
+    //    public Quiver(Bow quiverParent, ArrowType arrowType, int arrowQuantityInQuiver, GameObject arrowPrefab)
+    //    {
+    //        arrowsInQuiever = new Queue<Arrow>();
+    //        quiverTransform = new GameObject("quiver").transform;
+    //        quiverTransform.parent = quiverParent.transform;
+    //        type = arrowType;
+    //        for (int i = 0; i < arrowQuantityInQuiver; i++)
+    //        {
+    //            GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
+    //            Arrow arrow = arrowObj.GetComponent<Arrow>();
+    //            arrow.SetParent(quiverParent.player, quiverParent.GetPlayerColliderList(), this);
+    //            arrow.gameObject.SetActive(false);
+    //            arrowsInQuiever.Enqueue(arrow);
+    //        }
 
-        }
+    //    }
 
-        public void ReturnArrowInQuiver(Arrow arrow)
-        {
-            if (!arrowsInQuiever.Contains(arrow))
-                arrowsInQuiever.Enqueue(arrow);
-            arrow.transform.parent = quiverTransform;
-            arrow.gameObject.SetActive(false);
-        }
+    //    public void ReturnArrowInQuiver(Arrow arrow)
+    //    {
+    //        if (!arrowsInQuiever.Contains(arrow))
+    //            arrowsInQuiever.Enqueue(arrow);
+    //        arrow.transform.parent = quiverTransform;
+    //        arrow.gameObject.SetActive(false);
+    //    }
 
-        public Arrow GetArrowFromQuiver()
-        {
-            if (arrowsInQuiever.Count > 0)
-            {
-                Arrow arrow = arrowsInQuiever.Dequeue();
-                arrow.transform.SetParent(null);
-                arrow.gameObject.SetActive(true);
-                arrow.ResetArrow();
-                return arrow;
-            }
-            return null;
-        }
-    };
+    //    public Arrow GetArrowFromQuiver()
+    //    {
+    //        if (arrowsInQuiever.Count > 0)
+    //        {
+    //            Arrow arrow = arrowsInQuiever.Dequeue();
+    //            arrow.transform.SetParent(null);
+    //            arrow.gameObject.SetActive(true);
+    //            arrow.ResetArrow();
+    //            return arrow;
+    //        }
+    //        return null;
+    //    }
+    //};
 
     [SerializeField]
     private Transform bowTransform;
@@ -243,3 +244,4 @@ public class Bow : NetworkBehaviour
         return player.GetHitBoxColliderList();
     }
 }
+*/

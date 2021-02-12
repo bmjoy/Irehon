@@ -9,6 +9,7 @@ public class ArcherMovement : PlayerMovement
     protected override void Awake()
     {
         base.Awake();
+        IsAiming = false;
     }
 
     public override void ProcessMovementInput(PlayerController.InputState input)
@@ -28,10 +29,30 @@ public class ArcherMovement : PlayerMovement
         moveVector = moveVector.x != 0 || moveVector.z < 0 ? moveVector / 1.5f : moveVector;
 
         if (!IsAiming)
-            moveVector = input.SprintKeyDown && moveVector.x == 0 && moveVector.z > 0 ? moveVector * 1.4f : moveVector;
+            moveVector = input.SprintKeyDown ? moveVector.x == 0 && moveVector.z > 0 ? moveVector * 2f : moveVector : moveVector;
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);
         transform.Translate(moveVector * MOVEMENT_SPEED);
         ApplyAnimatorInput(input);
+    }
+
+    protected override void ApplyAnimatorInput(PlayerController.InputState input)
+    {
+        Vector2 moveVerticals = input.GetMoveVector();
+
+        if (input.SprintKeyDown && !IsAiming)
+            animator.SetBool("Sprint", moveVerticals.y > 0);
+        else
+            animator.SetBool("Sprint", false);
+        if (moveVerticals != Vector2.zero)
+        {
+            animator.SetBool("Walking", true);
+        }
+        else
+        {
+            animator.SetBool("Walking", false);
+        }
+        animator.SetFloat("xMove", moveVerticals.x);
+        animator.SetFloat("zMove", moveVerticals.y);
     }
 }

@@ -67317,14 +67317,12 @@ GameObject:
   - component: {fileID: 3199751937564902797}
   - component: {fileID: 7846204401776477249}
   - component: {fileID: 7223648354211534762}
-  - component: {fileID: 8867749927943114589}
   - component: {fileID: 7349229035227959283}
-  - component: {fileID: 1679783180303584070}
   - component: {fileID: 481381308375903423}
-  - component: {fileID: 3966619973931370720}
   - component: {fileID: 6345799612352186566}
   - component: {fileID: 1348290686895544046}
   - component: {fileID: 4074694227585022522}
+  - component: {fileID: 1173744839510810098}
   m_Layer: 11
   m_Name: ArcherPlayer
   m_TagString: Player
@@ -67499,30 +67497,6 @@ MonoBehaviour:
     localRotation: {x: 0, y: 0, z: 0, w: 0}
     localScale: {x: 0, y: 0, z: 0}
     movementSpeed: 0
---- !u!114 &8867749927943114589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89244adb7dc766f4aadef6ebc66e260b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  bowTransform: {fileID: 8256911264373171625}
-  stringBone: {fileID: 6501583825380527347}
-  rightHand: {fileID: 3623627892388555346}
-  snipeProjectile: {fileID: 9104560829178870620, guid: afb6c956fc3ad9547931c765b4bf3043,
-    type: 3}
-  commonProjectile: {fileID: 3472154829267124064, guid: ecc0564352ad5ea499466cc5b84643a6,
-    type: 3}
-  recoilProjectile: {fileID: 6015331266736071183, guid: 648a0fcf228903b4a84d8ebd905f5279,
-    type: 3}
-  projectileInHand: {fileID: 9106709322974029686}
 --- !u!114 &7349229035227959283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67539,23 +67513,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 3680576556998462724}
---- !u!114 &1679783180303584070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35633a2946d04234fa58ef04511df2b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  shoulderLookTarget: {fileID: 7438550497316060146}
-  aimingOffset: {x: 0, y: 7.71, z: -84}
-  aimingParticles: {fileID: 8312025322199256395}
 --- !u!114 &481381308375903423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67574,48 +67531,6 @@ MonoBehaviour:
   JUMP_FORCE: 6
   velocityJumpIncreasing: 8
   IsAiming: 0
---- !u!114 &3966619973931370720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ImpulseDefinition:
-    m_ImpulseChannel: 1
-    m_RawSignal: {fileID: 11400000, guid: 80540e23e509b364b85a6d8f33b714b5, type: 2}
-    m_AmplitudeGain: 1
-    m_FrequencyGain: 1
-    m_RepeatMode: 0
-    m_Randomize: 1
-    m_TimeEnvelope:
-      m_AttackShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      m_DecayShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      m_AttackTime: 0
-      m_SustainTime: 0.2
-      m_DecayTime: 0.7
-      m_ScaleWithImpact: 1
-      m_HoldForever: 0
-    m_ImpactRadius: 100
-    m_DirectionMode: 0
-    m_DissipationMode: 2
-    m_DissipationDistance: 1000
-    m_PropagationSpeed: 343
 --- !u!114 &6345799612352186566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67668,7 +67583,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca17d2a06d4deab4b917a32855172b1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilitys: []
+  abilitysPool:
+  - {fileID: 1173744839510810098}
+--- !u!114 &1173744839510810098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8735af7018df657428aefb450409f50a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  cooldownTime: 2
+  castTime: 0
+  triggerOnKey: 324
+  arrow: {fileID: 9104560829178870620, guid: afb6c956fc3ad9547931c765b4bf3043, type: 3}
+  arrowInHand: {fileID: 9106709322974029686}
+  bowStringBone: {fileID: 6501583825380527347}
+  rightHand: {fileID: 3623627892388555346}
+  shoulderForwardPoint: {fileID: 7438550497316060146}
+  aimingChestOffset: {x: 0, y: 6, z: -84}
+  aimingParticles: {fileID: 8312025322199256395}
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0
@@ -88510,15 +88450,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d39d9188cb2fb1945a44466b8f56d539, type: 3}
---- !u!4 &8208398339062489023 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4459585668807944, guid: d39d9188cb2fb1945a44466b8f56d539,
-    type: 3}
-  m_PrefabInstance: {fileID: 8207178327536673463}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &8312025322199256395 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 198158148465766396, guid: d39d9188cb2fb1945a44466b8f56d539,
+    type: 3}
+  m_PrefabInstance: {fileID: 8207178327536673463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8208398339062489023 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4459585668807944, guid: d39d9188cb2fb1945a44466b8f56d539,
     type: 3}
   m_PrefabInstance: {fileID: 8207178327536673463}
   m_PrefabAsset: {fileID: 0}

@@ -6,12 +6,13 @@ using System;
 
 public partial class PlayerController : NetworkBehaviour
 {
-    protected enum MouseClickType { Down = 0, Up};
+    protected enum MouseClickType { Down = 0, Up };
 
     [SyncVar]
     protected float lastXSpineAxis = 0f;
     [SerializeField]
     protected Transform shoulder;
+    protected List<KeyCode> pressedKeys = new List<KeyCode>();
     protected AudioSource audioSource;
     protected IMovementBehaviour movement;
     protected RagdollController ragdoll;
@@ -45,14 +46,8 @@ public partial class PlayerController : NetworkBehaviour
             return;
         if (!isControllAllow) //нужно защитить серверные вызовы
             return;
-        if (Input.GetKey(KeyCode.Mouse0))
-        {
-            KeyPressed(KeyCode.Mouse0, CameraController.instance.GetLookingTargetPosition());
-        }
-        if (Input.GetKey(KeyCode.Mouse1))
-        {
-            KeyPressed(KeyCode.Mouse1, CameraController.instance.GetLookingTargetPosition());
-        }
+        CheckAbilityTriggerKey(KeyCode.Mouse0);
+        CheckAbilityTriggerKey(KeyCode.Mouse1);
     }
 
     protected void FixedUpdate()
@@ -106,7 +101,23 @@ public partial class PlayerController : NetworkBehaviour
     {
         if (isClient || !isControllAllow || !player.IsAlive())
             return;
-        abilitySystem.AbilityKeyDown(button, target);
+        if (!pressedKeys.Contains(button))
+        {
+            abilitySystem.AbilityKeyDown(button, target);
+            pressedKeys.Add(button);
+        }
+    }
+
+    [Command]
+    protected void KeyUnpressed(KeyCode button, Vector3 target)
+    {
+        if (isClient || !isControllAllow || !player.IsAlive())
+            return;
+        if (pressedKeys.Contains(button))
+        {
+            abilitySystem.AbilityKeyUp(button, target);
+            pressedKeys.Remove(button);
+        }
     }
 
     [TargetRpc]
@@ -155,6 +166,20 @@ public partial class PlayerController : NetworkBehaviour
     protected virtual void JumpRPC()
     {
         movement.Jump();
+    }
+
+    protected void CheckAbilityTriggerKey(KeyCode key)
+    {
+        if (Input.GetKeyDown(key))
+        {
+            abilitySystem.AbilityKeyDown(key, CameraController.instance.GetLookingTargetPosition());
+            KeyPressed(key, CameraController.instance.GetLookingTargetPosition());
+        }
+        if (Input.GetKeyUp(key))
+        {
+            abilitySystem.AbilityKeyUp(key, CameraController.instance.GetLookingTargetPosition());
+            KeyUnpressed(key, CameraController.instance.GetLookingTargetPosition());
+        }
     }
 
     public void BlockControll() => isControllAllow = false;

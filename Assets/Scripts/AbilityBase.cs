@@ -3,54 +3,94 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public abstract class AbilityBase : NetworkBehaviour
+public abstract class AbilityBase : NetworkBehaviour, IAbility
 {
     [SerializeField]
     private float cooldownTime;
     [SerializeField]
     private float castTime;
+    public KeyCode TriggerKey { get { return triggerOnKey; } }
     [SerializeField]
-    public KeyCode TriggerKey { get; private set; }
+    private KeyCode triggerOnKey;
     private AbilitySystem abilitySystem;
 
-    private bool canCast;
+    protected delegate void CurrentAnimationEvent();
+    protected CurrentAnimationEvent currentAnimationEvent;
 
-    protected virtual void Start()
+    private bool canCast;
+    private bool isCasting;
+
+    protected void AbilityEndEvent()
+    {
+        isCasting = false;
+        abilitySystem.AllowTrigger();
+    }
+
+    protected abstract void StopHoldingAbility(Vector3 target);
+
+    protected abstract void Ability(Vector3 target);
+
+    protected abstract void InterruptAbility();
+    
+    protected void Start()
     {
         abilitySystem = GetComponent<AbilitySystem>();
-    }
-
-    public virtual void TriggerKeyDown(Vector3 target)
-    {
-        if (canCast)
-        {
-            StartCooldown();
-            Ability(target);
-            abilitySystem.BlockTrigger();
-            if (!isClientOnly)
-                CastAbilityOnOthers(target);
-        }
-    }
-
-    public virtual void TriggerKeyUp(Vector3 target)
-    {
+        canCast = true;
+        if (castTime > cooldownTime)
+            cooldownTime = castTime;
     }
 
 
-    public virtual void Interrupt()
+    public void Interrupt()
     {
-        StopAllCoroutines();
-        if (!isClientOnly)
+        InterruptAbility();
+        abilitySystem.AllowTrigger();
+        if (isServer)
             InterruptOnOthers();
     }
 
     [ClientRpc(excludeOwner = true)]
     private void InterruptOnOthers()
     {
-        Interrupt();
+        InterruptAbility();
     }
 
-    protected abstract void Ability(Vector3 target);
+    public void AnimationEvent() 
+    {
+        if (currentAnimationEvent != null)
+            currentAnimationEvent();
+    }
+
+    public void TriggerKeyUp(Vector3 target)
+    {
+        if (isCasting)
+        {
+            StopHoldingAbility(target);
+            if (isServer)
+                StopHoldingAbilityOnClients(target);
+        }
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    private void StopHoldingAbilityOnClients(Vector3 target)
+    {
+        StopHoldingAbility(target);
+    }
+    
+    public bool TriggerKeyDown(Vector3 target)
+    {
+        if (canCast)
+        {
+            isCasting = true;
+            StartCooldown();
+            Ability(target);
+            abilitySystem.BlockTrigger();
+            if (!isClientOnly)
+                CastAbilityOnOthers(target);
+            return true;
+        }
+        return false;
+    }
 
     [ClientRpc(excludeOwner = true)]
     protected void CastAbilityOnOthers(Vector3 target)

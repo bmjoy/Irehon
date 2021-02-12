@@ -73,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
         ApplyAnimatorInput(input);
     }
 
-    protected void ApplyAnimatorInput(PlayerController.InputState input)
+    protected virtual void ApplyAnimatorInput(PlayerController.InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
 

@@ -23,52 +23,5 @@ public class ArcherController : PlayerController
             return;
         if (!isControllAllow)
             return;
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            KeyPressed(KeyCode.E, CameraController.instance.GetLookingTargetPosition());
-        }
-    }
-
-    public bool IsAiming() => isAiming;
-
-    public bool IsAimingMovement() => aimingMovement;
-
-    public void StartAim()
-    {
-        isAiming = true;
-        StartAimingMovement();
-        if (!isServerOnly)
-            CameraController.instance.EnableAimCamera();
-        animator.StartAiming();
-    }
-
-    public void StartAimingMovement()
-    {
-        aimingMovement = true;
-    }
-
-    public void StopAimingMovement()
-    {
-        aimingMovement = false;
-    }
-
-    public void StopAim()
-    {
-        isAiming = false;
-        StopAimingMovement();
-        animator.StopAiming();
-    }
-
-    public void Shoot()
-    {
-        animator.PlayShootAnimation();
-    }
-
-    public void Shoot(int skill)
-    {
-        if (skill != 0)
-            animator.PlaySkillAnimation(skill);
-        else
-            animator.PlayShootAnimation();
     }
 }

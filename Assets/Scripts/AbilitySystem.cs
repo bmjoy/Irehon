@@ -5,41 +5,61 @@ using UnityEngine;
 public class AbilitySystem : MonoBehaviour, IAbilitySystem
 {
     [SerializeField]
-    private AbilityBase[] abilitys;
+    private AbilityBase[] abilitysPool;
 
-    private AbilityBase currentlyCastingSkill;
+    private IAbility[] abilitys;
+
+    private IAbility currentlyCastingSkill;
 
     private bool canTriggerAbility;
 
+    private void Start()
+    {
+        canTriggerAbility = true;
+         abilitys = abilitysPool;
+    }
+
     public void AbilityKeyDown(KeyCode key, Vector3 target)
     {
-        if (!canTriggerAbility)
+        if (!canTriggerAbility || currentlyCastingSkill != null)
             return;
-        foreach (AbilityBase ability in abilitys)
+        foreach (IAbility ability in abilitys)
         {
             if (ability.TriggerKey == key)
-                ability.TriggerKeyDown(target);
+            {
+                if (ability.TriggerKeyDown(target))
+                {
+                    currentlyCastingSkill = ability;
+                }
+            }
         }
     }
 
     public void AbilityKeyUp(KeyCode key, Vector3 target)
     {
-        if (!canTriggerAbility)
-            return;
-        foreach (AbilityBase ability in abilitys)
+        foreach (IAbility ability in abilitys)
         {
-            if (ability.TriggerKey == key)
+            if (ability.TriggerKey == key && currentlyCastingSkill == ability)
+            {
                 ability.TriggerKeyUp(target);
+            }
         }
     }
 
     public void AllowTrigger()
     {
         canTriggerAbility = true;
+        currentlyCastingSkill = null;
     }
 
     public void BlockTrigger()
     {
         canTriggerAbility = false;
+    }
+
+    public void AnimationEventTrigger()
+    {
+        if (currentlyCastingSkill != null)
+            currentlyCastingSkill.AnimationEvent();
     }
 }
