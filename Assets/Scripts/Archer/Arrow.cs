@@ -60,6 +60,7 @@ public class Arrow : MonoBehaviour
             return;
         if (selfColliders.Contains(other))
             return;
+        print(other.name);
         flying = false;
         rigidBody.useGravity = false;
         rigidBody.velocity = Vector3.zero;

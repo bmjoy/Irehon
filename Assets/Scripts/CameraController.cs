@@ -14,6 +14,10 @@ public class CameraController : MonoBehaviour
     private Cinemachine.CinemachineVirtualCamera aimCamera;
     [SerializeField]
     private Cinemachine.CinemachineVirtualCamera mainCamera;
+    private Cinemachine.CinemachineBasicMultiChannelPerlin currentShakeHandler;
+    private float shakeTimer;
+    private float shakeTimerTotal;
+    private float currentIntensity;
     private PlayerController player;
     private Transform playerTransform;
     private Transform shoulderTransform;
@@ -41,7 +45,16 @@ public class CameraController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
+        currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
         InvokeRepeating("SendRotationPacket", 3, 0.05f);
+    }
+
+    public void CreateShake(float power, float time)
+    {
+        shakeTimer = time;
+        shakeTimerTotal = time;
+        currentIntensity = power;
+        currentShakeHandler.m_AmplitudeGain = currentIntensity;
     }
 
     public void SendRotationPacket()
@@ -82,12 +95,18 @@ public class CameraController : MonoBehaviour
     {
         mainCamera.gameObject.SetActive(false);
         aimCamera.gameObject.SetActive(true);
+        float currentAmplitude = currentShakeHandler.m_AmplitudeGain;
+        currentShakeHandler = aimCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
+        currentShakeHandler.m_AmplitudeGain = currentAmplitude;
     }
 
     public void DisableAimCamera()
     {
         mainCamera.gameObject.SetActive(true);
         aimCamera.gameObject.SetActive(false);
+        float currentAmplitude = currentShakeHandler.m_AmplitudeGain;
+        currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
+        currentShakeHandler.m_AmplitudeGain = currentAmplitude;
     }
 
     public void SetTarget(Transform shoulderTarget, Transform playerTransform)
@@ -152,6 +171,12 @@ public class CameraController : MonoBehaviour
 
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -75f, 75f);
+
+        if (shakeTimer > 0)
+        {
+            shakeTimer -= Time.fixedDeltaTime;
+            currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(currentIntensity, 0, (1 - shakeTimer / shakeTimerTotal));
+        }
 
         shoulderTransform.localRotation = Quaternion.Euler(xRotation,-3.5f, 0f);
         if (yMouse != 0)

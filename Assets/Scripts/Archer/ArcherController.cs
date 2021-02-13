@@ -19,6 +19,7 @@ public class ArcherController : PlayerController
         if (previousInput.SprintKeyDown)
             return;
         base.Update();
+        CheckAbilityTriggerKey(KeyCode.F);
         if (!isLocalPlayer)
             return;
         if (!isControllAllow)

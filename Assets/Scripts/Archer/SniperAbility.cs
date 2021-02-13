@@ -76,6 +76,7 @@ public class SniperAbility : AbilityBase
         additionalyChestOffsetTime = 5f;
         movement.IsAiming = true;
         animator.SetBool("Aiming", true);
+        animator.SetBool("AimingMovement", true);
         currentAnimationEvent = () => StartCoroutine(ArrowInHandAnimation());
         
         if (isLocalPlayer)
@@ -88,6 +89,7 @@ public class SniperAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
+        print("started");
         aiming = true;
         arrowInHand.SetActive(true);
         aimingParticles.Play();
@@ -108,6 +110,8 @@ public class SniperAbility : AbilityBase
         releasedArrow.SetPower(GetHoldingPowerPercent());
         releasedArrow.TriggerReleaseEffect();
         releasedArrow.rigidBody.velocity = releasedArrow.transform.forward * (20 + GetHoldingPowerPercent() * 30);
+        if (isLocalPlayer)
+            CameraController.instance.CreateShake(5, .1f);
     }
 
     protected override void StopHoldingAbility(Vector3 target)
@@ -126,6 +130,7 @@ public class SniperAbility : AbilityBase
         arrowInHand.SetActive(false);
         aiming = false;
         animator.SetBool("Aiming", false);
+        animator.SetBool("AimingMovement", false);
 
         AbilityEndEvent();
         if (isLocalPlayer)
@@ -145,5 +150,6 @@ public class SniperAbility : AbilityBase
         aiming = false;
         animator.ResetTrigger("Shoot");
         animator.SetBool("Aiming", false);
+        animator.SetBool("AimingMovement", false);
     }
 }

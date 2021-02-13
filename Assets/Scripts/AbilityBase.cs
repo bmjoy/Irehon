@@ -74,6 +74,7 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     [ClientRpc(excludeOwner = true)]
     private void StopHoldingAbilityOnClients(Vector3 target)
     {
+        print("stop");
         StopHoldingAbility(target);
     }
     

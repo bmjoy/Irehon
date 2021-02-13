@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
+using System;
 
-public class AbilitySystem : MonoBehaviour, IAbilitySystem
+public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 {
     [SerializeField]
-    private AbilityBase[] abilitysPool;
+    private List<AbilityBase> abilitysPool = new List<AbilityBase>();
 
-    private IAbility[] abilitys;
+    private List<IAbility> abilitys = new List<IAbility>();
 
     private IAbility currentlyCastingSkill;
 
@@ -16,7 +18,8 @@ public class AbilitySystem : MonoBehaviour, IAbilitySystem
     private void Start()
     {
         canTriggerAbility = true;
-         abilitys = abilitysPool;
+        foreach (IAbility ability in abilitysPool)
+            abilitys.Add(ability);
     }
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)
@@ -29,7 +32,7 @@ public class AbilitySystem : MonoBehaviour, IAbilitySystem
             {
                 if (ability.TriggerKeyDown(target))
                 {
-                    currentlyCastingSkill = ability;
+                    SetCurrentSkill(ability);
                 }
             }
         }
@@ -46,10 +49,31 @@ public class AbilitySystem : MonoBehaviour, IAbilitySystem
         }
     }
 
+    private void SetCurrentSkill(IAbility ability)
+    {
+        currentlyCastingSkill = ability;
+        if (isServer)
+        {
+            if (ability == null)
+                SetCurrentCastingSkillOnOthers(-1);
+            else
+                SetCurrentCastingSkillOnOthers(abilitys.IndexOf(ability));
+        }
+    }
+
+    [ClientRpc(excludeOwner = true)]
+    private void SetCurrentCastingSkillOnOthers(int skillIndex)
+    {
+        if (skillIndex >= 0 && skillIndex < abilitys.Count)
+            currentlyCastingSkill = abilitys[skillIndex];
+        else
+            currentlyCastingSkill = null;
+    }
+
     public void AllowTrigger()
     {
         canTriggerAbility = true;
-        currentlyCastingSkill = null;
+        SetCurrentSkill(null);
     }
 
     public void BlockTrigger()
@@ -59,6 +83,7 @@ public class AbilitySystem : MonoBehaviour, IAbilitySystem
 
     public void AnimationEventTrigger()
     {
+        print("evenbt");
         if (currentlyCastingSkill != null)
             currentlyCastingSkill.AnimationEvent();
     }
