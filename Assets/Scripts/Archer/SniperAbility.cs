@@ -35,6 +35,7 @@ public class SniperAbility : AbilityBase
     private float holdingTime;
     private float additionalyChestOffsetTime;
     private bool aiming;
+    private bool startedAbility;
 
 
     protected new void Start()
@@ -71,7 +72,7 @@ public class SniperAbility : AbilityBase
 
     protected override void Ability(Vector3 target)
     {
-
+        //startedAbility = true;
         holdingTime = 0;
         additionalyChestOffsetTime = 5f;
         movement.IsAiming = true;
@@ -89,7 +90,6 @@ public class SniperAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
-        print("started");
         aiming = true;
         arrowInHand.SetActive(true);
         aimingParticles.Play();
@@ -116,6 +116,8 @@ public class SniperAbility : AbilityBase
 
     protected override void StopHoldingAbility(Vector3 target)
     {
+        //if (!startedAbility)
+        //    return;
         if (aiming && holdingTime > MIN_HOLDING_TIME)
         {
             animator.SetTrigger("Shoot");
@@ -144,6 +146,7 @@ public class SniperAbility : AbilityBase
     {
         if (isLocalPlayer)
             UIController.instance.EnableDefaultCrosshair();
+        startedAbility = false;
         additionalyChestOffsetTime = 0;
         movement.IsAiming = false;
         bowStringBone.localPosition = bowBoneStartPosition;

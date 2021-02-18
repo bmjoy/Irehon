@@ -5,24 +5,24 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    private const float TIME_TO_DESPAWN = 4f;
+    protected const float TIME_TO_DESPAWN = 4f;
     [SerializeField]
-    private int hitDamage;
+    protected int hitDamage;
     [SerializeField]
-    private HitEffect hitEffect;
+    protected HitEffect hitEffect;
     [SerializeField]
-    private ParticleSystem releaseEffect;
+    protected ParticleSystem releaseEffect;
     public Rigidbody rigidBody;
     [SerializeField]
-    private AudioSource releaseSound;
-    private float power;
-    private bool flying = true;
-    private float time = 0f;
+    protected AudioSource releaseSound;
+    protected float power;
+    protected bool flying = true;
+    protected float time = 0f;
     [SerializeField]
-    private SniperArrowParticle particle;
-    private Player arrowOwner;
-    private Quiver quiver;
-    private List<Collider> selfColliders;
+    protected SniperArrowParticle particle;
+    protected Player arrowOwner;
+    protected Quiver quiver;
+    protected List<Collider> selfColliders;
 
     public void ResetArrow()
     {
@@ -38,12 +38,12 @@ public class Arrow : MonoBehaviour
             releaseEffect?.Play();
     }
 
-    private int GetDamage()
+    protected int GetDamage()
     {
         return Convert.ToInt32(hitDamage * .3f + hitDamage * power);
     }
 
-    void Update()
+    protected void Update()
     {
         time += Time.deltaTime;
         if (flying && rigidBody.velocity != Vector3.zero)
@@ -54,9 +54,9 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") || !flying)
+        if (other.CompareTag("EntityBase") || other.CompareTag("Ability") || !flying)
             return;
         if (selfColliders.Contains(other))
             return;

@@ -20,14 +20,16 @@ public class Player : Entity
     {
         base.Death();
         controller.BlockControll();
-        DeathOnClient(connectionToClient);
+        if (isServer && !isLocalPlayer)
+            DeathOnClient(connectionToClient);
     }
 
     protected override void Respawn()
     {
         base.Respawn();
         //controller.ResetControll();
-        RespawnOnClient(connectionToClient);
+        if (isServer && !isLocalPlayer)
+            RespawnOnClient(connectionToClient);
     }
 
     [Server]
@@ -38,28 +40,28 @@ public class Player : Entity
     }
 
     [Server]
-    public override void TakeDamage(int damage)
+    public override void DoDamage(int damage)
     {
-        base.TakeDamage(damage);
+        base.DoDamage(damage);
         SetHealthOnClient(connectionToClient, health);
     }
 
     [TargetRpc]
-    public virtual void SetHealthOnClient(NetworkConnection con, int currentHealth)
+    protected virtual void SetHealthOnClient(NetworkConnection con, int currentHealth)
     {
         health = currentHealth;
         UIController.instance.SetHealthBarValue(1f * health / maxHealth);
     }
 
     [TargetRpc]
-    public virtual void DeathOnClient(NetworkConnection con)
+    protected virtual void DeathOnClient(NetworkConnection con)
     {
         base.Death();
         controller.BlockControll();
     }
 
     [TargetRpc]
-    public virtual void RespawnOnClient(NetworkConnection con)
+    protected virtual void RespawnOnClient(NetworkConnection con)
     {
         base.Respawn();
         //controller.ResetControll();
@@ -68,7 +70,7 @@ public class Player : Entity
     [Server]
     public void DoDamage(Entity target, int damage)
     {
-        target.TakeDamage(damage);
+        target.DoDamage(damage);
         controller.HitConfirmed(connectionToClient);
     }
 }

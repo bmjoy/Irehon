@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using System;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class Server : NetworkManager
 {

@@ -13,11 +13,11 @@ public class Entity : NetworkBehaviour
     [SerializeField]
     protected List<Collider> hitboxColliders = new List<Collider>();
     protected bool isAlive;
-    protected EntityAnimatorController animator;
+    protected RagdollController ragdoll;
 
     protected virtual void Awake()
     {
-        animator = GetComponent<EntityAnimatorController>();
+        ragdoll = GetComponent<RagdollController>();
     }
 
     protected virtual void Start()
@@ -41,7 +41,7 @@ public class Entity : NetworkBehaviour
     protected virtual void Death()
     {
         isAlive = false;
-        animator?.PlayDeathAnimation();
+        ragdoll?.ActivateRagdoll();
         if (isServer)
             Invoke("Respawn", respawnTime);
     }
@@ -50,8 +50,9 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Respawn()
     {
+        print("respawned");
         SetDefaultState();
-        animator?.RespawnAnimation();
+        ragdoll?.DisableRagdoll();
     }
 
     [Server]
@@ -74,7 +75,7 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    public virtual void TakeDamage(int damage)
+    public virtual void DoDamage(int damage)
     {
         if (!isAlive)
             return;

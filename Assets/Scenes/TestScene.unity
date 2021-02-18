@@ -573,7 +573,6 @@ GameObject:
   m_Component:
   - component: {fileID: 688626069}
   - component: {fileID: 688626068}
-  - component: {fileID: 688626070}
   m_Layer: 9
   m_Name: Aim camera
   m_TagString: Untagged
@@ -631,21 +630,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &688626070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688626067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ChannelMask: 1
-  m_Gain: 1
-  m_Use2DDistance: 0
 --- !u!1 &723792660
 GameObject:
   m_ObjectHideFlags: 0
@@ -1298,6 +1282,7 @@ GameObject:
   - component: {fileID: 1002696001}
   - component: {fileID: 1002696000}
   - component: {fileID: 1002695999}
+  - component: {fileID: 1002696002}
   m_Layer: 9
   m_Name: cm
   m_TagString: Untagged
@@ -1380,6 +1365,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1002696002
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002695997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 5
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1095838533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1881,6 +1883,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba05179c270d53f49ae1fdd8ce7d636a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnChangingTarget:
+    m_PersistentCalls:
+      m_Calls: []
   targetTransform: {fileID: 1620553405}
   aimCamera: {fileID: 688626068}
   mainCamera: {fileID: 481559706}
@@ -2662,6 +2667,10 @@ PrefabInstance:
       value: CircleGround
       objectReference: {fileID: 0}
     - target: {fileID: 1753094764215270, guid: c816d5df90c7fb84781794dc3a106a9f, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1753094764215270, guid: c816d5df90c7fb84781794dc3a106a9f, type: 3}
       propertyPath: m_TagString
       value: Walkable
       objectReference: {fileID: 0}
@@ -2721,6 +2730,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 23635091764835166, guid: c816d5df90c7fb84781794dc3a106a9f,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5799546346580526088, guid: c816d5df90c7fb84781794dc3a106a9f,
         type: 3}
       propertyPath: m_Convex
@@ -2740,6 +2754,7 @@ GameObject:
   - component: {fileID: 1916355464}
   - component: {fileID: 1916355462}
   - component: {fileID: 1916355463}
+  - component: {fileID: 1916355466}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -2771,7 +2786,7 @@ MonoBehaviour:
   maxConnections: 10
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
-  authenticator: {fileID: 0}
+  authenticator: {fileID: 1916355466}
   playerPrefab: {fileID: 3622006752709158442, guid: 553def14bf12a0c4db2e3da74a1151d5,
     type: 3}
   autoCreatePlayer: 1
@@ -2833,6 +2848,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1916355466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916355461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28496b776660156428f00cf78289c1ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnServerAuthenticated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClientAuthenticated:
+    m_PersistentCalls:
+      m_Calls: []
+  username: 
+  password: 
 --- !u!1 &1944639316
 GameObject:
   m_ObjectHideFlags: 0
@@ -3011,6 +3046,7 @@ GameObject:
   - component: {fileID: 2075133994}
   - component: {fileID: 2075133993}
   - component: {fileID: 2075133992}
+  - component: {fileID: 2075133995}
   m_Layer: 9
   m_Name: cm
   m_TagString: Untagged
@@ -3093,3 +3129,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2075133995
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075133990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 5
+  mNoiseOffsets: {x: 0, y: 0, z: 0}

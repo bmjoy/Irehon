@@ -1,11 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
+
+[System.Serializable]
+public class ChangingTarget : UnityEvent<Vector3>
+{
+}
 
 public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
-    public Camera cameraComponent { get; private set; }
+    public ChangingTarget OnChangingTarget;
+    public Camera cameraComponent { get; private set; } 
     private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
     private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
     [SerializeField]
@@ -24,6 +31,7 @@ public class CameraController : MonoBehaviour
     private bool cursorAiming;
     private bool needToSendY = false;
     private bool needToSendX = false;
+    private bool isLookingAtFloor;
 
     public static bool IsPointerOverUIObject()
     {
@@ -42,6 +50,7 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        OnChangingTarget = new ChangingTarget();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
@@ -69,6 +78,10 @@ public class CameraController : MonoBehaviour
         needToSendY = false;
     }
 
+    public bool IsTargetOnFloor()
+    {
+        return isLookingAtFloor;
+    }
     public Vector2 GetCurrentRotation()
     {
         Vector2 rotation = Vector2.zero;
@@ -124,11 +137,20 @@ public class CameraController : MonoBehaviour
         RaycastHit hit = new RaycastHit();
         Vector3 oldPosition = targetTransform.localPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10))
+        {
             oldPosition.z = hit.distance;
+            if (hit.collider.CompareTag("Floor") || hit.collider.CompareTag("Walkable"))
+                isLookingAtFloor = true;
+            else
+                isLookingAtFloor = false;
+        }
         else
+        {
+            isLookingAtFloor = false;
             oldPosition.z = 20;
-
+        }
+        OnChangingTarget.Invoke(targetTransform.position);
         targetTransform.localPosition = oldPosition;
     }
 
@@ -177,6 +199,8 @@ public class CameraController : MonoBehaviour
             shakeTimer -= Time.fixedDeltaTime;
             currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(currentIntensity, 0, (1 - shakeTimer / shakeTimerTotal));
         }
+        else
+            currentShakeHandler.m_AmplitudeGain = 0;
 
         shoulderTransform.localRotation = Quaternion.Euler(xRotation,-3.5f, 0f);
         if (yMouse != 0)

@@ -15,7 +15,6 @@ public partial class PlayerController : NetworkBehaviour
     protected List<KeyCode> pressedKeys = new List<KeyCode>();
     protected AudioSource audioSource;
     protected IMovementBehaviour movement;
-    protected RagdollController ragdoll;
     protected Rigidbody rigidBody;
     protected IAbilitySystem abilitySystem;
     protected Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
@@ -33,7 +32,6 @@ public partial class PlayerController : NetworkBehaviour
             CameraController.instance.SetTarget(shoulder, transform);
         }
         abilitySystem = GetComponent<AbilitySystem>();
-        ragdoll = GetComponent<RagdollController>();
         audioSource = GetComponent<AudioSource>();
         rigidBody = GetComponent<Rigidbody>();
         player = GetComponent<Player>();

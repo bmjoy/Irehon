@@ -6,7 +6,7 @@ using Mirror;
 public abstract class AbilityBase : NetworkBehaviour, IAbility
 {
     [SerializeField]
-    private float cooldownTime;
+    protected float cooldownTime;
     [SerializeField]
     private float castTime;
     public KeyCode TriggerKey { get { return triggerOnKey; } }
@@ -19,6 +19,8 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
 
     private bool canCast;
     private bool isCasting;
+
+    protected Coroutine cooldownCoroutine;
 
     protected void AbilityEndEvent()
     {
@@ -83,7 +85,7 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         if (canCast)
         {
             isCasting = true;
-            StartCooldown();
+            StartCooldown(cooldownTime);
             Ability(target);
             abilitySystem.BlockTrigger();
             if (!isClientOnly)
@@ -99,14 +101,20 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         Ability(target);
     }
 
-    private void StartCooldown()
+    protected void StartCooldown(float duration)
     {
-        StartCoroutine(Cooldown());
+        cooldownCoroutine = StartCoroutine(Cooldown());
         IEnumerator Cooldown()
         {
             canCast = false;
-            yield return new WaitForSeconds(cooldownTime);
+            yield return new WaitForSeconds(duration);
             canCast = true;
         }
+    }
+
+    protected void RemoveCooldown()
+    {
+        StopCoroutine(cooldownCoroutine);
+        canCast = true;
     }
 }

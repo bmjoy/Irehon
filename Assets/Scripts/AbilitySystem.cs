@@ -15,6 +15,8 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     private bool canTriggerAbility;
 
+    public bool IsAbilityCasting() => !canTriggerAbility;
+
     private void Start()
     {
         canTriggerAbility = true;
@@ -83,7 +85,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     public void AnimationEventTrigger()
     {
-        print("evenbt");
         if (currentlyCastingSkill != null)
             currentlyCastingSkill.AnimationEvent();
     }
