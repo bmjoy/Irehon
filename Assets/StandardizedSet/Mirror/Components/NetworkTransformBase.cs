@@ -310,7 +310,7 @@ namespace Mirror
         }
 
         // set position carefully depending on the target component
-        public virtual void ApplyPositionRotationScale(Vector3 position, Quaternion rotation, Vector3 scale)
+        void ApplyPositionRotationScale(Vector3 position, Quaternion rotation, Vector3 scale)
         {
             // local position/rotation for VR support
             targetComponent.transform.localPosition = position;
@@ -422,7 +422,7 @@ namespace Mirror
             RpcTeleport(position, rotation, clientAuthorityBeforeTeleport);
         }
 
-        protected void DoTeleport(Vector3 newPosition, Quaternion newRotation)
+        void DoTeleport(Vector3 newPosition, Quaternion newRotation)
         {
             transform.position = newPosition;
             transform.rotation = newRotation;
@@ -456,7 +456,7 @@ namespace Mirror
             {
                 clientAuthority = true;
 
-                // reset value so doesnt effect future calls, see note in ServerTeleport
+                // reset value so doesn't effect future calls, see note in ServerTeleport
                 clientAuthorityBeforeTeleport = false;
             }
             else
