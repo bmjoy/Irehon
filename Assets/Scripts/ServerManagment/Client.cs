@@ -19,7 +19,8 @@ public class Client : NetworkManager
 
     private void SaveCharacter(Character character)
     {
-        charactersList.Add(character);
+        if (!charactersList.Contains(character))
+            charactersList.Add(character);
         OnUpdateCharacterList.Invoke();
     }
 

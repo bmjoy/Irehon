@@ -13,6 +13,12 @@ public struct Character : NetworkMessage
     public Vector3 position;
 }
 
+public struct CharacterCreate : NetworkMessage
+{
+    public string NickName;
+    public Character.CharacterClass Class;
+}
+
 public struct CharacterSelection : NetworkMessage
 {
     public int selectedSlot;
@@ -20,8 +26,13 @@ public struct CharacterSelection : NetworkMessage
 
 public class CharacterSelector : MonoBehaviour
 {
+    int maxCharacterSlots = 3;
     [SerializeField]
     private Button[] characterSelections;
+    [SerializeField]
+    private Text nicknameField;
+    [SerializeField]
+    private Button createCharacterButton;
     private List<Character> characterList;
     private int selectedSlotId;
 
@@ -41,6 +52,10 @@ public class CharacterSelector : MonoBehaviour
 
     private void ShowCharacter(Character character, int slotId)
     {
+        if (slotId != maxCharacterSlots)
+            createCharacterButton.gameObject.SetActive(true);
+        else
+            createCharacterButton.gameObject.SetActive(false);
         characterSelections[slotId].gameObject.SetActive(true);
         characterSelections[slotId].GetComponentInChildren<Text>().text = 
             character.NickName + "\n" + character.Class.ToString();
@@ -53,5 +68,15 @@ public class CharacterSelector : MonoBehaviour
     private void Play()
     {
         NetworkClient.Send(new CharacterSelection { selectedSlot = selectedSlotId });
+    }
+
+    public void CreateCharacterButton()
+    {
+        CharacterCreate createQuerry = new CharacterCreate
+        {
+            Class = Character.CharacterClass.Archer,
+            NickName = nicknameField.text
+        };
+        NetworkClient.Send(createQuerry);
     }
 }

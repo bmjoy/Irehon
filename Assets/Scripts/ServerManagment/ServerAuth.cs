@@ -4,6 +4,7 @@ using Mirror;
 using UnityEngine.UI;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using System.Net.Mail;
 
 public struct AuthRequestMessage : NetworkMessage
 {
@@ -37,26 +38,47 @@ public class ServerAuth : NetworkAuthenticator
 
     public override void OnServerAuthenticate(NetworkConnection conn)
     {
-        print("auth");
     }
 
-    public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage msg)
+    public bool IsEmailValid(string emailaddress)
     {
-        print(msg.Email + " passw = " + msg.Password + msg.Type);
-        bool result = false;
-        int loginResponse = 0;
+        try
+        {
+            MailAddress m = new MailAddress(emailaddress);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool IsRequestValid(AuthRequestMessage msg, ref int loginResponse)
+    {
+        if (!IsEmailValid(msg.Email))
+            return false;
         switch (msg.Type)
         {
             case AuthRequestMessage.AuthType.Login:
                 loginResponse = MySqlServerConnection.instance.Login(msg.Email, msg.Password);
                 if (loginResponse != 0)
-                    result = true;
+                    return true;
                 break;
             case AuthRequestMessage.AuthType.Register:
-                MySqlServerConnection.instance.Register(msg.Email, msg.Password);
-                result = true;
+                loginResponse = MySqlServerConnection.instance.Register(msg.Email, msg.Password);
+                if (loginResponse != 0)
+                    return true;
                 break;
         }
+        return false;
+    }
+
+    public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage msg)
+    {
+        int loginResponse = 0;
+
+        bool result = IsRequestValid(msg, ref loginResponse);
 
         AuthResponseMessage authResponseMessage = new AuthResponseMessage();
         if (result)
@@ -69,7 +91,8 @@ public class ServerAuth : NetworkAuthenticator
         {
             conn.authenticationData = new PlayerConnection
             {
-                id = loginResponse
+                id = loginResponse,
+                selectedPlayer = -1,
             };
             ServerAccept(conn);
         }

@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class Server : NetworkManager
 {
     private NetworkManager manager;
+    private Vector3 characterSpawnPoint;
 
     public override void Start()
     {
@@ -17,6 +18,27 @@ public class Server : NetworkManager
         manager.StartServer();
         manager.ServerChangeScene("PvpScene");
         NetworkServer.RegisterHandler<CharacterSelection>(OnSelectedPlayerSlot, true);
+        NetworkServer.RegisterHandler<CharacterCreate>(CharacterCreate, true);
+        characterSpawnPoint = new Vector3(-2, 2, -73);
+    }
+
+    public void CharacterCreate(NetworkConnection con, CharacterCreate character)
+    {
+        PlayerConnection data = (PlayerConnection)con.authenticationData;
+        int p_id = data.id;
+        if (data.characters.Count > 2)
+            return;
+
+        Character newCharacter = new Character
+        {
+            Class = character.Class,
+            NickName = character.NickName,
+            position = characterSpawnPoint
+        };
+
+        MySqlServerConnection.instance.CreateNewCharacter(p_id, newCharacter);
+
+        SendCharacterListToPlayer(con);
     }
 
     public void OnSelectedPlayerSlot(NetworkConnection con, CharacterSelection selection)
@@ -27,14 +49,10 @@ public class Server : NetworkManager
         };
         con.Send(message);
 
-        if (con.authenticationData != null)
-            print(con.authenticationData.ToString());
-        else 
-            print("null");
-
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         Character selectedCharacter = data.characters[selection.selectedSlot];
 
+        //тут нужно будет искать по классам
         GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "ArcherPlayer"));
 
         playerObject.transform.position = selectedCharacter.position;
@@ -56,13 +74,17 @@ public class Server : NetworkManager
             sceneName = "CharacterSelection",
         };
         conn.Send(message);
-        PlayerConnection data = (PlayerConnection)conn.authenticationData;
+
+        SendCharacterListToPlayer(conn);
+    }
+
+    private void SendCharacterListToPlayer(NetworkConnection con)
+    {
+        PlayerConnection data = (PlayerConnection)con.authenticationData;
         data.characters = MySqlServerConnection.instance.GetCharacters(data.id);
         foreach (Character character in data.characters)
-        {
-            conn.Send(character);
-        }
-        conn.authenticationData = data;
+            con.Send(character);
+        con.authenticationData = data;
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn) { }
@@ -82,7 +104,9 @@ public class Server : NetworkManager
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
-        MySqlServerConnection.instance.UpdatePositionData(data.selectedPlayer, data.playerPrefab.position);
+        //print(data.selectedPlayer);
+        if (data.selectedPlayer >= 0)
+            MySqlServerConnection.instance.UpdatePositionData(data.selectedPlayer, data.playerPrefab.position);
         base.OnClientDisconnect(conn);
         print("Disconnected client " + conn.address);
     }
