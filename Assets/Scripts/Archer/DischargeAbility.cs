@@ -41,7 +41,6 @@ public class DischargeAbility : AbilityBase
         controller.AllowControll();
         if (isLocalPlayer)
         {
-            print("crate");
             CameraController.instance.CreateShake(5f, 0.5f);
             targetMark.DisableTarget();
         }

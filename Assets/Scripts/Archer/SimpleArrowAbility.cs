@@ -1,20 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Mirror;
 using UnityEngine;
-using Mirror;
 
 public class SimpleArrowAbility : AbilityBase
 {
     [SerializeField]
     private GameObject arrow;
     private Animator animator;
-    [SerializeField]
     private Transform rightHand;
     private Player player;
     private ArcherMovement movement;
     private delegate void ListeningTarget(Vector3 target);
     private ListeningTarget currentAction;
-    private Vector3 currentTarget;
     private Quiver quiver;
 
     private bool readyToShoot;
@@ -28,6 +24,7 @@ public class SimpleArrowAbility : AbilityBase
         player = GetComponent<Player>();
         movement = GetComponent<ArcherMovement>();
         animator = GetComponent<Animator>();
+        rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
         quiver = new Quiver(player, 15, arrow);
     }
 
@@ -35,7 +32,6 @@ public class SimpleArrowAbility : AbilityBase
     {
         animator.SetTrigger("Shoot");
         animator.SetBool("AimingMovement", true);
-        currentTarget = target;
         currentAnimationEvent = ArrowTargetSync;
         movement.IsAiming = true;
         if (!isLocalPlayer)

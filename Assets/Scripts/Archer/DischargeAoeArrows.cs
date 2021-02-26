@@ -7,10 +7,12 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
     private const int HIT_EFFECT_POOL_AMMOUNT = 7;
 
     private DischargeAoeArrows aoe;
+    private Collider collider;
     [SerializeField]
     private GameObject hitEffectPrefab;
     [SerializeField]
     private int damageByArrow;
+    private Player parent;
     private List<ParticleSystem> hitEffectPool = new List<ParticleSystem>();
     private new ParticleSystem particleSystem;
     private new AudioSource audio;
@@ -19,7 +21,7 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
 
     protected override void Effect(Entity entity)
     {
-        entity.DoDamage(damageByArrow);
+        parent.DoDamage(entity, damageByArrow);
     }
 
     protected override void OnAddToArea(Entity entity)
@@ -35,9 +37,12 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
 
     private void Start()
     {
+        parent = GetComponentInParent<Player>();
+        collider = GetComponent<Collider>();
         particleSystem = GetComponent<ParticleSystem>();
         aoe = GetComponent<DischargeAoeArrows>();
         audio = GetComponent<AudioSource>();
+        collider.enabled = false;
         for (int i = 0; i < HIT_EFFECT_POOL_AMMOUNT; i++)
         {
             GameObject hitEffectObj = Instantiate(hitEffectPrefab, transform);
@@ -50,6 +55,7 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
         float duration = particleSystem.main.duration + 0.1f;
         Transform parent = transform.parent;
         transform.parent = null;
+        collider.enabled = true;
         audio.Play();
         particleSystem.Play();
         currentHitId = 0;
@@ -57,7 +63,9 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
         IEnumerator ReturnToPlayer()
         {
             yield return new WaitForSeconds(duration);
+            collider.enabled = false;
             transform.parent = parent;
+            entityOnArea.Clear();
         }
     }
 
@@ -66,7 +74,6 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
         if (other.CompareTag("Walkable") || other.CompareTag("Floor"))
             return;
         int numCollisionEvents = particleSystem.GetCollisionEvents(other, collisionEvents);
-        print(numCollisionEvents + " name = " + other.name);
         for (int i = 0; i < numCollisionEvents; i++)
         {
             currentHitId++;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿    using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,9 +7,13 @@ public class UIController : MonoBehaviour
     public static UIController instance;
 
     private float defaultTriangleSize = 150;
+    private float healthBarUpdateDelay = 0.5f;
+    private float reducingAmount = 0.7f;
     private float minimumTriangleSize = 80f;
     [SerializeField]
-    private Slider health;
+    private Slider healthBar;
+    [SerializeField]
+    private Slider postHealthBar;
     [SerializeField]
     private CanvasGroup hitMarker;
     [SerializeField]
@@ -63,6 +67,26 @@ public class UIController : MonoBehaviour
 
     public void SetHealthBarValue(float value)
     {
-        health.value = value;
+        healthBar.value = value;
+
+        float passedTime = 0f;
+
+        StopAllCoroutines();
+
+        if (postHealthBar.value > healthBar.value)
+            StartCoroutine(ChangeFillAmount());
+        else
+            postHealthBar.value = healthBar.value;
+
+        IEnumerator ChangeFillAmount()
+        {
+            while (postHealthBar.value > healthBar.value)
+            {
+                passedTime += Time.deltaTime;
+                if (passedTime > healthBarUpdateDelay)
+                    postHealthBar.value -= reducingAmount * Time.deltaTime;
+                yield return null;
+            }
+        }
     }
 }

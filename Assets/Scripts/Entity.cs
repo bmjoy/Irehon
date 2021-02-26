@@ -1,23 +1,47 @@
 ﻿using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+public class HealthChangedEvent : UnityEvent<int, int> {}
+
+public class HitConfirmEvent : UnityEvent<int> { }
+
+public class OnTakeDamage : UnityEvent<int> { }
+
+public struct DamageMessage
+{
+    public Entity source;
+    public Entity target;
+    public int damage;
+}
 
 public class Entity : NetworkBehaviour
 {
+    public string NickName { get => name; }
+    public int Health { get => health; }
     [SerializeField]
     protected float respawnTime;
+    [SerializeField, SyncVar]
+    protected new string name;
     protected Vector3 spawnPosition;
+    [SyncVar(hook = "OnChangeHealth")]
     protected int health;
     [SerializeField]
     protected int maxHealth;
+    protected HitConfirmEvent HitConfirmEvent = new HitConfirmEvent();
     [SerializeField]
     protected List<Collider> hitboxColliders = new List<Collider>();
     protected bool isAlive;
     protected RagdollController ragdoll;
+    public OnTakeDamage OnTakeDamageEvent = new OnTakeDamage();
+    public HealthChangedEvent OnHealthChanged;
 
     protected virtual void Awake()
     {
         ragdoll = GetComponent<RagdollController>();
+        if (OnHealthChanged == null)
+            OnHealthChanged = new HealthChangedEvent();
     }
 
     protected virtual void Start()
@@ -26,9 +50,19 @@ public class Entity : NetworkBehaviour
         SetDefaultState();
     }
 
+    protected void OnChangeHealth(int oldValue, int newValue)
+    {
+        OnHealthChanged.Invoke(maxHealth, health);
+    }
+
     public List<Collider> GetHitBoxColliderList()
     {
         return hitboxColliders;
+    }
+
+    public void SetName(string name)
+    {
+        this.name = name;
     }
 
     protected virtual void SetDefaultState()
@@ -72,19 +106,34 @@ public class Entity : NetworkBehaviour
             this.health = 0;
             Death();
         }
+        OnHealthChanged?.Invoke(maxHealth, this.health);
+    }
+
+    [TargetRpc]
+    public void EntityHitConfirm(NetworkConnection con, int damage)
+    {
+        print("hit confirm on " + name);
+        HitConfirmEvent.Invoke(damage);
+    }
+
+    [TargetRpc]
+    public void TakeDamageEvent(NetworkConnection con, int damage)
+    {
+        OnTakeDamageEvent.Invoke(damage);
     }
 
     [Server]
-    public virtual void DoDamage(int damage)
+    public virtual void TakeDamage(DamageMessage damageMessage)
     {
         if (!isAlive)
             return;
-        health -= damage;
+        health -= damageMessage.damage;
         if (health <= 0)
         {
             Death();
             health = 0;
         }
-        print(name + " got " + damage + " damage\nHealth = " + health);
+        OnHealthChanged?.Invoke(maxHealth, this.health);
+        damageMessage.source.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
     }
 }

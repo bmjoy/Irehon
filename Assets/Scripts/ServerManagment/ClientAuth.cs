@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class ClientAuth : NetworkAuthenticator
 {
     [SerializeField]
-    private Text Email;
+    private TMPro.TMP_InputField Email;
     [SerializeField]
-    private Text Password;
+    private TMPro.TMP_InputField Password;
 
     public override void OnClientAuthenticate(NetworkConnection conn)
     {

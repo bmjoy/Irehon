@@ -23,6 +23,7 @@ public class MySqlServerConnection : MonoBehaviour
         connection.Close();
     }
 
+    #region не открывать, тут для бд всё
     public void Init()
     {
         connection = new MySqlConnection("server = 134.209.21.121; " +
@@ -30,6 +31,7 @@ public class MySqlServerConnection : MonoBehaviour
         connection.Open();
         SendCommand("USE players;");
     }
+    #endregion
 
     public int Register(string email, string passsword)
     {

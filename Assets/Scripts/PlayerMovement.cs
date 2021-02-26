@@ -9,6 +9,8 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
     protected float JUMP_FORCE = 9f;
     [SerializeField]
     protected float velocityJumpIncreasing;
+    [SerializeField]
+    protected AudioSource stepSoundSource;
     protected Rigidbody rigidBody;
     protected Animator animator;
     protected bool isGrounded;
@@ -92,12 +94,17 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
 
     public void Jump()
     {
-        rigidBody.AddForce(Vector3.up * JUMP_FORCE, ForceMode.Impulse);
+        rigidBody.velocity = new Vector3(rigidBody.velocity.x, JUMP_FORCE, rigidBody.velocity.z);
         animator.SetTrigger("Jump");
     }
 
     public bool IsCanJump()
     {
         return isGrounded && rigidBody.velocity.y < 1;
+    }
+
+    public void StepSound()
+    {
+        stepSoundSource.Play();
     }
 }

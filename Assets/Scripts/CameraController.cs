@@ -183,6 +183,16 @@ public class CameraController : MonoBehaviour
         if (playerTransform == null)
             return;
 
+        if (shakeTimer >= 0)
+        {
+            shakeTimer -= Time.fixedDeltaTime;
+            currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(currentIntensity, 0, (1 - shakeTimer / shakeTimerTotal));
+        }
+        else
+        {
+            currentShakeHandler.m_AmplitudeGain = 0;
+        }
+
         if (!cursorAiming || !player.IsControllAllowed())
             return;
 
@@ -193,14 +203,6 @@ public class CameraController : MonoBehaviour
 
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -75f, 75f);
-
-        if (shakeTimer > 0)
-        {
-            shakeTimer -= Time.fixedDeltaTime;
-            currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(currentIntensity, 0, (1 - shakeTimer / shakeTimerTotal));
-        }
-        else
-            currentShakeHandler.m_AmplitudeGain = 0;
 
         shoulderTransform.localRotation = Quaternion.Euler(xRotation,-3.5f, 0f);
         if (yMouse != 0)

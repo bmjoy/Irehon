@@ -10,6 +10,22 @@ public class Player : Entity
         controller = GetComponent<PlayerController>();
     }
 
+    protected override void Start()
+    {
+        base.Start();
+        if (isLocalPlayer)
+        {
+            OnHealthChanged.AddListener(UpdateHealthBar);
+            HitConfirmEvent.AddListener(controller.HitConfirmed);
+            OnTakeDamageEvent.AddListener(controller.TakeDamageEffect);
+        }
+    }
+
+    protected void UpdateHealthBar(int oldHealth, int newHealth)
+    {
+        UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth);
+}
+
     protected override void SetDefaultState()
     {
         base.SetDefaultState();
@@ -32,27 +48,6 @@ public class Player : Entity
             RespawnOnClient(connectionToClient);
     }
 
-    [Server]
-    protected override void SetHealth(int health)
-    {
-        base.SetHealth(health);
-        SetHealthOnClient(connectionToClient, health);
-    }
-
-    [Server]
-    public override void DoDamage(int damage)
-    {
-        base.DoDamage(damage);
-        SetHealthOnClient(connectionToClient, health);
-    }
-
-    [TargetRpc]
-    protected virtual void SetHealthOnClient(NetworkConnection con, int currentHealth)
-    {
-        health = currentHealth;
-        UIController.instance.SetHealthBarValue(1f * health / maxHealth);
-    }
-
     [TargetRpc]
     protected virtual void DeathOnClient(NetworkConnection con)
     {
@@ -70,7 +65,18 @@ public class Player : Entity
     [Server]
     public void DoDamage(Entity target, int damage)
     {
-        target.DoDamage(damage);
-        controller.HitConfirmed(connectionToClient);
+        DamageMessage damageMessage = new DamageMessage
+        {
+            damage = damage,
+            source = this,
+            target = target
+        };
+        target.TakeDamage(damageMessage);
+    }
+
+    public override void TakeDamage(DamageMessage damageMessage)
+    {
+        base.TakeDamage(damageMessage);
+        TakeDamageEvent(connectionToClient, damageMessage.damage);
     }
 }

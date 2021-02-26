@@ -26,13 +26,13 @@ public struct CharacterSelection : NetworkMessage
 
 public class CharacterSelector : MonoBehaviour
 {
-    int maxCharacterSlots = 3;
+    int maxCharacterSlots = 2;
     [SerializeField]
     private Button[] characterSelections;
     [SerializeField]
     private Text nicknameField;
     [SerializeField]
-    private Button createCharacterButton;
+    private RectTransform createCharacterTransform;
     private List<Character> characterList;
     private int selectedSlotId;
 
@@ -52,10 +52,10 @@ public class CharacterSelector : MonoBehaviour
 
     private void ShowCharacter(Character character, int slotId)
     {
-        if (slotId != maxCharacterSlots)
-            createCharacterButton.gameObject.SetActive(true);
+        if (slotId < maxCharacterSlots)
+            createCharacterTransform.gameObject.SetActive(true);
         else
-            createCharacterButton.gameObject.SetActive(false);
+            createCharacterTransform.gameObject.SetActive(false);
         characterSelections[slotId].gameObject.SetActive(true);
         characterSelections[slotId].GetComponentInChildren<Text>().text = 
             character.NickName + "\n" + character.Class.ToString();

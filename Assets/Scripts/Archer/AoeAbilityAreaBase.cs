@@ -4,9 +4,22 @@ using UnityEngine;
 
 public abstract class AoeAbilityAreaBase : MonoBehaviour
 {
-    private List<Entity> entityOnArea = new List<Entity>();
+    protected List<Entity> entityOnArea = new List<Entity>();
 
     private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("EntityBase"))
+        {
+            Entity entity = other.GetComponent<Entity>();
+            if (IsApproachToAbility(entity) && !entityOnArea.Contains(entity))
+            {
+                OnAddToArea(entity);
+                entityOnArea.Add(entity);
+            }
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("EntityBase"))
         {

@@ -6,8 +6,8 @@ using UnityEngine.Events;
 
 public class Client : NetworkManager
 {
-    private List<Character> charactersList = new List<Character>();
     public UnityEvent OnUpdateCharacterList;
+    private List<Character> charactersList = new List<Character>();
 
     public override void Start()
     {

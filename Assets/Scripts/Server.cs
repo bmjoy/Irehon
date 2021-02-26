@@ -55,6 +55,8 @@ public class Server : NetworkManager
         //тут нужно будет искать по классам
         GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "ArcherPlayer"));
 
+        playerObject.GetComponent<Entity>().SetName(selectedCharacter.NickName);
+
         playerObject.transform.position = selectedCharacter.position;
 
         data.playerPrefab = playerObject.transform;
