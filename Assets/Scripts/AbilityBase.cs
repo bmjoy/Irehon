@@ -2,16 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.UI;
+using UnityEngine.Events;
+
+public class AbilityCooldownEvent : UnityEvent<float> {}
 
 public abstract class AbilityBase : NetworkBehaviour, IAbility
 {
+    public KeyCode TriggerKey { get => triggerOnKey; }
+    public Sprite AbilityIcon { get => icon; }
+    public AbilityCooldownEvent OnAbilityCooldown { get => onAbilityCooldown ; set => onAbilityCooldown = value; }
+
+    private AbilityCooldownEvent onAbilityCooldown = new AbilityCooldownEvent();
+
     [SerializeField]
     protected float cooldownTime;
     [SerializeField]
     private float castTime;
-    public KeyCode TriggerKey { get { return triggerOnKey; } }
     [SerializeField]
     private KeyCode triggerOnKey;
+    [SerializeField]
+    private Sprite icon;
+
     private AbilitySystem abilitySystem;
 
     protected delegate void CurrentAnimationEvent();
@@ -42,6 +54,13 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
             cooldownTime = castTime;
     }
 
+    public virtual void AbilityInit(AbilitySystem abilitySystem)
+    {
+        canCast = true;
+        this.abilitySystem = abilitySystem;
+        if (castTime > cooldownTime)
+            cooldownTime = castTime;
+    }
 
     public void Interrupt()
     {
@@ -51,13 +70,23 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
             InterruptOnOthers();
     }
 
-    [ClientRpc(excludeOwner = true)]
+    [ClientRpc]
     private void InterruptOnOthers()
     {
         InterruptAbility();
     }
 
-    public void AnimationEvent() 
+    public void AnimationEvent()
+    {
+        if (currentAnimationEvent != null)
+        {
+            currentAnimationEvent();
+            AnimationEventOnOthers();
+        }
+    }
+
+    [ClientRpc]
+    public void AnimationEventOnOthers()
     {
         if (currentAnimationEvent != null)
             currentAnimationEvent();
@@ -73,10 +102,9 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         }
     }
 
-    [ClientRpc(excludeOwner = true)]
+    [ClientRpc]
     private void StopHoldingAbilityOnClients(Vector3 target)
     {
-        print("stop");
         StopHoldingAbility(target);
     }
     
@@ -95,21 +123,38 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         return false;
     }
 
-    [ClientRpc(excludeOwner = true)]
+    [ClientRpc]
     protected void CastAbilityOnOthers(Vector3 target)
     {
         Ability(target);
     }
 
+    [TargetRpc]
+    protected void ConfirmTrigger(NetworkConnection con, Vector3 target)
+    {
+        abilitySystem.BlockTrigger();
+        isCasting = true;
+        StartCooldown(cooldownTime);
+    }
+
+    [Server]
     protected void StartCooldown(float duration)
     {
+        OnAbilityCooldown.Invoke(duration);
         cooldownCoroutine = StartCoroutine(Cooldown());
+        StartCooldownOnOthers(connectionToClient, duration);
         IEnumerator Cooldown()
         {
             canCast = false;
             yield return new WaitForSeconds(duration);
             canCast = true;
         }
+    }
+
+    [TargetRpc]
+    protected void StartCooldownOnOthers(NetworkConnection con, float duration)
+    {
+        OnAbilityCooldown.Invoke(duration);
     }
 
     protected void RemoveCooldown()

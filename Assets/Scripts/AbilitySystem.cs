@@ -6,6 +6,16 @@ using System;
 
 public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 {
+    public GameObject AbilityPoolObject => abilityPoolObject;
+    public AudioSource AudioSource => audioSource;
+    public Animator AnimatorComponent => animator;
+    public PlayerController CharController => playerController;
+
+    private Animator animator;
+    private PlayerController playerController;
+    private AudioSource audioSource;
+    private GameObject abilityPoolObject;
+
     [SerializeField]
     private List<AbilityBase> abilitysPool = new List<AbilityBase>();
 
@@ -15,18 +25,43 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     private bool canTriggerAbility;
 
+    private float globalCooldownCountdown;
+
     public bool IsAbilityCasting() => !canTriggerAbility;
+
+    private void Update()
+    {
+        globalCooldownCountdown -= Time.deltaTime;
+    }
 
     private void Start()
     {
+        abilityPoolObject = new GameObject("AbilityPool", typeof(AudioSource));
+        animator = GetComponent<Animator>();
+        playerController = GetComponent<PlayerController>();
+        audioSource = abilityPoolObject.GetComponent<AudioSource>();
+        abilityPoolObject.transform.parent = transform;
         canTriggerAbility = true;
-        foreach (IAbility ability in abilitysPool)
-            abilitys.Add(ability);
+        AddNewAbility(typeof(DischargeAbility));
+    }
+
+    public void AddNewAbility(params Type[] ability)
+    {
+        IAbility abilityComponentCheck = ability[0] as IAbility;
+        if (!abilitys.Contains(abilityComponentCheck))
+        {
+            IAbility abilityComponent = gameObject.AddComponent(ability[0]) as IAbility;
+            abilitys.Add(abilityComponent);
+            abilityComponent.AbilityInit(this);
+            abilityComponent.OnAbilityCooldown.AddListener(AbilityTriggered);
+            if (isLocalPlayer)
+                AbilityUIController.instance.SetAbilityOnSlot(abilitys[abilitys.Count - 1], abilitys.Count - 1);
+        }
     }
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)
     {
-        if (!canTriggerAbility || currentlyCastingSkill != null)
+        if (globalCooldownCountdown > 0 || !canTriggerAbility || currentlyCastingSkill != null)
             return;
         foreach (IAbility ability in abilitys)
         {
@@ -38,6 +73,19 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
                 }
             }
         }
+    }
+
+    [Server]
+    public void AbilityTriggered(float time)
+    {
+        globalCooldownCountdown = 2f;
+        InvokeGlobalCooldown(connectionToClient, globalCooldownCountdown);
+    }
+
+    [TargetRpc]
+    public void InvokeGlobalCooldown(NetworkConnection con, float time)
+    {
+        AbilityUIController.instance.InvokeGlobalCooldown(time);
     }
 
     public void AbilityKeyUp(KeyCode key, Vector3 target)
@@ -54,22 +102,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     private void SetCurrentSkill(IAbility ability)
     {
         currentlyCastingSkill = ability;
-        if (isServer)
-        {
-            if (ability == null)
-                SetCurrentCastingSkillOnOthers(-1);
-            else
-                SetCurrentCastingSkillOnOthers(abilitys.IndexOf(ability));
-        }
-    }
-
-    [ClientRpc(excludeOwner = true)]
-    private void SetCurrentCastingSkillOnOthers(int skillIndex)
-    {
-        if (skillIndex >= 0 && skillIndex < abilitys.Count)
-            currentlyCastingSkill = abilitys[skillIndex];
-        else
-            currentlyCastingSkill = null;
     }
 
     public void AllowTrigger()
@@ -83,6 +115,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         canTriggerAbility = false;
     }
 
+    [Server]
     public void AnimationEventTrigger()
     {
         if (currentlyCastingSkill != null)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,15 +16,21 @@ public class DischargeAbility : AbilityBase
     private bool targeting;
     private PlayerController controller;
     private Vector3 targetMarkPos;
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip releaseSound;
+    private Transform head;
 
-    private new void Start()
+    public override void AbilityInit(AbilitySystem abilitySystem)
     {
-        base.Start();
+        base.AbilityInit(abilitySystem);
         realCooldown = cooldownTime;
         cooldownTime = 0;
-        controller = GetComponent<PlayerController>();
-        animator = GetComponent<Animator>();
+        controller = abilitySystem.CharController;
+        animator = abilitySystem.AnimatorComponent;
         targetMark = GetComponent<AoeTargetMark>();
+        audioSource = abilitySystem.AudioSource;
+        head = animator.GetBoneTransform(HumanBodyBones.Head);
     }
 
     protected override void Ability(Vector3 target)
@@ -59,32 +66,52 @@ public class DischargeAbility : AbilityBase
         if (!targeting)
             return;
         targeting = false;
-        if (isLocalPlayer)
-        {
-            if (targetMark.IsTargetable())
-                targetMark.DisableTarget();
-            else
-            {
-                targetMark.DisableTarget();
-                AbilityEndEvent();
-                return;
-            }
-        }
+        if (!isServer)
+            return;
 
         RaycastHit hit;
-        if (Physics.Raycast(target + Vector3.up, Vector3.down, out hit, 20, 1 << 11))
+        if (Vector3.Distance(target, head.position) < 25 &&
+            Physics.Raycast(target + Vector3.up, Vector3.down, out hit, 2.5f, 1 << 11))
+        {
             targetMarkPos = hit.point;
+        }
         else
         {
+            SetSpawnArrowPosition(Vector3.zero, false);
             targetMark.DisableTarget();
             AbilityEndEvent();
             return;
         }
-
+        SetSpawnArrowPosition(targetMarkPos, true);
         StartCooldown(realCooldown);
         controller.BlockControll();
         animator.SetInteger("CurrentSkill", 2);
         animator.SetTrigger("Skill");
         chargeParticles.Play();
+        audioSource.clip = releaseSound;
+        audioSource.Play();
+    }
+
+    [ClientRpc]
+    private void SetSpawnArrowPosition(Vector3 position, bool isTargetable)
+    {
+        if (isLocalPlayer)
+        {
+            targetMark.DisableTarget();
+        }
+        if (!isTargetable)
+        {
+            AbilityEndEvent();
+            return;
+        }
+
+        targetMarkPos = position;
+        StartCooldown(realCooldown);
+        controller.BlockControll();
+        animator.SetInteger("CurrentSkill", 2);
+        animator.SetTrigger("Skill");
+        chargeParticles.Play();
+        audioSource.clip = releaseSound;
+        audioSource.Play();
     }
 }

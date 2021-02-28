@@ -12,6 +12,10 @@ public class RecoilArrowAbility : AbilityBase
     private GameObject arrowPrefab;
     [SerializeField]
     private Transform rightHandTransform;
+    [SerializeField]
+    private AudioClip onTriggerClip;
+    [SerializeField]
+    private AudioSource audioSource;
 
     [SerializeField]
     private float recoilDuration;
@@ -47,6 +51,8 @@ public class RecoilArrowAbility : AbilityBase
         animator.SetInteger("CurrentSkill", 1);
         animator.SetTrigger("Skill");
         currentAnimationEvent = ShootArrow;
+        audioSource.clip = onTriggerClip;
+        audioSource.Play();
     }
 
     private void ShootArrow()

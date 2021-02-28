@@ -17,11 +17,11 @@ public class ArcherController : PlayerController
         if (previousInput.SprintKeyDown && !abilitySystem.IsAbilityCasting())
             return;
         base.Update();
-        CheckAbilityTriggerKey(KeyCode.F);
-        CheckAbilityTriggerKey(KeyCode.R);
         if (!isLocalPlayer)
             return;
         if (!isControllAllow)
             return;
+        CheckAbilityTriggerKey(KeyCode.F);
+        CheckAbilityTriggerKey(KeyCode.R);
     }
 }

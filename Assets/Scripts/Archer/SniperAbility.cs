@@ -12,6 +12,10 @@ public class SniperAbility : AbilityBase
     [SerializeField]
     private GameObject arrow;
     [SerializeField]
+    private AudioSource abilityAudioSource;
+    [SerializeField]
+    private AudioClip tenseSound;
+    [SerializeField]
     private GameObject arrowInHand;
     [SerializeField]
     private Transform bowStringBone;
@@ -90,6 +94,8 @@ public class SniperAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
+        abilityAudioSource.clip = tenseSound;
+        abilityAudioSource.Play();
         aiming = true;
         arrowInHand.SetActive(true);
         aimingParticles.Play();
@@ -116,8 +122,8 @@ public class SniperAbility : AbilityBase
 
     protected override void StopHoldingAbility(Vector3 target)
     {
-        //if (!startedAbility)
-        //    return;
+        if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
+            abilityAudioSource.Stop();
         if (aiming && holdingTime > MIN_HOLDING_TIME)
         {
             animator.SetTrigger("Shoot");
@@ -134,6 +140,8 @@ public class SniperAbility : AbilityBase
         animator.SetBool("Aiming", false);
         animator.SetBool("AimingMovement", false);
 
+        StartCooldown(cooldownTime);
+
         AbilityEndEvent();
         if (isLocalPlayer)
         {
@@ -146,6 +154,8 @@ public class SniperAbility : AbilityBase
     {
         if (isLocalPlayer)
             UIController.instance.EnableDefaultCrosshair();
+        if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
+            abilityAudioSource.Stop();
         startedAbility = false;
         additionalyChestOffsetTime = 0;
         movement.IsAiming = false;

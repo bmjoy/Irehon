@@ -23,6 +23,9 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private RectTransform defaultAimingRectangle;
 
+    private Coroutine hitMarkerCoroutine;
+    private Coroutine healthBarCoroutine;
+
     private void Awake()
     {
         instance = this;
@@ -50,9 +53,10 @@ public class UIController : MonoBehaviour
 
     public void ShowHitMarker()
     {
-        StopAllCoroutines();
+        if (hitMarkerCoroutine != null)
+            StopCoroutine(hitMarkerCoroutine);
         hitMarker.alpha = 1;
-        StartCoroutine(DisappearHitMarker());
+        hitMarkerCoroutine = StartCoroutine(DisappearHitMarker());
         hitMarkerSound.Play();
     }
 
@@ -71,10 +75,11 @@ public class UIController : MonoBehaviour
 
         float passedTime = 0f;
 
-        StopAllCoroutines();
+        if (healthBarCoroutine != null)
+            StopCoroutine(healthBarCoroutine);
 
         if (postHealthBar.value > healthBar.value)
-            StartCoroutine(ChangeFillAmount());
+            healthBarCoroutine = StartCoroutine(ChangeFillAmount());
         else
             postHealthBar.value = healthBar.value;
 

@@ -65,7 +65,7 @@ MonoBehaviour:
     value: 0
   saturation:
     overrideState: 1
-    value: 0
+    value: 17
   brightness:
     overrideState: 0
     value: 0
@@ -76,22 +76,22 @@ MonoBehaviour:
     overrideState: 1
     value: 0
   mixerRedOutRedIn:
-    overrideState: 0
+    overrideState: 1
     value: 100
   mixerRedOutGreenIn:
-    overrideState: 0
+    overrideState: 1
     value: 0
   mixerRedOutBlueIn:
-    overrideState: 0
+    overrideState: 1
     value: 0
   mixerGreenOutRedIn:
-    overrideState: 0
+    overrideState: 1
     value: 0
   mixerGreenOutGreenIn:
-    overrideState: 0
+    overrideState: 1
     value: 100
   mixerGreenOutBlueIn:
-    overrideState: 0
+    overrideState: 1
     value: 0
   mixerBlueOutRedIn:
     overrideState: 1
@@ -101,16 +101,16 @@ MonoBehaviour:
     value: 0
   mixerBlueOutBlueIn:
     overrideState: 1
-    value: 100
+    value: 122
   lift:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: 0}
+    value: {x: 0.87276536, y: 0.9045743, z: 1, w: 0}
   gamma:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: 0}
+    value: {x: 0.58935976, y: 0.707211, z: 1, w: 0}
   gain:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: 0}
+    value: {x: 0.76951724, y: 0.73423535, z: 1, w: 0}
   masterCurve:
     overrideState: 0
     value:
@@ -748,7 +748,7 @@ MonoBehaviour:
       - 0.984375
       - 0.9921875
   hueVsHueCurve:
-    overrideState: 0
+    overrideState: 1
     value:
       curve:
         serializedVersion: 2
@@ -1326,7 +1326,6 @@ MonoBehaviour:
   settings:
   - {fileID: 114094930955229750}
   - {fileID: 114753784628472484}
-  - {fileID: 114232185289346146}
   - {fileID: 114288678441462590}
   - {fileID: -6715903095584966825}
 --- !u!114 &114094930955229750
@@ -1378,40 +1377,6 @@ MonoBehaviour:
   quality:
     overrideState: 1
     value: 2
---- !u!114 &114232185289346146
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b77c5407dc277943b591ade9e6b18c5, type: 3}
-  m_Name: LensDistortion
-  m_EditorClassIdentifier: 
-  active: 1
-  enabled:
-    overrideState: 1
-    value: 1
-  intensity:
-    overrideState: 1
-    value: 30
-  intensityX:
-    overrideState: 1
-    value: 1
-  intensityY:
-    overrideState: 1
-    value: 1
-  centerX:
-    overrideState: 1
-    value: 0
-  centerY:
-    overrideState: 1
-    value: 0
-  scale:
-    overrideState: 1
-    value: 1
 --- !u!114 &114288678441462590
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1439,10 +1404,10 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.295
+    value: 0.394
   smoothness:
     overrideState: 1
-    value: 0.5
+    value: 0.334
   roundness:
     overrideState: 1
     value: 1
@@ -1474,25 +1439,25 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 1.39
+    value: 4.32
   threshold:
     overrideState: 1
     value: 1
   softKnee:
     overrideState: 1
-    value: 0.507
+    value: 0.04
   clamp:
     overrideState: 1
     value: 65472
   diffusion:
     overrideState: 1
-    value: 10
+    value: 5.35
   anamorphicRatio:
     overrideState: 1
     value: 0
   color:
     overrideState: 1
-    value: {r: 3.6886053, g: 0.35000283, b: 0.25105697, a: 1}
+    value: {r: 3.7321315, g: 1.4055419, b: 0, a: 1}
   fastMode:
     overrideState: 1
     value: 1
