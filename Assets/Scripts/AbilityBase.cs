@@ -24,13 +24,11 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     [SerializeField]
     protected float cooldownTime;
     [SerializeField]
-    private float castTime;
-    [SerializeField]
     protected KeyCode triggerOnKey;
     [SerializeField]
     private Sprite icon;
 
-    private AbilitySystem abilitySystem;
+    protected AbilitySystem abilitySystem;
     public abstract int Id { get; }
     protected delegate void CurrentAnimationEvent();
     protected CurrentAnimationEvent currentAnimationEvent;
@@ -48,33 +46,15 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
 
     protected abstract void StopHoldingAbility(Vector3 target);
 
-    protected abstract void Ability(Vector3 target);
 
 
     protected AbilityBase addingComponent;
-    public virtual void AddAbilityCopy(GameObject holder)
-    {
-        addingComponent = holder.AddComponent(GetType()) as AbilityBase;
-        addingComponent.icon = icon;
-        addingComponent.castTime = castTime;
-        addingComponent.cooldownTime = cooldownTime;
-        addingComponent.triggerOnKey = triggerOnKey;
-    }
-
-
     protected abstract void InterruptAbility();
     
-    protected void Start()
-    {
-        AddAbilityCopy(gameObject);
-    }
-
-    public virtual void AbilityInit(AbilitySystem abilitySystem)
+    protected virtual void Start()
     {
         canCast = true;
-        this.abilitySystem = abilitySystem;
-        if (castTime > cooldownTime)
-            cooldownTime = castTime;
+        abilitySystem = GetComponent<AbilitySystem>();
     }
 
     public void Interrupt()
@@ -137,6 +117,7 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         }
         return false;
     }
+    protected abstract void Ability(Vector3 target);
 
     [ClientRpc]
     protected void CastAbilityOnOthers(Vector3 target)

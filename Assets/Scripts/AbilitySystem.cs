@@ -9,20 +9,26 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public GameObject AbilityPoolObject => abilityPoolObject;
     public AudioSource AudioSource => audioSource;
     public Animator AnimatorComponent => animator;
-    public PlayerController CharController => playerController;
+    public PlayerController PlayerControll => playerController;
     public AoeTargetMark AOETargetMark => aoeTargetMark;
+    public Player PlayerComponent => player;
+    public PlayerMovement PlayerMovementComponent => playerMovement;
 
+    private PlayerMovement playerMovement;
+    private Player player;
     private AoeTargetMark aoeTargetMark;
     private Animator animator;
     private PlayerController playerController;
     private AudioSource audioSource;
     private GameObject abilityPoolObject;
 
+    private List<AbilityBase> abilitysPool;
     private List<IAbility> abilitys = new List<IAbility>();
 
     private IAbility currentlyCastingSkill;
 
     private bool canTriggerAbility;
+    private int slot;
 
     private float globalCooldownCountdown;
 
@@ -33,9 +39,13 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         globalCooldownCountdown -= Time.deltaTime;
     }
 
-    private void Start()
+    private void Awake()
     {
         abilityPoolObject = new GameObject("AbilityPool", typeof(AudioSource));
+        abilitysPool = new List<AbilityBase>(GetComponents<AbilityBase>());
+
+        player = GetComponent<Player>();
+        playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         audioSource = abilityPoolObject.GetComponent<AudioSource>();
@@ -44,18 +54,30 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         canTriggerAbility = true;
     }
 
-    public void AddNewAbility(params Type[] ability)
+    private void Start()
     {
-        IAbility abilityComponentCheck = ability[0] as IAbility;
-        if (!abilitys.Contains(abilityComponentCheck))
+        AddNewAbility(1, 2);
+        AddNewAbility(3, 1);
+        AddNewAbility(4, 3);
+        AddNewAbility(2, 0);
+    }
+
+    public void AddNewAbility(int id, int slot)
+    {
+        IAbility ability = abilitysPool.Find(p => p.Id == id);
+        if (ability == null)
         {
-            IAbility abilityComponent = gameObject.AddComponent<DischargeAbility>() as IAbility;
-            abilitys.Add(abilityComponent);
-            abilityComponent.AbilityInit(this);
-            abilityComponent.OnAbilityCooldown.AddListener(AbilityTriggered);
-            if (isLocalPlayer)
-                AbilityUIController.instance.SetAbilityOnSlot(abilitys[abilitys.Count - 1], abilitys.Count - 1);
+            Debug.Log("Ability with " + id + " not found");
+            return;
         }
+        AbilityUIController.instance.SetAbilityOnSlot(ability, slot);
+        if (abilitys.Find(p => p.Id == id) != null)
+        {
+            Debug.Log("Ability already on " + gameObject.name);
+            return;
+        }
+        abilitys.Add(ability);
+        ability.OnAbilityCooldown.AddListener(AbilityTriggered);
     }
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)
@@ -66,6 +88,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         {
             if (ability.TriggerKey == key)
             {
+                print(key);
                 if (ability.TriggerKeyDown(target))
                 {
                     SetCurrentSkill(ability);

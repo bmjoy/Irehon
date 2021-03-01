@@ -1,5 +1,6 @@
 ﻿public interface IAbility
 {
+    int Id { get; }
     AbilityCooldownEvent OnAbilityCooldown { get; set; }
     UnityEngine.Sprite AbilityIcon { get; }
     UnityEngine.KeyCode TriggerKey { get; }
@@ -9,10 +10,6 @@
     void TriggerKeyUp(UnityEngine.Vector3 target);
 
     void AnimationEvent();
-
-    void AbilityInit(AbilitySystem abilitySystem);
-
-    void AddAbilityCopy(UnityEngine.GameObject dest);
 
     void Interrupt();
 }

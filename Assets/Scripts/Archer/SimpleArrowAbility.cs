@@ -20,14 +20,14 @@ public class SimpleArrowAbility : AbilityBase
     private bool isGotTarget;
 
 
-    protected new void Start()
+    protected override void Start()
     {
         base.Start();
-        player = GetComponent<Player>();
-        movement = GetComponent<ArcherMovement>();
-        animator = GetComponent<Animator>();
+        player =  abilitySystem.PlayerComponent;
+        movement = abilitySystem.GetComponent<ArcherMovement>();
+        animator = abilitySystem.AnimatorComponent;
         rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        quiver = new Quiver(player, 15, arrow);
+        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 15, arrow);
     }
 
     protected override void Ability(Vector3 target)

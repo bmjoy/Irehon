@@ -13,7 +13,6 @@ public class SniperAbility : AbilityBase
 
     [SerializeField]
     private GameObject arrow;
-    [SerializeField]
     private AudioSource abilityAudioSource;
     [SerializeField]
     private AudioClip tenseSound;
@@ -48,11 +47,12 @@ public class SniperAbility : AbilityBase
     {
         base.Start();
         bowBoneStartPosition = bowStringBone.localPosition;
-        player = GetComponent<Player>();
+        player = abilitySystem.PlayerComponent;
+        abilityAudioSource = abilitySystem.AudioSource;
         movement = GetComponent<ArcherMovement>();
-        animator = GetComponent<Animator>();
+        animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
-        quiver = new Quiver(player, 5, arrow);
+        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, arrow);
     }
 
     private void LateUpdate()

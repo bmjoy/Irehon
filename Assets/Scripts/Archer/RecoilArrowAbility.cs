@@ -16,7 +16,6 @@ public class RecoilArrowAbility : AbilityBase
     private Transform rightHandTransform;
     [SerializeField]
     private AudioClip onTriggerClip;
-    [SerializeField]
     private AudioSource audioSource;
 
     [SerializeField]
@@ -36,10 +35,11 @@ public class RecoilArrowAbility : AbilityBase
     {
         base.Start();
         releaseParticleOldTransform = releaseParticle.transform.parent;
-        player = GetComponent<Player>();
-        controller = GetComponent<PlayerController>();
-        animator = GetComponent<Animator>();
-        quiver = new Quiver(player, 3, arrowPrefab);
+        player = abilitySystem.PlayerComponent;
+        controller = abilitySystem.PlayerControll;
+        animator = abilitySystem.AnimatorComponent;
+        audioSource = abilitySystem.AudioSource;
+        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 3, arrowPrefab);
     }
 
     protected override void Ability(Vector3 target)
