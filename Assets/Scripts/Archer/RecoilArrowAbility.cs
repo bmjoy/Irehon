@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RecoilArrowAbility : AbilityBase
 {
+    public override int Id => id;
+    private int id = 2;
     [SerializeField]
     private ParticleSystem prepareParticle;
     [SerializeField]

@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DischargeAbility : AbilityBase
-
 {
-    [SerializeField]
+    public override int Id => id;
+    private int id = 1;
     private ParticleSystem chargeParticles;
+    [SerializeField]
+    private GameObject aoeAbilityPrefab;
     private float realCooldown;
     private AoeTargetMark targetMark;
-    [SerializeField]
     private DischargeAoeArrows aoeAbility;
     private Animator animator;
     private bool targeting;
@@ -28,9 +29,23 @@ public class DischargeAbility : AbilityBase
         cooldownTime = 0;
         controller = abilitySystem.CharController;
         animator = abilitySystem.AnimatorComponent;
-        targetMark = GetComponent<AoeTargetMark>();
+        targetMark = abilitySystem.AOETargetMark;
         audioSource = abilitySystem.AudioSource;
         head = animator.GetBoneTransform(HumanBodyBones.Head);
+        chargeParticles = Instantiate(aoeAbilityPrefab, abilitySystem.AbilityPoolObject.transform)
+            .GetComponent<ParticleSystem>();
+        aoeAbility = chargeParticles.GetComponent<DischargeAoeArrows>();
+
+        cooldownTime = 5f;
+        triggerOnKey = KeyCode.F;
+    }
+
+    public override void AddAbilityCopy(GameObject holder)
+    {
+        base.AddAbilityCopy(holder);
+        DischargeAbility abilityComponent = addingComponent as DischargeAbility;
+        abilityComponent.releaseSound = releaseSound;
+        abilityComponent.aoeAbilityPrefab = aoeAbilityPrefab;
     }
 
     protected override void Ability(Vector3 target)

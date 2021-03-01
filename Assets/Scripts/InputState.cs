@@ -17,18 +17,13 @@ public partial class PlayerController
 
         public static bool operator !=(InputState c1, InputState c2)
         {
-            if (c1.ForwardKeyDown != c2.ForwardKeyDown || c1.BackKeyDown != c2.BackKeyDown
-                || c1.RightKeyDown != c2.RightKeyDown || c1.LeftKeyDown != c2.LeftKeyDown || 
-                c1.JumpKeyDown != c2.JumpKeyDown || c1.SprintKeyDown != c2.SprintKeyDown)
-                return true;
-            return false;
+            return !(c1.Equals(c2));
+                
         }
 
         public static bool operator ==(InputState c1, InputState c2)
         {
-            if (c1 != c2)
-                return false;
-            return true;
+            return !(c1.Equals(c2));
         }
 
         public Vector2 GetMoveVector()

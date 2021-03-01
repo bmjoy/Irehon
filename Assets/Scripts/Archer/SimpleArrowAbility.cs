@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class SimpleArrowAbility : AbilityBase
 {
+    public override int Id => id;
+    private int id = 3;
     [SerializeField]
     private GameObject arrow;
     private Animator animator;

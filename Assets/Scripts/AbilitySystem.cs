@@ -10,14 +10,13 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public AudioSource AudioSource => audioSource;
     public Animator AnimatorComponent => animator;
     public PlayerController CharController => playerController;
+    public AoeTargetMark AOETargetMark => aoeTargetMark;
 
+    private AoeTargetMark aoeTargetMark;
     private Animator animator;
     private PlayerController playerController;
     private AudioSource audioSource;
     private GameObject abilityPoolObject;
-
-    [SerializeField]
-    private List<AbilityBase> abilitysPool = new List<AbilityBase>();
 
     private List<IAbility> abilitys = new List<IAbility>();
 
@@ -40,9 +39,9 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         audioSource = abilityPoolObject.GetComponent<AudioSource>();
+        aoeTargetMark = GetComponent<AoeTargetMark>();
         abilityPoolObject.transform.parent = transform;
         canTriggerAbility = true;
-        AddNewAbility(typeof(DischargeAbility));
     }
 
     public void AddNewAbility(params Type[] ability)
@@ -50,7 +49,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         IAbility abilityComponentCheck = ability[0] as IAbility;
         if (!abilitys.Contains(abilityComponentCheck))
         {
-            IAbility abilityComponent = gameObject.AddComponent(ability[0]) as IAbility;
+            IAbility abilityComponent = gameObject.AddComponent<DischargeAbility>() as IAbility;
             abilitys.Add(abilityComponent);
             abilityComponent.AbilityInit(this);
             abilityComponent.OnAbilityCooldown.AddListener(AbilityTriggered);

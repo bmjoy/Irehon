@@ -12,5 +12,7 @@
 
     void AbilityInit(AbilitySystem abilitySystem);
 
+    void AddAbilityCopy(UnityEngine.GameObject dest);
+
     void Interrupt();
 }

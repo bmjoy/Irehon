@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using Mirror;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Linq;
+using System.Reflection;
 
 public class AbilityCooldownEvent : UnityEvent<float> {}
+
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+public class CopyFieldAttribute : Attribute { }
 
 public abstract class AbilityBase : NetworkBehaviour, IAbility
 {
@@ -20,12 +26,12 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     [SerializeField]
     private float castTime;
     [SerializeField]
-    private KeyCode triggerOnKey;
+    protected KeyCode triggerOnKey;
     [SerializeField]
     private Sprite icon;
 
     private AbilitySystem abilitySystem;
-
+    public abstract int Id { get; }
     protected delegate void CurrentAnimationEvent();
     protected CurrentAnimationEvent currentAnimationEvent;
 
@@ -44,14 +50,23 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
 
     protected abstract void Ability(Vector3 target);
 
+
+    protected AbilityBase addingComponent;
+    public virtual void AddAbilityCopy(GameObject holder)
+    {
+        addingComponent = holder.AddComponent(GetType()) as AbilityBase;
+        addingComponent.icon = icon;
+        addingComponent.castTime = castTime;
+        addingComponent.cooldownTime = cooldownTime;
+        addingComponent.triggerOnKey = triggerOnKey;
+    }
+
+
     protected abstract void InterruptAbility();
     
     protected void Start()
     {
-        abilitySystem = GetComponent<AbilitySystem>();
-        canCast = true;
-        if (castTime > cooldownTime)
-            cooldownTime = castTime;
+        AddAbilityCopy(gameObject);
     }
 
     public virtual void AbilityInit(AbilitySystem abilitySystem)

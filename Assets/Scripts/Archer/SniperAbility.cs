@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SniperAbility : AbilityBase
 {
+    public override int Id => id;
+    private int id = 4;
     private float MAX_HOLDING_TIME = 1.7f;
     private float MIN_HOLDING_TIME = 0.6f;
     private float BONUS_DAMAGE = 20;
