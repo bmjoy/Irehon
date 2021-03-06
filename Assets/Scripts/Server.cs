@@ -52,8 +52,8 @@ public class Server : NetworkManager
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         Character selectedCharacter = data.characters[selection.selectedSlot];
 
-        //тут нужно будет искать по классам
         GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "ArcherPlayer"));
+
 
         playerObject.GetComponent<Entity>().SetName(selectedCharacter.NickName);
 

@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class RecoilArrowAbility : AbilityBase
 {
-    public override int Id => id;
-    private int id = 2;
+    public override AbilityUnlockRequirment UnlockRequirment { get; } = 
+        new AbilityUnlockRequirment(SkillType.Bow, 25, new int[] { 2, 4 });
+    public override int Id { get; } = 2;
+    public override string Describe => "An arrow that deals high damage due to its weight, but also creates recoil because of this";
+    public override string Title => "Heavy arrow";
+
     [SerializeField]
     private ParticleSystem prepareParticle;
     [SerializeField]
@@ -16,13 +20,12 @@ public class RecoilArrowAbility : AbilityBase
     private Transform rightHandTransform;
     [SerializeField]
     private AudioClip onTriggerClip;
-    private AudioSource audioSource;
-
     [SerializeField]
     private float recoilDuration;
     [SerializeField]
     private float recoilPower;
 
+    private AudioSource audioSource;
     private Quiver quiver;
     private PlayerController controller;
     private Animator animator;

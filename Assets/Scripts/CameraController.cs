@@ -3,15 +3,19 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-[System.Serializable]
-public class ChangingTarget : UnityEvent<Vector3>
+public class OnChangingTarget : UnityEvent<Vector3>
+{
+}
+
+public class OnChangeCursorHidingState : UnityEvent<bool>
 {
 }
 
 public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
-    public ChangingTarget OnChangingTarget;
+    public OnChangingTarget OnChangingTarget;
+    public OnChangeCursorHidingState OnChangeCursorState;
     public Camera cameraComponent { get; private set; } 
     private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
     private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
@@ -50,7 +54,8 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        OnChangingTarget = new ChangingTarget();
+        OnChangingTarget = new OnChangingTarget();
+        OnChangeCursorState = new OnChangeCursorHidingState();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
@@ -156,16 +161,18 @@ public class CameraController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            EnableCursor();
-        else if (Input.GetKeyDown(KeyCode.Mouse1)) 
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            DisableCursor();
-        }
+            if (cursorAiming)
+                EnableCursor();
+            else
+                DisableCursor();
+        } 
     }
 
     private void EnableCursor()
     {
+        OnChangeCursorState.Invoke(false);
         cursorAiming = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -173,6 +180,7 @@ public class CameraController : MonoBehaviour
 
     private void DisableCursor()
     {
+        OnChangeCursorState.Invoke(true);
         cursorAiming = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

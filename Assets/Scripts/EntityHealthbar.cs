@@ -1,17 +1,20 @@
 ﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class EntityHealthbar : MonoBehaviour
 {
     [SerializeField]
-    private Slider healthBarFiller;
+    private Canvas canvas;
     [SerializeField]
-    private Slider healthBarPostFiller;
+    private Image healthBarFiller;
     [SerializeField]
-    private Text nickname;
+    private Image healthBarPostFiller;
+    [SerializeField]
+    private TextMeshPro nickname;
     [SerializeField]
     private float reducingPostBarAmmount = 3f;
     [SerializeField]
@@ -26,33 +29,41 @@ public class EntityHealthbar : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        cameraTransform = CameraController.instance.transform;
+        StartCoroutine(GetInstanceKostil());
         nickname.text = entity.NickName;
         entity.OnHealthChanged.AddListener(ChangeHealthOnBar);
+    }
+
+    private IEnumerator GetInstanceKostil()
+    {
+        while (CameraController.instance == null)
+            yield return null;
+        cameraTransform = CameraController.instance.transform;
+        canvas.worldCamera = CameraController.instance.cameraComponent;
     }
 
     private void ChangeHealthOnBar(int maxHealth, int health)
     {
         float fill = 1.0f * health / maxHealth;
 
-        healthBarFiller.value = fill;
+        healthBarFiller.fillAmount = fill;
 
         float passedTime = 0f;
 
         StopAllCoroutines();
 
-        if (healthBarPostFiller.value > healthBarFiller.value)
+        if (healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
             StartCoroutine(ChangeFillAmount());
         else
-            healthBarPostFiller.value = healthBarFiller.value;
+            healthBarPostFiller.fillAmount = healthBarFiller.fillAmount;
 
         IEnumerator ChangeFillAmount()
         {
-            while (healthBarPostFiller.value > healthBarFiller.value)
+            while (healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
             {
                 passedTime += Time.deltaTime;
                 if (passedTime > updateDelay)
-                    healthBarPostFiller.value -= reducingPostBarAmmount * Time.deltaTime;
+                    healthBarPostFiller.fillAmount -= reducingPostBarAmmount * Time.deltaTime;
                 yield return null;
             }
         }
@@ -65,6 +76,8 @@ public class EntityHealthbar : MonoBehaviour
 
     private void RepositionBar()
     {
+        if (cameraTransform == null)
+            return;
         transform.LookAt(cameraTransform);
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
     }

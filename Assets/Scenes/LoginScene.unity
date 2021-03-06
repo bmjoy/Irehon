@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22450733, g: 0.19549242, b: 0.25507525, a: 1}
+  m_IndirectSpecularColor: {r: 0.32688007, g: 0.2814003, b: 0.41651297, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -162,7 +162,7 @@ MonoBehaviour:
   offlineScene: 
   onlineScene: 
   transport: {fileID: 104105200}
-  networkAddress: server.fantasyz.me
+  networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60

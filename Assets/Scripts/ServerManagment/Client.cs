@@ -26,6 +26,9 @@ public class Client : NetworkManager
 
     public List<Character> GetCharacters() => charactersList;
 
+    public override void OnServerAddPlayer(NetworkConnection conn)
+    {
+    }
 
     public override void OnClientConnect(NetworkConnection conn)
     {
@@ -35,6 +38,7 @@ public class Client : NetworkManager
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
     {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+        ClientScene.PrepareToSpawnSceneObjects();
         print("change to " + newSceneName);
     }
 }

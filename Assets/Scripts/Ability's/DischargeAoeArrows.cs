@@ -26,12 +26,10 @@ public class DischargeAoeArrows : AoeAbilityAreaBase
 
     protected override void OnAddToArea(Entity entity)
     {
-        print("entered " + entity.name);
     }
 
     protected override void OnRemoveFromArea(Entity entity)
     {
-        print("left " + entity.name);
     }
 
 

@@ -10,16 +10,22 @@ using System.Reflection;
 
 public class AbilityCooldownEvent : UnityEvent<float> {}
 
-[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-public class CopyFieldAttribute : Attribute { }
 
 public abstract class AbilityBase : NetworkBehaviour, IAbility
 {
+    public abstract int Id { get; }
+    public abstract AbilityUnlockRequirment UnlockRequirment { get; }
+    public abstract string Title { get; }
+    public abstract string Describe { get; }
     public KeyCode TriggerKey { get => triggerOnKey; }
     public Sprite AbilityIcon { get => icon; }
     public AbilityCooldownEvent OnAbilityCooldown { get => onAbilityCooldown ; set => onAbilityCooldown = value; }
 
-    private AbilityCooldownEvent onAbilityCooldown = new AbilityCooldownEvent();
+    protected Coroutine cooldownCoroutine;
+    protected AbilitySystem abilitySystem;
+    protected CurrentAnimationEvent currentAnimationEvent;
+    protected AbilityBase addingComponent;
+    protected delegate void CurrentAnimationEvent();
 
     [SerializeField]
     protected float cooldownTime;
@@ -28,15 +34,14 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     [SerializeField]
     private Sprite icon;
 
-    protected AbilitySystem abilitySystem;
-    public abstract int Id { get; }
-    protected delegate void CurrentAnimationEvent();
-    protected CurrentAnimationEvent currentAnimationEvent;
-
+    private AbilityCooldownEvent onAbilityCooldown = new AbilityCooldownEvent();
     private bool canCast;
     private bool isCasting;
-
-    protected Coroutine cooldownCoroutine;
+    protected virtual void Start()
+    {
+        canCast = true;
+        abilitySystem = GetComponent<AbilitySystem>();
+    }
 
     protected void AbilityEndEvent()
     {
@@ -45,17 +50,8 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     }
 
     protected abstract void StopHoldingAbility(Vector3 target);
-
-
-
-    protected AbilityBase addingComponent;
+    protected abstract void Ability(Vector3 target);
     protected abstract void InterruptAbility();
-    
-    protected virtual void Start()
-    {
-        canCast = true;
-        abilitySystem = GetComponent<AbilitySystem>();
-    }
 
     public void Interrupt()
     {
@@ -117,20 +113,11 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         }
         return false;
     }
-    protected abstract void Ability(Vector3 target);
 
     [ClientRpc]
     protected void CastAbilityOnOthers(Vector3 target)
     {
         Ability(target);
-    }
-
-    [TargetRpc]
-    protected void ConfirmTrigger(NetworkConnection con, Vector3 target)
-    {
-        abilitySystem.BlockTrigger();
-        isCasting = true;
-        StartCooldown(cooldownTime);
     }
 
     [Server]

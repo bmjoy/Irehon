@@ -22,6 +22,7 @@ public partial class PlayerController : NetworkBehaviour
     protected int currentFrame;
     protected int gettedInputs;
     protected bool isControllAllow;
+    protected bool isCursorInGame;
     protected Player player;
 
     protected virtual void Start()
@@ -30,6 +31,7 @@ public partial class PlayerController : NetworkBehaviour
         {
             previousInput = GetInput();
             CameraController.instance.SetTarget(shoulder, transform);
+            CameraController.instance.OnChangeCursorState.AddListener(OnSelectingGame);
         }
         abilitySystem = GetComponent<AbilitySystem>();
         audioSource = GetComponent<AudioSource>();
@@ -42,10 +44,15 @@ public partial class PlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer)
             return;
-        if (!isControllAllow) //нужно защитить серверные вызовы
+        if (!isControllAllow || !isCursorInGame) //нужно защитить серверные вызовы
             return;
         CheckAbilityTriggerKey(KeyCode.Mouse0);
         CheckAbilityTriggerKey(KeyCode.Mouse1);
+    }
+
+    protected virtual void OnSelectingGame(bool state)
+    {
+        isCursorInGame = state;
     }
 
     protected void FixedUpdate()

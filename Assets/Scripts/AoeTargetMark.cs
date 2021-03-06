@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AoeTargetMark : MonoBehaviour
+public class AoeTargetMark : NetworkBehaviour
 {
     private Vector3 targetOffset = new Vector3(0, 0.2f, 0);
     private ParticleSystem particle;
@@ -15,7 +16,8 @@ public class AoeTargetMark : MonoBehaviour
     private void Start()
     {
         enabled = false;
-        CameraController.instance.OnChangingTarget.AddListener(MoveTargetCircle);
+        if (isLocalPlayer)
+            CameraController.instance.OnChangingTarget.AddListener(MoveTargetCircle);
         parent = targetTransform.parent;
         particle = targetTransform.GetComponent<ParticleSystem>();
     }

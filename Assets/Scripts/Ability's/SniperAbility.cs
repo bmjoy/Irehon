@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class SniperAbility : AbilityBase
 {
-    public override int Id => id;
-    private int id = 4;
-    private float MAX_HOLDING_TIME = 1.7f;
-    private float MIN_HOLDING_TIME = 0.6f;
-    private float BONUS_DAMAGE = 20;
-    private float BASE_DAMAGE = 10;
+    public override AbilityUnlockRequirment UnlockRequirment { get; } = 
+        new AbilityUnlockRequirment(SkillType.Bow, 15, new int[] { 3 });
+    public override int Id { get; } = 4;
+    public override string Describe => "Aimed bow shot that deals increased damage based on bow tension";
+    public override string Title => "Aimed shot";
+
+    private const float MAX_HOLDING_TIME = 1.7f;
+    private const float MIN_HOLDING_TIME = 0.6f;
 
     [SerializeField]
     private GameObject arrow;
-    private AudioSource abilityAudioSource;
     [SerializeField]
     private AudioClip tenseSound;
     [SerializeField]
@@ -28,10 +29,10 @@ public class SniperAbility : AbilityBase
     private Vector3 aimingChestOffset;
     [SerializeField]
     private ParticleSystem aimingParticles;
+
     private Vector3 bowBoneStartPosition;
-
+    private AudioSource abilityAudioSource;
     private Transform chestBone;
-
     private Animator animator;
     private Quiver quiver;
     private Player player;

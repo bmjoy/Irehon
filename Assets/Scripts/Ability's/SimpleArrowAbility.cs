@@ -3,10 +3,15 @@ using UnityEngine;
 
 public class SimpleArrowAbility : AbilityBase
 {
-    public override int Id => id;
-    private int id = 3;
+    public override AbilityUnlockRequirment UnlockRequirment { get; } = new AbilityUnlockRequirment(SkillType.Bow, 0, new int[] { 0 });
+    public override int Id { get; } = 3;
+
+    public override string Describe => "Simple bow shot";
+    public override string Title => "Quick shot";
+
     [SerializeField]
     private GameObject arrow;
+
     private Animator animator;
     private Transform rightHand;
     private Player player;

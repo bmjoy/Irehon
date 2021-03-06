@@ -11,6 +11,8 @@ public class UIController : MonoBehaviour
     private float reducingAmount = 0.7f;
     private float minimumTriangleSize = 80f;
     [SerializeField]
+    private Canvas AbilityTree;
+    [SerializeField]
     private Slider healthBar;
     [SerializeField]
     private Slider postHealthBar;
@@ -31,10 +33,23 @@ public class UIController : MonoBehaviour
         instance = this;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            EnableAbilityTreeWindowTrigger();
+        }   
+    }
+
     public void EnableDefaultCrosshair()
     {
         defaultAimingRectangle.gameObject.SetActive(true);
         triangleAimingRectangle.gameObject.SetActive(false);
+    }
+
+    public void EnableAbilityTreeWindowTrigger()
+    {
+        AbilityTree.enabled = !AbilityTree.enabled;
     }
 
     public void EnableTriangleCrosshair()

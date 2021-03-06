@@ -1,8 +1,19 @@
 ﻿using Mirror;
+using System.Collections.Generic;
+using System;
+using UnityEngine;
+
+[Serializable]
+public struct PlayerInfo : NetworkMessage
+{
+    public Skill[] skills;
+    public int[] unlockedSkills;
+}
 
 public class Player : Entity
 {
     PlayerController controller;
+    
 
     protected override void Awake()
     {
@@ -12,6 +23,14 @@ public class Player : Entity
 
     protected override void Start()
     {
+        PlayerInfo testInfo = new PlayerInfo()
+        {
+            skills = new Skill[] { new Skill(SkillType.Bow, 5, 12), new Skill(SkillType.Bow, 8, 454) },
+
+            unlockedSkills = new int[] { 1, 4152 }
+        };
+        string test = JsonUtility.ToJson(testInfo);
+        PlayerInfo newInfo = JsonUtility.FromJson<PlayerInfo>(test);
         base.Start();
         if (isLocalPlayer)
         {

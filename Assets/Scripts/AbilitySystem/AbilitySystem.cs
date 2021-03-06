@@ -23,6 +23,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     private GameObject abilityPoolObject;
 
     private List<AbilityBase> abilitysPool;
+    private List<int> unlockedSkills;
     private List<IAbility> abilitys = new List<IAbility>();
 
     private IAbility currentlyCastingSkill;
@@ -54,31 +55,66 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         canTriggerAbility = true;
     }
 
-    private void Start()
+    public void TryUnlockAbility(int id)
     {
-        AddNewAbility(1, 2);
-        AddNewAbility(3, 1);
-        AddNewAbility(4, 3);
-        AddNewAbility(2, 0);
+
     }
 
-    public void AddNewAbility(int id, int slot)
+    private void Start()
     {
-        IAbility ability = abilitysPool.Find(p => p.Id == id);
+        if (!isLocalPlayer && !isServer)
+            return;
+        AbilityHotbarController.instance.SetAbilitySystem(this);
+        unlockedSkills = new List<int> { 1, 3, 4 };
+        AbilityTreeController.instance.SetAbilitys(new List<IAbility>(abilitysPool));
+        AbilityTreeController.instance.SetUnlockedSkillsInfo(unlockedSkills);
+    }
+
+    public void TrySetAbilityToSlot(int id, int slot)
+    {
+        if (unlockedSkills.Contains(id))
+            SetAbilityToSlot(id, slot);
+    }
+
+    public void SetAbilityToSlot(int abilityId, int slot)
+    {
+        IAbility ability = abilitysPool.Find(p => p.Id == abilityId);
         if (ability == null)
         {
-            Debug.Log("Ability with " + id + " not found");
+            Debug.Log("Ability with " + abilityId + " not found");
             return;
         }
-        AbilityUIController.instance.SetAbilityOnSlot(ability, slot);
-        if (abilitys.Find(p => p.Id == id) != null)
+
+
+        //Ability on this slot already have ability
+        if (AbilityHotbarController.instance.GetAbilityFromSlot(slot) != null)
         {
-            Debug.Log("Ability already on " + gameObject.name);
-            return;
+            IAbility oldAbility = AbilityHotbarController.instance.GetAbilityFromSlot(slot);
+            if (abilitys.Contains(oldAbility))
+            {
+                abilitys.Remove(oldAbility);
+                oldAbility.OnAbilityCooldown.RemoveListener(AbilityTriggered);
+            }
+            AbilityHotbarController.instance.UnSetAbilityFromSlot(slot);
         }
-        abilitys.Add(ability);
-        ability.OnAbilityCooldown.AddListener(AbilityTriggered);
+
+        //Ability already on hotbar
+        if (abilitys.Find(p => p.Id == abilityId) != null)
+        {
+            if (isLocalPlayer)
+                AbilityHotbarController.instance.UnSetAbilityFromSlot(ability);
+            if (isLocalPlayer)
+                AbilityHotbarController.instance.SetAbilityOnSlot(ability, slot);
+        }
+        else
+        {
+            AbilityHotbarController.instance.SetAbilityOnSlot(ability, slot);
+            abilitys.Add(ability);
+            ability.OnAbilityCooldown.AddListener(AbilityTriggered);
+        }
     }
+
+    public IAbility GetAbilityById(int id) => abilitysPool.Find(p => p.Id == id);
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)
     {
@@ -107,7 +143,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     [TargetRpc]
     public void InvokeGlobalCooldown(NetworkConnection con, float time)
     {
-        AbilityUIController.instance.InvokeGlobalCooldown(time);
+        AbilityHotbarController.instance.InvokeGlobalCooldown(time);
     }
 
     public void AbilityKeyUp(KeyCode key, Vector3 target)

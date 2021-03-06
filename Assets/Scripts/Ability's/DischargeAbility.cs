@@ -5,21 +5,23 @@ using UnityEngine;
 
 public class DischargeAbility : AbilityBase
 {
-    public override int Id => id;
-    private int id = 1;
+    public override AbilityUnlockRequirment UnlockRequirment { get; } = new AbilityUnlockRequirment(SkillType.Bow, 50, new int[] { 2, 4 });
+    public override int Id { get; } = 1;
+    public override string Describe => "Launches multiple magical arrows into the sky, dealing explosive area damage";
+    public override string Title => "Rafale";
     [SerializeField]
     private ParticleSystem chargeParticles;
-    private float realCooldown;
-    private AoeTargetMark targetMark;
     [SerializeField]
     private DischargeAoeArrows aoeAbility;
+    [SerializeField]
+    private AudioClip releaseSound;
+    private float realCooldown;
+    private AoeTargetMark targetMark;
     private Animator animator;
     private bool targeting;
     private PlayerController controller;
     private Vector3 targetMarkPos;
     private AudioSource audioSource;
-    [SerializeField]
-    private AudioClip releaseSound;
     private Transform head;
 
     protected override void Start()
@@ -27,7 +29,7 @@ public class DischargeAbility : AbilityBase
         base.Start();
         realCooldown = cooldownTime;
         cooldownTime = 0;
-        controller = abilitySystem.PlayerControll;
+        controller = abilitySystem.PlayerControll; 
         animator = abilitySystem.AnimatorComponent;
         targetMark = abilitySystem.AOETargetMark;
         audioSource = abilitySystem.AudioSource;
