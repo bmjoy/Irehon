@@ -22,6 +22,7 @@ public class Server : NetworkManager
         characterSpawnPoint = new Vector3(-2, 2, -73);
     }
 
+    //Insert data in tables and send it to player
     public void CharacterCreate(NetworkConnection con, CharacterCreate character)
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
@@ -31,9 +32,8 @@ public class Server : NetworkManager
 
         Character newCharacter = new Character
         {
-            Class = character.Class,
             NickName = character.NickName,
-            position = characterSpawnPoint
+            position = characterSpawnPoint,
         };
 
         MySqlServerConnection.instance.CreateNewCharacter(p_id, newCharacter);
@@ -41,6 +41,7 @@ public class Server : NetworkManager
         SendCharacterListToPlayer(con);
     }
 
+    //Spawn character on player selected slot 
     public void OnSelectedPlayerSlot(NetworkConnection con, CharacterSelection selection)
     {
         SceneMessage message = new SceneMessage
@@ -52,22 +53,34 @@ public class Server : NetworkManager
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         Character selectedCharacter = data.characters[selection.selectedSlot];
 
+        int c_id = MySqlServerConnection.instance.GetCharacterId(selectedCharacter.NickName);
+
+        data.selectedPlayer = c_id;
+
         GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "ArcherPlayer"));
-
-
-        playerObject.GetComponent<Entity>().SetName(selectedCharacter.NickName);
 
         playerObject.transform.position = selectedCharacter.position;
 
+        Player playerComponent = playerObject.GetComponent<Player>();
+
+        playerComponent.SetName(selectedCharacter.NickName);
+
+
+
         data.playerPrefab = playerObject.transform;
 
-        data.selectedPlayer = MySqlServerConnection.instance.GetCharacterId(selectedCharacter.NickName);
-
-        con.authenticationData = data;
-
         NetworkServer.AddPlayerForConnection(con, playerObject);
+
+        //Skill[] playerSkillData = MySqlServerConnection.instance.GetSkillsData(c_id);
+        //playerComponent.SetSkillsData(playerSkillData);
+
+        CharacterData characterData = MySqlServerConnection.instance.GetCharacterData(c_id);
+        playerComponent.SetCharacterData(characterData);
+        
+        con.authenticationData = data;
     }
 
+    //Send characters and make him to choose one of them
     public override void OnServerConnect(NetworkConnection conn)
     {
         print("Connected client from " + conn.address);
@@ -80,6 +93,7 @@ public class Server : NetworkManager
         SendCharacterListToPlayer(conn);
     }
 
+    //Character list to choose on of them
     private void SendCharacterListToPlayer(NetworkConnection con)
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
@@ -103,12 +117,19 @@ public class Server : NetworkManager
         print("Started server");
     }
 
+    //Update character data on DB on disconneect
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
         //print(data.selectedPlayer);
         if (data.selectedPlayer >= 0)
-            MySqlServerConnection.instance.UpdatePositionData(data.selectedPlayer, data.playerPrefab.position);
+        {
+            int c_id = data.selectedPlayer;
+            Player player = data.playerPrefab.GetComponent<Player>();
+            MySqlServerConnection.instance.UpdatePositionData(c_id, player.transform.position);
+            MySqlServerConnection.instance.UpdateSkillsData(c_id, player.GetSkills());
+            MySqlServerConnection.instance.UpdateCharacterData(c_id, player.GetCharacterData());
+        }
         base.OnClientDisconnect(conn);
         print("Disconnected client " + conn.address);
     }

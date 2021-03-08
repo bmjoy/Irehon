@@ -6,9 +6,7 @@ using UnityEngine.UI;
 
 public struct Character : NetworkMessage
 {
-    public enum CharacterClass { Archer };
     public int slot;
-    public CharacterClass Class;
     public string NickName;
     public Vector3 position;
 }
@@ -16,7 +14,6 @@ public struct Character : NetworkMessage
 public struct CharacterCreate : NetworkMessage
 {
     public string NickName;
-    public Character.CharacterClass Class;
 }
 
 public struct CharacterSelection : NetworkMessage
@@ -57,8 +54,8 @@ public class CharacterSelector : MonoBehaviour
         else
             createCharacterTransform.gameObject.SetActive(false);
         characterSelections[slotId].gameObject.SetActive(true);
-        characterSelections[slotId].GetComponentInChildren<Text>().text = 
-            character.NickName + "\n" + character.Class.ToString();
+        characterSelections[slotId].GetComponentInChildren<Text>().text =
+            character.NickName;
     }
 
     public void SelectCharacter(int slotId) => selectedSlotId = slotId;
@@ -74,7 +71,6 @@ public class CharacterSelector : MonoBehaviour
     {
         CharacterCreate createQuerry = new CharacterCreate
         {
-            Class = Character.CharacterClass.Archer,
             NickName = nicknameField.text
         };
         NetworkClient.Send(createQuerry);

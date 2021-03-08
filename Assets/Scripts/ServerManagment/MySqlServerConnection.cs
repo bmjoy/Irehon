@@ -5,6 +5,35 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 
+public static class JsonHelper
+{
+    public static T[] FromJson<T>(string json)
+    {
+        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+        return wrapper.Items;
+    }
+
+    public static string ToJson<T>(T[] array)
+    {
+        Wrapper<T> wrapper = new Wrapper<T>();
+        wrapper.Items = array;
+        return JsonUtility.ToJson(wrapper);
+    }
+
+    public static string ToJson<T>(T[] array, bool prettyPrint)
+    {
+        Wrapper<T> wrapper = new Wrapper<T>();
+        wrapper.Items = array;
+        return JsonUtility.ToJson(wrapper, prettyPrint);
+    }
+
+    [Serializable]
+    private class Wrapper<T>
+    {
+        public T[] Items;
+    }
+}
+
 public class MySqlServerConnection : MonoBehaviour
 {
     public static MySqlServerConnection instance;
@@ -58,10 +87,11 @@ public class MySqlServerConnection : MonoBehaviour
     {
         try
         {
-            string command = $"INSERT INTO `characters` (`c_id`, `nickname`, `class`, `p_id`) " +
-                $"VALUES(NULL, '{character.NickName}', '{character.Class}', '{p_id}')";
-            RecieveSingleData(command);
+            string command = $"INSERT INTO `characters` (`c_id`, `nickname`, `p_id`) " +
+                $"VALUES(NULL, '{character.NickName}', '{p_id}')";
+            SendCommand(command);
             int c_id = GetCharacterId(character.NickName);
+            CreateCharacterData(c_id);
             CreatePositionData(c_id, character.position);
             print("Created " + character.NickName);
             return true;
@@ -73,13 +103,19 @@ public class MySqlServerConnection : MonoBehaviour
         }
     }
 
+    public void CreateCharacterData(int c_id)
+    {
+        string command = $"INSERT INTO c_data (c_id) VALUES ({c_id});";
+        SendCommand(command);
+    }
+
     public List<Character> GetCharacters(int p_id)
     {
-        int columnsInTable = 3;
+        int columnsInTable = 2;
 
         List<Character> characters = new List<Character>();
 
-        string command = "SELECT nickname, class, c_id FROM characters WHERE p_id = " + p_id + " ORDER BY c_id;";
+        string command = "SELECT nickname, c_id FROM characters WHERE p_id = " + p_id + " ORDER BY c_id;";
 
         List<string> characterInfo = RecieveMultipleData(command, columnsInTable);
 
@@ -91,13 +127,43 @@ public class MySqlServerConnection : MonoBehaviour
             new Character
             {
                 NickName = characterInfo[0 + i * columnsInTable],
-                Class = (Character.CharacterClass)Enum.Parse(typeof(Character.CharacterClass), characterInfo[1 + i * columnsInTable], true),
                 slot = i,
                 position = GetVector3("SELECT p_x, p_y, p_z FROM c_positions " +
-                    "WHERE c_id = " + characterInfo[2 + i * columnsInTable])
+                    "WHERE c_id = " + characterInfo[1 + i * columnsInTable])
             });
         }
         return characters;
+    }
+
+    public Skill[] GetSkillsData(int c_id)
+    {
+        string command = $"SELECT c_skills FROM c_data WHERE c_id = " + c_id + ";";
+        string response = RecieveSingleData(command);
+        print(response);
+        Skill[] skillData = JsonUtility.FromJson<Skill[]>(response);
+        print(JsonUtility.ToJson(skillData));
+        return skillData;
+    }
+
+    public CharacterData GetCharacterData(int c_id)
+    {
+        CharacterData data = new CharacterData();
+        data.freeSkillPoints = Convert.ToInt32(RecieveSingleData($"SELECT c_freesp FROM c_data WHERE c_id = {c_id};"));
+        data.lvl = Convert.ToInt32(RecieveSingleData($"SELECT c_lvl FROM c_data WHERE c_id = {c_id};"));
+        return data;
+    }
+
+    public void UpdateCharacterData(int c_id, CharacterData data)
+    {
+        SendCommand($"UPDATE c_data SET c_freesp = '{data.freeSkillPoints}' WHERE c_id = {c_id};");
+        SendCommand($"UPDATE c_data SET c_lvl = '{data.lvl}' WHERE c_id = {c_id};");
+    }
+
+    public void UpdateSkillsData(int c_id, Skill[] data)
+    {
+        string json = JsonHelper.ToJson(data);
+        string command = $"UPDATE c_data SET c_skills = '{json}' WHERE c_id = {c_id};";
+        SendCommand(command);
     }
 
     public void CreatePositionData(int c_id, Vector3 pos)

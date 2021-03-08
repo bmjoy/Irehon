@@ -96755,6 +96755,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51231f3d57d76bf488597251b24ca3f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   targetTransform: {fileID: 437537391177161106}
 --- !u!114 &1057096722151939023
 MonoBehaviour:
@@ -118260,7 +118262,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1398625787422678, guid: bb4b0fd3b8a81044aabaa29a49ae6ebb, type: 3}
       propertyPath: m_Name
-      value: MagicAccumulation
+      value: RecoilPreCastParticle
       objectReference: {fileID: 0}
     - target: {fileID: 1398625787422678, guid: bb4b0fd3b8a81044aabaa29a49ae6ebb, type: 3}
       propertyPath: m_Layer

@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-[Serializable]
-public struct PlayerInfo : NetworkMessage
+public struct CharacterData
 {
-    public Skill[] skills;
-    public int[] unlockedSkills;
+    public int lvl;
+    public int freeSkillPoints;
 }
+
+public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
 
 public class Player : Entity
 {
-    PlayerController controller;
-    
+    private PlayerController controller;
+    private CharacterData characterData;
+    private Skill[] skills;
+    public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
+
 
     protected override void Awake()
     {
@@ -23,20 +28,56 @@ public class Player : Entity
 
     protected override void Start()
     {
-        PlayerInfo testInfo = new PlayerInfo()
-        {
-            skills = new Skill[] { new Skill(SkillType.Bow, 5, 12), new Skill(SkillType.Bow, 8, 454) },
-
-            unlockedSkills = new int[] { 1, 4152 }
-        };
-        string test = JsonUtility.ToJson(testInfo);
-        PlayerInfo newInfo = JsonUtility.FromJson<PlayerInfo>(test);
         base.Start();
         if (isLocalPlayer)
         {
             OnHealthChanged.AddListener(UpdateHealthBar);
             HitConfirmEvent.AddListener(controller.HitConfirmed);
             OnTakeDamageEvent.AddListener(controller.TakeDamageEffect);
+        }
+    }
+
+    [TargetRpc]
+    private void UpdateCharacterData(NetworkConnection con, CharacterData data)
+    {
+        characterData = data;
+        print(JsonUtility.ToJson(data));
+        OnCharacterDataUpdateEvent.Invoke(characterData);
+    }
+
+    [TargetRpc]
+    private void UpdateSkillData(Skill[] skills)
+    {
+        this.skills = skills;
+        print(skills[0].Name);
+    }
+
+    [Server]
+    public void SetSkillsData(Skill[] skills)
+    {
+        this.skills = skills;
+    }
+
+    [Server]
+    public void SetCharacterData(CharacterData data)
+    {
+        print(JsonUtility.ToJson(data) + " sending");
+        characterData = data;
+        UpdateCharacterData(connectionToClient, characterData);
+    }
+
+    public Skill[] GetSkills() => skills;
+
+    public CharacterData GetCharacterData() => characterData;
+
+    public virtual void GetSkillXp(SkillType type, int xp)
+    {
+        for (int i = 0; i < skills.Length; i++)
+        {
+            if (skills[i].Type == type)
+            {
+                skills[i].GetXp(xp);
+            }
         }
     }
 
