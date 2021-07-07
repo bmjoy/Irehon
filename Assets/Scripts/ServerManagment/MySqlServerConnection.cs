@@ -135,35 +135,18 @@ public class MySqlServerConnection : MonoBehaviour
         return characters;
     }
 
-    public Skill[] GetSkillsData(int c_id)
-    {
-        string command = $"SELECT c_skills FROM c_data WHERE c_id = " + c_id + ";";
-        string response = RecieveSingleData(command);
-        print(response);
-        Skill[] skillData = JsonUtility.FromJson<Skill[]>(response);
-        print(JsonUtility.ToJson(skillData));
-        return skillData;
-    }
-
     public CharacterData GetCharacterData(int c_id)
     {
         CharacterData data = new CharacterData();
-        data.freeSkillPoints = Convert.ToInt32(RecieveSingleData($"SELECT c_freesp FROM c_data WHERE c_id = {c_id};"));
-        data.lvl = Convert.ToInt32(RecieveSingleData($"SELECT c_lvl FROM c_data WHERE c_id = {c_id};"));
+        //data.freeSkillPoints = Convert.ToInt32(RecieveSingleData($"SELECT c_freesp FROM c_data WHERE c_id = {c_id};"));
+        //data.lvl = Convert.ToInt32(RecieveSingleData($"SELECT c_lvl FROM c_data WHERE c_id = {c_id};"));
         return data;
     }
 
     public void UpdateCharacterData(int c_id, CharacterData data)
     {
-        SendCommand($"UPDATE c_data SET c_freesp = '{data.freeSkillPoints}' WHERE c_id = {c_id};");
-        SendCommand($"UPDATE c_data SET c_lvl = '{data.lvl}' WHERE c_id = {c_id};");
-    }
-
-    public void UpdateSkillsData(int c_id, Skill[] data)
-    {
-        string json = JsonHelper.ToJson(data);
-        string command = $"UPDATE c_data SET c_skills = '{json}' WHERE c_id = {c_id};";
-        SendCommand(command);
+        //SendCommand($"UPDATE c_data SET c_freesp = '{data.freeSkillPoints}' WHERE c_id = {c_id};");
+        //SendCommand($"UPDATE c_data SET c_lvl = '{data.lvl}' WHERE c_id = {c_id};");
     }
 
     public void CreatePositionData(int c_id, Vector3 pos)

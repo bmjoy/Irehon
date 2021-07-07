@@ -71,9 +71,6 @@ public class Server : NetworkManager
 
         NetworkServer.AddPlayerForConnection(con, playerObject);
 
-        //Skill[] playerSkillData = MySqlServerConnection.instance.GetSkillsData(c_id);
-        //playerComponent.SetSkillsData(playerSkillData);
-
         CharacterData characterData = MySqlServerConnection.instance.GetCharacterData(c_id);
         playerComponent.SetCharacterData(characterData);
         
@@ -121,16 +118,13 @@ public class Server : NetworkManager
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
-        //print(data.selectedPlayer);
         if (data.selectedPlayer >= 0)
         {
             int c_id = data.selectedPlayer;
             Player player = data.playerPrefab.GetComponent<Player>();
             MySqlServerConnection.instance.UpdatePositionData(c_id, player.transform.position);
-            MySqlServerConnection.instance.UpdateSkillsData(c_id, player.GetSkills());
             MySqlServerConnection.instance.UpdateCharacterData(c_id, player.GetCharacterData());
         }
         base.OnClientDisconnect(conn);
-        print("Disconnected client " + conn.address);
     }
 }

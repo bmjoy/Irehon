@@ -48,19 +48,5 @@ public partial class PlayerController
                    currentRotation == state.currentRotation &&
                    frame == state.frame;
         }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 2013472923;
-            hashCode = hashCode * -1521134295 + ForwardKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + BackKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + RightKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + LeftKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + SprintKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + JumpKeyDown.GetHashCode();
-            hashCode = hashCode * -1521134295 + currentRotation.GetHashCode();
-            hashCode = hashCode * -1521134295 + frame.GetHashCode();
-            return hashCode;
-        }
     };
 }

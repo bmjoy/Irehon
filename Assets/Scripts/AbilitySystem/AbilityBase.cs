@@ -8,18 +8,11 @@ using UnityEngine.Events;
 using System.Linq;
 using System.Reflection;
 
-public class AbilityCooldownEvent : UnityEvent<float> {}
-
-
-public abstract class AbilityBase : NetworkBehaviour, IAbility
+public abstract class AbilityBase : MonoBehaviour
 {
-    public abstract int Id { get; }
-    public abstract AbilityUnlockRequirment UnlockRequirment { get; }
-    public abstract string Title { get; }
-    public abstract string Describe { get; }
     public KeyCode TriggerKey { get => triggerOnKey; }
-    public Sprite AbilityIcon { get => icon; }
-    public AbilityCooldownEvent OnAbilityCooldown { get => onAbilityCooldown ; set => onAbilityCooldown = value; }
+
+    protected bool isLocalPlayer { get => abilitySystem.isLocalPlayer; }
 
     protected Coroutine cooldownCoroutine;
     protected AbilitySystem abilitySystem;
@@ -28,18 +21,15 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     protected delegate void CurrentAnimationEvent();
 
     [SerializeField]
+    protected int id;
+    [SerializeField]
     protected float cooldownTime;
     [SerializeField]
     protected KeyCode triggerOnKey;
-    [SerializeField]
-    private Sprite icon;
 
-    private AbilityCooldownEvent onAbilityCooldown = new AbilityCooldownEvent();
-    private bool canCast;
     private bool isCasting;
     protected virtual void Start()
     {
-        canCast = true;
         abilitySystem = GetComponent<AbilitySystem>();
     }
 
@@ -56,15 +46,6 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
     public void Interrupt()
     {
         InterruptAbility();
-        abilitySystem.AllowTrigger();
-        if (isServer)
-            InterruptOnOthers();
-    }
-
-    [ClientRpc]
-    private void InterruptOnOthers()
-    {
-        InterruptAbility();
     }
 
     public void AnimationEvent()
@@ -72,77 +53,17 @@ public abstract class AbilityBase : NetworkBehaviour, IAbility
         if (currentAnimationEvent != null)
         {
             currentAnimationEvent();
-            AnimationEventOnOthers();
         }
-    }
-
-    [ClientRpc]
-    public void AnimationEventOnOthers()
-    {
-        if (currentAnimationEvent != null)
-            currentAnimationEvent();
     }
 
     public void TriggerKeyUp(Vector3 target)
-    {
-        if (isCasting)
-        {
-            StopHoldingAbility(target);
-            if (isServer)
-                StopHoldingAbilityOnClients(target);
-        }
-    }
-
-    [ClientRpc]
-    private void StopHoldingAbilityOnClients(Vector3 target)
     {
         StopHoldingAbility(target);
     }
     
     public bool TriggerKeyDown(Vector3 target)
     {
-        if (canCast)
-        {
-            isCasting = true;
-            StartCooldown(cooldownTime);
-            Ability(target);
-            abilitySystem.BlockTrigger();
-            if (!isClientOnly)
-                CastAbilityOnOthers(target);
-            return true;
-        }
-        return false;
-    }
-
-    [ClientRpc]
-    protected void CastAbilityOnOthers(Vector3 target)
-    {
         Ability(target);
-    }
-
-    [Server]
-    protected void StartCooldown(float duration)
-    {
-        OnAbilityCooldown.Invoke(duration);
-        cooldownCoroutine = StartCoroutine(Cooldown());
-        StartCooldownOnOthers(connectionToClient, duration);
-        IEnumerator Cooldown()
-        {
-            canCast = false;
-            yield return new WaitForSeconds(duration);
-            canCast = true;
-        }
-    }
-
-    [TargetRpc]
-    protected void StartCooldownOnOthers(NetworkConnection con, float duration)
-    {
-        OnAbilityCooldown.Invoke(duration);
-    }
-
-    protected void RemoveCooldown()
-    {
-        StopCoroutine(cooldownCoroutine);
-        canCast = true;
+        return true;
     }
 }

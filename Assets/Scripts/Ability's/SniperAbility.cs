@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class SniperAbility : AbilityBase
 {
-    public override AbilityUnlockRequirment UnlockRequirment { get; } = 
-        new AbilityUnlockRequirment(SkillType.Bow, 15, new int[] { 3 });
-    public override int Id { get; } = 4;
-    public override string Describe => "Aimed bow shot that deals increased damage based on bow tension";
-    public override string Title => "Aimed shot";
-
     private const float MAX_HOLDING_TIME = 1.7f;
     private const float MIN_HOLDING_TIME = 0.6f;
 
@@ -41,7 +35,6 @@ public class SniperAbility : AbilityBase
     private float holdingTime;
     private float additionalyChestOffsetTime;
     private bool aiming;
-    private bool startedAbility;
 
 
     protected new void Start()
@@ -79,7 +72,6 @@ public class SniperAbility : AbilityBase
 
     protected override void Ability(Vector3 target)
     {
-        //startedAbility = true;
         holdingTime = 0;
         additionalyChestOffsetTime = 5f;
         movement.IsAiming = true;
@@ -143,8 +135,6 @@ public class SniperAbility : AbilityBase
         animator.SetBool("Aiming", false);
         animator.SetBool("AimingMovement", false);
 
-        StartCooldown(cooldownTime);
-
         AbilityEndEvent();
         if (isLocalPlayer)
         {
@@ -159,7 +149,6 @@ public class SniperAbility : AbilityBase
             UIController.instance.EnableDefaultCrosshair();
         if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
-        startedAbility = false;
         additionalyChestOffsetTime = 0;
         movement.IsAiming = false;
         bowStringBone.localPosition = bowBoneStartPosition;

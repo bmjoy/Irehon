@@ -6,8 +6,7 @@ using UnityEngine.Events;
 
 public struct CharacterData
 {
-    public int lvl;
-    public int freeSkillPoints;
+    
 }
 
 public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
@@ -16,7 +15,6 @@ public class Player : Entity
 {
     private PlayerController controller;
     private CharacterData characterData;
-    private Skill[] skills;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
 
 
@@ -41,21 +39,7 @@ public class Player : Entity
     private void UpdateCharacterData(NetworkConnection con, CharacterData data)
     {
         characterData = data;
-        print(JsonUtility.ToJson(data));
         OnCharacterDataUpdateEvent.Invoke(characterData);
-    }
-
-    [TargetRpc]
-    private void UpdateSkillData(Skill[] skills)
-    {
-        this.skills = skills;
-        print(skills[0].Name);
-    }
-
-    [Server]
-    public void SetSkillsData(Skill[] skills)
-    {
-        this.skills = skills;
     }
 
     [Server]
@@ -66,20 +50,7 @@ public class Player : Entity
         UpdateCharacterData(connectionToClient, characterData);
     }
 
-    public Skill[] GetSkills() => skills;
-
     public CharacterData GetCharacterData() => characterData;
-
-    public virtual void GetSkillXp(SkillType type, int xp)
-    {
-        for (int i = 0; i < skills.Length; i++)
-        {
-            if (skills[i].Type == type)
-            {
-                skills[i].GetXp(xp);
-            }
-        }
-    }
 
     protected void UpdateHealthBar(int oldHealth, int newHealth)
     {
