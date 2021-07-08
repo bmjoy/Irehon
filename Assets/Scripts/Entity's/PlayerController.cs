@@ -16,7 +16,7 @@ public partial class PlayerController : NetworkBehaviour
     protected AudioSource audioSource;
     protected IMovementBehaviour movement;
     protected Rigidbody rigidBody;
-    protected IAbilitySystem abilitySystem;
+    protected AbilitySystem abilitySystem;
     protected Queue<SendInputState> sendedInputs = new Queue<SendInputState>();
     protected InputState previousInput;
     protected int currentFrame;

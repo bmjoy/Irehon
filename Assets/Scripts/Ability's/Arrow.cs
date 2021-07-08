@@ -33,8 +33,10 @@ public class Arrow : MonoBehaviour
 
     public void TriggerReleaseEffect()
     {
-        releaseSound?.Play();
-        releaseEffect?.Play();
+        if (releaseSound != null)
+            releaseSound.Play();
+        if (releaseEffect != null)
+            releaseEffect.Play();
     }
 
     protected int GetDamage()
@@ -62,7 +64,8 @@ public class Arrow : MonoBehaviour
         flying = false;
         rigidBody.useGravity = false;
         rigidBody.velocity = Vector3.zero;
-        hitEffect?.ReleaseEffect();
+        if (hitEffect != null)
+            hitEffect.ReleaseEffect();
         HittedColliderProcess(other);
         if (other.CompareTag("Entity"))
             quiver.ReturnArrowInQuiver(this);

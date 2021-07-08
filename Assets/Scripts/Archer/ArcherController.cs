@@ -17,11 +17,5 @@ public class ArcherController : PlayerController
         if (previousInput.SprintKeyDown && !abilitySystem.IsAbilityCasting())
             return;
         base.Update();
-        if (!isLocalPlayer)
-            return;
-        if (!isControllAllow)
-            return;
-        CheckAbilityTriggerKey(KeyCode.F);
-        CheckAbilityTriggerKey(KeyCode.R);
     }
 }

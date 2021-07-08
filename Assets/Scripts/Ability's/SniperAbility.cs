@@ -7,22 +7,17 @@ public class SniperAbility : AbilityBase
     private const float MAX_HOLDING_TIME = 1.7f;
     private const float MIN_HOLDING_TIME = 0.6f;
 
-    [SerializeField]
-    private GameObject arrow;
-    [SerializeField]
-    private AudioClip tenseSound;
-    [SerializeField]
-    private GameObject arrowInHand;
-    [SerializeField]
-    private Transform bowStringBone;
-    [SerializeField]
-    private Transform rightHand;
-    [SerializeField]
-    private Transform shoulderForwardPoint;
-    [SerializeField]
-    private Vector3 aimingChestOffset;
-    [SerializeField]
-    private ParticleSystem aimingParticles;
+    private Bow bow;
+
+    private Transform rightHand => prefabData.RightHand;
+    private Transform shoulderForwardPoint => prefabData.ShoulderForwardPoint;
+    private GameObject arrow => bow.Arrow;
+    private AudioClip tenseSound => bow.TenseSound;
+    private GameObject arrowInHand => bow.ArrowInHand;
+    private Transform bowStringBone => bow.BowStringBone;
+    private ParticleSystem aimingParticles => bow.AimingParticles;
+
+    private Vector3 aimingChestOffset = new Vector3(0, -5f, -86f);
 
     private Vector3 bowBoneStartPosition;
     private AudioSource abilityAudioSource;
@@ -37,13 +32,15 @@ public class SniperAbility : AbilityBase
     private bool aiming;
 
 
-    protected new void Start()
+
+    public override void Setup(AbilitySystem abilitySystem)
     {
-        base.Start();
+        base.Setup(abilitySystem);
+        bow = weapon as Bow;
         bowBoneStartPosition = bowStringBone.localPosition;
         player = abilitySystem.PlayerComponent;
         abilityAudioSource = abilitySystem.AudioSource;
-        movement = GetComponent<ArcherMovement>();
+        movement = abilitySystem.GetComponent<ArcherMovement>();
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
         quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, arrow);
@@ -135,7 +132,7 @@ public class SniperAbility : AbilityBase
         animator.SetBool("Aiming", false);
         animator.SetBool("AimingMovement", false);
 
-        AbilityEndEvent();
+        AbilityEnd();
         if (isLocalPlayer)
         {
             CameraController.instance.DisableAimCamera();
@@ -156,5 +153,10 @@ public class SniperAbility : AbilityBase
         animator.ResetTrigger("Shoot");
         animator.SetBool("Aiming", false);
         animator.SetBool("AimingMovement", false);
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(quiver);
     }
 }

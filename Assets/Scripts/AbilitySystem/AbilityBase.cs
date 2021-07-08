@@ -16,27 +16,22 @@ public abstract class AbilityBase : MonoBehaviour
 
     protected Coroutine cooldownCoroutine;
     protected AbilitySystem abilitySystem;
+    protected AbilityPrefabData prefabData;
+    protected Weapon weapon;
+
     protected CurrentAnimationEvent currentAnimationEvent;
-    protected AbilityBase addingComponent;
     protected delegate void CurrentAnimationEvent();
 
-    [SerializeField]
-    protected int id;
     [SerializeField]
     protected float cooldownTime;
     [SerializeField]
     protected KeyCode triggerOnKey;
 
-    private bool isCasting;
-    protected virtual void Start()
+    public virtual void Setup(AbilitySystem abilitySystem)
     {
-        abilitySystem = GetComponent<AbilitySystem>();
-    }
-
-    protected void AbilityEndEvent()
-    {
-        isCasting = false;
-        abilitySystem.AllowTrigger();
+        this.abilitySystem = abilitySystem;
+        prefabData = abilitySystem.AbilityPrefabData;
+        weapon = GetComponent<Weapon>();
     }
 
     protected abstract void StopHoldingAbility(Vector3 target);
@@ -65,5 +60,15 @@ public abstract class AbilityBase : MonoBehaviour
     {
         Ability(target);
         return true;
+    }
+
+    protected void AbilityStart()
+    {
+        abilitySystem.BlockTrigger();
+    }
+
+    protected void AbilityEnd()
+    {
+        abilitySystem.AllowTrigger();
     }
 }

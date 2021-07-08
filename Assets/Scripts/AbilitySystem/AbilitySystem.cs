@@ -12,7 +12,9 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public PlayerController PlayerControll => playerController;
     public Player PlayerComponent => player;
     public PlayerMovement PlayerMovementComponent => playerMovement;
+    public AbilityPrefabData AbilityPrefabData => abilityPrefabData;
 
+    private AbilityPrefabData abilityPrefabData;
     private PlayerMovement playerMovement;
     private Player player;
     private Animator animator;
@@ -22,9 +24,13 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     private AbilityBase currentAbility;
 
+    [SerializeField]
+    private GameObject weaponPrefab;
+
+    private GameObject weapon;
+
+    [SyncVar]
     private bool isAbilityCasting;
-    private bool isAbilityOnCooldown;
-    private int slot;
 
     private float abilityCooldown;
 
@@ -35,11 +41,21 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         abilityCooldown -= Time.deltaTime;
     }
 
+    public void SetWeapon(Weapon weapon)
+    {
+        if (currentAbility != null)
+        {
+            currentAbility.Interrupt();
+        }
+        currentAbility = weapon.Setup(this);
+    }
+
     private void Awake()
     {
         abilityPoolObject = new GameObject("AbilityPool", typeof(AudioSource));
 
         player = GetComponent<Player>();
+        abilityPrefabData = GetComponent<AbilityPrefabData>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
@@ -52,6 +68,8 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     {
         if (!isLocalPlayer && !isServer)
             return;
+        weapon = Instantiate(weaponPrefab, AbilityPrefabData.LeftHand);
+        currentAbility = weapon.GetComponent<Weapon>().Setup(this);
     }
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)
@@ -59,13 +77,33 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         if (abilityCooldown > 0 || isAbilityCasting)
             return;
         if (currentAbility.TriggerKey == key)
+        {
             currentAbility.TriggerKeyDown(target);
+            AbilityKeyDownRPC(target);
+        }
+    }
+
+    [ClientRpc]
+    private void AbilityKeyDownRPC(Vector3 target)
+    {
+        if (!isServer)
+            currentAbility.TriggerKeyDown(target);
+    }
+
+    [ClientRpc]
+    private void AbilityKeyUpRPC(Vector3 target)
+    {
+        if (!isServer)
+            currentAbility.TriggerKeyUp(target);
     }
 
     public void AbilityKeyUp(KeyCode key, Vector3 target)
     {
         if (currentAbility.TriggerKey == key)
+        {
             currentAbility.TriggerKeyUp(target);
+            AbilityKeyUpRPC(target);
+        }
     }
 
     public void AllowTrigger()
@@ -82,5 +120,13 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public void AnimationEventTrigger()
     {
         currentAbility.AnimationEvent();
+        AnimationEventRPC();
+    }
+
+    [ClientRpc]
+    private void AnimationEventRPC()
+    {
+        if (!isServer)
+            currentAbility.AnimationEvent();
     }
 }

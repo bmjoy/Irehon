@@ -44,4 +44,9 @@ public class Quiver : MonoBehaviour
         }
         return null;
     }
+
+    private void OnDestroy()
+    {
+        Destroy(quiverTransform);
+    }
 };
