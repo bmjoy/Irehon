@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class ClientAuth : NetworkAuthenticator
 {
     [SerializeField]
+    private TMPro.TMP_Text ResponseText;
+    [SerializeField]
     private TMPro.TMP_InputField Email;
     [SerializeField]
     private TMPro.TMP_InputField Password;
@@ -14,7 +16,6 @@ public class ClientAuth : NetworkAuthenticator
     public override void OnClientAuthenticate(NetworkConnection conn)
     {
         NetworkClient.Send(currentRequest);
-        print("Sended request");
     }
 
     public override void OnServerAuthenticate(NetworkConnection conn)
@@ -33,7 +34,7 @@ public class ClientAuth : NetworkAuthenticator
     {
         currentRequest = new AuthRequestMessage()
         {
-            Email = Email.text,
+            Login = Email.text,
             Password = Password.text,
             Type = AuthRequestMessage.AuthType.Register
         };
@@ -45,7 +46,7 @@ public class ClientAuth : NetworkAuthenticator
     {
         currentRequest = new AuthRequestMessage()
         {
-            Email = Email.text,
+            Login = Email.text,
             Password = Password.text,
             Type = AuthRequestMessage.AuthType.Login
         };
@@ -55,10 +56,12 @@ public class ClientAuth : NetworkAuthenticator
 
     private void OnAuthResponseMessage(NetworkConnection conn, AuthResponseMessage msg)
     {
-        print("response = " + msg.Connected);
         if (msg.Connected)
             ClientAccept(conn);
         else
+        {
+            
             ClientReject(conn);
+        }
     }
 }

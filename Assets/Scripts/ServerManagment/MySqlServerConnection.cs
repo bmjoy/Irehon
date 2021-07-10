@@ -62,12 +62,12 @@ public class MySqlServerConnection : MonoBehaviour
     }
     #endregion
 
-    public int Register(string email, string passsword)
+    public int Register(string login, string passsword)
     {
-        string command = $"INSERT INTO `users` (`p_id`, `email`, `password`) " +
-            $"VALUES (NULL, '{email}', '{passsword}')";
+        string command = $"INSERT INTO `users` (`p_id`, `login`, `password`) " +
+            $"VALUES (NULL, '{login}', '{passsword}')";
         RecieveSingleData(command);
-        return (Login(email, passsword));
+        return (Login(login, passsword));
     }
 
     private Vector3 GetVector3(string sqlCommand)
@@ -210,10 +210,10 @@ public class MySqlServerConnection : MonoBehaviour
             return null;
     }
 
-    public int Login(string email, string password)
+    public int Login(string login, string password)
     {
         string response = RecieveSingleData($"SELECT p_id FROM users " +
-            $"WHERE email = '{email}' AND password = '{password}';");
+            $"WHERE login = '{login}' AND password = '{password}';");
         if (response != "")
             return Convert.ToInt32(response);
         else

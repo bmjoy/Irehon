@@ -5,12 +5,13 @@ using UnityEngine.UI;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 public struct AuthRequestMessage : NetworkMessage
 {
     public enum AuthType { Guest, Login, Register };
     public AuthType Type;
-    public string Email;
+    public string Login;
     public string Password;
 
 }
@@ -18,6 +19,7 @@ public struct AuthRequestMessage : NetworkMessage
 public struct AuthResponseMessage : NetworkMessage
 {
     public bool Connected;
+    public string ResponseText;
 }
 
 public struct PlayerConnection
@@ -40,45 +42,51 @@ public class ServerAuth : NetworkAuthenticator
     {
     }
 
-    public bool IsEmailValid(string emailaddress)
+    public bool IsLoginValid(string login)
     {
-        try
-        {
-            MailAddress m = new MailAddress(emailaddress);
-
-            return true;
-        }
-        catch
-        {
+        if (login.Length > 20)
             return false;
-        }
+        return Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
     }
 
-    public bool IsRequestValid(AuthRequestMessage msg, ref int loginResponse)
+    public bool IsRequestValid(AuthRequestMessage msg, ref int loginResponse, out string response)
     {
-        if (!IsEmailValid(msg.Email))
+        if (!IsLoginValid(msg.Login))
+        {
+            response = "Login can contain only letters or digits";
             return false;
+        }
         switch (msg.Type)
         {
             case AuthRequestMessage.AuthType.Login:
-                loginResponse = MySqlServerConnection.instance.Login(msg.Email, msg.Password);
+                loginResponse = MySqlServerConnection.instance.Login(msg.Login, msg.Password);
                 if (loginResponse != 0)
+                {
+                    response = "Succesful";
                     return true;
-                break;
+                }
+                response = "Login or Password incorrect";
+                return false;
             case AuthRequestMessage.AuthType.Register:
-                loginResponse = MySqlServerConnection.instance.Register(msg.Email, msg.Password);
+                loginResponse = MySqlServerConnection.instance.Register(msg.Login, msg.Password);
                 if (loginResponse != 0)
+                {
+                    response = "Succesful";
                     return true;
-                break;
+                }
+                response = "User with this login exist";
+                return false;
         }
+        response = "Invalid auth request";
         return false;
     }
 
     public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage msg)
     {
         int loginResponse = 0;
+        string responseText;
 
-        bool result = IsRequestValid(msg, ref loginResponse);
+        bool result = IsRequestValid(msg, ref loginResponse, out responseText);
 
         AuthResponseMessage authResponseMessage = new AuthResponseMessage();
         if (result)
