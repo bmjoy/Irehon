@@ -92,7 +92,8 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Kill()
     {
-        SetHealth(0);
+        if (isAlive)
+            SetHealth(0);
     }
 
     [Server]

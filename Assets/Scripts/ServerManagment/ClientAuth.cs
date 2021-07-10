@@ -56,12 +56,15 @@ public class ClientAuth : NetworkAuthenticator
 
     private void OnAuthResponseMessage(NetworkConnection conn, AuthResponseMessage msg)
     {
+        print("auth response gotted");
         if (msg.Connected)
             ClientAccept(conn);
         else
         {
-            
+            print("Response " + msg.ResponseText);
+            ResponseText.text = msg.ResponseText;
             ClientReject(conn);
+            GetComponent<NetworkManager>().StopClient();
         }
     }
 }

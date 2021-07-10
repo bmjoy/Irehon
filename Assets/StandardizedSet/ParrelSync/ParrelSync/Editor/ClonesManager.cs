@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.IO;
 using Debug = UnityEngine.Debug;
 
@@ -101,11 +99,19 @@ namespace ParrelSync
             Debug.Log("Start cloning project, original project: " + sourceProject + ", clone project: " + cloneProject);
 
             ClonesManager.CreateProjectFolder(cloneProject);
-            ClonesManager.CopyLibraryFolder(sourceProject, cloneProject);
 
+            //Copy Folders           
+            Debug.Log("Library copy: " + cloneProject.libraryPath);
+            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, cloneProject.libraryPath,
+                "Cloning Project Library '" + sourceProject.name + "'. ");
+            Debug.Log("Packages copy: " + cloneProject.libraryPath);
+            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.packagesPath, cloneProject.packagesPath,
+              "Cloning Project Packages '" + sourceProject.name + "'. ");
+
+
+            //Link Folders
             ClonesManager.LinkFolders(sourceProject.assetPath, cloneProject.assetPath);
             ClonesManager.LinkFolders(sourceProject.projectSettingsPath, cloneProject.projectSettingsPath);
-            ClonesManager.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
             ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
 
@@ -181,7 +187,8 @@ namespace ParrelSync
         {
 
             //Determine whether it is opened in another instance by checking the UnityLockFile
-            string UnityLockFilePath = Path.Combine(projectPath, "Temp", "UnityLockfile");
+            string UnityLockFilePath = new string[] { projectPath, "Temp", "UnityLockfile" }
+                .Aggregate(Path.Combine);
 
             switch (Application.platform)
             {
@@ -279,6 +286,7 @@ namespace ParrelSync
         /// </summary>
         /// <param name="sourceProject"></param>
         /// <param name="destinationProject"></param>
+        [System.Obsolete]
         public static void CopyLibraryFolder(Project sourceProject, Project destinationProject)
         {
             if (Directory.Exists(destinationProject.libraryPath))
@@ -305,7 +313,7 @@ namespace ParrelSync
         {
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
-            var command = $"ln -s {sourcePath} {destinationPath}";
+            var command = string.Format("ln -s {0} {1}", sourcePath, destinationPath);
 
             Debug.Log("Mac hard link " + command);
 
@@ -321,7 +329,7 @@ namespace ParrelSync
         {
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
-            var command = $"ln -s {sourcePath} {destinationPath}";
+            var command = string.Format("ln -s {0} {1}", sourcePath, destinationPath);           
 
             Debug.Log("Linux Symlink " + command);
 
@@ -588,13 +596,13 @@ namespace ParrelSync
                 "Scanning '" + directory.FullName + "'...", 0f);
 
             /// Calculate size of all files in directory.
-            long filesSize = directory.EnumerateFiles().Sum((FileInfo file) => file.Length);
+            long filesSize = directory.GetFiles().Sum((FileInfo file) => file.Length);
 
             /// Calculate size of all nested directories.
             long directoriesSize = 0;
             if (includeNested)
             {
-                IEnumerable<DirectoryInfo> nestedDirectories = directory.EnumerateDirectories();
+                IEnumerable<DirectoryInfo> nestedDirectories = directory.GetDirectories();
                 foreach (DirectoryInfo nestedDir in nestedDirectories)
                 {
                     directoriesSize += ClonesManager.GetDirectorySize(nestedDir, true, progressBarPrefix);

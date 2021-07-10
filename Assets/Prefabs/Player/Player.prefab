@@ -57824,14 +57824,14 @@ GameObject:
   - component: {fileID: 7846204401776477249}
   - component: {fileID: 7223648354211534762}
   - component: {fileID: 7349229035227959283}
-  - component: {fileID: 481381308375903423}
-  - component: {fileID: 6345799612352186566}
   - component: {fileID: 1348290686895544046}
   - component: {fileID: 4074694227585022522}
   - component: {fileID: 1057096722151939023}
   - component: {fileID: 5703503392593569569}
+  - component: {fileID: 9156328745020896161}
+  - component: {fileID: 4533929607853588459}
   m_Layer: 10
-  m_Name: ArcherPlayer
+  m_Name: Player
   m_TagString: EntityBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58023,39 +58023,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 3680576556998462724}
---- !u!114 &481381308375903423
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56ec5233da5dd4748a6acbc44fd05ae5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  MOVEMENT_SPEED: 0.08
-  JUMP_FORCE: 6
-  velocityJumpIncreasing: 8
-  IsAiming: 0
---- !u!114 &6345799612352186566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ca35676b36712d4fa559277dff578a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  shoulder: {fileID: 7066463827737571305}
 --- !u!114 &1348290686895544046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58131,6 +58098,38 @@ MonoBehaviour:
   RightHand: {fileID: 3623627892388555346}
   LeftHand: {fileID: 3623615235401456022}
   ParticlesPool: {fileID: 3313438804453150676}
+--- !u!114 &9156328745020896161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b681ecfad27dbe4083ecbad75c53781, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  shoulder: {fileID: 7066463827737571305}
+--- !u!114 &4533929607853588459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90fb938cfa6bfa4c94f4284cefee118, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  MOVEMENT_SPEED: 0.08
+  JUMP_FORCE: 6
+  velocityJumpIncreasing: 8
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0

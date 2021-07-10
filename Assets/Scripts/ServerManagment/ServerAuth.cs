@@ -42,6 +42,8 @@ public class ServerAuth : NetworkAuthenticator
     {
     }
 
+    public int GetPassword(string password) => password.GetHashCode();
+
     public bool IsLoginValid(string login)
     {
         if (login.Length > 20)
@@ -56,11 +58,12 @@ public class ServerAuth : NetworkAuthenticator
             response = "Login can contain only letters or digits";
             return false;
         }
+        int passwordHash = msg.Password.GetStableHashCode();
         switch (msg.Type)
         {
             case AuthRequestMessage.AuthType.Login:
-                loginResponse = MySqlServerConnection.instance.Login(msg.Login, msg.Password);
-                if (loginResponse != 0)
+                loginResponse = MySqlServerConnection.instance.Login(msg.Login, passwordHash);
+                if (loginResponse > 0)
                 {
                     response = "Succesful";
                     return true;
@@ -68,8 +71,8 @@ public class ServerAuth : NetworkAuthenticator
                 response = "Login or Password incorrect";
                 return false;
             case AuthRequestMessage.AuthType.Register:
-                loginResponse = MySqlServerConnection.instance.Register(msg.Login, msg.Password);
-                if (loginResponse != 0)
+                loginResponse = MySqlServerConnection.instance.Register(msg.Login, passwordHash);
+                if (loginResponse > 0)
                 {
                     response = "Succesful";
                     return true;
@@ -89,11 +92,13 @@ public class ServerAuth : NetworkAuthenticator
         bool result = IsRequestValid(msg, ref loginResponse, out responseText);
 
         AuthResponseMessage authResponseMessage = new AuthResponseMessage();
+        authResponseMessage.ResponseText = responseText;
         if (result)
             authResponseMessage.Connected = true;
         else
             authResponseMessage.Connected = false;
-        conn.Send(authResponseMessage);
+        print(authResponseMessage.ResponseText);
+        conn.Send(authResponseMessage, Channels.DefaultUnreliable);
 
         if (result)
         {

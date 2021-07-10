@@ -58,15 +58,22 @@ public class MySqlServerConnection : MonoBehaviour
         connection = new MySqlConnection("server = 134.209.21.121; " +
             "user = server; database = players; password = FGPFHGOU@#HASDAKSD;");
         connection.Open();
-        SendCommand("USE players;");
+        RecieveSingleData("USE players;");
     }
     #endregion
 
-    public int Register(string login, string passsword)
+    public int Register(string login, int passsword)
     {
-        string command = $"INSERT INTO `users` (`p_id`, `login`, `password`) " +
-            $"VALUES (NULL, '{login}', '{passsword}')";
-        RecieveSingleData(command);
+        try
+        {
+            string command = $"INSERT INTO `users` (`p_id`, `login`, `password`) " +
+                $"VALUES (NULL, '{login}', '{passsword}')";
+            RecieveSingleData(command);
+        }
+        catch
+        {
+            return -1;
+        }
         return (Login(login, passsword));
     }
 
@@ -89,8 +96,10 @@ public class MySqlServerConnection : MonoBehaviour
         {
             string command = $"INSERT INTO `characters` (`c_id`, `nickname`, `p_id`) " +
                 $"VALUES(NULL, '{character.NickName}', '{p_id}')";
-            SendCommand(command);
+            RecieveSingleData(command);
             int c_id = GetCharacterId(character.NickName);
+            if (c_id == 0)
+                return false;
             CreateCharacterData(c_id);
             CreatePositionData(c_id, character.position);
             print("Created " + character.NickName);
@@ -106,7 +115,7 @@ public class MySqlServerConnection : MonoBehaviour
     public void CreateCharacterData(int c_id)
     {
         string command = $"INSERT INTO c_data (c_id) VALUES ({c_id});";
-        SendCommand(command);
+        RecieveSingleData(command);
     }
 
     public List<Character> GetCharacters(int p_id)
@@ -210,7 +219,7 @@ public class MySqlServerConnection : MonoBehaviour
             return null;
     }
 
-    public int Login(string login, string password)
+    public int Login(string login, int password)
     {
         string response = RecieveSingleData($"SELECT p_id FROM users " +
             $"WHERE login = '{login}' AND password = '{password}';");

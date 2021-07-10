@@ -10,12 +10,14 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
     [SerializeField]
     protected float velocityJumpIncreasing;
     protected Rigidbody rigidBody;
+    protected AbilitySystem abilitySystem;
     protected Animator animator;
     protected bool isGrounded;
 
     protected virtual void Awake()
     {
         isGrounded = true;
+        abilitySystem = GetComponent<AbilitySystem>();
         animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
     }
@@ -62,14 +64,17 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
 
         moveVector = Vector3.ClampMagnitude(moveVector, 1);
 
+        if (abilitySystem.IsAbilityCasting())
+            moveVector /= 2.5f;
+
         //Walking side slowness
         moveVector = moveVector.x != 0 || moveVector.z < 0 ? moveVector / 1.5f : moveVector;
 
-        moveVector = input.SprintKeyDown && moveVector.x == 0 && moveVector.z > 0 ? moveVector * 1.4f : moveVector;
+        if (!abilitySystem.IsAbilityCasting())
+            moveVector = input.SprintKeyDown ? moveVector.x == 0 && moveVector.z > 0 ? moveVector * 2f : moveVector : moveVector;
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);
         transform.Translate(moveVector * MOVEMENT_SPEED);
-
         ApplyAnimatorInput(input);
     }
 
@@ -77,7 +82,10 @@ public class PlayerMovement : NetworkBehaviour, IMovementBehaviour
     {
         Vector2 moveVerticals = input.GetMoveVector();
 
-        animator.SetBool("Sprint", input.SprintKeyDown);
+        if (input.SprintKeyDown && !abilitySystem.IsAbilityCasting())
+            animator.SetBool("Sprint", moveVerticals.y > 0);
+        else
+            animator.SetBool("Sprint", false);
         if (moveVerticals != Vector2.zero)
         {
             animator.SetBool("Walking", true);

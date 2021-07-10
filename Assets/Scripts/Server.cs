@@ -57,7 +57,7 @@ public class Server : NetworkManager
 
         data.selectedPlayer = c_id;
 
-        GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "ArcherPlayer"));
+        GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "Player"));
 
         playerObject.transform.position = selectedCharacter.position;
 
@@ -95,8 +95,13 @@ public class Server : NetworkManager
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         data.characters = MySqlServerConnection.instance.GetCharacters(data.id);
+        print(data.characters.Count);
         foreach (Character character in data.characters)
+        {
+            print("sended char " + character.NickName);
             con.Send(character);
+              
+        }
         con.authenticationData = data;
     }
 
@@ -117,6 +122,11 @@ public class Server : NetworkManager
     //Update character data on DB on disconneect
     public override void OnServerDisconnect(NetworkConnection conn)
     {
+        if (conn.authenticationData == null)
+        {
+            base.OnClientDisconnect(conn);
+            return;
+        }
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
         if (data.selectedPlayer >= 0)
         {

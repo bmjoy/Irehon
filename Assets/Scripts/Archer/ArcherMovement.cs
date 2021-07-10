@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class ArcherMovement : PlayerMovement
 {
-    public bool IsAiming;
     protected IAbilitySystem abilitySystem;
 
     protected override void Awake()
     {
         base.Awake();
         abilitySystem = GetComponent<IAbilitySystem>();
-        IsAiming = false;
     }
 
     public override void ProcessMovementInput(PlayerController.InputState input)
@@ -24,13 +22,13 @@ public class ArcherMovement : PlayerMovement
 
         moveVector = Vector3.ClampMagnitude(moveVector, 1);
 
-        if (IsAiming)
+        if (abilitySystem.IsAbilityCasting())
             moveVector /= 2.5f;
 
         //Walking side slowness
         moveVector = moveVector.x != 0 || moveVector.z < 0 ? moveVector / 1.5f : moveVector;
 
-        if (!IsAiming && !abilitySystem.IsAbilityCasting())
+        if (!abilitySystem.IsAbilityCasting())
             moveVector = input.SprintKeyDown ? moveVector.x == 0 && moveVector.z > 0 ? moveVector * 2f : moveVector : moveVector;
 
         transform.rotation = Quaternion.Euler(0, input.currentRotation, 0);
@@ -42,7 +40,7 @@ public class ArcherMovement : PlayerMovement
     {
         Vector2 moveVerticals = input.GetMoveVector();
 
-        if (input.SprintKeyDown && !IsAiming && !abilitySystem.IsAbilityCasting())
+        if (input.SprintKeyDown && !abilitySystem.IsAbilityCasting())
             animator.SetBool("Sprint", moveVerticals.y > 0);
         else
             animator.SetBool("Sprint", false);

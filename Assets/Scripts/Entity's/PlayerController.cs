@@ -46,6 +46,8 @@ public partial class PlayerController : NetworkBehaviour
             return;
         if (!isControllAllow || !isCursorInGame) //нужно защитить серверные вызовы
             return;
+        if (previousInput.SprintKeyDown && !abilitySystem.IsAbilityCasting())
+            return;
         CheckAbilityTriggerKey(KeyCode.Mouse0);
         CheckAbilityTriggerKey(KeyCode.Mouse1);
     }

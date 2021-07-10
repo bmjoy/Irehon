@@ -25,7 +25,7 @@ public class SniperAbility : AbilityBase
     private Animator animator;
     private Quiver quiver;
     private Player player;
-    private ArcherMovement movement;
+    private PlayerMovement movement;
 
     private float holdingTime;
     private float additionalyChestOffsetTime;
@@ -40,7 +40,7 @@ public class SniperAbility : AbilityBase
         bowBoneStartPosition = bowStringBone.localPosition;
         player = abilitySystem.PlayerComponent;
         abilityAudioSource = abilitySystem.AudioSource;
-        movement = abilitySystem.GetComponent<ArcherMovement>();
+        movement = abilitySystem.GetComponent<PlayerMovement>();
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
         quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, arrow);
@@ -71,7 +71,7 @@ public class SniperAbility : AbilityBase
     {
         holdingTime = 0;
         additionalyChestOffsetTime = 5f;
-        movement.IsAiming = true;
+        abilitySystem.BlockTrigger();
         animator.SetBool("Aiming", true);
         animator.SetBool("AimingMovement", true);
         currentAnimationEvent = () => StartCoroutine(ArrowInHandAnimation());
@@ -126,7 +126,7 @@ public class SniperAbility : AbilityBase
             additionalyChestOffsetTime = 0.05f;
         aimingParticles.Stop();
         bowStringBone.localPosition = bowBoneStartPosition;
-        movement.IsAiming = false;
+        abilitySystem.AllowTrigger();
         arrowInHand.SetActive(false);
         aiming = false;
         animator.SetBool("Aiming", false);
@@ -147,7 +147,7 @@ public class SniperAbility : AbilityBase
         if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
         additionalyChestOffsetTime = 0;
-        movement.IsAiming = false;
+        abilitySystem.AllowTrigger();
         bowStringBone.localPosition = bowBoneStartPosition;
         aiming = false;
         animator.ResetTrigger("Shoot");

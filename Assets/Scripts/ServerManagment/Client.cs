@@ -14,11 +14,12 @@ public class Client : NetworkManager
         base.Start();
         if (OnUpdateCharacterList == null)
             OnUpdateCharacterList = new UnityEvent();
-        NetworkClient.RegisterHandler<Character>(SaveCharacter, false);
+        NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
     }
 
     private void SaveCharacter(Character character)
     {
+        print("new character get");
         if (!charactersList.Contains(character))
             charactersList.Add(character);
         OnUpdateCharacterList.Invoke();
