@@ -35,21 +35,12 @@ public class UIController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            EnableAbilityTreeWindowTrigger();
-        }   
     }
 
     public void EnableDefaultCrosshair()
     {
         defaultAimingRectangle.gameObject.SetActive(true);
         triangleAimingRectangle.gameObject.SetActive(false);
-    }
-
-    public void EnableAbilityTreeWindowTrigger()
-    {
-        AbilityTree.enabled = !AbilityTree.enabled;
     }
 
     public void EnableTriangleCrosshair()
