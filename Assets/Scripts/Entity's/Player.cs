@@ -45,7 +45,6 @@ public class Player : Entity
     [Server]
     public void SetCharacterData(CharacterData data)
     {
-        print(JsonUtility.ToJson(data) + " sending");
         characterData = data;
         UpdateCharacterData(connectionToClient, characterData);
     }

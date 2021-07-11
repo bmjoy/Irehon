@@ -178,7 +178,7 @@ public partial class PlayerController : NetworkBehaviour
         }
     }
 
-    [ClientRpc(excludeOwner = true)]
+    [ClientRpc(includeOwner = false)]
     protected virtual void JumpRPC()
     {
         movement.Jump();

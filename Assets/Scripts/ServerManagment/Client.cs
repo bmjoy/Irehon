@@ -14,12 +14,16 @@ public class Client : NetworkManager
         base.Start();
         if (OnUpdateCharacterList == null)
             OnUpdateCharacterList = new UnityEvent();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
         NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
     }
 
     private void SaveCharacter(Character character)
     {
-        print("new character get");
         if (!charactersList.Contains(character))
             charactersList.Add(character);
         OnUpdateCharacterList.Invoke();
@@ -33,13 +37,11 @@ public class Client : NetworkManager
 
     public override void OnClientConnect(NetworkConnection conn)
     {
-        print("connected");
     }
 
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
     {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-        ClientScene.PrepareToSpawnSceneObjects();
-        print("change to " + newSceneName);
+        NetworkClient.PrepareToSpawnSceneObjects();
     }
 }

@@ -102,12 +102,10 @@ public class MySqlServerConnection : MonoBehaviour
                 return false;
             CreateCharacterData(c_id);
             CreatePositionData(c_id, character.position);
-            print("Created " + character.NickName);
             return true;
         }
         catch
         {
-            print("Can't create character");
             return false;
         }
     }
@@ -187,13 +185,11 @@ public class MySqlServerConnection : MonoBehaviour
 
     private void SendCommand(string command)
     {
-        print(command);
         new MySqlCommand(command, connection);
     }
 
     private List<string> RecieveMultipleData(string command, int columnQuantity)
     {
-        print(command);
         List<string> response = new List<string>();
 
         MySqlCommand commandResponse = new MySqlCommand(command, connection);
@@ -210,7 +206,6 @@ public class MySqlServerConnection : MonoBehaviour
 
     private string RecieveSingleData(string command)
     {
-        print(command);
         MySqlCommand commandResponse = new MySqlCommand(command, connection);
         var chars = commandResponse.ExecuteScalar();
         if (chars != null)

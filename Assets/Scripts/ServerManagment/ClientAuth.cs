@@ -13,14 +13,13 @@ public class ClientAuth : NetworkAuthenticator
     [SerializeField]
     private TMPro.TMP_InputField Password;
 
-    public override void OnClientAuthenticate(NetworkConnection conn)
+    public override void OnClientAuthenticate()
     {
         NetworkClient.Send(currentRequest);
     }
 
     public override void OnServerAuthenticate(NetworkConnection conn)
     {
-        
     }
 
     private AuthRequestMessage currentRequest;
@@ -42,6 +41,8 @@ public class ClientAuth : NetworkAuthenticator
         GetComponent<NetworkManager>().StartClient();
     }
 
+    
+
     public void LoginButton()
     {
         currentRequest = new AuthRequestMessage()
@@ -54,17 +55,14 @@ public class ClientAuth : NetworkAuthenticator
         GetComponent<NetworkManager>().StartClient();
     }
 
-    private void OnAuthResponseMessage(NetworkConnection conn, AuthResponseMessage msg)
+    private void OnAuthResponseMessage(AuthResponseMessage msg)
     {
-        print("auth response gotted");
         if (msg.Connected)
-            ClientAccept(conn);
+            ClientAccept();
         else
         {
-            print("Response " + msg.ResponseText);
             ResponseText.text = msg.ResponseText;
-            ClientReject(conn);
-            GetComponent<NetworkManager>().StopClient();
+            ClientReject();
         }
     }
 }

@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 public struct AuthRequestMessage : NetworkMessage
 {
@@ -97,8 +98,7 @@ public class ServerAuth : NetworkAuthenticator
             authResponseMessage.Connected = true;
         else
             authResponseMessage.Connected = false;
-        print(authResponseMessage.ResponseText);
-        conn.Send(authResponseMessage, Channels.DefaultUnreliable);
+        conn.Send(authResponseMessage);
 
         if (result)
         {
@@ -110,10 +110,17 @@ public class ServerAuth : NetworkAuthenticator
             ServerAccept(conn);
         }
         else
-            ServerReject(conn);
+        {
+            IEnumerator WaitBeforeDisconnect()
+            {
+                yield return new WaitForSeconds(0.1f);
+                ServerReject(conn);
+            }
+            StartCoroutine(WaitBeforeDisconnect());
+        }
     }
 
-    public override void OnClientAuthenticate(NetworkConnection conn)
+    public override void OnClientAuthenticate()
     {
         
     }

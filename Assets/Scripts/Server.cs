@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 public class Server : NetworkManager
 {
     private NetworkManager manager;
+    [SerializeField]
+    private GameObject mob;
     private Vector3 characterSpawnPoint;
 
     public override void Start()
@@ -16,7 +18,6 @@ public class Server : NetworkManager
         manager = GetComponent<NetworkManager>();
         manager.clientLoadedScene = false;
         manager.StartServer();
-        manager.ServerChangeScene("PvpScene");
         NetworkServer.RegisterHandler<CharacterSelection>(OnSelectedPlayerSlot, true);
         NetworkServer.RegisterHandler<CharacterCreate>(CharacterCreate, true);
         characterSpawnPoint = new Vector3(-2, 2, -73);
@@ -57,7 +58,7 @@ public class Server : NetworkManager
 
         data.selectedPlayer = c_id;
 
-        GameObject playerObject = Instantiate(spawnPrefabs.Find(x => x.name == "Player"));
+        GameObject playerObject = Instantiate(playerPrefab);
 
         playerObject.transform.position = selectedCharacter.position;
 
@@ -80,7 +81,6 @@ public class Server : NetworkManager
     //Send characters and make him to choose one of them
     public override void OnServerConnect(NetworkConnection conn)
     {
-        print("Connected client from " + conn.address);
         SceneMessage message = new SceneMessage
         {
             sceneName = "CharacterSelection",
@@ -95,10 +95,8 @@ public class Server : NetworkManager
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         data.characters = MySqlServerConnection.instance.GetCharacters(data.id);
-        print(data.characters.Count);
         foreach (Character character in data.characters)
         {
-            print("sended char " + character.NickName);
             con.Send(character);
               
         }
@@ -110,13 +108,14 @@ public class Server : NetworkManager
     public override void OnStopServer()
     {
         base.OnStopServer();
-        print("Stopped server");
+        
     }
 
     public override void OnStartServer()    
     {
         base.OnStartServer();
-        print("Started server");
+        GameObject mob = Instantiate(this.mob);
+        NetworkServer.Spawn(mob);
     }
 
     //Update character data on DB on disconneect
@@ -124,7 +123,7 @@ public class Server : NetworkManager
     {
         if (conn.authenticationData == null)
         {
-            base.OnClientDisconnect(conn);
+            base.OnServerDisconnect(conn);
             return;
         }
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
@@ -135,6 +134,6 @@ public class Server : NetworkManager
             MySqlServerConnection.instance.UpdatePositionData(c_id, player.transform.position);
             MySqlServerConnection.instance.UpdateCharacterData(c_id, player.GetCharacterData());
         }
-        base.OnClientDisconnect(conn);
+        base.OnServerDisconnect(conn);
     }
 }
