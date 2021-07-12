@@ -59,6 +59,7 @@ public class MySqlServerConnection : MonoBehaviour
             "user = server; database = players; password = FGPFHGOU@#HASDAKSD;");
         connection.Open();
         RecieveSingleData("USE players;");
+        ItemDatabase.instance.DatabaseLoad();
     }
     #endregion
 
@@ -186,6 +187,26 @@ public class MySqlServerConnection : MonoBehaviour
     private void SendCommand(string command)
     {
         new MySqlCommand(command, connection);
+    }
+
+    public string GetItemsList()
+    {
+        string[] itemColumns = { "id", "slug", "type", "name", "description", "rarity", "modifiers", "metadata" };
+        return RecieveJson("items", itemColumns);
+    }
+
+    private string RecieveJson(string tableName, string[] columns)
+    {
+        string command = $"SELECT JSON_ARRAYAGG(JSON_OBJECT(";
+        foreach (string column in columns)
+        {
+            if (command[command.Length - 1] != '(')
+                command += ",";
+            command += $"'{column}', {column}";
+        }
+        command += $")) FROM {tableName}";
+        string recieve = RecieveSingleData(command);
+        return recieve;
     }
 
     private List<string> RecieveMultipleData(string command, int columnQuantity)
