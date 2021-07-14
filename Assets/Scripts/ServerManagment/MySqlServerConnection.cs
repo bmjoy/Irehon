@@ -126,7 +126,8 @@ public class MySqlServerConnection : MonoBehaviour
 
     private void CreateAndLinkCharacterContainer(int c_id)
     {
-        int container_id = Convert.ToInt32(InsertSingleValue("containers", "slots", Inventory.GetEmptyInventoryJson()));
+        Inventory container = new Inventory(20);
+        int container_id = Convert.ToInt32(InsertSingleValue("containers", "slots", container.ToJson()));
         RecieveSingleData($"UPDATE characters SET container_id = '{container_id}' WHERE c_id = {c_id};");
     }
 
@@ -173,6 +174,16 @@ public class MySqlServerConnection : MonoBehaviour
     {
         //SendCommand($"UPDATE c_data SET c_freesp = '{data.freeSkillPoints}' WHERE c_id = {c_id};");
         //SendCommand($"UPDATE c_data SET c_lvl = '{data.lvl}' WHERE c_id = {c_id};");
+    }
+
+    public int CreateObjectItem(int item_id, int container_id)
+    {
+        Dictionary<string, string> values = new Dictionary<string, string>()
+        {
+            ["item_id"] = item_id.ToString(),
+            ["container_id"] = container_id.ToString()
+        };
+        return Convert.ToInt32(InsertDictionary("object_items", values));
     }
 
     public void CreatePositionData(int c_id, Vector3 pos)

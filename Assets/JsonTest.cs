@@ -6,24 +6,22 @@ using System;
 
 public class JsonTest : MonoBehaviour
 {
-    public static string GetEmptyInventoryJson()
-    {
-        InventorySlot[] slots = new InventorySlot[20];
-        for (int i = 0; i < slots.Length; i++)
-            slots[i] = new InventorySlot(i);
-        return JsonHelper.ToJson(slots);
-    }
+    //public static string GetEmptyInventoryJson()
+    //{
+    //    Inventory container = new Inventory(20);
+    //    return container.GetJson();
+    //}
 
-    [Serializable]
-    public class Test<T>
-    {
-        public T[] slots;
-    }
+    //[Serializable]
+    //public class Test<T>
+    //{
+    //    public T[] slots;
+    //}
 
-    private void Start()
-    {
-        print(GetEmptyInventoryJson());
-    }
+    //private void Start()
+    //{
+    //    print(GetEmptyInventoryJson());
+    //}
 
     
 }
