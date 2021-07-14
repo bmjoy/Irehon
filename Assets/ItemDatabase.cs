@@ -31,6 +31,34 @@ public class Item
     }
 }
 
+[Serializable]
+public struct InventorySlot
+{
+    public int itemId;
+    public int objectId;
+    public int slotIndex;
+
+    public InventorySlot(int slotIndex)
+    {
+        itemId = 0;
+        objectId = 0;
+        this.slotIndex = slotIndex;
+    }
+}
+
+public class Inventory
+{
+    public const int INVENTORY_CAPACITY = 20;
+
+    public static string GetEmptyInventoryJson()
+    {
+        InventorySlot[] slots = new InventorySlot[20];
+        for (int i = 0; i < slots.Length; i++)
+            slots[i] = new InventorySlot(i);
+        return JsonHelper.ToJson(slots);
+    }
+}
+
 public class ItemDatabase : MonoBehaviour
 {
     public static ItemDatabase instance;

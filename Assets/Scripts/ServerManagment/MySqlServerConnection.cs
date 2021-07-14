@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 
 public static class JsonHelper
@@ -67,41 +68,53 @@ public class MySqlServerConnection : MonoBehaviour
     {
         try
         {
-            string command = $"INSERT INTO `users` (`p_id`, `login`, `password`) " +
-                $"VALUES (NULL, '{login}', '{passsword}')";
-            RecieveSingleData(command);
+            Dictionary<string, string> userInfo = new Dictionary<string, string>();
+            userInfo["p_id"] = null;
+            userInfo["login"] = login;
+            userInfo["password"] = passsword.ToString();
+            int p_id = Convert.ToInt32(InsertDictionary("users", userInfo));
+            return p_id;
         }
         catch
         {
             return -1;
         }
-        return (Login(login, passsword));
     }
 
-    private Vector3 GetVector3(string sqlCommand)
+    public int Login(string login, int password)
     {
-        Vector3 vector = Vector3.zero;
-
-        List<string> positionPoints = RecieveMultipleData(sqlCommand, 3);
-
-        vector.x = (float)Convert.ToDouble(positionPoints[0]);
-        vector.y = (float)Convert.ToDouble(positionPoints[1]);
-        vector.z = (float)Convert.ToDouble(positionPoints[2]);
-
-        return vector;
+        var filter = new Dictionary<string, string>()
+        {
+            ["login"] = login,
+            ["password"] = password.ToString()
+        };
+        SingleSelect("users", "p_id", filter);
+        string response = SingleSelect("users", "p_id", filter);
+        if (response != "")
+            return Convert.ToInt32(response);
+        else
+            return 0;
     }
 
     public bool CreateNewCharacter(int p_id, Character character)
     {
         try
         {
-            string command = $"INSERT INTO `characters` (`c_id`, `nickname`, `p_id`) " +
-                $"VALUES(NULL, '{character.NickName}', '{p_id}')";
-            RecieveSingleData(command);
-            int c_id = GetCharacterId(character.NickName);
-            if (c_id == 0)
+            Dictionary<string, string> characterInfo = new Dictionary<string, string>();
+            characterInfo["c_id"] = null;
+            characterInfo["nickname"] = character.NickName;
+            characterInfo["p_id"] = p_id.ToString();
+            characterInfo["container_id"] = "0";
+            string c_id_str = InsertDictionary("characters", characterInfo);
+            if (c_id_str == null)
                 return false;
+
+            int c_id = Convert.ToInt32(c_id_str);
+            Debug.Log("Creating container");
+            CreateAndLinkCharacterContainer(c_id);
+            Debug.Log("Creating char data");
             CreateCharacterData(c_id);
+            Debug.Log("Creating position");
             CreatePositionData(c_id, character.position);
             return true;
         }
@@ -111,10 +124,15 @@ public class MySqlServerConnection : MonoBehaviour
         }
     }
 
+    private void CreateAndLinkCharacterContainer(int c_id)
+    {
+        int container_id = Convert.ToInt32(InsertSingleValue("containers", "slots", Inventory.GetEmptyInventoryJson()));
+        RecieveSingleData($"UPDATE characters SET container_id = '{container_id}' WHERE c_id = {c_id};");
+    }
+
     public void CreateCharacterData(int c_id)
     {
-        string command = $"INSERT INTO c_data (c_id) VALUES ({c_id});";
-        RecieveSingleData(command);
+        InsertSingleValue("c_data", "c_id", c_id.ToString());
     }
 
     public List<Character> GetCharacters(int p_id)
@@ -181,12 +199,11 @@ public class MySqlServerConnection : MonoBehaviour
 
     public int GetCharacterId(string NickName)
     {
-        return Convert.ToInt32(RecieveSingleData($"SELECT c_id FROM `characters` WHERE nickname = '{NickName}'"));
-    }
-
-    private void SendCommand(string command)
-    {
-        new MySqlCommand(command, connection);
+        var filter = new Dictionary<string, string>()
+        {
+            ["nickname"] = NickName
+        };
+        return Convert.ToInt32(SingleSelect("characters", "c_id", filter));
     }
 
     public string GetItemsList()
@@ -225,6 +242,24 @@ public class MySqlServerConnection : MonoBehaviour
         return response;
     }
 
+    private string SingleSelect(string table, string column, Dictionary<string, string> filter)
+    {
+        string command = $"SELECT {column} FROM {table}";
+        if (filter.Count > 0)
+        {
+            command += " WHERE ";
+            for (int i = 0; i < filter.Count; i++)
+            {
+                if (i != 0)
+                    command += " AND ";
+                var filterPair = filter.ElementAt(i);
+                command += $"{filterPair.Key} = '{filterPair.Value}'";
+            }
+        }
+        command += ";";
+        return RecieveSingleData(command);
+    }
+
     private string RecieveSingleData(string command)
     {
         MySqlCommand commandResponse = new MySqlCommand(command, connection);
@@ -235,13 +270,47 @@ public class MySqlServerConnection : MonoBehaviour
             return null;
     }
 
-    public int Login(string login, int password)
+    private Vector3 GetVector3(string sqlCommand)
     {
-        string response = RecieveSingleData($"SELECT p_id FROM users " +
-            $"WHERE login = '{login}' AND password = '{password}';");
-        if (response != "")
-            return Convert.ToInt32(response);
-        else
-            return 0;
+        Vector3 vector = Vector3.zero;
+
+        List<string> positionPoints = RecieveMultipleData(sqlCommand, 3);
+
+        vector.x = (float)Convert.ToDouble(positionPoints[0]);
+        vector.y = (float)Convert.ToDouble(positionPoints[1]);
+        vector.z = (float)Convert.ToDouble(positionPoints[2]);
+
+        return vector;
+    }
+
+    private string InsertSingleValue(string table, string key, string value)
+    {
+        return RecieveSingleData($"INSERT INTO {table} ({key}) VALUES ('{value}'); SELECT LAST_INSERT_ID();");
+    }
+
+    private string InsertDictionary(string table, Dictionary<string, string> values)
+    {
+        string[] keys = values.Keys.ToArray();
+        string command = $"INSERT INTO `{table}` (";
+        for (int i = 0; i < keys.Length; i++)
+        {
+            if (i != 0)
+                command += ", ";
+            command += $"`{keys[i]}`";
+        }
+        command += ") VALUES(";
+        for (int i = 0; i < keys.Length; i++)
+        {
+            string value = values[keys[i]];
+            if (i != 0)
+                command += ", ";
+            if (value != null)
+                command += $"'{value}'";
+            else
+                command += "NULL";
+        }
+        command += "); SELECT LAST_INSERT_ID();";
+        string res = RecieveSingleData(command);
+        return res;
     }
 }
