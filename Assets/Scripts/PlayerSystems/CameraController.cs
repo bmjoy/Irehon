@@ -58,7 +58,7 @@ public class CameraController : MonoBehaviour
         OnChangeCursorState = new OnChangeCursorHidingState();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        cursorAiming = true;
+        cursorAiming = false;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
         InvokeRepeating("SendRotationPacket", 3, 0.05f);
     }

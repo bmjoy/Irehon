@@ -153,9 +153,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
   autoStartServerBuild: 1
-  showDebugMessages: 0
   serverTickRate: 60
   serverBatching: 0
   serverBatchInterval: 0
@@ -172,7 +172,7 @@ MonoBehaviour:
   autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 3622006752709158442, guid: 553def14bf12a0c4db2e3da74a1151d5, type: 3}
+  - {fileID: 5620380849228149108, guid: 7876725493f9e4135ade1231357cb8b7, type: 3}
   OnUpdateCharacterList:
     m_PersistentCalls:
       m_Calls: []

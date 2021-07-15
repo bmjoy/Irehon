@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public struct Character : NetworkMessage
 {
     public int slot;
+    public int id;
     public string NickName;
     public Vector3 position;
 }

@@ -29,7 +29,7 @@ public class ItemDatabase : MonoBehaviour
             Debug.Log("Second call of loading database err");
             return;
         }
-        string jsonString = MySqlServerConnection.instance.GetItemsList();
+        string jsonString = MySql.Database.instance.GetItemsList();
         databaseResponse = JSON.Parse(jsonString);
 
         ParseItems();

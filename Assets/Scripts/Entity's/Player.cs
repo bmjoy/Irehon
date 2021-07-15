@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils;
 
 public struct CharacterData
 {
-    
+    public Container inventory;
+    public int containerId;
 }
 
 public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
@@ -38,6 +40,7 @@ public class Player : Entity
     [TargetRpc]
     private void UpdateCharacterData(NetworkConnection con, CharacterData data)
     {
+        print(JsonHelper.ToJson(data.inventory.slots));
         characterData = data;
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
@@ -45,6 +48,8 @@ public class Player : Entity
     [Server]
     public void SetCharacterData(CharacterData data)
     {
+        print(data.containerId);
+        print(JsonUtility.ToJson(data.inventory));
         characterData = data;
         UpdateCharacterData(connectionToClient, characterData);
     }

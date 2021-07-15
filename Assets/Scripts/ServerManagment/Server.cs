@@ -37,7 +37,7 @@ public class Server : NetworkManager
             position = characterSpawnPoint,
         };
 
-        MySqlServerConnection.instance.CreateNewCharacter(p_id, newCharacter);
+        MySql.Database.instance.CreateNewCharacter(p_id, newCharacter);
 
         SendCharacterListToPlayer(con);
     }
@@ -54,7 +54,7 @@ public class Server : NetworkManager
         PlayerConnection data = (PlayerConnection)con.authenticationData;
         Character selectedCharacter = data.characters[selection.selectedSlot];
 
-        int c_id = MySqlServerConnection.instance.GetCharacterId(selectedCharacter.NickName);
+        int c_id = MySql.Database.instance.GetCharacterId(selectedCharacter.NickName);
 
         data.selectedPlayer = c_id;
 
@@ -72,7 +72,7 @@ public class Server : NetworkManager
 
         NetworkServer.AddPlayerForConnection(con, playerObject);
 
-        CharacterData characterData = MySqlServerConnection.instance.GetCharacterData(c_id);
+        CharacterData characterData = MySql.Database.instance.GetCharacterData(c_id);
         playerComponent.SetCharacterData(characterData);
         
         con.authenticationData = data;
@@ -94,7 +94,7 @@ public class Server : NetworkManager
     private void SendCharacterListToPlayer(NetworkConnection con)
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
-        data.characters = MySqlServerConnection.instance.GetCharacters(data.id);
+        data.characters = MySql.Database.instance.GetCharacters(data.id);
         foreach (Character character in data.characters)
         {
             con.Send(character);
@@ -131,8 +131,8 @@ public class Server : NetworkManager
         {
             int c_id = data.selectedPlayer;
             Player player = data.playerPrefab.GetComponent<Player>();
-            MySqlServerConnection.instance.UpdatePositionData(c_id, player.transform.position);
-            MySqlServerConnection.instance.UpdateCharacterData(c_id, player.GetCharacterData());
+            MySql.Database.instance.UpdatePositionData(c_id, player.transform.position);
+            MySql.Database.instance.UpdateCharacterData(c_id, player.GetCharacterData());
         }
         base.OnServerDisconnect(conn);
     }
