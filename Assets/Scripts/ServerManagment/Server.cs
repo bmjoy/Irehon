@@ -5,6 +5,7 @@ using Mirror;
 using System;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class Server : NetworkManager
 {
@@ -26,20 +27,23 @@ public class Server : NetworkManager
     //Insert data in tables and send it to player
     public void CharacterCreate(NetworkConnection con, CharacterCreate character)
     {
-        PlayerConnection data = (PlayerConnection)con.authenticationData;
-        int p_id = data.id;
-        if (data.characters.Count > 2)
-            return;
-
-        Character newCharacter = new Character
+        var outer = Task.Factory.StartNew(() =>
         {
-            NickName = character.NickName,
-            position = characterSpawnPoint,
-        };
+            PlayerConnection data = (PlayerConnection)con.authenticationData;
+            int p_id = data.id;
+            if (data.characters.Count > 2)
+                return;
 
-        MySql.Database.instance.CreateNewCharacter(p_id, newCharacter);
+            Character newCharacter = new Character
+            {
+                NickName = character.NickName,
+                position = characterSpawnPoint,
+            };
 
-        SendCharacterListToPlayer(con);
+            MySql.Database.instance.CreateNewCharacter(p_id, newCharacter);
+
+            SendCharacterListToPlayer(con);
+        });
     }
 
     //Spawn character on player selected slot 
@@ -67,7 +71,6 @@ public class Server : NetworkManager
         playerComponent.SetName(selectedCharacter.NickName);
 
 
-
         data.playerPrefab = playerObject.transform;
 
         NetworkServer.AddPlayerForConnection(con, playerObject);
@@ -81,13 +84,16 @@ public class Server : NetworkManager
     //Send characters and make him to choose one of them
     public override void OnServerConnect(NetworkConnection conn)
     {
-        SceneMessage message = new SceneMessage
+        var outer = Task.Factory.StartNew(() =>
         {
-            sceneName = "CharacterSelection",
-        };
-        conn.Send(message);
+            SceneMessage message = new SceneMessage
+            {
+                sceneName = "CharacterSelection",
+            };
+            conn.Send(message);
 
-        SendCharacterListToPlayer(conn);
+            SendCharacterListToPlayer(conn);
+        });
     }
 
     //Character list to choose on of them
@@ -127,13 +133,16 @@ public class Server : NetworkManager
             return;
         }
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
-        if (data.selectedPlayer >= 0)
+        var outer = Task.Factory.StartNew(() =>
         {
-            int c_id = data.selectedPlayer;
-            Player player = data.playerPrefab.GetComponent<Player>();
-            MySql.Database.instance.UpdatePositionData(c_id, player.transform.position);
-            MySql.Database.instance.UpdateCharacterData(c_id, player.GetCharacterData());
-        }
+            if (data.selectedPlayer >= 0)
+            {
+                int c_id = data.selectedPlayer;
+                Player player = data.playerPrefab.GetComponent<Player>();
+                MySql.Database.instance.UpdatePositionData(c_id, player.transform.position);
+                MySql.Database.instance.UpdateCharacterData(c_id, player.GetCharacterData());
+            }
+        });
         base.OnServerDisconnect(conn);
     }
 }

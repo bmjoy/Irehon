@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,7 +39,10 @@ public class TestUI : MonoBehaviour
 
     public void ChangeItemOwner()
     {
-        MySql.ContainerData.i.ChangeItemOwner(Convert.ToInt32(containerId.text), Convert.ToInt32(container2Id.text), Convert.ToInt32(objectId.text));
+        var outer = Task.Factory.StartNew(() =>
+        {
+            MySql.ContainerData.i.ChangeItemOwner(Convert.ToInt32(containerId.text), Convert.ToInt32(container2Id.text), Convert.ToInt32(objectId.text));
+        });
     }
 
     public void CreateContainer()

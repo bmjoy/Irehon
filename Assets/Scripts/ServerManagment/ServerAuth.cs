@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Threading.Tasks;
 
 public struct AuthRequestMessage : NetworkMessage
 {
@@ -87,37 +88,40 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage msg)
     {
-        int loginResponse = 0;
-        string responseText;
-
-        bool result = IsRequestValid(msg, ref loginResponse, out responseText);
-
-        AuthResponseMessage authResponseMessage = new AuthResponseMessage();
-        authResponseMessage.ResponseText = responseText;
-        if (result)
-            authResponseMessage.Connected = true;
-        else
-            authResponseMessage.Connected = false;
-        conn.Send(authResponseMessage);
-
-        if (result)
+        var outer = Task.Factory.StartNew(() =>
         {
-            conn.authenticationData = new PlayerConnection
+            int loginResponse = 0;
+            string responseText;
+
+            bool result = IsRequestValid(msg, ref loginResponse, out responseText);
+
+            AuthResponseMessage authResponseMessage = new AuthResponseMessage();
+            authResponseMessage.ResponseText = responseText;
+            if (result)
+                authResponseMessage.Connected = true;
+            else
+                authResponseMessage.Connected = false;
+            conn.Send(authResponseMessage);
+
+            if (result)
             {
-                id = loginResponse,
-                selectedPlayer = -1,
-            };
-            ServerAccept(conn);
-        }
-        else
-        {
-            IEnumerator WaitBeforeDisconnect()
-            {
-                yield return new WaitForSeconds(0.1f);
-                ServerReject(conn);
+                conn.authenticationData = new PlayerConnection
+                {
+                    id = loginResponse,
+                    selectedPlayer = -1,
+                };
+                ServerAccept(conn);
             }
-            StartCoroutine(WaitBeforeDisconnect());
-        }
+            else
+            {
+                IEnumerator WaitBeforeDisconnect()
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    ServerReject(conn);
+                }
+                StartCoroutine(WaitBeforeDisconnect());
+            }
+        });
     }
 
     public override void OnClientAuthenticate()

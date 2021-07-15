@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace MySql
@@ -34,7 +35,6 @@ namespace MySql
 
         public int CreateContainer(int capacity)
         {
-            Debug.Log(capacity);
             Container container = new Container(capacity);
             return Convert.ToInt32(connection.Insert("containers", "slots", container.ToJson()));
         }
@@ -118,7 +118,7 @@ namespace MySql
             Container container = GetContainer(containerId);
             if (container == null)
                 return false;
-            var slot = Array.Find(container.slots, x => x.objectId == objectId);
+            var slot = container.FindObject(objectId);
             if (slot == null)
                 return false;
             slot.objectId = 0;
@@ -132,7 +132,7 @@ namespace MySql
             Container container = GetContainer(containerId);
             if (container == null)
                 return false;
-            var slot = Array.Find(container.slots, x => x.objectId == 0 && x.itemId == 0);
+            var slot = container.GetEmptySlot();
             if (slot == null)
                 return false;
             slot.itemId = GetItemIdById(objectId);
@@ -158,7 +158,7 @@ namespace MySql
             Container container = GetContainer(containerId);
             if (container == null)
                 return 0;
-            return Array.FindAll(container.slots, x => x.itemId == 0 && x.objectId == 0).Length;
+            return container.GetEmptySlotsCount();
         }
 
         private void ChangeContainerOnItem(int containerId, int objectId)
