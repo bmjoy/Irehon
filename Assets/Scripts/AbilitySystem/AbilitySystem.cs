@@ -66,10 +66,10 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     private void Start()
     {
-        if (!isLocalPlayer && !isServer)
-            return;
         weapon = Instantiate(weaponPrefab, AbilityPrefabData.LeftHand);
         currentAbility = weapon.GetComponent<Weapon>().Setup(this);
+        if (!isLocalPlayer && !isServer)
+            return;
     }
 
     public void AbilityKeyDown(KeyCode key, Vector3 target)

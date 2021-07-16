@@ -57891,6 +57891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
+  visible: 0
   m_AssetId: 
   hasSpawned: 0
 --- !u!65 &5789036800629056985
@@ -68464,16 +68465,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3623265182689542640}
     m_Modifications:
-    - target: {fileID: 4287184691163289204, guid: b7b2c32e4dbcb2c428604646ce570a49,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4287184691163289204, guid: b7b2c32e4dbcb2c428604646ce570a49,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6073363424752824553, guid: b7b2c32e4dbcb2c428604646ce570a49,
         type: 3}
       propertyPath: m_Pivot.x
@@ -68583,16 +68574,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EntityHealthBar
-      objectReference: {fileID: 0}
-    - target: {fileID: 8006868926737861653, guid: b7b2c32e4dbcb2c428604646ce570a49,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8006868926737861653, guid: b7b2c32e4dbcb2c428604646ce570a49,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7b2c32e4dbcb2c428604646ce570a49, type: 3}
