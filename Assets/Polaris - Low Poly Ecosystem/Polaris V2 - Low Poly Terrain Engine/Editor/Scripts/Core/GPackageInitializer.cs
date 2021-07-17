@@ -103,8 +103,8 @@ namespace Pinwheel.Griffin
 
         private static void CheckUnityPackagesAndInit()
         {
-            listPackageRequest = Client.List(true);
-            EditorApplication.update += OnRequestingPackageList;
+            //listPackageRequest = Client.List(true);
+            //EditorApplication.update += OnRequestingPackageList;
         }
 
         private static void OnRequestingPackageList()

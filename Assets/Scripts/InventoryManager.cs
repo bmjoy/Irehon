@@ -29,7 +29,8 @@ public class InventoryManager : MonoBehaviour
     {
         foreach (ContainerSlot containerSlot in container.slots)
         {
-
+            GameObject slot = Instantiate(inventorySlotPrefab, containerBG);
+            slot.GetComponent<InventorySlotUI>().Intialize(containerSlot);
         }
     }
 }
