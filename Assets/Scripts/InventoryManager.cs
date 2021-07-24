@@ -52,6 +52,12 @@ public class InventoryManager : MonoBehaviour
         containerWindow.gameObject.SetActive(true);
     }
 
+    public void OpenContainer(Container container)
+    {
+        containerWindow.gameObject.SetActive(true);
+        FillContainer(containerWindow, container, OpenedContainerType.OtherContainer);
+    }
+
     public RectTransform GetDragger() => dragger;
 
     public Image GetDraggerImage() => draggerImage;

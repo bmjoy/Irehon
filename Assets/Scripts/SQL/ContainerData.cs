@@ -198,11 +198,11 @@ namespace MySql
             int oldItemId = oldContainer[oldSlot].itemId;
             int oldObjectItemId = oldContainer[oldSlot].objectId;
 
-            container[oldSlot].itemId = container[slot].itemId;
-            container[oldSlot].objectId = container[slot].objectId;
+            oldContainer[oldSlot].itemId = container[slot].itemId;
+            oldContainer[oldSlot].objectId = container[slot].objectId;
 
-            oldContainer[slot].itemId = oldItemId;
-            oldContainer[slot].objectId = oldObjectItemId;
+            container[slot].itemId = oldItemId;
+            container[slot].objectId = oldObjectItemId;
             SaveContainer(containerId, container);
             SaveContainer(oldContainerId, oldContainer);
             return true;

@@ -40,6 +40,13 @@ public class Player : Entity
             HitConfirmEvent.AddListener(controller.HitConfirmed);
             OnTakeDamageEvent.AddListener(controller.TakeDamageEffect);
         }
+        else
+            Invoke("Test", 2f);
+    }
+
+    private void Test()
+    {
+        OpenContainer(17);
     }
 
     [TargetRpc]
@@ -63,12 +70,27 @@ public class Player : Entity
         UpdateCharacterData(connectionToClient, characterData);
     }
 
+    [TargetRpc]
+    public void OpenAnotherContainer(string json)
+    {
+        Container container = new Container(json);
+        InventoryManager.instance.OpenContainer(container);
+    }
+
+    [Server]
+    public void OpenContainer(int containerId)
+    {
+        openedContainerId = containerId;
+        Task.Run(() =>
+            OpenAnotherContainer(MySql.ContainerData.i.GetContainer(containerId).ToJson()));
+    }
+
     public CharacterData GetCharacterData() => characterData;
 
     protected void UpdateHealthBar(int oldHealth, int newHealth)
     {
         UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth);
-}
+    }
 
     protected override void SetDefaultState()
     {
@@ -154,6 +176,12 @@ public class Player : Entity
             Task.Run(() =>
             {
                 MySql.ContainerData.i.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
+                characterData.inventory = MySql.ContainerData.i.GetContainer(characterData.containerId);
+                UpdateCharacterData(connectionToClient, characterData);
+                if (firstContainerId != characterData.containerId)
+                    OpenContainer(firstContainerId);
+                else
+                    OpenContainer(secondContainerId);
             });
         }
     }
