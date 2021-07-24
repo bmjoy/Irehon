@@ -12,6 +12,7 @@ public class ItemDatabase : MonoBehaviour
 
     private bool isDatabaseLoaded;
     private JSONNode databaseResponse;
+    public string jsonString { get; private set; }
 
     private void Awake()
     {
@@ -22,6 +23,17 @@ public class ItemDatabase : MonoBehaviour
         isDatabaseLoaded = false;
     }
 
+    public void DatabaseLoadJson(string jsonString)
+    {
+        print(jsonString);
+        if (isDatabaseLoaded)
+            return;
+        databaseResponse = JSON.Parse(jsonString);
+        isDatabaseLoaded = true;
+        ParseItems();
+        print(items.Count);
+    }
+
     public void DatabaseLoad()
     {
         if (isDatabaseLoaded)
@@ -29,10 +41,12 @@ public class ItemDatabase : MonoBehaviour
             Debug.Log("Second call of loading database err");
             return;
         }
-        string jsonString = MySql.Database.instance.GetItemsList();
+        jsonString = MySql.Database.instance.GetItemsList();
         databaseResponse = JSON.Parse(jsonString);
+        isDatabaseLoaded = true;
 
         ParseItems();
+        print("loaded");
     }
 
     private void ParseItems()
@@ -41,4 +55,8 @@ public class ItemDatabase : MonoBehaviour
         foreach (JSONNode item in databaseResponse)
             items.Add(new Item(item));
     }
+
+    public static Item GetItemById(int id) => instance.items?.Find(x => x.id == id);
+
+    public static Item GetItemBySlug(string slug) => instance.items?.Find(x => x.slug == slug);
 }

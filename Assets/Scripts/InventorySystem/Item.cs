@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SimpleJSON;
 using UnityEngine;
 
-public enum ItemType { Weapon, Armor }
+public enum ItemType { Weapon, Armor, Resource, Quest }
 public enum ItemRarity { Common, Uncommon, Rare, Epic }
 
 public class Item
@@ -17,6 +17,7 @@ public class Item
     public ItemRarity rarity { get; }
     public JSONNode modifiers { get; }
     public JSONNode metadata { get; }
+    public Sprite sprite { get; }
 
     public Item(JSONNode json)
     {

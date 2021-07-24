@@ -49,36 +49,47 @@ public class Server : NetworkManager
     //Spawn character on player selected slot 
     public void OnSelectedPlayerSlot(NetworkConnection con, CharacterSelection selection)
     {
-        SceneMessage message = new SceneMessage
+        StartCoroutine(SpawnPlayer());
+        IEnumerator SpawnPlayer()
         {
-            sceneName = "PvpScene",
-        };
-        con.Send(message);
+            SceneMessage message = new SceneMessage
+            {
+                sceneName = "PvpScene",
+            };
+            con.Send(message);
 
-        PlayerConnection data = (PlayerConnection)con.authenticationData;
-        Character selectedCharacter = data.characters[selection.selectedSlot];
+            PlayerConnection data = (PlayerConnection)con.authenticationData;
+            Character selectedCharacter = data.characters[selection.selectedSlot];
 
-        int c_id = MySql.Database.instance.GetCharacterId(selectedCharacter.NickName);
+            int c_id = 0;
 
-        data.selectedPlayer = c_id;
+            var outer = Task.Factory.StartNew(() => c_id = MySql.Database.instance.GetCharacterId(selectedCharacter.NickName));
+            while (!outer.IsCompleted)
+                yield return null;
 
-        GameObject playerObject = Instantiate(playerPrefab);
+            data.selectedPlayer = c_id;
 
-        playerObject.transform.position = selectedCharacter.position;
+            GameObject playerObject = Instantiate(playerPrefab);
+            playerObject.transform.position = selectedCharacter.position;
 
-        Player playerComponent = playerObject.GetComponent<Player>();
-
-        playerComponent.SetName(selectedCharacter.NickName);
+            Player playerComponent = playerObject.GetComponent<Player>();
 
 
-        data.playerPrefab = playerObject.transform;
+            playerComponent.SetName(selectedCharacter.NickName);
 
-        NetworkServer.AddPlayerForConnection(con, playerObject);
+            data.playerPrefab = playerObject.transform;
 
-        CharacterData characterData = MySql.Database.instance.GetCharacterData(c_id);
-        playerComponent.SetCharacterData(characterData);
-        
-        con.authenticationData = data;
+            NetworkServer.AddPlayerForConnection(con, playerObject);
+
+            playerComponent.SendItemDatabase(ItemDatabase.instance.jsonString);
+            CharacterData characterData = new CharacterData();
+            var charDataTask = Task.Factory.StartNew(() => characterData = MySql.Database.instance.GetCharacterData(c_id));
+            while (!charDataTask.IsCompleted)
+                yield return null;
+            playerComponent.SetCharacterData(characterData);
+
+            con.authenticationData = data;
+        }
     }
 
     //Send characters and make him to choose one of them

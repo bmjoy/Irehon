@@ -4,17 +4,21 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Utils;
+using System.Threading.Tasks;
 
 public struct CharacterData
 {
     public Container inventory;
     public int containerId;
+    public int characterId;
 }
 
 public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
 
 public class Player : Entity
 {
+    public bool isDataAlreadyRecieved { get; private set; } = false;
+    private int openedContainerId;
     private PlayerController controller;
     private CharacterData characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -31,6 +35,7 @@ public class Player : Entity
         base.Start();
         if (isLocalPlayer)
         {
+            InventoryManager.instance.PlayerIntialize(this);
             OnHealthChanged.AddListener(UpdateHealthBar);
             HitConfirmEvent.AddListener(controller.HitConfirmed);
             OnTakeDamageEvent.AddListener(controller.TakeDamageEffect);
@@ -40,16 +45,20 @@ public class Player : Entity
     [TargetRpc]
     private void UpdateCharacterData(NetworkConnection con, CharacterData data)
     {
-        print(JsonHelper.ToJson(data.inventory.slots));
+        isDataAlreadyRecieved = true;
         characterData = data;
         OnCharacterDataUpdateEvent.Invoke(characterData);
+    }
+
+    [TargetRpc]
+    public void SendItemDatabase(string json)
+    {
+        ItemDatabase.instance.DatabaseLoadJson(json);
     }
 
     [Server]
     public void SetCharacterData(CharacterData data)
     {
-        print(data.containerId);
-        print(JsonUtility.ToJson(data.inventory));
         characterData = data;
         UpdateCharacterData(connectionToClient, characterData);
     }
@@ -107,6 +116,46 @@ public class Player : Entity
             target = target
         };
         target.TakeDamage(damageMessage);
+    }
+
+    private int GetContainerId(OpenedContainerType type)
+    {
+        switch (type)
+        {
+            case OpenedContainerType.Inventory: return characterData.containerId;
+            case OpenedContainerType.OtherContainer: return openedContainerId;
+            default: return 0;
+        };
+    }
+
+    [Command]
+    public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
+    {
+        int firstContainerId = GetContainerId(firstType);
+        if (firstContainerId == 0)
+            return;
+        int secondContainerId = GetContainerId(secondType);
+        if (secondContainerId == 0)
+            return;
+        if (firstContainerId == secondContainerId)
+        {
+            Task.Run(() =>
+            {
+                MySql.ContainerData.i.SwapSlot(firstContainerId, firstSlot, secondSlot);
+                if (firstContainerId == characterData.containerId)
+                {
+                    characterData.inventory = MySql.ContainerData.i.GetContainer(characterData.containerId);
+                    UpdateCharacterData(connectionToClient, characterData);
+                }
+            });
+        }
+        else
+        {
+            Task.Run(() =>
+            {
+                MySql.ContainerData.i.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
+            });
+        }
     }
 
     public override void TakeDamage(DamageMessage damageMessage)

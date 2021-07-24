@@ -69,6 +69,11 @@ namespace MySql
                 CreateAndLinkCharacterContainer(c_id);
                 CreateCharacterData(c_id);
                 CreatePositionData(c_id, character.position);
+                ContainerData.i.GiveCharacterItem(c_id, 1);
+                ContainerData.i.GiveCharacterItem(c_id, 4);
+                ContainerData.i.GiveCharacterItem(c_id, 3);
+                ContainerData.i.GiveCharacterItem(c_id, 1);
+                ContainerData.i.GiveCharacterItem(c_id, 2);
                 return true;
             }
             catch 
@@ -120,6 +125,7 @@ namespace MySql
             CharacterData data = new CharacterData();
             data.containerId = ContainerData.i.GetCharacterContainer(c_id);
             data.inventory = ContainerData.i.GetContainer(data.containerId);
+            data.characterId = c_id;
             return data;
         }
 

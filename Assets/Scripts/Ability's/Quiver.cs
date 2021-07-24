@@ -21,7 +21,6 @@ public class Quiver : MonoBehaviour
             arrow.gameObject.SetActive(false);
             arrowsInQuiever.Enqueue(arrow);
         }
-
     }
 
     public void ReturnArrowInQuiver(Arrow arrow)

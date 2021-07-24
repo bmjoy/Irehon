@@ -10,6 +10,8 @@ namespace MySql
     {
         int CreateContainer(int capacity);
         Container GetContainer(int containerId);
+        void SwapSlot(int containerId, int oldSlot, int newSlot);
+        void MoveSlot(int oldContainerId, int oldSlot, int containerId, int slot);
         void SaveContainer(int containerId, Container container);
         int GetCharacterContainer(int characterId);
         bool GiveContainerItem(int containerId, int itemId);
@@ -22,7 +24,7 @@ namespace MySql
 
     public class ContainerData : IContainerData
     {
-        public static IContainerData i; 
+        public static IContainerData i;
 
         private Connection connection;
 
@@ -37,6 +39,16 @@ namespace MySql
         {
             Container container = new Container(capacity);
             return Convert.ToInt32(connection.Insert("containers", "slots", container.ToJson()));
+        }
+
+        public void MoveSlot(int oldContainerId, int oldSlot, int containerId, int slot)
+        {
+            MoveSlotData(oldContainerId, oldSlot, containerId, slot);
+        }
+
+        public void SwapSlot(int containerId, int oldSlot, int newSlot)
+        {
+            MoveSlotData(containerId, oldSlot, newSlot);
         }
 
         public void SaveContainer(int containerId, Container container)
@@ -151,6 +163,49 @@ namespace MySql
                 ["container_id"] = containerId.ToString()
             };
             return Convert.ToInt32(connection.Insert("object_items", values));
+        }
+
+        private bool MoveSlotData(int containerId, int from, int to)
+        {
+            Container container = GetContainer(containerId);
+            if (container == null)
+                return false;
+            int containerSlotsCount = container.slots.Length;
+            if (from < 0 || to < 0 || from > containerSlotsCount || to > containerSlotsCount)
+                return false;
+            int oldItemId = container[from].itemId;
+            int oldObjectItemId = container[from].objectId;
+
+            container[from].itemId = container[to].itemId;
+            container[from].objectId = container[to].objectId;
+
+            container[to].itemId = oldItemId;
+            container[to].objectId = oldObjectItemId;
+            SaveContainer(containerId, container);
+            return true;
+        }
+
+        private bool MoveSlotData(int oldContainerId, int oldSlot, int containerId, int slot)
+        {
+            Container oldContainer = GetContainer(oldContainerId);
+            Container container = GetContainer(containerId);
+            if (container == null || oldContainer == null)
+                return false;
+            int oldContainerSlotsCount = oldContainer.slots.Length;
+            int containerSlotsCount = container.slots.Length;
+            if (oldSlot < 0 || slot < 0 || oldSlot > oldContainerSlotsCount || slot > containerSlotsCount)
+                return false;
+            int oldItemId = oldContainer[oldSlot].itemId;
+            int oldObjectItemId = oldContainer[oldSlot].objectId;
+
+            container[oldSlot].itemId = container[slot].itemId;
+            container[oldSlot].objectId = container[slot].objectId;
+
+            oldContainer[slot].itemId = oldItemId;
+            oldContainer[slot].objectId = oldObjectItemId;
+            SaveContainer(containerId, container);
+            SaveContainer(oldContainerId, oldContainer);
+            return true;
         }
 
         private int EmptySlotCount(int containerId)
