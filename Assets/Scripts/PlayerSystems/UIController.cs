@@ -24,6 +24,8 @@ public class UIController : MonoBehaviour
     private RectTransform triangleAimingRectangle;
     [SerializeField]
     private RectTransform defaultAimingRectangle;
+    [SerializeField]
+    private GameObject interactableHint;
 
     private Coroutine hitMarkerCoroutine;
     private Coroutine healthBarCoroutine;
@@ -55,6 +57,16 @@ public class UIController : MonoBehaviour
         float sizeDelta = (defaultTriangleSize - minimumTriangleSize) * newSize;
         float size = defaultTriangleSize - sizeDelta;
         triangleAimingRectangle.sizeDelta = new Vector2(size, size);
+    }
+
+    public void ShowInteractableHint()
+    {
+        interactableHint.SetActive(true);
+    }
+
+    public void HideInteractableHint()
+    {
+        interactableHint.SetActive(false);
     }
 
     public void ShowHitMarker()

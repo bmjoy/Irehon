@@ -13,6 +13,7 @@ public class TestUI : MonoBehaviour
     public InputField objectId;
     public InputField characterId;
     public Text frameCount;
+    public InputField count;
 
     long frame = 0;
 
@@ -24,7 +25,7 @@ public class TestUI : MonoBehaviour
 
     public void GiveItem()
     {
-        MySql.ContainerData.i.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text));
+        MySql.ContainerData.i.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text), Convert.ToInt32(count.text));
     }
 
     public void RemoveItem()

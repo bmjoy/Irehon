@@ -70,10 +70,10 @@ namespace MySql
                 CreateCharacterData(c_id);
                 CreatePositionData(c_id, character.position);
                 ContainerData.i.GiveCharacterItem(c_id, 1);
-                ContainerData.i.GiveCharacterItem(c_id, 4);
-                ContainerData.i.GiveCharacterItem(c_id, 3);
-                ContainerData.i.GiveCharacterItem(c_id, 1);
-                ContainerData.i.GiveCharacterItem(c_id, 2);
+                ContainerData.i.GiveCharacterItem(c_id, 4, 4);
+                ContainerData.i.GiveCharacterItem(c_id, 3, 2);
+                ContainerData.i.GiveCharacterItem(c_id, 1, 6);
+                ContainerData.i.GiveCharacterItem(c_id, 2, 9);
                 return true;
             }
             catch 
@@ -167,7 +167,7 @@ namespace MySql
 
         public string GetItemsList()
         {
-            string[] itemColumns = { "id", "slug", "type", "name", "description", "rarity", "modifiers", "metadata" };
+            string[] itemColumns = { "id", "slug", "stack", "type", "name", "description", "rarity", "modifiers", "metadata" };
             return connection.RecieveJson("items", itemColumns);
         }
     }

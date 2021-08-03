@@ -8,17 +8,23 @@ public enum OpenedContainerType { Inventory, OtherContainer}
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject inventorySlotPrefab;
+    private UIWindow inventoryWindow;
+    [SerializeField]
+    private UIWindow otherContainerWindow;
     [SerializeField]
     private RectTransform inventory;
     [SerializeField]
     private RectTransform containerWindow;
+
+    [SerializeField]
+    private GameObject inventorySlotPrefab;
+
     [SerializeField]
     private RectTransform dragger;
     [SerializeField]
     private Image draggerImage;
-    [SerializeField]
-    private List<InventorySlotUI> inventorySlots;
+
+    private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
     private Canvas canvas;
     private Player player;
     public static InventoryManager instance;
@@ -31,8 +37,6 @@ public class InventoryManager : MonoBehaviour
             instance = this;
         canvas = GetComponent<Canvas>();
     }
-
-   
 
     public void PlayerIntialize(Player player)
     {
@@ -47,15 +51,15 @@ public class InventoryManager : MonoBehaviour
         player.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
-    public void OpenInventory()
-    {
-        containerWindow.gameObject.SetActive(true);
-    }
-
     public void OpenContainer(Container container)
     {
-        containerWindow.gameObject.SetActive(true);
         FillContainer(containerWindow, container, OpenedContainerType.OtherContainer);
+        otherContainerWindow.Open();
+    }
+
+    public void CloseContainer()
+    {
+        otherContainerWindow.Close();
     }
 
     public RectTransform GetDragger() => dragger;
@@ -64,9 +68,9 @@ public class InventoryManager : MonoBehaviour
 
     private void FillInventory(Container container)
     {
-        print("Get fill inventory prikaz");
         if (container.slots.Length > inventorySlots.Count)
         {
+
             int diff = container.slots.Length - inventorySlots.Count;
             for (int i = 0; i < diff; i++)
             {

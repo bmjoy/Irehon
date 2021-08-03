@@ -13,6 +13,14 @@ public class ClientAuth : NetworkAuthenticator
     [SerializeField]
     private TMPro.TMP_InputField Password;
 
+    //private void Start()
+    //{
+    //    currentRequest.Login = "qwerty";
+    //    currentRequest.Password = "1234";
+    //    currentRequest.Type = AuthRequestMessage.AuthType.Login;
+    //    GetComponent<NetworkManager>().StartClient();
+    //}
+
     public override void OnClientAuthenticate()
     {
         NetworkClient.Send(currentRequest);

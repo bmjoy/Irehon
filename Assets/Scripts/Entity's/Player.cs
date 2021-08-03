@@ -151,6 +151,18 @@ public class Player : Entity
     }
 
     [Command]
+    public void OpenChest(NetworkIdentity identity)
+    {
+        Chest chest = identity.GetComponent<Chest>();
+
+        if (chest == null ||
+                Vector3.Distance(chest.gameObject.transform.position, transform.position) > 7f)
+            return;
+
+        OpenContainer(chest.ContainerId);
+    }
+
+    [Command]
     public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
     {
         int firstContainerId = GetContainerId(firstType);
@@ -169,6 +181,8 @@ public class Player : Entity
                     characterData.inventory = MySql.ContainerData.i.GetContainer(characterData.containerId);
                     UpdateCharacterData(connectionToClient, characterData);
                 }
+                else
+                    OpenContainer(firstContainerId);
             });
         }
         else

@@ -34,6 +34,10 @@ public class Container
      
     public ContainerSlot FindObject(int objectId) => Array.Find(slots, x => x.objectId == objectId);
 
+    public ContainerSlot FindItem(int itemId) => Array.Find(slots, x => x.itemId == itemId);
+
+    public ContainerSlot[] FindItemSlots(int itemId) => Array.FindAll(slots, x => x.itemId == itemId);
+
     public ContainerSlot this[int i]
     {
         get => slots[i];

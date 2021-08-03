@@ -11,8 +11,11 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 {
     [SerializeField]
     private Image itemSprite;
+    [SerializeField]
+    TMPro.TMP_Text quantityText;
     private Canvas canvas;
     private int itemId;
+    private int itemQuantity;
     public OpenedContainerType type { get; private set; }
     public int slotId { get; private set; }
 
@@ -26,7 +29,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         InventorySlotUI inventorySlot = data.pointerDrag.GetComponent<InventorySlotUI>();
         if (inventorySlot == null || inventorySlot.itemId == 0)
             return;
-        InventoryManager.instance.MoveSlots(this, inventorySlot);
+        InventoryManager.instance.MoveSlots(inventorySlot, this);
     }
 
     public void OnBeginDrag(PointerEventData data)
@@ -56,18 +59,22 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         this.canvas = canvas;
         slotId = containerSlot.slotIndex;
+        this.type = type;
+
         bool isSlotUpdated = true;
-        if (itemId == containerSlot.itemId)
+        if (itemId == containerSlot.itemId && itemQuantity == containerSlot.itemQuantity)
             isSlotUpdated = false;
         itemId = containerSlot.itemId;
-        this.type = type;
+        itemQuantity = containerSlot.itemQuantity;
         if (itemId == 0)
         {
+            quantityText.text = "";
             itemSprite.color = Color.clear;
             return;
         }
         if (isSlotUpdated)
         {
+            quantityText.text = itemQuantity.ToString();
             itemSprite.color = Color.white;
             string slug = ItemDatabase.GetItemById(itemId)?.slug;
             if (slug != null)

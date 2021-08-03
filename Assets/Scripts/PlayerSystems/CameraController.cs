@@ -29,7 +29,8 @@ public class CameraController : MonoBehaviour
     private float shakeTimer;
     private float shakeTimerTotal;
     private float currentIntensity;
-    private PlayerController player;
+    private PlayerController playerController;
+    private Player player;
     private Transform playerTransform;
     private Transform shoulderTransform;
     private bool cursorAiming;
@@ -76,9 +77,9 @@ public class CameraController : MonoBehaviour
         if (playerTransform == null)
             return;
         if (needToSendY)
-            player.UpdateYRotation(playerTransform.rotation.eulerAngles.y);
+            playerController.UpdateYRotation(playerTransform.rotation.eulerAngles.y);
         if (needToSendX)
-            player.UpdateXRotation(xRotation);
+            playerController.UpdateXRotation(xRotation);
         needToSendX = false;
         needToSendY = false;
     }
@@ -134,13 +135,19 @@ public class CameraController : MonoBehaviour
         this.playerTransform = playerTransform;
         mainCamera.Follow = shoulderTarget;
         aimCamera.Follow = shoulderTarget;
-        player = playerTransform.GetComponent<PlayerController>();
+        playerController = playerTransform.GetComponent<PlayerController>();
+        player = playerTransform.GetComponent<Player>();
     }
 
     public void UpdateTarget()
     {
         RaycastHit hit = new RaycastHit();
         Vector3 oldPosition = targetTransform.localPosition;
+
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 7, 1 << 12))
+            UIController.instance.ShowInteractableHint();
+        else
+            UIController.instance.HideInteractableHint();
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10))
         {
@@ -167,7 +174,17 @@ public class CameraController : MonoBehaviour
                 EnableCursor();
             else
                 DisableCursor();
-        } 
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+            InteractAttemp();
+    }
+
+    private void InteractAttemp()
+    {
+        RaycastHit hit = new RaycastHit();
+        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 7, 1 << 11 | 1 << 10))
+            return;
+        hit.collider.GetComponent<IInteractable>()?.Interact(player);
     }
 
     private void EnableCursor()
@@ -201,7 +218,7 @@ public class CameraController : MonoBehaviour
             currentShakeHandler.m_AmplitudeGain = 0;
         }
 
-        if (!cursorAiming || !player.IsControllAllowed())
+        if (!cursorAiming || !playerController.IsControllAllowed())
             return;
 
         UpdateTarget();

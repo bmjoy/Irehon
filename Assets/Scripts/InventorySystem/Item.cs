@@ -10,6 +10,7 @@ public enum ItemRarity { Common, Uncommon, Rare, Epic }
 public class Item
 {
     public int id { get; }
+    public int maxInStack { get; }
     public string slug { get; }
     public ItemType type { get; }
     public string name { get; }
@@ -25,6 +26,7 @@ public class Item
         slug = json["slug"].Value;
         type = (ItemType)Enum.Parse(typeof(ItemType), json["type"].Value);
         name = json["name"].Value;
+        maxInStack = Convert.ToInt32(json["stack"].Value);
         description = json["description"].Value;
         rarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), json["rarity"].Value);
         modifiers = json["modifiers"];

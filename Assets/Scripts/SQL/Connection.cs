@@ -34,7 +34,7 @@ namespace MySql
         public void Init()
         {
             connection = new MySqlConnection("server = 134.209.21.121; " +
-                "user = server; database = players; password = FGPFHGOU@#HASDAKSD;");
+                "user = server; database = players; password = Q@!#AFZDZDF!AASDS;");
             connection.Open();
             RecieveSingleData("USE players;");
             ItemDatabase.instance.DatabaseLoad();
@@ -89,6 +89,44 @@ namespace MySql
         {
             string command = $"UPDATE {table} SET {valueKey} = '{value}' WHERE {filter} = '{filterValue}';";
             return RecieveSingleData(command);
+        }
+
+        public List<string> MultipleSelect(string table, List<string> columns, string valueKey, string value)
+        {
+            string command = "SELECT ";
+            for (int i = 0; i < columns.Count; i++)
+            {
+                if (i != 0)
+                    command += ", ";
+                command += columns[i];
+            }
+            command += $" FROM {table} WHERE {valueKey} = '{value}';";
+            return RecieveMultipleData(command, columns.Count);
+        }
+
+        public List<string> MultipleSelect(string table, List<string> columns, Dictionary<string, string> filter)
+        {
+            string command = "SELECT ";
+            for (int i = 0; i < columns.Count; i++)
+            {
+                if (i != 0)
+                    command += ", ";
+                command += columns[i];
+            }
+            command += " FROM " + table;
+            if (filter.Count > 0)
+            {
+                command += " WHERE ";
+                for (int i = 0; i < filter.Count; i++)
+                {
+                    if (i != 0)
+                        command += " AND ";
+                    var filterPair = filter.ElementAt(i);
+                    command += $"{filterPair.Key} = '{filterPair.Value}'";
+                }
+            }
+            command += ";";
+            return RecieveMultipleData(command, columns.Count);
         }
 
         public string SingleSelect(string table, string column, Dictionary<string, string> filter)
