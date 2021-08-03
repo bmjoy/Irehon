@@ -88,23 +88,19 @@ namespace MySql
 
         public bool GiveCharacterItem(Character character, int itemId, int count)
         {
-            if (itemId <= 0)
-                return false;
             int containerId = GetCharacterContainer(character.id);
             return GiveContainerItem(containerId, itemId, count);
         }
 
         public bool GiveCharacterItem(Character character, int itemId)
         {
-            if (itemId <= 0)
-                return false;
             int containerId = GetCharacterContainer(character.id);
             return GiveContainerItem(containerId, itemId, 1);
         }
 
         public bool GiveCharacterItem(int characterId, int itemId, int count)
         {
-            if (itemId <= 0)
+            if (characterId <= 0)
                 return false;
             int containerId = GetCharacterContainer(characterId);
             return GiveContainerItem(containerId, itemId, count);
@@ -112,7 +108,7 @@ namespace MySql
 
         public bool GiveCharacterItem(int characterId, int itemId)
         {
-            if (itemId <= 0)
+            if (characterId <= 0)
                 return false;
             int containerId = GetCharacterContainer(characterId);
             return GiveContainerItem(containerId, itemId, 1);
@@ -121,7 +117,7 @@ namespace MySql
         //Создает и помещает такой то предмет в контейнер
         public bool GiveContainerItem(int containerId, int itemId, int count)
         {
-            if (itemId <= 0)
+            if (itemId <= 0 || count <= 0 || containerId <= 0)
                 return false;
 
             Container container = GetContainer(containerId);
@@ -186,6 +182,9 @@ namespace MySql
 
         private bool CreateItemInEmptySlot(int containerId, int itemId, int count)
         {
+            if (itemId <= 0 || count <= 0 || containerId <= 0)
+                return false;
+
             Container container = GetContainer(containerId);
 
             Item item = ItemDatabase.GetItemById(itemId);
@@ -251,7 +250,7 @@ namespace MySql
 
         private int CreateItem(int containerId, int itemId, int count)
         {
-            if (itemId <= 0)
+            if (itemId <= 0 || count <= 0)
                 return 0;
             Dictionary<string, string> values = new Dictionary<string, string>()
             {

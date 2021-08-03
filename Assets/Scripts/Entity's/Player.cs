@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Utils;
 using System.Threading.Tasks;
+using System.Collections;
 
 public struct CharacterData
 {
@@ -19,6 +20,7 @@ public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
     private int openedContainerId;
+    private bool isContainerOpened;
     private PlayerController controller;
     private CharacterData characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -46,7 +48,7 @@ public class Player : Entity
 
     private void Test()
     {
-        OpenContainer(17);
+        
     }
 
     [TargetRpc]
@@ -151,15 +153,56 @@ public class Player : Entity
     }
 
     [Command]
-    public void OpenChest(NetworkIdentity identity)
+    public void InterractAttempToServer(Vector3 interractPos)
     {
-        Chest chest = identity.GetComponent<Chest>();
+        if (Vector3.Distance(interractPos, transform.position) > 3f)
+            return;
+        RaycastHit hit;
+        if (!Physics.Raycast(interractPos + Vector3.up, Vector3.down * 3, out hit, 3, 1 << 12))
+            return;
+        hit.collider.GetComponent<IInteractable>().Interact(this);
+    }
 
-        if (chest == null ||
-                Vector3.Distance(chest.gameObject.transform.position, transform.position) > 7f)
+    [TargetRpc]
+    private void CloseChest()
+    {
+        InventoryManager.instance.CloseContainer();
+    }
+
+    [Command]
+    public void ChestClosedRpc()
+    {
+        openedContainerId = 0;
+    }
+
+    [Server]
+    private void UpdateChestData()
+    {
+        OpenContainer(openedContainerId);
+    }
+
+    [Server]
+    public void OpenChest(Chest chest)
+    {
+        if (openedContainerId != 0 || chest == null ||
+                Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
             return;
 
         OpenContainer(chest.ContainerId);
+        openedContainerId = chest.ContainerId;
+        chest.OnContainerUpdate.AddListener(UpdateChestData);
+        Vector3 chestPos= chest.transform.position;
+        StartCoroutine(CheckChestDistance());
+        IEnumerator CheckChestDistance()
+        {
+            while (openedContainerId != 0 && Vector3.Distance(chestPos, transform.position) < 4f)
+            {
+                yield return null;
+            }
+            openedContainerId = 0;
+            chest.OnContainerUpdate.RemoveListener(UpdateChestData);
+            CloseChest();
+        }
     }
 
     [Command]
@@ -171,9 +214,9 @@ public class Player : Entity
         int secondContainerId = GetContainerId(secondType);
         if (secondContainerId == 0)
             return;
-        if (firstContainerId == secondContainerId)
+        Task.Run(() =>
         {
-            Task.Run(() =>
+            if (firstContainerId == secondContainerId)
             {
                 MySql.ContainerData.i.SwapSlot(firstContainerId, firstSlot, secondSlot);
                 if (firstContainerId == characterData.containerId)
@@ -183,11 +226,8 @@ public class Player : Entity
                 }
                 else
                     OpenContainer(firstContainerId);
-            });
-        }
-        else
-        {
-            Task.Run(() =>
+            }
+            else
             {
                 MySql.ContainerData.i.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
                 characterData.inventory = MySql.ContainerData.i.GetContainer(characterData.containerId);
@@ -196,8 +236,8 @@ public class Player : Entity
                     OpenContainer(firstContainerId);
                 else
                     OpenContainer(secondContainerId);
-            });
-        }
+            }
+        });
     }
 
     public override void TakeDamage(DamageMessage damageMessage)

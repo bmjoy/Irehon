@@ -119,7 +119,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     [Server]
     public void AnimationEventTrigger()
     {
-        print("WTFFF");
         currentAbility.AnimationEvent();
         AnimationEventRPC();
     }

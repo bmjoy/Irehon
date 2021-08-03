@@ -11,13 +11,13 @@ public class Chest : NetworkBehaviour, IInteractable
     [SerializeField]
     private int containerId;
     public int ContainerId { get => containerId; }
-
+     
     public OnContainerUpdate OnContainerUpdate { get; } = new OnContainerUpdate();
 
     public void ContainerUpdateEvent() => OnContainerUpdate.Invoke();
 
     public void Interact(Player player)
     {
-
+        player.OpenChest(this);
     }
 }

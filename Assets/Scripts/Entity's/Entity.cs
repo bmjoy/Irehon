@@ -84,7 +84,6 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Respawn()
     {
-        print("respawned");
         SetDefaultState();
         ragdoll?.DisableRagdoll();
     }
@@ -113,7 +112,6 @@ public class Entity : NetworkBehaviour
     [TargetRpc]
     public void EntityHitConfirm(NetworkConnection con, int damage)
     {
-        print("hit confirm on " + name);
         HitConfirmEvent.Invoke(damage);
     }
 

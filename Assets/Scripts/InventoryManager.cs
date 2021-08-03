@@ -60,7 +60,10 @@ public class InventoryManager : MonoBehaviour
     public void CloseContainer()
     {
         otherContainerWindow.Close();
+        CloseContainerOnServer();
     }
+
+    public void CloseContainerOnServer() => player.ChestClosedRpc();
 
     public RectTransform GetDragger() => dragger;
 

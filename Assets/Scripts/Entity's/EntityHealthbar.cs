@@ -44,8 +44,6 @@ public class EntityHealthbar : MonoBehaviour
 
     private void ChangeHealthOnBar(int maxHealth, int health)
     {
-        print(maxHealth);
-        print(health);
         float fill = 1.0f * health / maxHealth;
 
         healthBarFiller.fillAmount = fill;

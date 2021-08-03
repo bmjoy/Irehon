@@ -25,13 +25,11 @@ public class ItemDatabase : MonoBehaviour
 
     public void DatabaseLoadJson(string jsonString)
     {
-        print(jsonString);
         if (isDatabaseLoaded)
             return;
         databaseResponse = JSON.Parse(jsonString);
         isDatabaseLoaded = true;
         ParseItems();
-        print(items.Count);
     }
 
     public void DatabaseLoad()
@@ -46,7 +44,6 @@ public class ItemDatabase : MonoBehaviour
         isDatabaseLoaded = true;
 
         ParseItems();
-        print("loaded");
     }
 
     private void ParseItems()

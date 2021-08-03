@@ -130,7 +130,6 @@ public class CameraController : MonoBehaviour
 
     public void SetTarget(Transform shoulderTarget, Transform playerTransform)
     {
-        print(shoulderTarget);
         shoulderTransform = shoulderTarget;
         this.playerTransform = playerTransform;
         mainCamera.Follow = shoulderTarget;
@@ -141,13 +140,8 @@ public class CameraController : MonoBehaviour
 
     public void UpdateTarget()
     {
-        RaycastHit hit = new RaycastHit();
+        RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
-
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 7, 1 << 12))
-            UIController.instance.ShowInteractableHint();
-        else
-            UIController.instance.HideInteractableHint();
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10))
         {
@@ -181,10 +175,10 @@ public class CameraController : MonoBehaviour
 
     private void InteractAttemp()
     {
-        RaycastHit hit = new RaycastHit();
-        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 7, 1 << 11 | 1 << 10))
+        RaycastHit hit;
+        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 4, 1 << 12))
             return;
-        hit.collider.GetComponent<IInteractable>()?.Interact(player);
+        player.InterractAttempToServer(hit.point);
     }
 
     private void EnableCursor()
@@ -217,6 +211,11 @@ public class CameraController : MonoBehaviour
         {
             currentShakeHandler.m_AmplitudeGain = 0;
         }
+
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
+            UIController.instance.ShowInteractableHint();
+        else
+            UIController.instance.HideInteractableHint();
 
         if (!cursorAiming || !playerController.IsControllAllowed())
             return;
