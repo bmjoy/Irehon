@@ -6,21 +6,9 @@ using UnityEngine;
 
 namespace MySql
 {
-    class Database
+    public static class Database
     {
-        public static Database instance;
-
-        public Database(Connection connection)
-        {
-            if (instance == null)
-                instance = this;
-
-            this.connection = connection;
-        }
-
-        private Connection connection;
-
-        public int Register(string login, int passsword)
+        public static int Register(string login, int passsword)
         {
             try
             {
@@ -28,7 +16,7 @@ namespace MySql
                 userInfo["p_id"] = null;
                 userInfo["login"] = login;
                 userInfo["password"] = passsword.ToString();
-                int p_id = Convert.ToInt32(connection.Insert("users", userInfo));
+                int p_id = Convert.ToInt32(Connection.Insert("users", userInfo));
                 return p_id;
             }
             catch
@@ -37,22 +25,22 @@ namespace MySql
             }
         }
 
-        public int Login(string login, int password)
+        public static int Login(string login, int password)
         {
             var filter = new Dictionary<string, string>()
             {
                 ["login"] = login,
                 ["password"] = password.ToString()
             };
-            connection.SingleSelect("users", "p_id", filter);
-            string response = connection.SingleSelect("users", "p_id", filter);
+            Connection.SingleSelect("users", "p_id", filter);
+            string response = Connection.SingleSelect("users", "p_id", filter);
             if (response != "")
                 return Convert.ToInt32(response);
             else
                 return 0;
         }
 
-        public bool CreateNewCharacter(int p_id, Character character)
+        public static bool CreateNewCharacter(int p_id, Character character)
         {
             try
             {
@@ -61,7 +49,7 @@ namespace MySql
                 characterInfo["nickname"] = character.NickName;
                 characterInfo["p_id"] = p_id.ToString();
                 characterInfo["container_id"] = "0";
-                string c_id_str = connection.Insert("characters", characterInfo);
+                string c_id_str = Connection.Insert("characters", characterInfo);
                 if (c_id_str == null)
                     return false;
 
@@ -69,11 +57,12 @@ namespace MySql
                 CreateAndLinkCharacterContainer(c_id);
                 CreateCharacterData(c_id);
                 CreatePositionData(c_id, character.position);
-                ContainerData.i.GiveCharacterItem(c_id, 1);
-                ContainerData.i.GiveCharacterItem(c_id, 4, 4);
-                ContainerData.i.GiveCharacterItem(c_id, 3, 2);
-                ContainerData.i.GiveCharacterItem(c_id, 1, 6);
-                ContainerData.i.GiveCharacterItem(c_id, 2, 9);
+                //Test inventory system on new chars
+                ContainerData.GiveCharacterItem(c_id, 1);
+                ContainerData.GiveCharacterItem(c_id, 4, 4);
+                ContainerData.GiveCharacterItem(c_id, 3, 2);
+                ContainerData.GiveCharacterItem(c_id, 1, 6);
+                ContainerData.GiveCharacterItem(c_id, 2, 9);
                 return true;
             }
             catch 
@@ -82,18 +71,18 @@ namespace MySql
             }
         }
 
-        private void CreateAndLinkCharacterContainer(int c_id)
+        private static void CreateAndLinkCharacterContainer(int c_id)
         {
-            int container_id = ContainerData.i.CreateContainer(20);
-            connection.RecieveSingleData($"UPDATE characters SET container_id = '{container_id}' WHERE c_id = {c_id};");
+            int container_id = ContainerData.CreateContainer(20);
+            Connection.RecieveSingleData($"UPDATE characters SET container_id = '{container_id}' WHERE c_id = {c_id};");
         }
 
-        private void CreateCharacterData(int c_id)
+        private static void CreateCharacterData(int c_id)
         {
-            connection.Insert("c_data", "c_id", c_id.ToString());
+            Connection.Insert("c_data", "c_id", c_id.ToString());
         }
 
-        public List<Character> GetCharacters(int p_id)
+        public static List<Character> GetCharacters(int p_id)
         {
             int columnsInTable = 2;
 
@@ -101,7 +90,7 @@ namespace MySql
 
             string command = "SELECT nickname, c_id FROM characters WHERE p_id = " + p_id + " ORDER BY c_id;";
 
-            List<string> characterInfo = connection.RecieveMultipleData(command, columnsInTable);
+            List<string> characterInfo = Connection.RecieveMultipleData(command, columnsInTable);
 
             int charactersQuantity = characterInfo.Count / columnsInTable;
 
@@ -113,28 +102,28 @@ namespace MySql
                     NickName = characterInfo[0 + i * columnsInTable],
                     slot = i,
                     id = Convert.ToInt32(characterInfo[1 + i * columnsInTable]),
-                    position = connection.GetVector3("SELECT p_x, p_y, p_z FROM c_positions " +
+                    position = Connection.GetVector3("SELECT p_x, p_y, p_z FROM c_positions " +
                         "WHERE c_id = " + characterInfo[1 + i * columnsInTable])
                 });
             }
             return characters;
         }
 
-        public CharacterData GetCharacterData(int c_id)
+        public static CharacterData GetCharacterData(int c_id)
         {
             CharacterData data = new CharacterData();
-            data.containerId = ContainerData.i.GetCharacterContainer(c_id);
-            data.inventory = ContainerData.i.GetContainer(data.containerId);
+            data.containerId = ContainerData.GetCharacterContainer(c_id);
+            data.inventory = ContainerData.GetContainer(data.containerId);
             data.characterId = c_id;
             return data;
         }
 
-        public void UpdateCharacterData(int c_id, CharacterData data)
+        public static void UpdateCharacterData(int c_id, CharacterData data)
         {
-            connection.UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson());
+            Connection.UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson());
         }
 
-        private void CreatePositionData(int c_id, Vector3 pos)
+        private static void CreatePositionData(int c_id, Vector3 pos)
         {
             string x = pos.x.ToString("0.00", new CultureInfo("en-US"));
             string y = pos.y.ToString("0.00", new CultureInfo("en-US"));
@@ -142,10 +131,10 @@ namespace MySql
 
             string command = $"INSERT INTO `c_positions` (`c_id`, `p_x`, `p_y`, `p_z`) " +
                 $"VALUES ('{c_id}', '{x}', '{y}', '{z}')";
-            connection.RecieveSingleData(command);
+            Connection.RecieveSingleData(command);
         }
 
-        public void UpdatePositionData(int c_id, Vector3 pos)
+        public static void UpdatePositionData(int c_id, Vector3 pos)
         {
             string x = pos.x.ToString("0.00", new CultureInfo("en-US"));
             string y = pos.y.ToString("0.00", new CultureInfo("en-US"));
@@ -153,22 +142,22 @@ namespace MySql
 
             string command = $"UPDATE `c_positions` SET `p_x` = '{x}', `p_y` = '{y}', `p_z` = '{z}' " +
                 $"WHERE `c_positions`.`c_id` = {c_id};";
-            connection.RecieveSingleData(command);
+            Connection.RecieveSingleData(command);
         }
 
-        public int GetCharacterId(string NickName)
+        public static int GetCharacterId(string NickName)
         {
             var filter = new Dictionary<string, string>()
             {
                 ["nickname"] = NickName
             };
-            return Convert.ToInt32(connection.SingleSelect("characters", "c_id", filter));
+            return Convert.ToInt32(Connection.SingleSelect("characters", "c_id", filter));
         }
 
-        public string GetItemsList()
+        public static string GetItemsList()
         {
             string[] itemColumns = { "id", "slug", "stack", "type", "name", "description", "rarity", "modifiers", "metadata" };
-            return connection.RecieveJson("items", itemColumns);
+            return Connection.RecieveJson("items", itemColumns);
         }
     }
 }

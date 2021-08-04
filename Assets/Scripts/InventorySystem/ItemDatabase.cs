@@ -4,26 +4,22 @@ using UnityEngine;
 using SimpleJSON;
 using System;
 
-public class ItemDatabase : MonoBehaviour
+public static class ItemDatabase
 {
-    public static ItemDatabase instance;
 
-    private List<Item> items;
+    private static List<Item> items;
 
-    private bool isDatabaseLoaded;
-    private JSONNode databaseResponse;
-    public string jsonString { get; private set; }
+    private static bool isDatabaseLoaded = false;
+    private static JSONNode databaseResponse;
+    public static string jsonString { get; private set; }
 
-    private void Awake()
+    static ItemDatabase()
     {
-        if (instance != null && instance != this)
-            Destroy(this);
-        else
-            instance = this;
-        isDatabaseLoaded = false;
+        if (!isDatabaseLoaded)
+            DatabaseLoad();
     }
 
-    public void DatabaseLoadJson(string jsonString)
+    public static void DatabaseLoadJson(string jsonString)
     {
         if (isDatabaseLoaded)
             return;
@@ -32,28 +28,28 @@ public class ItemDatabase : MonoBehaviour
         ParseItems();
     }
 
-    public void DatabaseLoad()
+    public static void DatabaseLoad()
     {
         if (isDatabaseLoaded)
         {
             Debug.Log("Second call of loading database err");
             return;
         }
-        jsonString = MySql.Database.instance.GetItemsList();
+        jsonString = MySql.Database.GetItemsList();
         databaseResponse = JSON.Parse(jsonString);
         isDatabaseLoaded = true;
 
         ParseItems();
     }
 
-    private void ParseItems()
+    private static void ParseItems()
     {
         items = new List<Item>();
         foreach (JSONNode item in databaseResponse)
             items.Add(new Item(item));
     }
 
-    public static Item GetItemById(int id) => instance.items?.Find(x => x.id == id);
+    public static Item GetItemById(int id) => items?.Find(x => x.id == id);
 
-    public static Item GetItemBySlug(string slug) => instance.items?.Find(x => x.slug == slug);
+    public static Item GetItemBySlug(string slug) => items?.Find(x => x.slug == slug);
 }

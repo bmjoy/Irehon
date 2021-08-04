@@ -36,12 +36,12 @@ public class CharacterSelector : MonoBehaviour
 
     private void Start()
     {
-        characterList = NetworkManager.singleton.GetComponent<Client>().GetCharacters();
+        characterList = NetworkManager.singleton.GetComponent<ClientManager>().GetCharacters();
         UpdateCharacterListUI();
-        NetworkManager.singleton.GetComponent<Client>().OnUpdateCharacterList.AddListener(UpdateCharacterListUI);
+        NetworkManager.singleton.GetComponent<ClientManager>().OnUpdateCharacterList.AddListener(UpdateCharacterListUI);
     }
 
-    private void UpdateCharacterListUI()
+    private void UpdateCharacterListUI() 
     {
         int slotId = 0;
         foreach (Character character in characterList)

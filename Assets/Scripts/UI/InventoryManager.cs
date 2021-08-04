@@ -26,7 +26,7 @@ public class InventoryManager : MonoBehaviour
 
     private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
     private Canvas canvas;
-    private Player player;
+    private PlayerContainerController playerContainerContrller;
     public static InventoryManager instance;
 
     private void Awake()
@@ -40,36 +40,36 @@ public class InventoryManager : MonoBehaviour
 
     public void PlayerIntialize(Player player)
     {
-        this.player = player;
-        player.OnCharacterDataUpdateEvent.AddListener(x => FillInventory(x.inventory));
+        playerContainerContrller = player.GetComponent<PlayerContainerController>();
+        player.OnCharacterDataUpdateEvent.AddListener(x => UpdateInventory(x.inventory));
         if (player.isDataAlreadyRecieved)
-            FillInventory(player.GetCharacterData().inventory);
+            UpdateInventory(player.GetCharacterData().inventory);
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
     {
-        player.MoveItem(from.type, from.slotId, to.type, to.slotId);
+        playerContainerContrller.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
-    public void OpenContainer(Container container)
+    public void OpenOtherContainer(Container container)
     {
-        FillContainer(containerWindow, container, OpenedContainerType.OtherContainer);
+        FillOtherContainer(containerWindow, container, OpenedContainerType.OtherContainer);
         otherContainerWindow.Open();
     }
 
-    public void CloseContainer()
+    public void CloseOtherContainer()
     {
         otherContainerWindow.Close();
-        CloseContainerOnServer();
+        CloseOtherContainerOnServer();
     }
 
-    public void CloseContainerOnServer() => player.ChestClosedRpc();
+    public void CloseOtherContainerOnServer() => playerContainerContrller.OtherContainerClosedRpc();
 
     public RectTransform GetDragger() => dragger;
 
     public Image GetDraggerImage() => draggerImage;
 
-    private void FillInventory(Container container)
+    private void UpdateInventory(Container container)
     {
         if (container.slots.Length > inventorySlots.Count)
         {
@@ -87,7 +87,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void FillContainer(RectTransform containerBG, Container container, OpenedContainerType type)
+    private void FillOtherContainer(RectTransform containerBG, Container container, OpenedContainerType type)
     {
         foreach (Transform previousContainerSlot in containerBG)
                 Destroy(previousContainerSlot.gameObject);

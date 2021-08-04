@@ -4,7 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
-public class Client : NetworkManager
+public class ClientManager : NetworkManager
 {
     public UnityEvent OnUpdateCharacterList;
     private List<Character> charactersList = new List<Character>();

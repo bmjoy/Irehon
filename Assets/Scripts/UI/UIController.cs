@@ -35,10 +35,6 @@ public class UIController : MonoBehaviour
         instance = this;
     }
 
-    private void Update()
-    {
-    }
-
     public void EnableDefaultCrosshair()
     {
         defaultAimingRectangle.gameObject.SetActive(true);

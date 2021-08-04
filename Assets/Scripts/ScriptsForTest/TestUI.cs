@@ -25,29 +25,30 @@ public class TestUI : MonoBehaviour
 
     public void GiveItem()
     {
-        MySql.ContainerData.i.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text), Convert.ToInt32(count.text));
+        MySql.ContainerData.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text), Convert.ToInt32(count.text));
     }
 
     public void RemoveItem()
     {
-        MySql.ContainerData.i.RemoveItem(Convert.ToInt32(containerId.text), Convert.ToInt32(objectId.text));
+        MySql.ContainerData.RemoveItem(Convert.ToInt32(containerId.text), Convert.ToInt32(objectId.text));
     }
 
     public void GiveCharacterItem()
     {
-        MySql.ContainerData.i.GiveCharacterItem(Convert.ToInt32(characterId.text), Convert.ToInt32(itemId.text));
+        MySql.ContainerData.GiveCharacterItem(Convert.ToInt32(characterId.text), Convert.ToInt32(itemId.text));
     }
 
     public void ChangeItemOwner()
     {
         var outer = Task.Factory.StartNew(() =>
         {
-            MySql.ContainerData.i.ChangeItemOwner(Convert.ToInt32(containerId.text), Convert.ToInt32(container2Id.text), Convert.ToInt32(objectId.text));
+            MySql.ContainerData.ChangeItemOwner(Convert.ToInt32(containerId.text), Convert.ToInt32(container2Id.text), Convert.ToInt32(objectId.text));
         });
     }
 
     public void CreateContainer()
     {
-        MySql.ContainerData.i.CreateContainer(Convert.ToInt32(containerId.text));
+        MySql.ContainerData.CreateContainer(Convert.ToInt32(containerId.text));
     }
 }
+ 

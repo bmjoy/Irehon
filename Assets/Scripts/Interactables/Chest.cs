@@ -18,6 +18,6 @@ public class Chest : NetworkBehaviour, IInteractable
 
     public void Interact(Player player)
     {
-        player.OpenChest(this);
+        player.GetComponent<PlayerContainerController>().OpenChest(this);
     }
 }

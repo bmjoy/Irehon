@@ -8,40 +8,21 @@ using UnityEngine;
 
 namespace MySql
 {
-    public class Connection : MonoBehaviour
+    public static class Connection
     {
-        public static Connection instance;
+        private static MySqlConnection connection;
 
-        private MySqlConnection connection;
-
-        private void Awake()
-        {
-            if (instance == null)
-                instance = this;
-            else if (instance != this)
-                Destroy(this);
-
-            new ContainerData(this);
-            new Database(this);
-        }
-
-        private void OnApplicationQuit()
-        {
-            connection.Close();
-        }
-
-        #region не открывать, тут для бд всё
-        public void Init()
+        static Connection()
         {
             connection = new MySqlConnection("server = 134.209.21.121; " +
                 "user = server; database = players; password = Q@!#AFZDZDF!AASDS;");
             connection.Open();
             RecieveSingleData("USE players;");
-            ItemDatabase.instance.DatabaseLoad();
-        }
-        #endregion
 
-        public string RecieveJson(string tableName, string[] columns)
+            AppDomain.CurrentDomain.ProcessExit += (x, y) => connection.Close();
+        }
+
+        public static string RecieveJson(string tableName, string[] columns)
         {
             string command = $"SELECT JSON_ARRAYAGG(JSON_OBJECT(";
             foreach (string column in columns)
@@ -55,7 +36,7 @@ namespace MySql
             return recieve;
         }
 
-        public List<string> RecieveMultipleData(string command, int columnQuantity)
+        public static List<string> RecieveMultipleData(string command, int columnQuantity)
         {
             List<string> response = new List<string>();
 
@@ -71,7 +52,7 @@ namespace MySql
             return response;
         }
 
-        public string UpdateColumn(string table, string filter, string filterValue, Dictionary<string, string> updateValues)
+        public static string UpdateColumn(string table, string filter, string filterValue, Dictionary<string, string> updateValues)
         {
             string command = $"UPDATE {table} SET ";
             for (int i = 0; i < updateValues.Count; i++)
@@ -85,13 +66,13 @@ namespace MySql
             return RecieveSingleData(command);
         }
 
-        public string UpdateColumn(string table, string filter, string filterValue, string valueKey, string value)
+        public static string UpdateColumn(string table, string filter, string filterValue, string valueKey, string value)
         {
             string command = $"UPDATE {table} SET {valueKey} = '{value}' WHERE {filter} = '{filterValue}';";
             return RecieveSingleData(command);
         }
 
-        public List<string> MultipleSelect(string table, List<string> columns, string valueKey, string value)
+        public static List<string> MultipleSelect(string table, List<string> columns, string valueKey, string value)
         {
             string command = "SELECT ";
             for (int i = 0; i < columns.Count; i++)
@@ -104,7 +85,7 @@ namespace MySql
             return RecieveMultipleData(command, columns.Count);
         }
 
-        public List<string> MultipleSelect(string table, List<string> columns, Dictionary<string, string> filter)
+        public static List<string> MultipleSelect(string table, List<string> columns, Dictionary<string, string> filter)
         {
             string command = "SELECT ";
             for (int i = 0; i < columns.Count; i++)
@@ -129,7 +110,7 @@ namespace MySql
             return RecieveMultipleData(command, columns.Count);
         }
 
-        public string SingleSelect(string table, string column, Dictionary<string, string> filter)
+        public static string SingleSelect(string table, string column, Dictionary<string, string> filter)
         {
             string command = $"SELECT {column} FROM {table}";
             if (filter.Count > 0)
@@ -147,14 +128,14 @@ namespace MySql
             return RecieveSingleData(command);
         }
 
-        public string SingleSelect(string table, string column, string filter, string value)
+        public static string SingleSelect(string table, string column, string filter, string value)
         {
             string command = $"SELECT {column} FROM {table}";
             command += $" WHERE {filter} = '{value}';";
             return RecieveSingleData(command);
         }
 
-        public Vector3 GetVector3(string sqlCommand)
+        public static Vector3 GetVector3(string sqlCommand)
         {
             Vector3 vector = Vector3.zero;
 
@@ -167,12 +148,12 @@ namespace MySql
             return vector;
         }
 
-        public string Insert(string table, string key, string value)
+        public static string Insert(string table, string key, string value)
         {
             return RecieveSingleData($"INSERT INTO {table} ({key}) VALUES ('{value}'); SELECT LAST_INSERT_ID();");
         }
 
-        public string Insert(string table, Dictionary<string, string> values)
+        public static string Insert(string table, Dictionary<string, string> values)
         {
             string[] keys = values.Keys.ToArray();
             string command = $"INSERT INTO `{table}` (";
@@ -198,13 +179,13 @@ namespace MySql
             return res;
         }
 
-        public string Delete(string table, string filter, string value)
+        public static string Delete(string table, string filter, string value)
         {
             string command = $"DELETE FROM {table} WHERE {filter} = '{value}';";
             return RecieveSingleData(command);
         }
 
-        public string RecieveSingleData(string command)
+        public static string RecieveSingleData(string command)
         {
             MySqlCommand commandResponse = new MySqlCommand(command, connection);
             var chars = commandResponse.ExecuteScalar();

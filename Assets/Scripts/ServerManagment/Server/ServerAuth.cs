@@ -36,7 +36,6 @@ public class ServerAuth : NetworkAuthenticator
 {
     public override void OnStartServer()
     {
-        GetComponent<MySql.Connection>().Init();
         NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
     }
 
@@ -64,7 +63,7 @@ public class ServerAuth : NetworkAuthenticator
         switch (msg.Type)
         {
             case AuthRequestMessage.AuthType.Login:
-                loginResponse = MySql.Database.instance.Login(msg.Login, passwordHash);
+                loginResponse = MySql.Database.Login(msg.Login, passwordHash);
                 if (loginResponse > 0)
                 {
                     response = "Succesful";
@@ -73,7 +72,7 @@ public class ServerAuth : NetworkAuthenticator
                 response = "Login or Password incorrect";
                 return false;
             case AuthRequestMessage.AuthType.Register:
-                loginResponse = MySql.Database.instance.Register(msg.Login, passwordHash);
+                loginResponse = MySql.Database.Register(msg.Login, passwordHash);
                 if (loginResponse > 0)
                 {
                     response = "Succesful";

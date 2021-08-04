@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 
-public class Server : NetworkManager
+public class ServerManager : NetworkManager
 {
     private NetworkManager manager;
     [SerializeField]
@@ -40,7 +40,7 @@ public class Server : NetworkManager
                 position = characterSpawnPoint,
             };
 
-            MySql.Database.instance.CreateNewCharacter(p_id, newCharacter);
+            MySql.Database.CreateNewCharacter(p_id, newCharacter);
 
             SendCharacterListToPlayer(con);
         });
@@ -63,7 +63,7 @@ public class Server : NetworkManager
 
             int c_id = 0;
 
-            var outer = Task.Factory.StartNew(() => c_id = MySql.Database.instance.GetCharacterId(selectedCharacter.NickName));
+            var outer = Task.Factory.StartNew(() => c_id = MySql.Database.GetCharacterId(selectedCharacter.NickName));
             while (!outer.IsCompleted)
                 yield return null;
 
@@ -81,9 +81,9 @@ public class Server : NetworkManager
 
             NetworkServer.AddPlayerForConnection(con, playerObject);
 
-            playerComponent.SendItemDatabase(ItemDatabase.instance.jsonString);
+            playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
             CharacterData characterData = new CharacterData();
-            var charDataTask = Task.Factory.StartNew(() => characterData = MySql.Database.instance.GetCharacterData(c_id));
+            var charDataTask = Task.Factory.StartNew(() => characterData = MySql.Database.GetCharacterData(c_id));
             while (!charDataTask.IsCompleted)
                 yield return null;
             playerComponent.SetCharacterData(characterData);
@@ -111,7 +111,7 @@ public class Server : NetworkManager
     private void SendCharacterListToPlayer(NetworkConnection con)
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
-        data.characters = MySql.Database.instance.GetCharacters(data.id);
+        data.characters = MySql.Database.GetCharacters(data.id);
         foreach (Character character in data.characters)
         {
             con.Send(character);
@@ -150,8 +150,8 @@ public class Server : NetworkManager
             {
                 int c_id = data.selectedPlayer;
                 Player player = data.playerPrefab.GetComponent<Player>();
-                MySql.Database.instance.UpdatePositionData(c_id, player.transform.position);
-                MySql.Database.instance.UpdateCharacterData(c_id, player.GetCharacterData());
+                MySql.Database.UpdatePositionData(c_id, player.transform.position);
+                MySql.Database.UpdateCharacterData(c_id, player.GetCharacterData());
             }
         });
         base.OnServerDisconnect(conn);
