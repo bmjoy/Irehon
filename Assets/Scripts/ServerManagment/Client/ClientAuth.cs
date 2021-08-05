@@ -7,19 +7,9 @@ using UnityEngine.UI;
 public class ClientAuth : NetworkAuthenticator
 {
     [SerializeField]
-    private TMPro.TMP_Text ResponseText;
-    [SerializeField]
     private TMPro.TMP_InputField Email;
     [SerializeField]
     private TMPro.TMP_InputField Password;
-
-    //private void Start()
-    //{
-    //    currentRequest.Login = "qwerty";
-    //    currentRequest.Password = "1234";
-    //    currentRequest.Type = AuthRequestMessage.AuthType.Login;
-    //    GetComponent<NetworkManager>().StartClient();
-    //}
 
     public override void OnClientAuthenticate()
     {
@@ -34,7 +24,7 @@ public class ClientAuth : NetworkAuthenticator
 
     public override void OnStartClient()
     {
-        NetworkClient.RegisterHandler<AuthResponseMessage>(OnAuthResponseMessage, false);
+        ClientManager.OnGetServerMessage.AddListener(OnAuthResponseMessage);
     }
 
     public void RegisterButton()
@@ -63,14 +53,11 @@ public class ClientAuth : NetworkAuthenticator
         GetComponent<NetworkManager>().StartClient();
     }
 
-    private void OnAuthResponseMessage(AuthResponseMessage msg)
+    private void OnAuthResponseMessage(ServerMessage msg)
     {
-        if (msg.Connected)
+        if (msg.messageType == MessageType.AuthAccept)
             ClientAccept();
-        else
-        {
-            ResponseText.text = msg.ResponseText;
+        else if (msg.messageType == MessageType.AuthReject)
             ClientReject();
-        }
     }
 }

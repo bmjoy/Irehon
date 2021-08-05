@@ -9,10 +9,21 @@ using System.Threading.Tasks;
 
 public class ServerManager : NetworkManager
 {
+    public static ServerManager i;
+
+    [SerializeField]
+    private Vector3 characterSpawnPoint;
     private NetworkManager manager;
     [SerializeField]
     private GameObject mob;
-    private Vector3 characterSpawnPoint;
+
+    public override void Awake()
+    {
+        if (i != null && i != this)
+            Destroy(gameObject);
+        else
+            i = this;
+    }
 
     public override void Start()
     {
@@ -21,7 +32,6 @@ public class ServerManager : NetworkManager
         manager.StartServer();
         NetworkServer.RegisterHandler<CharacterSelection>(OnSelectedPlayerSlot, true);
         NetworkServer.RegisterHandler<CharacterCreate>(CharacterCreate, true);
-        characterSpawnPoint = new Vector3(-2, 2, -73);
     }
 
     //Insert data in tables and send it to player
@@ -33,6 +43,20 @@ public class ServerManager : NetworkManager
             int p_id = data.id;
             if (data.characters.Count > 2)
                 return;
+
+            if (!ServerAuth.IsLoginValid(character.NickName))
+            {
+                print("invalid login");
+                SendMessage(con, "Invalid symbols in nickname", MessageType.Error);
+                return;
+            }
+
+            if (MySql.Database.GetCharacterId(character.NickName) != 0)
+            {
+                print("Sended msg");
+                SendMessage(con, "Nickname already in use", MessageType.Error);
+                return;
+            } 
 
             Character newCharacter = new Character
             {
@@ -46,12 +70,24 @@ public class ServerManager : NetworkManager
         });
     }
 
+    public static void SendMessage(NetworkConnection con, string msg, MessageType type)
+    {
+        ServerMessage serverMessage = new ServerMessage
+        {
+            message = msg,
+            messageType = type
+        };
+        con.Send(serverMessage);
+    }
+
     //Spawn character on player selected slot 
     public void OnSelectedPlayerSlot(NetworkConnection con, CharacterSelection selection)
     {
         StartCoroutine(SpawnPlayer());
         IEnumerator SpawnPlayer()
         {
+            if (selection.selectedSlot > 2)
+                yield break;
             SceneMessage message = new SceneMessage
             {
                 sceneName = "PvpScene",
@@ -66,6 +102,9 @@ public class ServerManager : NetworkManager
             var outer = Task.Factory.StartNew(() => c_id = MySql.Database.GetCharacterId(selectedCharacter.NickName));
             while (!outer.IsCompleted)
                 yield return null;
+
+            if (c_id == 0)
+                yield break;
 
             data.selectedPlayer = c_id;
 
@@ -82,8 +121,11 @@ public class ServerManager : NetworkManager
             NetworkServer.AddPlayerForConnection(con, playerObject);
 
             playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
+
             CharacterData characterData = new CharacterData();
+
             var charDataTask = Task.Factory.StartNew(() => characterData = MySql.Database.GetCharacterData(c_id));
+
             while (!charDataTask.IsCompleted)
                 yield return null;
             playerComponent.SetCharacterData(characterData);

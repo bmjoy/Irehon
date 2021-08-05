@@ -26,11 +26,15 @@ public class CharacterSelector : MonoBehaviour
 {
     int maxCharacterSlots = 2;
     [SerializeField]
+    private GameObject playButton;
+    [SerializeField]
     private Button[] characterSelections;
     [SerializeField]
     private Text nicknameField;
     [SerializeField]
     private RectTransform createCharacterTransform;
+    [SerializeField]
+    private Sprite activeCharacterSprite;
     private List<Character> characterList;
     private int selectedSlotId;
 
@@ -50,13 +54,17 @@ public class CharacterSelector : MonoBehaviour
 
     private void ShowCharacter(Character character, int slotId)
     {
+        playButton.SetActive(true);
         if (slotId < maxCharacterSlots)
+        {
             createCharacterTransform.gameObject.SetActive(true);
+            createCharacterTransform.position = characterSelections[slotId + 1].GetComponent<RectTransform>().position;
+        }
         else
             createCharacterTransform.gameObject.SetActive(false);
         characterSelections[slotId].gameObject.SetActive(true);
-        characterSelections[slotId].GetComponentInChildren<Text>().text =
-            character.NickName;
+        characterSelections[slotId].GetComponent<Image>().sprite = activeCharacterSprite;
+        characterSelections[slotId].GetComponentInChildren<Text>().text = character.NickName;
     }
 
     public void SelectCharacter(int slotId) => selectedSlotId = slotId;

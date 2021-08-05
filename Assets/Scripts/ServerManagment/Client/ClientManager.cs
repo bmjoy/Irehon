@@ -4,9 +4,19 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
+public enum MessageType { AuthAccept, AuthReject, Error, Notification }
+public struct ServerMessage : NetworkMessage
+{
+    public MessageType messageType;
+    public string message;
+}
+
+public class OnGetServerMessage : UnityEvent<ServerMessage> { }
+
 public class ClientManager : NetworkManager
 {
     public UnityEvent OnUpdateCharacterList;
+    public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
     private List<Character> charactersList = new List<Character>();
 
     public override void Start()
@@ -14,12 +24,19 @@ public class ClientManager : NetworkManager
         base.Start();
         if (OnUpdateCharacterList == null)
             OnUpdateCharacterList = new UnityEvent();
+        OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+        NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
         NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
+    }
+
+    private void ServerMessageEvent(ServerMessage msg)
+    {
+        OnGetServerMessage.Invoke(msg);
     }
 
     private void SaveCharacter(Character character)
@@ -28,6 +45,8 @@ public class ClientManager : NetworkManager
             charactersList.Add(character);
         OnUpdateCharacterList.Invoke();
     }
+
+    
 
     public List<Character> GetCharacters() => charactersList;
 

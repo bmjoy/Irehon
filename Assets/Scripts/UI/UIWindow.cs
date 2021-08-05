@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class UIWindow : MonoBehaviour
 {
@@ -14,15 +15,20 @@ public class UIWindow : MonoBehaviour
     public UnityEvent OnOpenWindow;
 
     private GameObject windowObject;
+    private LayoutGroup layoutGroup;
 
     private void Awake()
     {
         windowObject = transform.GetChild(0).gameObject;
+        layoutGroup = windowObject.GetComponent<HorizontalLayoutGroup>();
     }
 
     public void Open()
     {
         isEnabled = true;
+        Canvas.ForceUpdateCanvases();
+        layoutGroup.enabled = false;
+        layoutGroup.enabled = true;
         windowObject.SetActive(true);
         OnOpenWindow?.Invoke();
     }
@@ -44,11 +50,7 @@ public class UIWindow : MonoBehaviour
     {
         isEnabled = !isEnabled;
         if (isEnabled)
-        {
-            windowObject.SetActive(true);
-            windowObject.SetActive(false);
             Open();
-        }
         else
             Close();
     }

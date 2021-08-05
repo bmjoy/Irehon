@@ -147,11 +147,8 @@ namespace MySql
 
         public static int GetCharacterId(string NickName)
         {
-            var filter = new Dictionary<string, string>()
-            {
-                ["nickname"] = NickName
-            };
-            return Convert.ToInt32(Connection.SingleSelect("characters", "c_id", filter));
+            string c_id = Connection.SingleSelect("characters", "c_id", "nickname", NickName);
+            return c_id == "" ? 0 : Convert.ToInt32(c_id);
         }
 
         public static string GetItemsList()

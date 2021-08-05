@@ -18,12 +18,6 @@ public struct AuthRequestMessage : NetworkMessage
 
 }
 
-public struct AuthResponseMessage : NetworkMessage
-{
-    public bool Connected;
-    public string ResponseText;
-}
-
 public struct PlayerConnection
 {
     public int id;
@@ -43,9 +37,9 @@ public class ServerAuth : NetworkAuthenticator
     {
     }
 
-    public int GetPassword(string password) => password.GetHashCode();
+    public static int GetPassword(string password) => password.GetHashCode();
 
-    public bool IsLoginValid(string login)
+    public static bool IsLoginValid(string login)
     {
         if (login.Length > 20)
             return false;
@@ -94,13 +88,10 @@ public class ServerAuth : NetworkAuthenticator
 
             bool result = IsRequestValid(msg, ref loginResponse, out responseText);
 
-            AuthResponseMessage authResponseMessage = new AuthResponseMessage();
-            authResponseMessage.ResponseText = responseText;
             if (result)
-                authResponseMessage.Connected = true;
+                ServerManager.SendMessage(conn, responseText, MessageType.AuthAccept);
             else
-                authResponseMessage.Connected = false;
-            conn.Send(authResponseMessage);
+                ServerManager.SendMessage(conn, responseText, MessageType.AuthReject);
 
             if (result)
             {
