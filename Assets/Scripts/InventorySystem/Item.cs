@@ -32,4 +32,12 @@ public class Item
         modifiers = json["modifiers"];
         metadata = json["metadata"];
     }
+
+    public virtual List<TooltipMessage> GetStringMessage()
+    {
+        List<TooltipMessage> messages = new List<TooltipMessage>();
+        messages.Add(new TooltipMessage(name, 30));
+        messages.Add(new TooltipMessage(description, 20));
+        return messages;
+    }
 }

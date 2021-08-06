@@ -7,15 +7,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IDropHandler
+public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
     private Image itemSprite;
     [SerializeField]
     TMPro.TMP_Text quantityText;
     private Canvas canvas;
+    [SerializeField]
     private int itemId;
+    [SerializeField]
     private int itemQuantity;
+    private Item item;
     public OpenedContainerType type { get; private set; }
     public int slotId { get; private set; }
 
@@ -76,9 +79,21 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         {
             quantityText.text = itemQuantity.ToString();
             itemSprite.color = Color.white;
-            string slug = ItemDatabase.GetItemById(itemId)?.slug;
+            item = ItemDatabase.GetItemById(itemId);
+            string slug = item?.slug;
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        item = ItemDatabase.GetItemById(itemId);
+        TooltipWindowController.ShowTooltip(item.GetStringMessage(), GetComponent<RectTransform>());
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        TooltipWindowController.HideTooltip();
     }
 }
