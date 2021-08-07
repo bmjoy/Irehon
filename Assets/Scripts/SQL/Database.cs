@@ -52,7 +52,6 @@ namespace MySql
                 string c_id_str = Connection.Insert("characters", characterInfo);
                 if (c_id_str == null)
                     return false;
-
                 int c_id = Convert.ToInt32(c_id_str);
                 CreateAndLinkCharacterContainer(c_id);
                 CreateCharacterData(c_id);

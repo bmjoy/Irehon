@@ -33,10 +33,23 @@ public class Item
         metadata = json["metadata"];
     }
 
+    private Color GetRarityColor(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Common: return Color.white;
+            case ItemRarity.Uncommon: return Color.green;
+            case ItemRarity.Rare: return Color.blue;
+            case ItemRarity.Epic: return Color.magenta;
+            default: return Color.white;
+        }
+    }
+
     public virtual List<TooltipMessage> GetStringMessage()
     {
         List<TooltipMessage> messages = new List<TooltipMessage>();
         messages.Add(new TooltipMessage(name, 30));
+        messages.Add(new TooltipMessage(GetRarityColor(rarity), rarity.ToString(), 20));
         messages.Add(new TooltipMessage(description, 20));
         return messages;
     }

@@ -15,22 +15,21 @@ public class UIWindow : MonoBehaviour
     public UnityEvent OnOpenWindow;
 
     private GameObject windowObject;
-    private LayoutGroup layoutGroup;
 
     private void Awake()
     {
         windowObject = transform.GetChild(0).gameObject;
-        layoutGroup = windowObject.GetComponent<HorizontalLayoutGroup>();
     }
 
     public void Open()
     {
         isEnabled = true;
-        Canvas.ForceUpdateCanvases();
-        layoutGroup.enabled = false;
-        layoutGroup.enabled = true;
         windowObject.SetActive(true);
         OnOpenWindow?.Invoke();
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)windowObject.transform);
+        Canvas.ForceUpdateCanvases();
+        windowObject.GetComponent<VerticalLayoutGroup>().SetLayoutVertical();
+        Canvas.ForceUpdateCanvases();
     }
 
     public void Close()

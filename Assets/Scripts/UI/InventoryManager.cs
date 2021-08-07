@@ -25,7 +25,8 @@ public class InventoryManager : MonoBehaviour
     private Image draggerImage;
 
     private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
-    private Canvas canvas;
+    [SerializeField]
+    private Canvas canvas; 
     private PlayerContainerController playerContainerContrller;
     public static InventoryManager instance;
 
@@ -35,7 +36,6 @@ public class InventoryManager : MonoBehaviour
             Destroy(this);
         else
             instance = this;
-        canvas = GetComponent<Canvas>();
     }
 
     public void PlayerIntialize(Player player)

@@ -46,14 +46,12 @@ public class ServerManager : NetworkManager
 
             if (!ServerAuth.IsLoginValid(character.NickName))
             {
-                print("invalid login");
                 SendMessage(con, "Invalid symbols in nickname", MessageType.Error);
                 return;
             }
 
             if (MySql.Database.GetCharacterId(character.NickName) != 0)
             {
-                print("Sended msg");
                 SendMessage(con, "Nickname already in use", MessageType.Error);
                 return;
             } 
@@ -63,9 +61,7 @@ public class ServerManager : NetworkManager
                 NickName = character.NickName,
                 position = characterSpawnPoint,
             };
-
             MySql.Database.CreateNewCharacter(p_id, newCharacter);
-
             SendCharacterListToPlayer(con);
         });
     }

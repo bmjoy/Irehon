@@ -13,10 +13,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     private Image itemSprite;
     [SerializeField]
     TMPro.TMP_Text quantityText;
+    [SerializeField]
     private Canvas canvas;
     [SerializeField]
     private int itemId;
-    [SerializeField]
     private int itemQuantity;
     private Item item;
     public OpenedContainerType type { get; private set; }
@@ -24,7 +24,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     public void OnPointerClick(PointerEventData data)
     {
-        //AbilityTreeController.instance.OnSelectSkill(skillId);
+        
     }
 
     public void OnDrop(PointerEventData data)
@@ -88,6 +88,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (itemId == 0)
+            return;
         item = ItemDatabase.GetItemById(itemId);
         TooltipWindowController.ShowTooltip(item.GetStringMessage(), GetComponent<RectTransform>());
     }
