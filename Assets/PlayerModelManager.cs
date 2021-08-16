@@ -8,9 +8,9 @@ public class PlayerModelManager : SerializedMonoBehaviour
     public Dictionary<string, List<GameObject>> armorPartModels = new Dictionary<string, List<GameObject>>();
 
     [SerializeField]
-    private Dictionary<int, List<GameObject>> enabledArmorParts = new Dictionary<int, List<GameObject>>();
+    private Dictionary<EquipmentSlot, List<GameObject>> enabledArmorParts = new Dictionary<EquipmentSlot, List<GameObject>>();
     [SerializeField]
-    private Dictionary<int, string> equipedArmorPartsSlug = new Dictionary<int, string>();
+    private Dictionary<EquipmentSlot, string> equipedArmorPartsSlug = new Dictionary<EquipmentSlot, string>();
 
     private void Awake()
     {
@@ -40,12 +40,12 @@ public class PlayerModelManager : SerializedMonoBehaviour
         else
             slug = GetBaseSlugModel(slot);
 
-        if (equipedArmorPartsSlug[(int)slot] == slug)
+        if (equipedArmorPartsSlug[slot] == slug)
             return;
 
-        if (enabledArmorParts.ContainsKey((int)slot))
+        if (enabledArmorParts.ContainsKey(slot))
         {
-            foreach (GameObject model in enabledArmorParts[(int)slot])
+            foreach (GameObject model in enabledArmorParts[slot])
                 model.SetActive(false);
 
             foreach (GameObject model in armorPartModels[slug])
