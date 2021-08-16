@@ -20,9 +20,9 @@ public struct AuthRequestMessage : NetworkMessage
 
 public struct PlayerConnection
 {
-    public int id;
+    public int playerId;
     public List<Character> characters;
-    public int selectedPlayer;
+    public int characterId;
     public Transform playerPrefab;
 }
 
@@ -97,8 +97,8 @@ public class ServerAuth : NetworkAuthenticator
             {
                 conn.authenticationData = new PlayerConnection
                 {
-                    id = loginResponse,
-                    selectedPlayer = -1,
+                    playerId = loginResponse,
+                    characterId = -1,
                 };
                 ServerAccept(conn);
             }

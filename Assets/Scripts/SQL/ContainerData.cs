@@ -35,6 +35,11 @@ namespace MySql
             return Convert.ToInt32(Connection.SingleSelect("characters", "container_id", "c_id", characterId.ToString()));
         }
 
+        public static int GetEquipmentContainer(int characterId)
+        {
+            return Convert.ToInt32(Connection.SingleSelect("characters", "equipment_id", "c_id", characterId.ToString()));
+        }
+
         public static int GetItemOwner(int objectId)
         {
             return Convert.ToInt32(Connection.SingleSelect("object_items", "container_id", "id", objectId.ToString()));

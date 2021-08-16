@@ -2,17 +2,35 @@
 using System.Collections;
 using Mirror;
 using System.Threading.Tasks;
+using System;
 
 public class PlayerContainerController : NetworkBehaviour
 {
     private Player player;
+    private PlayerModelManager playerModelManager;
     private CharacterData characterData => player.GetCharacterData();
     private int openedContainerId;
-    private bool isContainerOpened;
 
     private void Awake()
     {
         player = GetComponent<Player>();
+        playerModelManager = GetComponent<PlayerModelManager>();
+    }
+
+    [ClientRpc]
+    private void UpdateEquipmentModel(CharacterData characterData)
+    {
+        Container equipment = characterData.equipment;
+        for (int i = 0; i < equipment.slots.Length; i++)
+        {
+            if (equipment.slots[i].itemId != 0)
+            {
+                Item item = ItemDatabase.GetItemById(equipment[i].itemId);
+                playerModelManager.EquipModel(item, (EquipmentSlot)i);
+            }
+            else
+                playerModelManager.EquipModel(null, (EquipmentSlot)i);
+        }
     }
 
     [TargetRpc]
@@ -58,8 +76,9 @@ public class PlayerContainerController : NetworkBehaviour
     {
         switch (type)
         {
-            case OpenedContainerType.Inventory: return player.GetCharacterData().containerId;
+            case OpenedContainerType.Inventory: return characterData.containerId;
             case OpenedContainerType.OtherContainer: return openedContainerId;
+            case OpenedContainerType.Equipment: return characterData.equipmentContainerId;
             default: return 0;
         };
     }
@@ -88,9 +107,43 @@ public class PlayerContainerController : NetworkBehaviour
         }
     }
 
+    //from , to
+    [Server]
+    private void Equip(int equipmentSlot, int inventorySlot)
+    {
+        Item equipableItem = ItemDatabase.GetItemById(characterData.inventory[inventorySlot].itemId);
+        
+        int equipmentItemSlot = equipableItem.metadata["equipmentSlot"].AsInt;
+        
+        if (equipmentSlot != equipmentItemSlot)
+            return;
+
+        MySql.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
+        
+        {
+            CharacterData characterData = this.characterData;
+            characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
+            characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
+            player.SetCharacterData(characterData);
+        }
+    }
+
+    private bool IsMoveLegal(OpenedContainerType firstType, OpenedContainerType secondType)
+    {
+        if (firstType == OpenedContainerType.Equipment && secondType != OpenedContainerType.Inventory)
+            return false;
+        if (secondType == OpenedContainerType.Equipment && firstType != OpenedContainerType.Inventory)
+            return false;
+        else
+            return true;
+    }
+
     [Command]
+    //from , to
     public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
     {
+        if (!IsMoveLegal(firstType, secondType))
+            return;
         int firstContainerId = GetContainerId(firstType);
         if (firstContainerId == 0)
             return;
@@ -99,6 +152,11 @@ public class PlayerContainerController : NetworkBehaviour
             return;
         Task.Run(() =>
         {
+            if (firstType == OpenedContainerType.Inventory && secondType == OpenedContainerType.Equipment)
+            {
+                Equip(secondSlot, firstSlot);
+                return;
+            }
             if (firstContainerId == secondContainerId)
             {
                 MySql.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);

@@ -22,12 +22,12 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     public OpenedContainerType type { get; private set; }
     public int slotId { get; private set; }
 
-    public void OnPointerClick(PointerEventData data)
+    public virtual void OnPointerClick(PointerEventData data)
     {
         
     }
 
-    public void OnDrop(PointerEventData data)
+    public virtual void OnDrop(PointerEventData data)
     {
         InventorySlotUI inventorySlot = data.pointerDrag.GetComponent<InventorySlotUI>();
         if (inventorySlot == null || inventorySlot.itemId == 0)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum OpenedContainerType { Inventory, OtherContainer}
+public enum OpenedContainerType { Inventory, Equipment, OtherContainer}
 
 public class InventoryManager : MonoBehaviour
 {
@@ -24,10 +24,11 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private Image draggerImage;
 
+    private List<InventorySlotUI> equipmentSlots = new List<InventorySlotUI>();
     private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
     [SerializeField]
     private Canvas canvas; 
-    private PlayerContainerController playerContainerContrller;
+    private PlayerContainerController playerContainerController;
     public static InventoryManager instance;
 
     private void Awake()
@@ -40,15 +41,16 @@ public class InventoryManager : MonoBehaviour
 
     public void PlayerIntialize(Player player)
     {
-        playerContainerContrller = player.GetComponent<PlayerContainerController>();
+        playerContainerController = player.GetComponent<PlayerContainerController>();
         player.OnCharacterDataUpdateEvent.AddListener(x => UpdateInventory(x.inventory));
+        player.OnCharacterDataUpdateEvent.AddListener(x => UpdateEquipment(x.equipment));
         if (player.isDataAlreadyRecieved)
             UpdateInventory(player.GetCharacterData().inventory);
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
     {
-        playerContainerContrller.MoveItem(from.type, from.slotId, to.type, to.slotId);
+        playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
     public void OpenOtherContainer(Container container)
@@ -63,11 +65,21 @@ public class InventoryManager : MonoBehaviour
         CloseOtherContainerOnServer();
     }
 
-    public void CloseOtherContainerOnServer() => playerContainerContrller.OtherContainerClosedRpc();
+    public void CloseOtherContainerOnServer() => playerContainerController.OtherContainerClosedRpc();
 
     public RectTransform GetDragger() => dragger;
 
     public Image GetDraggerImage() => draggerImage;
+
+    private void UpdateEquipment(Container container)
+    {
+        if (equipmentSlots.Count != container.slots.Length)
+            throw new System.Exception("Equipment slots count not equal to equipment type count");
+        for (int i = 0; i < equipmentSlots.Count; i++)
+        {
+            equipmentSlots[i].Intialize(container[i], canvas, OpenedContainerType.Equipment);
+        }
+    }
 
     private void UpdateInventory(Container container)
     {

@@ -17,6 +17,9 @@ public class ServerManager : NetworkManager
     [SerializeField]
     private GameObject mob;
 
+    private List<int> connectedPlayersId = new List<int>();
+    private Dictionary<int, Player> connectedCharacters = new Dictionary<int, Player>();
+
     public override void Awake()
     {
         if (i != null && i != this)
@@ -34,13 +37,20 @@ public class ServerManager : NetworkManager
         NetworkServer.RegisterHandler<CharacterCreate>(CharacterCreate, true);
     }
 
+    public Player GetPlayer(int id)
+    {
+        return connectedCharacters[id];
+    }
+
+    public bool IsPlayerConnected(int p_id) => connectedPlayersId.Contains(p_id);
+
     //Insert data in tables and send it to player
     public void CharacterCreate(NetworkConnection con, CharacterCreate character)
     {
         var outer = Task.Factory.StartNew(() =>
         {
             PlayerConnection data = (PlayerConnection)con.authenticationData;
-            int p_id = data.id;
+            int p_id = data.playerId;
             if (data.characters.Count > 2)
                 return;
 
@@ -102,13 +112,14 @@ public class ServerManager : NetworkManager
             if (c_id == 0)
                 yield break;
 
-            data.selectedPlayer = c_id;
+            data.characterId = c_id;
 
             GameObject playerObject = Instantiate(playerPrefab);
             playerObject.transform.position = selectedCharacter.position;
 
             Player playerComponent = playerObject.GetComponent<Player>();
 
+            connectedCharacters.Add(c_id, playerComponent);
 
             playerComponent.SetName(selectedCharacter.NickName);
 
@@ -135,6 +146,21 @@ public class ServerManager : NetworkManager
     {
         var outer = Task.Factory.StartNew(() =>
         {
+            PlayerConnection data = (PlayerConnection)conn.authenticationData;
+
+            if (connectedPlayersId.Contains(data.playerId))
+            {
+                SendMessage(conn, "Already connected", MessageType.Error);
+                StartCoroutine(WaitBeforeDisconnect());
+                IEnumerator WaitBeforeDisconnect()
+                {
+                    yield return new WaitForSeconds(0.05f);
+                    conn.Disconnect();
+                }
+                return;
+            }
+            else
+                connectedPlayersId.Add(data.playerId);
             SceneMessage message = new SceneMessage
             {
                 sceneName = "CharacterSelection",
@@ -149,7 +175,7 @@ public class ServerManager : NetworkManager
     private void SendCharacterListToPlayer(NetworkConnection con)
     {
         PlayerConnection data = (PlayerConnection)con.authenticationData;
-        data.characters = MySql.Database.GetCharacters(data.id);
+        data.characters = MySql.Database.GetCharacters(data.playerId);
         foreach (Character character in data.characters)
         {
             con.Send(character);
@@ -184,14 +210,16 @@ public class ServerManager : NetworkManager
         PlayerConnection data = (PlayerConnection)conn.authenticationData;
         var outer = Task.Factory.StartNew(() =>
         {
-            if (data.selectedPlayer >= 0)
+            if (data.characterId >= 0)
             {
-                int c_id = data.selectedPlayer;
+                int c_id = data.characterId;
                 Player player = data.playerPrefab.GetComponent<Player>();
                 MySql.Database.UpdatePositionData(c_id, player.transform.position);
                 MySql.Database.UpdateCharacterData(c_id, player.GetCharacterData());
             }
         });
+        connectedCharacters.Remove(data.characterId);
+        connectedPlayersId.Remove(data.playerId);
         base.OnServerDisconnect(conn);
     }
 }

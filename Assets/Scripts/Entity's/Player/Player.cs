@@ -10,6 +10,8 @@ using System.Collections;
 public struct CharacterData
 {
     public Container inventory;
+    public Container equipment;
+    public int equipmentContainerId;
     public int containerId;
     public int characterId;
 }
@@ -19,9 +21,8 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
 public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
-    private int openedContainerId;
-    private bool isContainerOpened;
     private PlayerController controller;
+    private Equipment equipment = new Equipment();
     private CharacterData characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
 
@@ -56,6 +57,7 @@ public class Player : Entity
     {
         isDataAlreadyRecieved = true;
         characterData = data;
+        equipment.Update(data.equipment);
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
@@ -63,6 +65,7 @@ public class Player : Entity
     public void SetCharacterData(CharacterData data)
     {
         characterData = data;
+        equipment.Update(data.equipment);
         UpdateCharacterData(connectionToClient, characterData);
     }
 

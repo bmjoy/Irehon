@@ -49,6 +49,7 @@ namespace MySql
                 characterInfo["nickname"] = character.NickName;
                 characterInfo["p_id"] = p_id.ToString();
                 characterInfo["container_id"] = "0";
+                characterInfo["equipment_id"] = "0";
                 string c_id_str = Connection.Insert("characters", characterInfo);
                 if (c_id_str == null)
                     return false;
@@ -56,12 +57,14 @@ namespace MySql
                 CreateAndLinkCharacterContainer(c_id);
                 CreateCharacterData(c_id);
                 CreatePositionData(c_id, character.position);
+
                 //Test inventory system on new chars
                 ContainerData.GiveCharacterItem(c_id, 1);
                 ContainerData.GiveCharacterItem(c_id, 4, 4);
                 ContainerData.GiveCharacterItem(c_id, 3, 2);
                 ContainerData.GiveCharacterItem(c_id, 1, 6);
                 ContainerData.GiveCharacterItem(c_id, 2, 9);
+
                 return true;
             }
             catch 
@@ -72,8 +75,14 @@ namespace MySql
 
         private static void CreateAndLinkCharacterContainer(int c_id)
         {
-            int container_id = ContainerData.CreateContainer(20);
-            Connection.RecieveSingleData($"UPDATE characters SET container_id = '{container_id}' WHERE c_id = {c_id};");
+            int containerId = ContainerData.CreateContainer(20);
+            int equipmentContainer = ContainerData.CreateContainer(Equipment.EquipmentSlotLength);
+
+            Dictionary<string, string> updateValues = new Dictionary<string, string>();
+            updateValues["container_id"] = containerId.ToString();
+            updateValues["equipment_id"] = equipmentContainer.ToString();
+
+            Connection.UpdateColumn("characters", "c_id", c_id.ToString(), updateValues);
         }
 
         private static void CreateCharacterData(int c_id)
@@ -111,15 +120,22 @@ namespace MySql
         public static CharacterData GetCharacterData(int c_id)
         {
             CharacterData data = new CharacterData();
+            
             data.containerId = ContainerData.GetCharacterContainer(c_id);
             data.inventory = ContainerData.GetContainer(data.containerId);
+
+            data.equipmentContainerId = ContainerData.GetEquipmentContainer(c_id);
+            data.equipment = ContainerData.GetContainer(data.equipmentContainerId);
+            
             data.characterId = c_id;
+            
             return data;
         }
 
         public static void UpdateCharacterData(int c_id, CharacterData data)
         {
             Connection.UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson());
+            Connection.UpdateColumn("containers", "id", data.equipmentContainerId.ToString(), "slots", data.equipment.ToJson());
         }
 
         private static void CreatePositionData(int c_id, Vector3 pos)
