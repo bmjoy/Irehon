@@ -37,14 +37,18 @@ public class PlayerModelManager : SerializedMonoBehaviour
             return;
         
         string slug;
-        
+
+
         if (item != null && armorPartModels.ContainsKey(item.slug))
             slug = item.slug;
         else
             slug = GetBaseSlugModel(slot);
+        print(slug);
 
         if (equipedArmorPartsSlug.ContainsKey(slot) && equipedArmorPartsSlug[slot] == slug)
             return;
+
+        print("got here");
 
         equipedArmorPartsSlug[slot] = slug;
         

@@ -7,14 +7,11 @@ public class EquipmentSlotUI : InventorySlotUI
 {
 
     [SerializeField]
-    private EquipmentSlot equipmentSlotType;
+    private EquipmentSlot equipmentSlotType; 
     public override int slotId { get => (int)equipmentSlotType; protected set => base.slotId = value; }
-    private Sprite baseSprite;
 
-    private void Start()
-    {
-        baseSprite = itemSprite.sprite;
-    }
+    [SerializeField]
+    private Image baseSprite;
 
     public override void Intialize(ContainerSlot containerSlot, Canvas canvas, OpenedContainerType type)
     {
@@ -22,18 +19,32 @@ public class EquipmentSlotUI : InventorySlotUI
         this.type = OpenedContainerType.Equipment;
 
         bool isSlotUpdated = true;
+
+
         if (itemId == containerSlot.itemId)
             isSlotUpdated = false;
+        
+        print(itemId);
+
         itemId = containerSlot.itemId;
+
         if (itemId == 0)
         {
-            itemSprite.sprite = baseSprite;
+            itemSprite.gameObject.SetActive(false);
+            baseSprite.gameObject.SetActive(true);
             return;
         }
+        else
+        {
+            itemSprite.gameObject.SetActive(true);
+            baseSprite.gameObject.SetActive(false);
+        }
+
         if (isSlotUpdated)
         {
             item = ItemDatabase.GetItemById(itemId);
             string slug = item?.slug;
+            print(slug + "as");
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
         }

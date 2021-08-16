@@ -80,13 +80,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             quantityText.text = itemQuantity.ToString();
             itemSprite.color = Color.white;
             item = ItemDatabase.GetItemById(itemId);
-            print(item == null);
             string slug = item?.slug;
-            print(slug);
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
         }
-        print(isSlotUpdated);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

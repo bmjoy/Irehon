@@ -17,7 +17,6 @@ public class PlayerContainerController : NetworkBehaviour
         playerModelManager = GetComponent<PlayerModelManager>();
     }
 
-    [ClientRpc]
     public void UpdateEquipmentModelRpc(Container equipment)
     {
         for (int i = 0; i < equipment.slots.Length; i++)
@@ -110,15 +109,11 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     private void Equip(int equipmentSlot, int inventorySlot)
     {
-        print("got equip");
         Item equipableItem = ItemDatabase.GetItemById(characterData.inventory[inventorySlot].itemId);
 
-        if (equipableItem.type != ItemType.Armor || equipableItem.type != ItemType.Weapon)
+        if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
             return;
-
-        int equipmentItemSlot = equipableItem.metadata["equipmentSlot"].AsInt;
-        
-        if (equipmentSlot != equipmentItemSlot)
+        if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
             return;
 
         MySql.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
@@ -128,7 +123,6 @@ public class PlayerContainerController : NetworkBehaviour
             characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
             player.SetCharacterData(characterData);
         }
-        UpdateEquipmentModelRpc(characterData.equipment);
     }
 
     private bool IsMoveLegal(OpenedContainerType firstType, OpenedContainerType secondType)
@@ -145,7 +139,6 @@ public class PlayerContainerController : NetworkBehaviour
     //from , to
     public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
     {
-        print("got move item");
         if (!IsMoveLegal(firstType, secondType))
             return;
         int firstContainerId = GetContainerId(firstType);
@@ -154,7 +147,6 @@ public class PlayerContainerController : NetworkBehaviour
         int secondContainerId = GetContainerId(secondType);
         if (secondContainerId == 0)
             return;
-        print("got move item and start");
 
         Task.Run(() =>
         {
@@ -163,7 +155,17 @@ public class PlayerContainerController : NetworkBehaviour
                 Equip(secondSlot, firstSlot);
                 return;
             }
-            if (firstContainerId == secondContainerId)
+            if (firstType == OpenedContainerType.Equipment && secondType == OpenedContainerType.Inventory)
+            {
+                MySql.ContainerData.MoveSlot(characterData.equipmentContainerId, firstSlot, characterData.containerId, secondSlot);
+                {
+                    CharacterData characterData = this.characterData;
+                    characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
+                    characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
+                    player.SetCharacterData(characterData);
+                }
+            }
+            else if (firstContainerId == secondContainerId)
             {
                 MySql.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
                 if (firstContainerId == characterData.containerId)
@@ -180,11 +182,13 @@ public class PlayerContainerController : NetworkBehaviour
                 MySql.ContainerData.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
                 CharacterData characterData = this.characterData;
                 characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
+                characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
                 player.SetCharacterData(characterData);
-                if (firstContainerId != characterData.containerId)
-                    OpenContainer(firstContainerId);
-                else
-                    OpenContainer(secondContainerId);
+                if (firstType == OpenedContainerType.OtherContainer || secondType == OpenedContainerType.OtherContainer)
+                    if (firstContainerId != characterData.containerId)
+                        OpenContainer(firstContainerId);
+                    else
+                        OpenContainer(secondContainerId);
             }
         });
     }

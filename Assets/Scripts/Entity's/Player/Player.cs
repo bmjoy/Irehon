@@ -59,6 +59,13 @@ public class Player : Entity
         characterData = data;
         equipment.Update(data.equipment);
         OnCharacterDataUpdateEvent.Invoke(characterData);
+        print("got char data");
+    }
+
+    [ClientRpc]
+    private void UpdatePublicData(CharacterData data)
+    {
+        GetComponent<PlayerContainerController>().UpdateEquipmentModelRpc(data.equipment);
     }
 
     [Server]
@@ -66,8 +73,10 @@ public class Player : Entity
     {
         characterData = data;
         equipment.Update(data.equipment);
-        GetComponent<PlayerContainerController>().UpdateEquipmentModelRpc(data.equipment);
         UpdateCharacterData(connectionToClient, characterData);
+        CharacterData sharedData = new CharacterData();
+        sharedData.equipment = data.equipment;
+        UpdatePublicData(sharedData);
     }
 
     public CharacterData GetCharacterData() => characterData;

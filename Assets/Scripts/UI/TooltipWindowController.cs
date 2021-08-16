@@ -89,9 +89,9 @@ public class TooltipWindowController : MonoBehaviour
             textComponent.text = message.Message;
             textComponent.color = message.Color;
             textComponent.fontSize = message.Font;
-            i.spawningTextWindow.gameObject.SetActive(true);
             Canvas.ForceUpdateCanvases();
         }
+        i.spawningTextWindow.gameObject.SetActive(true);
         i.isCursorFollowing = true;
 
     }

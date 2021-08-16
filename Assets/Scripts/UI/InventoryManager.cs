@@ -46,12 +46,14 @@ public class InventoryManager : MonoBehaviour
         player.OnCharacterDataUpdateEvent.AddListener(x => UpdateInventory(x.inventory));
         player.OnCharacterDataUpdateEvent.AddListener(x => UpdateEquipment(x.equipment));
         if (player.isDataAlreadyRecieved)
+        {
             UpdateInventory(player.GetCharacterData().inventory);
+            UpdateEquipment(player.GetCharacterData().equipment);
+        }
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
     {
-        print("move slot");
         playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
@@ -75,8 +77,6 @@ public class InventoryManager : MonoBehaviour
 
     private void UpdateEquipment(Container container)
     {
-        if (equipmentSlots.Count != container.slots.Length)
-            throw new System.Exception("Equipment slots count not equal to equipment type count");
         for (int i = 0; i < equipmentSlots.Count; i++)
         {
             equipmentSlots[i].Intialize(container[i], canvas, OpenedContainerType.Equipment);
