@@ -66,6 +66,7 @@ public class Player : Entity
     {
         characterData = data;
         equipment.Update(data.equipment);
+        GetComponent<PlayerContainerController>().UpdateEquipmentModelRpc(data.equipment);
         UpdateCharacterData(connectionToClient, characterData);
     }
 

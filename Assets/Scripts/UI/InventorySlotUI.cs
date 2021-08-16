@@ -10,17 +10,17 @@ using UnityEngine.UI;
 public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
-    private Image itemSprite;
+    protected Image itemSprite;
     [SerializeField]
-    TMPro.TMP_Text quantityText;
+    protected TMPro.TMP_Text quantityText;
     [SerializeField]
-    private Canvas canvas;
+    protected Canvas canvas;
     [SerializeField]
-    private int itemId;
-    private int itemQuantity;
-    private Item item;
-    public OpenedContainerType type { get; private set; }
-    public int slotId { get; private set; }
+    protected int itemId;
+    protected int itemQuantity;
+    protected Item item;
+    public OpenedContainerType type { get; protected set; }
+    public virtual int slotId { get; protected set; }
 
     public virtual void OnPointerClick(PointerEventData data)
     {
@@ -58,7 +58,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         InventoryManager.instance.GetDragger().gameObject.SetActive(false);
     }
 
-    public void Intialize(ContainerSlot containerSlot, Canvas canvas, OpenedContainerType type)
+    public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, OpenedContainerType type)
     {
         this.canvas = canvas;
         slotId = containerSlot.slotIndex;
@@ -80,10 +80,13 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             quantityText.text = itemQuantity.ToString();
             itemSprite.color = Color.white;
             item = ItemDatabase.GetItemById(itemId);
+            print(item == null);
             string slug = item?.slug;
+            print(slug);
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
         }
+        print(isSlotUpdated);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

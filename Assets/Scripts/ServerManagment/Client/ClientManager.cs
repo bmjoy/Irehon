@@ -15,9 +15,24 @@ public class OnGetServerMessage : UnityEvent<ServerMessage> { }
 
 public class ClientManager : NetworkManager
 {
+    public static ClientManager i;
     public UnityEvent OnUpdateCharacterList;
     public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
     private List<Character> charactersList = new List<Character>();
+
+    public override void Awake()
+    {
+        if (i != null && i != this)
+            Destroy(gameObject);
+        else
+            i = this;
+    }
+
+    override public void OnDestroy()
+    {
+        //Shutdown();
+        
+    }
 
     public override void Start()
     {

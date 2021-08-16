@@ -8,6 +8,73 @@ using UnityEngine;
 
 namespace MySql
 {
+    public class Querry
+    {
+        private string command;
+        public string Run()
+        {
+            return Connection.RecieveSingleData(command);
+        }
+        public Querry Insert(string table, string key, string value)
+        {
+            command += $"INSERT INTO {table} ({key}) VALUES ('{value}'); SELECT LAST_INSERT_ID();";
+
+            return this;
+        }
+
+        public Querry Insert(string table, Dictionary<string, string> values)
+        {
+            string[] keys = values.Keys.ToArray();
+            string command = $"INSERT INTO `{table}` (";
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (i != 0)
+                    command += ", ";
+                command += $"`{keys[i]}`";
+            }
+            command += ") VALUES(";
+            for (int i = 0; i < keys.Length; i++)
+            {
+                string value = values[keys[i]];
+                if (i != 0)
+                    command += ", ";
+                if (value != null)
+                    command += $"'{value}'";
+                else
+                    command += "NULL";
+            }
+            command += "); SELECT LAST_INSERT_ID();";
+            this.command += command;
+            return this;
+        }
+
+        public Querry UpdateColumn(string table, string filter, string filterValue, Dictionary<string, string> updateValues)
+        {
+            string command = $"UPDATE {table} SET ";
+            for (int i = 0; i < updateValues.Count; i++)
+            {
+                if (i != 0)
+                    command += ", ";
+                var valuePair = updateValues.ElementAt(i);
+                command += $"{valuePair.Key} = '{valuePair.Value}'";
+            }
+            command += $" WHERE {filter} = '{filterValue}';";
+            this.command += command;
+            return this;
+        }
+
+        public Querry UpdateColumn(string table, string filter, string filterValue, string valueKey, string value)
+        {
+            command += $"UPDATE {table} SET {valueKey} = '{value}' WHERE {filter} = '{filterValue}';";
+            return this;
+        }
+
+        public Querry Delete(string table, string filter, string value)
+        {
+            command += $"DELETE FROM {table} WHERE {filter} = '{value}';";
+            return this;
+        }
+    }
     public static class Connection
     {
         private static MySqlConnection connection;
@@ -18,8 +85,11 @@ namespace MySql
                 "user = server; database = players; password = Q@!#AFZDZDF!AASDS;");
             connection.Open();
             RecieveSingleData("USE players;");
+        }
 
-            AppDomain.CurrentDomain.ProcessExit += (x, y) => connection.Close();
+        public static void Shutdown()
+        {
+            connection.Close();
         }
 
         public static string RecieveJson(string tableName, string[] columns)

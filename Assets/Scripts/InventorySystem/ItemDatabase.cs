@@ -37,6 +37,7 @@ public static class ItemDatabase
         }
         jsonString = MySql.Database.GetItemsList();
         databaseResponse = JSON.Parse(jsonString);
+        Debug.Log(jsonString);
         isDatabaseLoaded = true;
 
         ParseItems();

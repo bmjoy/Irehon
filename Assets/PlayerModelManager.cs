@@ -33,6 +33,9 @@ public class PlayerModelManager : SerializedMonoBehaviour
 
     public void EquipModel(Item item, EquipmentSlot slot)
     {
+        if (slot == EquipmentSlot.Weapon || slot == EquipmentSlot.None)
+            return;
+        
         string slug;
         
         if (item != null && armorPartModels.ContainsKey(item.slug))
@@ -40,9 +43,11 @@ public class PlayerModelManager : SerializedMonoBehaviour
         else
             slug = GetBaseSlugModel(slot);
 
-        if (equipedArmorPartsSlug[slot] == slug)
+        if (equipedArmorPartsSlug.ContainsKey(slot) && equipedArmorPartsSlug[slot] == slug)
             return;
 
+        equipedArmorPartsSlug[slot] = slug;
+        
         if (enabledArmorParts.ContainsKey(slot))
         {
             foreach (GameObject model in enabledArmorParts[slot])
@@ -50,6 +55,15 @@ public class PlayerModelManager : SerializedMonoBehaviour
 
             foreach (GameObject model in armorPartModels[slug])
                 model.SetActive(true);
+
+            enabledArmorParts[slot] = armorPartModels[slug];
         }
+        else
+        {
+            foreach (GameObject model in armorPartModels[slug])
+                model.SetActive(true);
+        }
+        enabledArmorParts[slot] = armorPartModels[slug];
+        
     }
 }

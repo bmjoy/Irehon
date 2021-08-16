@@ -60,10 +60,10 @@ namespace MySql
 
                 //Test inventory system on new chars
                 ContainerData.GiveCharacterItem(c_id, 1);
-                ContainerData.GiveCharacterItem(c_id, 4, 4);
-                ContainerData.GiveCharacterItem(c_id, 3, 2);
-                ContainerData.GiveCharacterItem(c_id, 1, 6);
-                ContainerData.GiveCharacterItem(c_id, 2, 9);
+                ContainerData.GiveCharacterItem(c_id, 4);
+                ContainerData.GiveCharacterItem(c_id, 3);
+                ContainerData.GiveCharacterItem(c_id, 2);
+                ContainerData.GiveCharacterItem(c_id, 2);
 
                 return true;
             }
@@ -134,8 +134,9 @@ namespace MySql
 
         public static void UpdateCharacterData(int c_id, CharacterData data)
         {
-            Connection.UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson());
-            Connection.UpdateColumn("containers", "id", data.equipmentContainerId.ToString(), "slots", data.equipment.ToJson());
+            new Querry().UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson())
+                .UpdateColumn("containers", "id", data.equipmentContainerId.ToString(), "slots", data.equipment.ToJson())
+                .Run();
         }
 
         private static void CreatePositionData(int c_id, Vector3 pos)
@@ -168,7 +169,7 @@ namespace MySql
 
         public static string GetItemsList()
         {
-            string[] itemColumns = { "id", "slug", "stack", "type", "name", "description", "rarity", "modifiers", "metadata" };
+            string[] itemColumns = { "id", "slug", "stack", "type", "name", "description", "rarity", "modifiers", "metadata", "slot" };
             return Connection.RecieveJson("items", itemColumns);
         }
     }

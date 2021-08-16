@@ -4,7 +4,7 @@ using UnityEngine;
 using SimpleJSON;
 using System;
 
-public enum EquipmentSlot { Weapon, Helmet, Chestplate, Gloves, Leggins, Boots }
+public enum EquipmentSlot { Helmet, Chestplate, Gloves, Leggins, Boots, Weapon, None}
 public class Equipment
 {
     public static readonly int EquipmentSlotLength = Enum.GetNames(typeof(EquipmentSlot)).Length;
@@ -17,6 +17,8 @@ public class Equipment
         stats = new Dictionary<string, int>();
         for (int i = 0; i < container.slots.Length; i++)
         {
+            if (container[i].itemId == 0)
+                return;
             Item item = ItemDatabase.GetItemById(container[i].itemId);
             JSONNode itemStats = item.metadata["stats"];
             if (itemStats != null)

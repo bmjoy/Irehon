@@ -22,7 +22,7 @@ public class ServerManager : NetworkManager
 
     public override void Awake()
     {
-        if (i != null && i != this)
+        if ((i != null && i != this) || ClientManager.i != null)
             Destroy(gameObject);
         else
             i = this;
@@ -33,8 +33,15 @@ public class ServerManager : NetworkManager
         manager = GetComponent<NetworkManager>();
         manager.clientLoadedScene = false;
         manager.StartServer();
+        ItemDatabase.DatabaseLoad();
         NetworkServer.RegisterHandler<CharacterSelection>(OnSelectedPlayerSlot, true);
         NetworkServer.RegisterHandler<CharacterCreate>(CharacterCreate, true);
+    }
+
+    public override void OnDestroy()
+    {
+        //MySql.Connection.Shutdown();
+        //Shutdown();
     }
 
     public Player GetPlayer(int id)

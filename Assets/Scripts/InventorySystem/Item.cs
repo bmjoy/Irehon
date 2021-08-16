@@ -18,6 +18,7 @@ public class Item
     public ItemRarity rarity { get; }
     public JSONNode modifiers { get; }
     public JSONNode metadata { get; }
+    public EquipmentSlot equipmentSlot { get; }
     public Sprite sprite { get; }
 
     public Item(JSONNode json)
@@ -31,6 +32,7 @@ public class Item
         rarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), json["rarity"].Value);
         modifiers = json["modifiers"];
         metadata = json["metadata"];
+        equipmentSlot = (EquipmentSlot)Enum.Parse(typeof(EquipmentSlot), json["slot"].Value);
     }
 
     private Color GetRarityColor(ItemRarity rarity)

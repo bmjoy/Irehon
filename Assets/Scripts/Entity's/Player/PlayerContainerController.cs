@@ -18,15 +18,14 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void UpdateEquipmentModel(CharacterData characterData)
+    public void UpdateEquipmentModelRpc(Container equipment)
     {
-        Container equipment = characterData.equipment;
         for (int i = 0; i < equipment.slots.Length; i++)
         {
             if (equipment.slots[i].itemId != 0)
             {
                 Item item = ItemDatabase.GetItemById(equipment[i].itemId);
-                playerModelManager.EquipModel(item, (EquipmentSlot)i);
+                playerModelManager.EquipModel(item, item.equipmentSlot);
             }
             else
                 playerModelManager.EquipModel(null, (EquipmentSlot)i);
@@ -111,21 +110,25 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     private void Equip(int equipmentSlot, int inventorySlot)
     {
+        print("got equip");
         Item equipableItem = ItemDatabase.GetItemById(characterData.inventory[inventorySlot].itemId);
-        
+
+        if (equipableItem.type != ItemType.Armor || equipableItem.type != ItemType.Weapon)
+            return;
+
         int equipmentItemSlot = equipableItem.metadata["equipmentSlot"].AsInt;
         
         if (equipmentSlot != equipmentItemSlot)
             return;
 
         MySql.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
-        
         {
             CharacterData characterData = this.characterData;
             characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
             characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
             player.SetCharacterData(characterData);
         }
+        UpdateEquipmentModelRpc(characterData.equipment);
     }
 
     private bool IsMoveLegal(OpenedContainerType firstType, OpenedContainerType secondType)
@@ -142,6 +145,7 @@ public class PlayerContainerController : NetworkBehaviour
     //from , to
     public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
     {
+        print("got move item");
         if (!IsMoveLegal(firstType, secondType))
             return;
         int firstContainerId = GetContainerId(firstType);
@@ -150,6 +154,8 @@ public class PlayerContainerController : NetworkBehaviour
         int secondContainerId = GetContainerId(secondType);
         if (secondContainerId == 0)
             return;
+        print("got move item and start");
+
         Task.Run(() =>
         {
             if (firstType == OpenedContainerType.Inventory && secondType == OpenedContainerType.Equipment)

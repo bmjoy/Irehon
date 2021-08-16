@@ -93,6 +93,21 @@ namespace MySql
             return GiveContainerItem(containerId, itemId, 1);
         }
 
+        public static void GiveCharacterItem(int characterId, Dictionary<int, int> itemCount)
+        {
+            if (characterId <= 0)
+                return;
+            int containerId = GetCharacterContainer(characterId);
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (KeyValuePair<int, int> items in itemCount)
+                tasks.Add(Task.Factory.StartNew(() => GiveContainerItem(containerId, items.Key, items.Value)));
+
+            foreach (Task task in tasks)
+                task.Wait();
+        }
+
         //Создает и помещает такой то предмет в контейнер
         public static bool GiveContainerItem(int containerId, int itemId, int count)
         {

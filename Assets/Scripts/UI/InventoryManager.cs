@@ -24,6 +24,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private Image draggerImage;
 
+    [SerializeField]
     private List<InventorySlotUI> equipmentSlots = new List<InventorySlotUI>();
     private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
     [SerializeField]
@@ -50,6 +51,7 @@ public class InventoryManager : MonoBehaviour
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
     {
+        print("move slot");
         playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
