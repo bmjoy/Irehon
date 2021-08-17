@@ -97,6 +97,10 @@ public class Player : Entity
         controller.BlockControll();
         if (isServer && !isLocalPlayer)
             DeathOnClient(connectionToClient);
+        if (isServer)
+        {
+
+        }
     }
 
     protected override void Respawn()

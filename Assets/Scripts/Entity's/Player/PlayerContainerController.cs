@@ -62,7 +62,6 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     private void UpdateChestData()
     {
-        print("update chest data");
         OpenContainer(openedContainerId);
     }
 
