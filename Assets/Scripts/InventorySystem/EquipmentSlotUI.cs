@@ -23,8 +23,7 @@ public class EquipmentSlotUI : InventorySlotUI
 
         if (itemId == containerSlot.itemId)
             isSlotUpdated = false;
-        
-        print(itemId);
+
 
         itemId = containerSlot.itemId;
 
@@ -44,7 +43,6 @@ public class EquipmentSlotUI : InventorySlotUI
         {
             item = ItemDatabase.GetItemById(itemId);
             string slug = item?.slug;
-            print(slug + "as");
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
         }

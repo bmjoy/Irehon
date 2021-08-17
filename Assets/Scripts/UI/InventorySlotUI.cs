@@ -39,6 +39,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         if (itemId == 0)
             return;
+        TooltipWindowController.HideTooltip();
         InventoryManager.instance.GetDragger().gameObject.SetActive(true);
         InventoryManager.instance.GetDragger().position = GetComponent<RectTransform>().position;
         InventoryManager.instance.GetDraggerImage().sprite = itemSprite.sprite;
@@ -48,6 +49,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         if (itemId == 0)
             return;
+        TooltipWindowController.HideTooltip();
         InventoryManager.instance.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor; 
     }
 

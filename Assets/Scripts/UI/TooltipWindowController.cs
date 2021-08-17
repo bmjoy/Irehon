@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct TooltipMessage
 {
@@ -92,6 +93,11 @@ public class TooltipWindowController : MonoBehaviour
             Canvas.ForceUpdateCanvases();
         }
         i.spawningTextWindow.gameObject.SetActive(true);
+        i.customTextWindow.gameObject.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)i.spawningTextWindow.transform);
+        Canvas.ForceUpdateCanvases();
+        i.spawningTextWindow.GetComponent<VerticalLayoutGroup>().SetLayoutVertical();
+        Canvas.ForceUpdateCanvases();
         i.isCursorFollowing = true;
 
     }

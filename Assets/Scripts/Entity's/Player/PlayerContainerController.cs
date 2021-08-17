@@ -8,6 +8,7 @@ public class PlayerContainerController : NetworkBehaviour
 {
     private Player player;
     private PlayerModelManager playerModelManager;
+    private Chest chest;
     private CharacterData characterData => player.GetCharacterData();
     private int openedContainerId;
 
@@ -53,12 +54,15 @@ public class PlayerContainerController : NetworkBehaviour
     [Command]
     public void OtherContainerClosedRpc()
     {
+        chest?.OnContainerUpdate.RemoveListener(UpdateChestData);
+        chest = null;
         openedContainerId = 0;
     }
 
     [Server]
     private void UpdateChestData()
     {
+        print("update chest data");
         OpenContainer(openedContainerId);
     }
 
@@ -88,6 +92,8 @@ public class PlayerContainerController : NetworkBehaviour
                 Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
             return;
 
+        this.chest = chest;
+
         OpenContainer(chest.ContainerId);
         openedContainerId = chest.ContainerId;
         chest.OnContainerUpdate.AddListener(UpdateChestData);
@@ -101,6 +107,7 @@ public class PlayerContainerController : NetworkBehaviour
             }
             openedContainerId = 0;
             chest.OnContainerUpdate.RemoveListener(UpdateChestData);
+            chest = null;
             CloseChest();
         }
     }
@@ -185,10 +192,7 @@ public class PlayerContainerController : NetworkBehaviour
                 characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
                 player.SetCharacterData(characterData);
                 if (firstType == OpenedContainerType.OtherContainer || secondType == OpenedContainerType.OtherContainer)
-                    if (firstContainerId != characterData.containerId)
-                        OpenContainer(firstContainerId);
-                    else
-                        OpenContainer(secondContainerId);
+                    chest?.OnContainerUpdate.Invoke();
             }
         });
     }

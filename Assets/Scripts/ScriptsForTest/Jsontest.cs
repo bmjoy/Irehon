@@ -21,7 +21,7 @@ public class Jsontest : MonoBehaviour
         {
             foreach (KeyValuePair<string, JSONNode> kvp in (JSONObject)node)
             {
-                print(("{0}: {1}", kvp.Key, kvp.Value));
+                //print(("{0}: {1}", kvp.Key, kvp.Value));
 
             }
         }

@@ -15,8 +15,6 @@ public class Quiver : MonoBehaviour
         {
             GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
             Arrow arrow = arrowObj.GetComponent<Arrow>();
-            if (arrow == null)
-                print(arrowObj.name + arrowPrefab.name);
             arrow.SetParent(quiverOwner, quiverOwner.GetHitBoxColliderList(), this);
             arrow.gameObject.SetActive(false);
             arrowsInQuiever.Enqueue(arrow);

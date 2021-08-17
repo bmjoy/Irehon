@@ -59,7 +59,6 @@ public class Player : Entity
         characterData = data;
         equipment.Update(data.equipment);
         OnCharacterDataUpdateEvent.Invoke(characterData);
-        print("got char data");
     }
 
     [ClientRpc]
