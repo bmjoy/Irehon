@@ -75,9 +75,11 @@ public class Entity : NetworkBehaviour
     protected virtual void Death()
     {
         isAlive = false;
-        ragdoll?.ActivateRagdoll();
         if (isServer)
+        {
+            GetComponent<PlayerContainerController>().SpawnDeathContainer();
             Invoke("Respawn", respawnTime);
+        }
     }
 
     public bool IsAlive() => isAlive;
@@ -85,7 +87,6 @@ public class Entity : NetworkBehaviour
     protected virtual void Respawn()
     {
         SetDefaultState();
-        ragdoll?.DisableRagdoll();
     }
 
     [Server]
@@ -133,6 +134,6 @@ public class Entity : NetworkBehaviour
             health = 0;
         }
         OnHealthChanged?.Invoke(maxHealth, this.health);
-        damageMessage.source.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
+        damageMessage.source?.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
     }
 }

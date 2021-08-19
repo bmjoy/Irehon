@@ -3,12 +3,17 @@ using System.Collections;
 using Mirror;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 public class PlayerContainerController : NetworkBehaviour
 {
+    [SerializeField]
+    private GameObject deathPrefab;
+
     private Player player;
     private PlayerModelManager playerModelManager;
     private Chest chest;
+
     private CharacterData characterData => player.GetCharacterData();
     private int openedContainerId;
 
@@ -18,17 +23,38 @@ public class PlayerContainerController : NetworkBehaviour
         playerModelManager = GetComponent<PlayerModelManager>();
     }
 
-    public void UpdateEquipmentModelRpc(Container equipment)
+    [Server]
+    public void SpawnDeathContainer()
     {
-        for (int i = 0; i < equipment.slots.Length; i++)
+        GameObject deathBody = Instantiate(deathPrefab);
+        NetworkServer.Spawn(deathBody);
+        deathBody.transform.position = player.GetMoldelPosition();
+        deathBody.transform.rotation = transform.rotation;
+        deathBody.GetComponent<RagdollController>().ChangeRagdollState(true);
+        deathBody.GetComponent<DeathContainer>().SetEquipment(characterData.equipment);
+        CharacterData newData = characterData;
+        newData.equipment.Truncate();
+        newData.inventory.Truncate();
+        player.SetCharacterData(newData);
+        int deathContainer = 0;
+        var outer = Task.Factory.StartNew(() =>
         {
-            if (equipment.slots[i].itemId != 0)
-            {
-                Item item = ItemDatabase.GetItemById(equipment[i].itemId);
-                playerModelManager.EquipModel(item, item.equipmentSlot);
-            }
-            else
-                playerModelManager.EquipModel(null, (EquipmentSlot)i);
+            print("started in new thread");
+            List<int> playerContainers = new List<int>() 
+            { 
+                characterData.containerId, 
+                characterData.equipmentContainerId 
+            };
+            deathContainer = MySql.ContainerData.MoveAllItemsInNewContainer(playerContainers);
+            print($"new death container id = {deathContainer}");
+        });
+        StartCoroutine(WaitTask());
+        IEnumerator WaitTask()
+        {
+            while (!outer.IsCompleted)
+                yield return null;
+            deathBody.GetComponent<Chest>().SetChestId(deathContainer);
+            print("done with spawn container");
         }
     }
 

@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RagdollController : MonoBehaviour
+public class RagdollController : NetworkBehaviour
 {
     [SerializeField]
     private List<GameObject> ragdollParts = new List<GameObject>();
@@ -14,7 +15,7 @@ public class RagdollController : MonoBehaviour
     private List<Collider> ragdollColliders = new List<Collider>();
     private List<Rigidbody> ragdollRigs = new List<Rigidbody>();
 
-    private void Start()
+    private void Awake()
     {
         foreach (GameObject rag in ragdollParts)
         {
@@ -25,7 +26,27 @@ public class RagdollController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void ActivateRagdoll()
+
+    [Server]
+    public void ChangeRagdollState(bool isEnabled)
+    {
+        if (isEnabled)
+            ActivateRagdoll();
+        else
+            DisableRagdoll();
+        RagdollRpc(isEnabled);
+    }
+
+    [ClientRpc]
+    private void RagdollRpc(bool isEnabled)
+    {
+        if (isEnabled)
+            ActivateRagdoll();
+        else
+            DisableRagdoll();
+    }
+
+    private void ActivateRagdoll()
     {
         foreach (Collider collider in ragdollColliders)
         {
@@ -43,16 +64,14 @@ public class RagdollController : MonoBehaviour
             entityBasicCollider.enabled = false;
     }
 
-    public void DisableRagdoll()
+    private void DisableRagdoll()
     {
         foreach (Collider collider in ragdollColliders)
-        {
             collider.isTrigger = true;
-        }
+
         foreach (Rigidbody rig in ragdollRigs)
-        {
             rig.isKinematic = true;
-        }
+
         if (rigBody)
             rigBody.isKinematic = false;
         if (animator)

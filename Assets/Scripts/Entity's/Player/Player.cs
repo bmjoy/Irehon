@@ -21,6 +21,8 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
 public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
+    [SerializeField]
+    private GameObject model;
     private PlayerController controller;
     private Equipment equipment = new Equipment();
     private CharacterData characterData;
@@ -47,6 +49,16 @@ public class Player : Entity
             Invoke("Test", 2f);
     }
 
+    private void Update()
+    {
+        if (isServer && Input.GetKeyDown(KeyCode.Minus))
+            TakeDamage(new DamageMessage()
+            {
+                damage = 123,
+                target = this
+            });
+    }
+
     private void Test()
     {
         
@@ -61,10 +73,12 @@ public class Player : Entity
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
+    public Vector3 GetMoldelPosition() => model.transform.position;
+
     [ClientRpc]
     private void UpdatePublicData(CharacterData data)
     {
-        GetComponent<PlayerContainerController>().UpdateEquipmentModelRpc(data.equipment);
+        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(data.equipment);
     }
 
     [Server]
@@ -88,42 +102,31 @@ public class Player : Entity
     protected override void SetDefaultState()
     {
         base.SetDefaultState();
+        model.SetActive(true);
         controller.AllowControll();
     }
 
     protected override void Death()
     {
         base.Death();
+        model.SetActive(false);
         controller.BlockControll();
-        if (isServer && !isLocalPlayer)
-            DeathOnClient(connectionToClient);
-        if (isServer)
-        {
-
-        }
+        if (isServerOnly)
+            DeathOnClient();
     }
 
     protected override void Respawn()
     {
         base.Respawn();
-        //controller.ResetControll();
-        if (isServer && !isLocalPlayer)
-            RespawnOnClient(connectionToClient);
+        if (isServer)
+            RespawnOnClient();
     }
 
-    [TargetRpc]
-    protected virtual void DeathOnClient(NetworkConnection con)
-    {
-        base.Death();
-        controller.BlockControll();
-    }
+    [ClientRpc]
+    protected virtual void DeathOnClient() => Death();
 
-    [TargetRpc]
-    protected virtual void RespawnOnClient(NetworkConnection con)
-    {
-        base.Respawn();
-        //controller.ResetControll();
-    }
+    [ClientRpc]
+    protected virtual void RespawnOnClient() => Respawn();
 
     [Server]
     public void DoDamage(Entity target, int damage)

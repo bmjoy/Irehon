@@ -20,4 +20,11 @@ public class ContainerSlot
         itemQuantity = 0;
         this.slotIndex = slotIndex;
     }
+
+    public void CopyContent(ContainerSlot slot)
+    {
+        itemId = slot.itemId;
+        objectId = slot.objectId;
+        itemQuantity = slot.itemQuantity;
+    }
 }

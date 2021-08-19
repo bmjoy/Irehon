@@ -15,6 +15,11 @@ namespace MySql
             return Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
         }
 
+        public static int CreateContainer(Container container)
+        {
+            return Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
+        }
+
         public static void MoveSlot(int oldContainerId, int oldSlot, int containerId, int slot)
         {
             MoveSlotData(oldContainerId, oldSlot, containerId, slot);
@@ -106,6 +111,34 @@ namespace MySql
 
             foreach (Task task in tasks)
                 task.Wait();
+        }
+
+        public static int MoveAllItemsInNewContainer(List<int> containersId)
+        {
+            List<Container> containers = new List<Container>();
+            
+            foreach (int containerId in containersId)
+                containers.Add(GetContainer(containerId));
+
+            List<ContainerSlot> filledSlots = new List<ContainerSlot>();
+
+            foreach (Container container in containers)
+                filledSlots.AddRange(container.GetFilledSlots());
+
+            int requiredSlotCount = filledSlots.Count;
+
+            Container newContainer = new Container(requiredSlotCount);
+
+            for (int i = 0; i < requiredSlotCount; i++)
+                newContainer[i].CopyContent(filledSlots[i]);
+
+            for (int i = 0; i < containersId.Count; i++)
+            {
+                containers[i].Truncate();
+                SaveContainer(containersId[i], containers[i]);
+            }
+
+            return CreateContainer(newContainer);
         }
 
         //Создает и помещает такой то предмет в контейнер

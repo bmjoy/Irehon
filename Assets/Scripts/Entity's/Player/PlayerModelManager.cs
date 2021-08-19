@@ -14,7 +14,7 @@ public class PlayerModelManager : SerializedMonoBehaviour
 
     private void Awake()
     {
-        GetComponent<Player>().OnCharacterDataUpdateEvent.AddListener(data => { });
+        GetComponent<Player>()?.OnCharacterDataUpdateEvent.AddListener(data => { });
     }
 
     private string GetBaseSlugModel(EquipmentSlot slot)
@@ -28,6 +28,20 @@ public class PlayerModelManager : SerializedMonoBehaviour
             case EquipmentSlot.Boots: return "base_boots";
             case EquipmentSlot.Leggins: return "base_leggins";
             default: return null;
+        }
+    }
+
+    public void UpdateEquipmentContainer(Container equipment)
+    {
+        for (int i = 0; i < equipment.slots.Length; i++)
+        {
+            if (equipment.slots[i].itemId != 0)
+            {
+                Item item = ItemDatabase.GetItemById(equipment[i].itemId);
+                EquipModel(item, item.equipmentSlot);
+            }
+            else
+                EquipModel(null, (EquipmentSlot)i);
         }
     }
 
