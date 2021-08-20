@@ -95,9 +95,6 @@ public class TooltipWindowController : MonoBehaviour
         i.spawningTextWindow.gameObject.SetActive(true);
         i.customTextWindow.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)i.spawningTextWindow.transform);
-        Canvas.ForceUpdateCanvases();
-        i.spawningTextWindow.GetComponent<VerticalLayoutGroup>().SetLayoutVertical();
-        Canvas.ForceUpdateCanvases();
         i.isCursorFollowing = true;
 
     }

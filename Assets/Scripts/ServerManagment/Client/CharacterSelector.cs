@@ -35,6 +35,8 @@ public class CharacterSelector : MonoBehaviour
     private RectTransform createCharacterTransform;
     [SerializeField]
     private Sprite activeCharacterSprite;
+    [SerializeField]
+    private Sprite selectedCharacrterSprite;
     private List<Character> characterList;
     private int selectedSlotId;
 
@@ -67,7 +69,12 @@ public class CharacterSelector : MonoBehaviour
         characterSelections[slotId].GetComponentInChildren<Text>().text = character.NickName;
     }
 
-    public void SelectCharacter(int slotId) => selectedSlotId = slotId;
+    public void SelectCharacter(int slotId)
+    {
+        characterSelections[selectedSlotId].GetComponent<Image>().sprite = activeCharacterSprite;
+        characterSelections[slotId].GetComponent<Image>().sprite = selectedCharacrterSprite;
+        selectedSlotId = slotId;
+    }
 
     public void PlayButton() => Play();
 

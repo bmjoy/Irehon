@@ -27,9 +27,6 @@ public class UIWindow : MonoBehaviour
         windowObject.SetActive(true);
         OnOpenWindow?.Invoke();
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)windowObject.transform);
-        Canvas.ForceUpdateCanvases();
-        windowObject.GetComponent<VerticalLayoutGroup>().SetLayoutVertical();
-        Canvas.ForceUpdateCanvases();
     }
 
     public void Close()
