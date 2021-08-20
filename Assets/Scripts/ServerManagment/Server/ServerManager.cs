@@ -6,7 +6,7 @@ using System;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
-
+using Server;
 public class ServerManager : NetworkManager
 {
     public static ServerManager i;
@@ -63,13 +63,13 @@ public class ServerManager : NetworkManager
 
             if (!ServerAuth.IsLoginValid(character.NickName))
             {
-                SendMessage(con, "Invalid symbols in nickname", MessageType.Error);
+                SendMessage(con, "Invalid symbols in nickname", Server.MessageType.Error);
                 return;
             }
 
             if (MySql.Database.GetCharacterId(character.NickName) != 0)
             {
-                SendMessage(con, "Nickname already in use", MessageType.Error);
+                SendMessage(con, "Nickname already in use", Server.MessageType.Error);
                 return;
             } 
 
@@ -83,7 +83,7 @@ public class ServerManager : NetworkManager
         });
     }
 
-    public static void SendMessage(NetworkConnection con, string msg, MessageType type)
+    public static void SendMessage(NetworkConnection con, string msg, Server.MessageType type)
     {
         ServerMessage serverMessage = new ServerMessage
         {
@@ -157,7 +157,7 @@ public class ServerManager : NetworkManager
 
             if (connectedPlayersId.Contains(data.playerId))
             {
-                SendMessage(conn, "Already connected", MessageType.Error);
+                SendMessage(conn, "Already connected", Server.MessageType.Error);
                 StartCoroutine(WaitBeforeDisconnect());
                 IEnumerator WaitBeforeDisconnect()
                 {

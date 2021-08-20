@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Server;
 
 public class ServerMessageNotificator : MonoBehaviour
 {
     [SerializeField]
-    private TMPro.TMP_Text textComponent;
+    private Text textComponent;
 
     private static ServerMessageNotificator i;
     private Image parentBG;

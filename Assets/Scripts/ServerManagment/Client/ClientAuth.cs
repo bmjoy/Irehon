@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using Server;
 
 public class ClientAuth : NetworkAuthenticator
 {
     [SerializeField]
-    private TMPro.TMP_InputField Email;
+    private InputField Email;
     [SerializeField]
-    private TMPro.TMP_InputField Password;
+    private InputField Password;
 
     public override void OnClientAuthenticate()
     {

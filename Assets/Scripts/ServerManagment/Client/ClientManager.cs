@@ -4,78 +4,82 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
-public enum MessageType { AuthAccept, AuthReject, Error, Notification }
-public struct ServerMessage : NetworkMessage
+namespace Server
 {
-    public MessageType messageType;
-    public string message;
-}
-
-public class OnGetServerMessage : UnityEvent<ServerMessage> { }
-
-public class ClientManager : NetworkManager
-{
-    public static ClientManager i;
-    public UnityEvent OnUpdateCharacterList;
-    public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
-    private List<Character> charactersList = new List<Character>();
-
-    public override void Awake()
+    public enum MessageType { AuthAccept, AuthReject, Error, Notification }
+    public struct ServerMessage : NetworkMessage
     {
-        if (i != null && i != this)
-            Destroy(gameObject);
-        else
-            i = this;
+        public MessageType messageType;
+        public string message;
     }
 
-    override public void OnDestroy()
+    public class OnGetServerMessage : UnityEvent<ServerMessage> { }
+
+    public class ClientManager : NetworkManager
     {
-        //Shutdown();
-        
+        public static ClientManager i;
+        public UnityEvent OnUpdateCharacterList;
+        public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
+        private List<Character> charactersList = new List<Character>();
+
+        public override void Awake()
+        {
+            if (i != null && i != this)
+                Destroy(gameObject);
+            else
+                i = this;
+        }
+
+        override public void OnDestroy()
+        {
+            //Shutdown();
+
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            if (OnUpdateCharacterList == null)
+                OnUpdateCharacterList = new UnityEvent();
+            OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
+            NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
+        }
+
+        private void ServerMessageEvent(ServerMessage msg)
+        {
+            OnGetServerMessage.Invoke(msg);
+        }
+
+        private void SaveCharacter(Character character)
+        {
+            if (!charactersList.Contains(character))
+                charactersList.Add(character);
+            OnUpdateCharacterList.Invoke();
+        }
+
+
+
+        public List<Character> GetCharacters() => charactersList;
+
+        public override void OnServerAddPlayer(NetworkConnection conn)
+        {
+        }
+
+        public override void OnClientConnect(NetworkConnection conn)
+        {
+        }
+
+        public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
+        {
+            base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+            NetworkClient.PrepareToSpawnSceneObjects();
+        }
     }
 
-    public override void Start()
-    {
-        base.Start();
-        if (OnUpdateCharacterList == null)
-            OnUpdateCharacterList = new UnityEvent();
-        OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
-    }
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-        NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
-        NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
-    }
-
-    private void ServerMessageEvent(ServerMessage msg)
-    {
-        OnGetServerMessage.Invoke(msg);
-    }
-
-    private void SaveCharacter(Character character)
-    {
-        if (!charactersList.Contains(character))
-            charactersList.Add(character);
-        OnUpdateCharacterList.Invoke();
-    }
-
-    
-
-    public List<Character> GetCharacters() => charactersList;
-
-    public override void OnServerAddPlayer(NetworkConnection conn)
-    {
-    }
-
-    public override void OnClientConnect(NetworkConnection conn)
-    {
-    }
-
-    public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
-    {
-        base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-        NetworkClient.PrepareToSpawnSceneObjects();
-    }
 }
