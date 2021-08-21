@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Threading.Tasks;
+using Client;
 using Server;
 
 public struct AuthRequestMessage : NetworkMessage

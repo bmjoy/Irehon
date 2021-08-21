@@ -3,93 +3,110 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
-using Server;
+using Client;
 
 public struct Character : NetworkMessage
 {
     public int slot;
     public int id;
-    public string NickName;
+    public string name;
     public Vector3 position;
 }
 
-public struct CharacterCreate : NetworkMessage
+namespace Client
 {
-    public string NickName;
-}
-
-public struct CharacterSelection : NetworkMessage
-{
-    public int selectedSlot;
-}
-
-public class CharacterSelector : MonoBehaviour
-{
-    int maxCharacterSlots = 2;
-    [SerializeField]
-    private GameObject playButton;
-    [SerializeField]
-    private Button[] characterSelections;
-    [SerializeField]
-    private Text nicknameField;
-    [SerializeField]
-    private RectTransform createCharacterTransform;
-    [SerializeField]
-    private Sprite activeCharacterSprite;
-    [SerializeField]
-    private Sprite selectedCharacrterSprite;
-    private List<Character> characterList;
-    private int selectedSlotId;
-
-    private void Start()
+    public enum CharacterOperations { Play, Create, Delete }
+    public struct CharacterOperationRequest : NetworkMessage
     {
-        characterList = NetworkManager.singleton.GetComponent<ClientManager>().GetCharacters();
-        UpdateCharacterListUI();
-        NetworkManager.singleton.GetComponent<ClientManager>().OnUpdateCharacterList.AddListener(UpdateCharacterListUI);
+        public CharacterOperations opeartion;
+        public string nickname;
+        public int selectedSlot;
     }
 
-    private void UpdateCharacterListUI() 
+    public class CharacterSelector : MonoBehaviour
     {
-        int slotId = 0;
-        foreach (Character character in characterList)
-            ShowCharacter(character, slotId++);
-    }
+        [SerializeField]
+        private Text nicknameField;
+        [SerializeField]
+        private RectTransform createCharacterTransform;
+        [SerializeField]
+        private GameObject characterPrefab;
 
-    private void ShowCharacter(Character character, int slotId)
-    {
-        playButton.SetActive(true);
-        if (slotId < maxCharacterSlots)
+        private List<Character> characterList;
+        private List<GameObject> createdCharacterTabs = new List<GameObject>();
+        private int selectedSlotId;
+
+        private void Start()
         {
-            createCharacterTransform.gameObject.SetActive(true);
-            createCharacterTransform.position = characterSelections[slotId + 1].GetComponent<RectTransform>().position;
+            characterList = NetworkManager.singleton.GetComponent<ClientManager>().GetCharacters();
+            UpdateCharacterListUI();
+            NetworkManager.singleton.GetComponent<ClientManager>().OnUpdateCharacterList.AddListener(UpdateCharacterListUI);
         }
-        else
-            createCharacterTransform.gameObject.SetActive(false);
-        characterSelections[slotId].gameObject.SetActive(true);
-        characterSelections[slotId].GetComponent<Image>().sprite = activeCharacterSprite;
-        characterSelections[slotId].GetComponentInChildren<Text>().text = character.NickName;
-    }
 
-    public void SelectCharacter(int slotId)
-    {
-        characterSelections[selectedSlotId].GetComponent<Image>().sprite = activeCharacterSprite;
-        characterSelections[slotId].GetComponent<Image>().sprite = selectedCharacrterSprite;
-        selectedSlotId = slotId;
-    }
-
-    public void PlayButton() => Play();
-
-    private void Play()
-    {
-        NetworkClient.Send(new CharacterSelection { selectedSlot = selectedSlotId });
-    }
-
-    public void CreateCharacterButton()
-    {
-        CharacterCreate createQuerry = new CharacterCreate
+        private CharacterOperationRequest CreateCharacterRequest(CharacterOperations operation)
         {
-            NickName = nicknameField.text
-        };
-        NetworkClient.Send(createQuerry);
+            switch (operation)
+            {
+                case CharacterOperations.Create:
+                    {
+                        var request = new CharacterOperationRequest();
+                        request.opeartion = operation;
+                        request.nickname = nicknameField.text;
+                        return request;
+                    }
+                case CharacterOperations.Delete:
+                    {
+                        var request = new CharacterOperationRequest();
+                        request.opeartion = operation;
+                        request.selectedSlot = selectedSlotId;
+                        return request;
+                    }
+                case CharacterOperations.Play:
+                    {
+                        var request = new CharacterOperationRequest();
+                        request.opeartion = operation;
+                        request.selectedSlot = selectedSlotId;
+                        return request;
+                    }
+                default:
+                    throw new System.Exception("Character operation request error: unknown type");
+            }
+        }
+
+        private void UpdateCharacterListUI()
+        {
+            foreach (GameObject tab in createdCharacterTabs)
+                Destroy(tab);
+
+            int slotId = 0;
+
+            foreach (Character character in characterList)
+                createdCharacterTabs.Add(CreateCharacterTab(character, slotId++));
+            if (createdCharacterTabs.Count > 0)
+            {
+                createdCharacterTabs[0].GetComponent<Toggle>().isOn = true;
+                selectedSlotId = 0;
+            }
+        }
+
+        private GameObject CreateCharacterTab(Character character, int slotId)
+        {
+            GameObject newTab = Instantiate(characterPrefab, createCharacterTransform);
+
+            newTab.GetComponent<CharacterTab>().IntializeTab(this, character, slotId);
+
+            return newTab;
+        }
+
+        public void SelectCharacter(int slotId)=> selectedSlotId = slotId;
+
+        public void CreateCharacterButton() => CharacterOperationAction(CharacterOperations.Create);
+
+        public void PlayButton() => CharacterOperationAction(CharacterOperations.Play);
+
+        public void CharacterOperationAction(CharacterOperations operation)
+        {
+            NetworkClient.Send(CreateCharacterRequest(CharacterOperations.Play));
+        }
     }
 }

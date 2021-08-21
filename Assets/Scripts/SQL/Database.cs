@@ -8,6 +8,7 @@ namespace MySql
 {
     public static class Database
     {
+        public const int MAX_CHARACTERS_PER_ACCOUNT = 5;
         public static int Register(string login, int passsword)
         {
             try
@@ -46,7 +47,7 @@ namespace MySql
             {
                 Dictionary<string, string> characterInfo = new Dictionary<string, string>();
                 characterInfo["c_id"] = null;
-                characterInfo["nickname"] = character.NickName;
+                characterInfo["nickname"] = character.name;
                 characterInfo["p_id"] = p_id.ToString();
                 characterInfo["container_id"] = "0";
                 characterInfo["equipment_id"] = "0";
@@ -61,9 +62,6 @@ namespace MySql
                 //Test inventory system on new chars
                 ContainerData.GiveCharacterItem(c_id, 1);
                 ContainerData.GiveCharacterItem(c_id, 4);
-                ContainerData.GiveCharacterItem(c_id, 3);
-                ContainerData.GiveCharacterItem(c_id, 2);
-                ContainerData.GiveCharacterItem(c_id, 2);
 
                 return true;
             }
@@ -107,7 +105,7 @@ namespace MySql
                 characters.Add(
                 new Character
                 {
-                    NickName = characterInfo[0 + i * columnsInTable],
+                    name = characterInfo[0 + i * columnsInTable],
                     slot = i,
                     id = Convert.ToInt32(characterInfo[1 + i * columnsInTable]),
                     position = Connection.GetVector3("SELECT p_x, p_y, p_z FROM c_positions " +
@@ -137,6 +135,11 @@ namespace MySql
             new Querry().UpdateColumn("containers", "id", data.containerId.ToString(), "slots", data.inventory.ToJson())
                 .UpdateColumn("containers", "id", data.equipmentContainerId.ToString(), "slots", data.equipment.ToJson())
                 .Run();
+        }
+
+        public static void DeleteCharacter(int c_id)
+        {
+            Connection.Delete("characters", "c_id", c_id.ToString());
         }
 
         private static void CreatePositionData(int c_id, Vector3 pos)

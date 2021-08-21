@@ -4,7 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
-namespace Server
+namespace Client
 {
     public enum MessageType { AuthAccept, AuthReject, Error, Notification }
     public struct ServerMessage : NetworkMessage
