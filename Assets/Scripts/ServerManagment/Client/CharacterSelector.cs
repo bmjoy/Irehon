@@ -32,6 +32,10 @@ namespace Client
         private RectTransform createCharacterTransform;
         [SerializeField]
         private GameObject characterPrefab;
+        [SerializeField]
+        private ToggleGroup toggleGroup;
+
+        public ToggleGroup ToggleGroup => toggleGroup;
 
         private List<Character> characterList;
         private List<GameObject> createdCharacterTabs = new List<GameObject>();
@@ -40,7 +44,7 @@ namespace Client
         private void Start()
         {
             characterList = NetworkManager.singleton.GetComponent<ClientManager>().GetCharacters();
-            UpdateCharacterListUI();
+            UpdateCharacterListUI(characterList);
             NetworkManager.singleton.GetComponent<ClientManager>().OnUpdateCharacterList.AddListener(UpdateCharacterListUI);
         }
 
@@ -74,7 +78,7 @@ namespace Client
             }
         }
 
-        private void UpdateCharacterListUI()
+        private void UpdateCharacterListUI(List<Character> characterList)
         {
             foreach (GameObject tab in createdCharacterTabs)
                 Destroy(tab);
@@ -87,10 +91,7 @@ namespace Client
                 createdCharacterTabs.Add(CreateCharacterTab(character, slotId++));
 
             if (createdCharacterTabs.Count > 0)
-            {
-                ExecuteEvents.Execute(createdCharacterTabs[0], new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
                 selectedSlotId = 0;
-            }
         }
 
         private GameObject CreateCharacterTab(Character character, int slotId)

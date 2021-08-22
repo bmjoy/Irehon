@@ -13,12 +13,19 @@ namespace Client
         public string message;
     }
 
+    public struct CharactersInfo : NetworkMessage
+    {
+        public Character[] characters;
+    }
+
+    public class OnUpdateCharacterList : UnityEvent<List<Character>> { }
+
     public class OnGetServerMessage : UnityEvent<ServerMessage> { }
 
     public class ClientManager : NetworkManager
     {
         public static ClientManager i;
-        public UnityEvent OnUpdateCharacterList;
+        public OnUpdateCharacterList OnUpdateCharacterList;
         public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
         private List<Character> charactersList = new List<Character>();
 
@@ -40,7 +47,7 @@ namespace Client
         {
             base.Start();
             if (OnUpdateCharacterList == null)
-                OnUpdateCharacterList = new UnityEvent();
+                OnUpdateCharacterList = new OnUpdateCharacterList();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
         }
 
@@ -48,7 +55,7 @@ namespace Client
         {
             base.OnStartClient();
             NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
-            NetworkClient.RegisterHandler<Character>(SaveCharacter, true);
+            NetworkClient.RegisterHandler<CharactersInfo>(SaveCharacter, true);
         }
 
         private void ServerMessageEvent(ServerMessage msg)
@@ -56,11 +63,11 @@ namespace Client
             OnGetServerMessage.Invoke(msg);
         }
 
-        private void SaveCharacter(Character character)
+        private void SaveCharacter(CharactersInfo charactersInfo)
         {
-            if (!charactersList.Contains(character))
-                charactersList.Add(character);
-            OnUpdateCharacterList.Invoke();
+            print(charactersInfo.characters.Length);
+            charactersList = new List<Character>(charactersInfo.characters);
+            OnUpdateCharacterList.Invoke(charactersList);
         }
 
 

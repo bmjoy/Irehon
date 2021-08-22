@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UIWindow : MonoBehaviour
+public enum WindowAction { Open, Close }
+
+public class UIWindow : SerializedMonoBehaviour
 {
     [SerializeField]
     private KeyCode TriggerKey;
@@ -40,6 +43,8 @@ public class UIWindow : MonoBehaviour
     {
         if (Input.GetKeyDown(TriggerKey))
             SwitchWindowState();
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Close();
     }
 
     public void SwitchWindowState()

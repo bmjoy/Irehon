@@ -52,7 +52,6 @@ namespace Server
 
         public void CharacterOperationRequest(NetworkConnection con, CharacterOperationRequest request)
         {
-            print(request.opeartion);
             switch (request.opeartion)
             {
                 case CharacterOperations.Create:
@@ -73,7 +72,7 @@ namespace Server
             {
                 PlayerConnection data = (PlayerConnection)con.authenticationData;
 
-                if (request.selectedSlot > data.characters.Count)
+                if (request.selectedSlot >= data.characters.Count)
                     return;
                 Character selectedCharacter = data.characters[request.selectedSlot];
 
@@ -147,7 +146,7 @@ namespace Server
 
                 PlayerConnection data = (PlayerConnection)con.authenticationData;
 
-                if (request.selectedSlot > data.characters.Count)
+                if (request.selectedSlot >= data.characters.Count)
                     yield break;
 
                 Character selectedCharacter = data.characters[request.selectedSlot];
@@ -225,11 +224,7 @@ namespace Server
         {
             PlayerConnection data = (PlayerConnection)con.authenticationData;
             data.characters = MySql.Database.GetCharacters(data.playerId);
-            foreach (Character character in data.characters)
-            {
-                con.Send(character);
-
-            }
+            con.Send(new CharactersInfo { characters = data.characters.ToArray() });
             con.authenticationData = data;
         }
 
