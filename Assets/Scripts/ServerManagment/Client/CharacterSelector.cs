@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 using Client;
+using UnityEngine.EventSystems;
 
 public struct Character : NetworkMessage
 {
@@ -78,13 +79,16 @@ namespace Client
             foreach (GameObject tab in createdCharacterTabs)
                 Destroy(tab);
 
+            createdCharacterTabs.Clear();
+
             int slotId = 0;
 
             foreach (Character character in characterList)
                 createdCharacterTabs.Add(CreateCharacterTab(character, slotId++));
+
             if (createdCharacterTabs.Count > 0)
             {
-                createdCharacterTabs[0].GetComponent<Toggle>().isOn = true;
+                ExecuteEvents.Execute(createdCharacterTabs[0], new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
                 selectedSlotId = 0;
             }
         }
@@ -106,7 +110,7 @@ namespace Client
 
         public void CharacterOperationAction(CharacterOperations operation)
         {
-            NetworkClient.Send(CreateCharacterRequest(CharacterOperations.Play));
+            NetworkClient.Send(CreateCharacterRequest(operation));
         }
     }
 }
