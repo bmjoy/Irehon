@@ -14,6 +14,8 @@ public class CharacterTab : MonoBehaviour, IPointerClickHandler
     {
         this.selector = selector;
         nicknameField.text = character.name;
+        this.slotId = slot;
+        GetComponent<Toggle>().group = selector.ToggleGroup;
     }
 
     public void Destroy()

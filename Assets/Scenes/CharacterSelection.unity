@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -666,6 +666,7 @@ MonoBehaviour:
   createCharacterTransform: {fileID: 870575106}
   characterPrefab: {fileID: 743353633484139353, guid: b8f5e0ccb8c60ea4b822cff1646c82b7,
     type: 3}
+  toggleGroup: {fileID: 1333149582}
 --- !u!1 &303117875
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,7 +1759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1180845649}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Image (Background)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2018,12 +2019,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 299163583}
-        m_MethodName: 
+      - m_Target: {fileID: 299163588}
+        m_MethodName: PlayButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2244,7 +2245,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -740, y: -273}
+  m_AnchoredPosition: {x: -792, y: -257}
   m_SizeDelta: {x: 842, y: -116.704834}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1333149582

@@ -25,7 +25,7 @@ namespace Client
             parentBG = textComponent.transform.parent.GetComponent<Image>();
         }
 
-        private IEnumerator DisappearHitMarker()
+        private IEnumerator DisappearNotification()
         {
             yield return new WaitForSeconds(1.5f);
             while (textComponent.color.a > 0)
@@ -35,7 +35,7 @@ namespace Client
                 yield return new WaitForSeconds(.1f);
             }
             textComponent.text = "";
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)textComponent.transform);
+            parentBG.gameObject.SetActive(false);
         }
 
         public static void ShowMessage(ServerMessage msg)
@@ -45,12 +45,16 @@ namespace Client
 
         private void MessageShowAndHide(ServerMessage msg)
         {
+            if (msg.message == "")
+                return;
             if (opacity != null)
                 StopCoroutine(i.opacity);
+            parentBG.gameObject.SetActive(true);
             textComponent.text += msg.message + System.Environment.NewLine;
             textComponent.color = Color.white;
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)textComponent.transform);
-            opacity = StartCoroutine(DisappearHitMarker());
+            parentBG.color = Color.white;
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)parentBG.transform);
+            opacity = StartCoroutine(DisappearNotification());
         }
     }
 }
