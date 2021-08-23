@@ -44,7 +44,7 @@ public class PlayerAnimatorController : EntityAnimatorController
         animator.SetBool("Walking", !isSprint);
     }
 
-    public virtual void ApplyAnimatorInput(PlayerController.InputState input)
+    public virtual void ApplyAnimatorInput(InputState input)
     {
         Vector2 moveVerticals = input.GetMoveVector();
 

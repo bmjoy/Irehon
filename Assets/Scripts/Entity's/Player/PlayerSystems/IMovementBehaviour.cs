@@ -1,6 +1,6 @@
 ﻿public interface IMovementBehaviour
 {
-    void ProcessMovementInput(PlayerController.InputState input);
+    void ProcessMovementInput(InputState input);
     void Jump();
 
     bool IsCanJump();

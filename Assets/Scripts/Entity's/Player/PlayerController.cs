@@ -4,7 +4,7 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public partial class PlayerController : NetworkBehaviour
+public class PlayerController : NetworkBehaviour
 {
     protected enum MouseClickType { Down = 0, Up };
 
