@@ -35,6 +35,7 @@ public class CameraController : MonoBehaviour
     private Transform playerTransform;
     private Transform shoulderTransform;
     private bool cursorAiming;
+    private float xRotation = 0f;
     private bool needToSendY = false;
     private bool needToSendX = false;
     private bool isLookingAtFloor;
@@ -58,16 +59,16 @@ public class CameraController : MonoBehaviour
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
     }
 
-    public void CreateShake(float power, float time)
+    public static void CreateShake(float power, float time)
     {
-        shakeTimer = time;
-        shakeTimerTotal = time;
-        currentIntensity = power;
-        currentShakeHandler.m_AmplitudeGain = currentIntensity;
+        i.shakeTimer = time;
+        i.shakeTimerTotal = time;
+        i.currentIntensity = power;
+        i.currentShakeHandler.m_AmplitudeGain = i.currentIntensity;
     }
-    public Vector2 GetRotation()
+    public static Vector2 GetRotation()
     {
-        return new Vector2(xRotation, playerTransform.rotation.eulerAngles.y);
+        return new Vector2(i.xRotation, i.playerTransform.rotation.eulerAngles.y);
     }
 
     public bool IsTargetOnFloor()
@@ -87,31 +88,29 @@ public class CameraController : MonoBehaviour
         return i.targetTransform.position;
     }
 
-    public float GetPlayerYAxis()
+    public static float GetPlayerYAxis()
     {
-        float angle = shoulderTransform.eulerAngles.x;
+        float angle = i.shoulderTransform.eulerAngles.x;
         angle = (angle > 180) ? angle - 360 : angle;
         return angle;
     }
 
-    float xRotation = 0f;
-
-    public void EnableAimCamera()
+    public static void EnableAimCamera()
     {
-        mainCamera.gameObject.SetActive(false);
-        aimCamera.gameObject.SetActive(true);
-        float currentAmplitude = currentShakeHandler.m_AmplitudeGain;
-        currentShakeHandler = aimCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-        currentShakeHandler.m_AmplitudeGain = currentAmplitude;
+        i.mainCamera.gameObject.SetActive(false);
+        i.aimCamera.gameObject.SetActive(true);
+        float currentAmplitude = i.currentShakeHandler.m_AmplitudeGain;
+        i.currentShakeHandler = i.aimCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
+        i.currentShakeHandler.m_AmplitudeGain = currentAmplitude;
     }
 
-    public void DisableAimCamera()
+    public static void DisableAimCamera()
     {
-        mainCamera.gameObject.SetActive(true);
-        aimCamera.gameObject.SetActive(false);
-        float currentAmplitude = currentShakeHandler.m_AmplitudeGain;
-        currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-        currentShakeHandler.m_AmplitudeGain = currentAmplitude;
+        i.mainCamera.gameObject.SetActive(true);
+        i.aimCamera.gameObject.SetActive(false);
+        float currentAmplitude = i.currentShakeHandler.m_AmplitudeGain;
+        i.currentShakeHandler = i.mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
+        i.currentShakeHandler.m_AmplitudeGain = currentAmplitude;
     }
 
     public void SetTarget(Transform shoulderTarget, Transform playerTransform)
@@ -168,9 +167,10 @@ public class CameraController : MonoBehaviour
                 DisableCursor();
         }
     }
+
+    //TODO: перевести в UI controller
     private void EnableCursor()
     {
-        OnChangeCursorState.Invoke(false);
         cursorAiming = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -178,7 +178,6 @@ public class CameraController : MonoBehaviour
 
     private void DisableCursor()
     {
-        OnChangeCursorState.Invoke(true);
         cursorAiming = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

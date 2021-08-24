@@ -9,7 +9,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public GameObject AbilityPoolObject => abilityPoolObject;
     public AudioSource AudioSource => audioSource;
     public Animator AnimatorComponent => animator;
-    public PlayerController PlayerControll => playerController;
     public Player PlayerComponent => player;
     public PlayerMovement PlayerMovementComponent => playerMovement;
     public AbilityPrefabData AbilityPrefabData => abilityPrefabData;
@@ -18,7 +17,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     private PlayerMovement playerMovement;
     private Player player;
     private Animator animator;
-    private PlayerController playerController;
     private AudioSource audioSource;
     private GameObject abilityPoolObject;
 
@@ -58,7 +56,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         abilityPrefabData = GetComponent<AbilityPrefabData>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
-        playerController = GetComponent<PlayerController>();
         audioSource = abilityPoolObject.GetComponent<AudioSource>();
         abilityPoolObject.transform.parent = transform;
         isAbilityCasting = false;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerInput : NetworkBehaviour
 {
-    private int frame;
+    private long avaliablePackets;
 
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
 
@@ -18,11 +18,19 @@ public class PlayerInput : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        avaliablePackets++;
+
+        if (!isLocalPlayer)
+            return;
+        
         InputInfo currentInput = new InputInfo();
         currentInput.PressedKeys = new List<KeyCode>();
 
         FillMovementKeysInput(ref currentInput);
         FillCameraInput(ref currentInput);
+
+        SendInputOnServer(currentInput);
+        sendedInputs.Enqueue(currentInput);
     }
 
     private void FillMovementKeysInput(ref InputInfo input)
@@ -49,7 +57,13 @@ public class PlayerInput : NetworkBehaviour
     [Command]
     private void SendInputOnServer(InputInfo input)
     {
+        if (avaliablePackets <= 0)
+            return;
 
+        avaliablePackets--;
+        playerStateMachine.InputInState(input);
+        input.Position = transform.position;
+        RecieveInputResponse(input);
     }
 
     [TargetRpc]
@@ -62,14 +76,8 @@ public class PlayerInput : NetworkBehaviour
         Quaternion rot = transform.rotation;
 
         foreach (var sendedInput in sendedInputs)
-            playerStateMachine.CurrentState.ClientHandleInput(sendedInput);
+            playerStateMachine.InputInState(input);
 
         transform.rotation = rot;
-    }
-
-    [TargetRpc]
-    private void DropWaitingInputResponse()
-    {
-        sendedInputs.Dequeue();
     }
 }

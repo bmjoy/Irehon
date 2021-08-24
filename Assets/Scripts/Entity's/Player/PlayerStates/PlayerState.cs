@@ -8,14 +8,14 @@ public abstract class PlayerState
     {
         this.player = player;
     }
-
-    public bool CanRotateCamera { get; private set; }
-    public float MovementSpeed { get; private set; }
-    public bool CanInteract { get; private set; }
+    public virtual bool CanTakeDamage => true;
+    public abstract bool CanRotateCamera { get; }
+    public abstract float MovementSpeed { get; }
+    public abstract bool CanInteract { get; }
 
     protected Player player;
-    public virtual void Enter() { }
-    public virtual void Exit() { }
-    public abstract void ClientHandleInput(InputInfo input);
-    public abstract void ServerHandleInput(InputInfo input);
+    public virtual void Update() { }
+    public abstract void Enter();
+    public abstract void Exit();
+    public abstract PlayerState HandleInput(InputInfo input, bool isServer);
 }

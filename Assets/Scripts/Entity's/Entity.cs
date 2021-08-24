@@ -33,13 +33,11 @@ public class Entity : NetworkBehaviour
     [SerializeField]
     protected List<Collider> hitboxColliders = new List<Collider>();
     protected bool isAlive;
-    protected RagdollController ragdoll;
     public OnTakeDamage OnTakeDamageEvent = new OnTakeDamage();
     public HealthChangedEvent OnHealthChanged;
 
     protected virtual void Awake()
     {
-        ragdoll = GetComponent<RagdollController>();
         if (OnHealthChanged == null)
             OnHealthChanged = new HealthChangedEvent();
     }

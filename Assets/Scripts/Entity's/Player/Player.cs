@@ -23,7 +23,7 @@ public class Player : Entity
     public bool isDataAlreadyRecieved { get; private set; } = false;
     [SerializeField]
     private GameObject model;
-    private PlayerController controller;
+    private PlayerStateMachine stateMachine;
     private Equipment equipment = new Equipment();
     private CharacterData characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -32,7 +32,7 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
-        controller = GetComponent<PlayerController>();
+        stateMachine = GetComponent<PlayerStateMachine>();
     }
 
     protected override void Start()
@@ -42,26 +42,18 @@ public class Player : Entity
         {
             InventoryManager.instance.PlayerIntialize(this);
             OnHealthChanged.AddListener(UpdateHealthBar);
-            HitConfirmEvent.AddListener(controller.HitConfirmed);
-            OnTakeDamageEvent.AddListener(controller.TakeDamageEffect);
+            OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
         }
-        else
-            Invoke("Test", 2f);
     }
 
     private void Update()
     {
-        if (isServer && Input.GetKeyDown(KeyCode.Minus))
-            TakeDamage(new DamageMessage()
-            {
-                damage = 123,
-                target = this
-            });
-    }
-
-    private void Test()
-    {
-        
+        //if (isServer && Input.GetKeyDown(KeyCode.Minus))
+        //    TakeDamage(new DamageMessage()
+        //    {
+        //        damage = 123,
+        //        target = this
+        //    });
     }
 
     [TargetRpc]
@@ -76,8 +68,10 @@ public class Player : Entity
     public Vector3 GetMoldelPosition() => model.transform.position;
 
     [ClientRpc]
-    private void UpdatePublicData(CharacterData data)
+    private void GetPublicCharacterData(CharacterData data)
     {
+        CharacterData sharedData = new CharacterData();
+        sharedData.equipment = characterData.equipment;
         GetComponent<PlayerModelManager>().UpdateEquipmentContainer(data.equipment);
     }
 
@@ -85,11 +79,15 @@ public class Player : Entity
     public void SetCharacterData(CharacterData data)
     {
         characterData = data;
+
         equipment.Update(data.equipment);
+
         UpdateCharacterData(connectionToClient, characterData);
+
         CharacterData sharedData = new CharacterData();
         sharedData.equipment = data.equipment;
-        UpdatePublicData(sharedData);
+
+        GetPublicCharacterData(sharedData);
     }
 
     public CharacterData GetCharacterData() => characterData;
@@ -102,15 +100,12 @@ public class Player : Entity
     protected override void SetDefaultState()
     {
         base.SetDefaultState();
-        model.SetActive(true);
-        controller.AllowControll();
+        stateMachine.ChangePlayerState(new PlayerIdleState(this));
     }
 
-    protected override void Death()
+    protected override void Death() 
     {
         base.Death();
-        model.SetActive(false);
-        controller.BlockControll();
         if (isServerOnly)
             DeathOnClient();
     }
@@ -140,7 +135,6 @@ public class Player : Entity
         target.TakeDamage(damageMessage);
     }
 
-    [Command]
     public void InterractAttempToServer(Vector3 interractPos)
     {
         if (Vector3.Distance(interractPos, transform.position) > 3f)

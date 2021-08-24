@@ -79,7 +79,7 @@ public class SniperAbility : AbilityBase
         if (isLocalPlayer)
         {
             UIController.instance.EnableTriangleCrosshair();
-            CameraController.i.EnableAimCamera();
+            CameraController.EnableAimCamera();
             UIController.instance.ChangeTriangleAimSize(holdingTime / MAX_HOLDING_TIME);
         }
     }
@@ -109,7 +109,7 @@ public class SniperAbility : AbilityBase
         releasedArrow.TriggerReleaseEffect();
         releasedArrow.rigidBody.velocity = releasedArrow.transform.forward * (20 + GetHoldingPowerPercent() * 30);
         if (isLocalPlayer)
-            CameraController.i.CreateShake(5, .1f);
+            CameraController.CreateShake(5, .1f);
     }
 
     protected override void StopHoldingAbility(Vector3 target)
@@ -135,7 +135,7 @@ public class SniperAbility : AbilityBase
         AbilityEnd();
         if (isLocalPlayer)
         {
-            CameraController.i.DisableAimCamera();
+            CameraController.DisableAimCamera();
             UIController.instance.EnableDefaultCrosshair();
         }
     }
