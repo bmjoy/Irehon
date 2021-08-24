@@ -40,6 +40,8 @@ public class PlayerInput : NetworkBehaviour
         CheckInputKey(KeyCode.S, ref input);
         CheckInputKey(KeyCode.D, ref input);
         CheckInputKey(KeyCode.LeftShift, ref input);
+        CheckInputKey(KeyCode.Space, ref input);
+
     }
 
     private void FillCameraInput(ref InputInfo input)
@@ -50,7 +52,7 @@ public class PlayerInput : NetworkBehaviour
 
     private void CheckInputKey(KeyCode key, ref InputInfo input)
     {
-        if (Input.GetKeyDown(key) && !input.PressedKeys.Contains(key))
+        if (Input.GetKey(key) && !input.PressedKeys.Contains(key))
             input.PressedKeys.Add(key);
     }
 
@@ -70,7 +72,8 @@ public class PlayerInput : NetworkBehaviour
     private void RecieveInputResponse(InputInfo input)
     {
         sendedInputs.Dequeue();
-        
+
+        PlayerState currentState = playerStateMachine.CurrentState;
         transform.position = input.Position;
 
         Quaternion rot = transform.rotation;
@@ -79,5 +82,6 @@ public class PlayerInput : NetworkBehaviour
             playerStateMachine.InputInState(input);
 
         transform.rotation = rot;
+        playerStateMachine.ChangePlayerState(currentState);
     }
 }

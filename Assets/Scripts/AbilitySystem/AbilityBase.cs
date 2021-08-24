@@ -16,7 +16,7 @@ public abstract class AbilityBase : MonoBehaviour
 
     protected Coroutine cooldownCoroutine;
     protected AbilitySystem abilitySystem;
-    protected AbilityPrefabData prefabData;
+    protected PlayerBonesLinks boneLinks;
     protected Weapon weapon;
 
     protected CurrentAnimationEvent currentAnimationEvent;
@@ -30,7 +30,7 @@ public abstract class AbilityBase : MonoBehaviour
     public virtual void Setup(AbilitySystem abilitySystem)
     {
         this.abilitySystem = abilitySystem;
-        prefabData = abilitySystem.AbilityPrefabData;
+        boneLinks = abilitySystem.PlayerBonesLinks;
         weapon = GetComponent<Weapon>();
     }
 

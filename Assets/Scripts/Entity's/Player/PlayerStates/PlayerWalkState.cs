@@ -21,6 +21,7 @@ public class PlayerWalkState : PlayerRotatableState
     public override void Enter()
     {
         animator.SetBool("Walking", true);
+        Debug.Log("Enabled animator walking");
     }
 
     public override void Exit()
@@ -28,11 +29,14 @@ public class PlayerWalkState : PlayerRotatableState
         animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
+        Debug.Log("Disabled animator walking");
     }
 
     public override PlayerState HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
+
+        Debug.Log($"Movement input with = {input.GetMoveVector()}");
 
         if (input.IsKeyPressed(KeyCode.Space))
             return new PlayerJumpingState(player);

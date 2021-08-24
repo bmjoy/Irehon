@@ -25,19 +25,24 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public void InputInState(InputInfo input)
     {
+        print("Method call");
         PlayerState previousState = currentState;
 
         currentState = currentState.HandleInput(input, isServer);
 
         if (previousState != currentState)
         {
+            print($"Changged state");
+            print("Exit");
             if (previousState != null)
                 previousState.Exit();
-            
+            print("Enter");
             currentState.Enter();
 
             OnPlayerChangeState.Invoke();
         }
+        else
+            print("Not changed state");
     }
 
     public void ChangePlayerState(PlayerState state)
@@ -48,7 +53,6 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState = state;
 
         state.Enter();
-
         OnPlayerChangeState.Invoke();
     }
 

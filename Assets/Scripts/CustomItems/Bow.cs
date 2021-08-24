@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bow : Weapon
 {
-    private AbilityPrefabData prefabData;
+    private PlayerBonesLinks playerBonesLinks;
 
     [SerializeField]
     private SniperAbility ability;
@@ -21,9 +21,9 @@ public class Bow : Weapon
 
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
-        prefabData = abilitySystem.GetComponent<AbilityPrefabData>();
+        playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
         AimingParticles.transform.parent = abilitySystem.AbilityPoolObject.transform;
-        ArrowInHand = Instantiate(arrowInHandPrefab, prefabData.RightHand);
+        ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
         ability.Setup(abilitySystem);
         return ability;
     }

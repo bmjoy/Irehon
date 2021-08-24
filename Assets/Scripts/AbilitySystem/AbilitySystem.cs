@@ -11,9 +11,9 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public Animator AnimatorComponent => animator;
     public Player PlayerComponent => player;
     public PlayerMovement PlayerMovementComponent => playerMovement;
-    public AbilityPrefabData AbilityPrefabData => abilityPrefabData;
+    public PlayerBonesLinks PlayerBonesLinks => boneLinks;
 
-    private AbilityPrefabData abilityPrefabData;
+    private PlayerBonesLinks boneLinks;
     private PlayerMovement playerMovement;
     private Player player;
     private Animator animator;
@@ -53,7 +53,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         abilityPoolObject = new GameObject("AbilityPool", typeof(AudioSource));
 
         player = GetComponent<Player>();
-        abilityPrefabData = GetComponent<AbilityPrefabData>();
+        boneLinks = GetComponent<PlayerBonesLinks>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
         audioSource = abilityPoolObject.GetComponent<AudioSource>();
@@ -63,7 +63,7 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
 
     private void Start()
     {
-        weapon = Instantiate(weaponPrefab, AbilityPrefabData.LeftHand);
+        weapon = Instantiate(weaponPrefab, boneLinks.LeftHand);
         currentAbility = weapon.GetComponent<Weapon>().Setup(this);
         if (!isLocalPlayer && !isServer)
             return;

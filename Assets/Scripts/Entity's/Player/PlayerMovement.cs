@@ -1,17 +1,10 @@
 ﻿using UnityEngine;
 using Mirror;
 
-public class PlayerMovement : NetworkBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     private float baseMovementSpeed = 0.125f;
-
-    private Rigidbody rigidBody;
-
-    protected virtual void Awake()
-    {
-        rigidBody = GetComponent<Rigidbody>();
-    }
 
     public void Move(Vector2 move, float speed)
     {

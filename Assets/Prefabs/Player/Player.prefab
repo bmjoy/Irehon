@@ -57827,12 +57827,13 @@ GameObject:
   - component: {fileID: 1348290686895544046}
   - component: {fileID: 4074694227585022522}
   - component: {fileID: 1057096722151939023}
-  - component: {fileID: 5703503392593569569}
   - component: {fileID: 4533929607853588459}
   - component: {fileID: -4658562000828924262}
   - component: {fileID: 6917227734773393694}
   - component: {fileID: 2664160040767692989}
   - component: {fileID: 9082607167818742943}
+  - component: {fileID: 7333964489168342066}
+  - component: {fileID: -2395624029655710705}
   m_Layer: 10
   m_Name: Player
   m_TagString: EntityBase
@@ -57971,7 +57972,6 @@ MonoBehaviour:
   - {fileID: 818987927441242114}
   - {fileID: 1037910698048657053}
   - {fileID: 3450897155572697010}
-  model: {fileID: 3621247107891634102}
 --- !u!114 &7223648354211534762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58089,22 +58089,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a1ed90f256da703478b553a914186ec3, type: 3}
   - {fileID: 8300000, guid: 9f8ac53e2f55c0242aabdb173338e444, type: 3}
   stepSource: {fileID: 1200480433440911439}
---- !u!114 &5703503392593569569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3622006752709158442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b8867e57c5174639a1966de0e1a3b62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShoulderForwardPoint: {fileID: 7438550497316060146}
-  RightHand: {fileID: 3623627892388555346}
-  LeftHand: {fileID: 3623615235401456022}
-  ParticlesPool: {fileID: 3313438804453150676}
 --- !u!114 &4533929607853588459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58117,8 +58101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90fb938cfa6bfa4c94f4284cefee118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   baseMovementSpeed: 0.125
 --- !u!114 &-4658562000828924262
 MonoBehaviour:
@@ -59461,6 +59443,7 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 3623669573011969124}
+    - {fileID: 7066463827737571305}
     - {fileID: 7438550497316060146}
     - {fileID: 3623627892388555346}
     - {fileID: 3623615235401456022}
@@ -59474,20 +59457,20 @@ MonoBehaviour:
       Entry: 10
       Data: 0
     - Name: Shoulder
-      Entry: 6
-      Data: 
-    - Name: ShoulderForwardPoint
       Entry: 10
       Data: 1
-    - Name: RightHand
+    - Name: ShoulderForwardPoint
       Entry: 10
       Data: 2
-    - Name: LeftHand
+    - Name: RightHand
       Entry: 10
       Data: 3
-    - Name: ParticlesPool
+    - Name: LeftHand
       Entry: 10
       Data: 4
+    - Name: ParticlesPool
+      Entry: 10
+      Data: 5
 --- !u!114 &9082607167818742943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59500,6 +59483,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b400cfb98c89d3c44b3d450b78b1349e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7333964489168342066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31662d2e6c4f6544fb0bfe6c5affebc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  OnPlayerChangeState:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &-2395624029655710705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 905c491ab252d514bb10c19707af5fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0

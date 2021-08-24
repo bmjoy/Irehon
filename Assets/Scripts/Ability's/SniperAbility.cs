@@ -9,8 +9,8 @@ public class SniperAbility : AbilityBase
 
     private Bow bow;
 
-    private Transform rightHand => prefabData.RightHand;
-    private Transform shoulderForwardPoint => prefabData.ShoulderForwardPoint;
+    private Transform rightHand => boneLinks.RightHand;
+    private Transform shoulderForwardPoint => boneLinks.Shoulder;
     private GameObject arrow => bow.Arrow;
     private AudioClip tenseSound => bow.TenseSound;
     private GameObject arrowInHand => bow.ArrowInHand;

@@ -21,8 +21,6 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
 public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
-    [SerializeField]
-    private GameObject model;
     private PlayerStateMachine stateMachine;
     private Equipment equipment = new Equipment();
     private CharacterData characterData;
@@ -42,6 +40,7 @@ public class Player : Entity
         {
             InventoryManager.instance.PlayerIntialize(this);
             OnHealthChanged.AddListener(UpdateHealthBar);
+            CameraController.i.Intialize(this);
             OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
         }
     }
@@ -65,7 +64,7 @@ public class Player : Entity
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
-    public Vector3 GetMoldelPosition() => model.transform.position;
+    public Vector3 GetMoldelPosition() => Vector3.zero;
 
     [ClientRpc]
     private void GetPublicCharacterData(CharacterData data)

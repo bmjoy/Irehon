@@ -36,8 +36,6 @@ public class CameraController : MonoBehaviour
     private Transform shoulderTransform;
     private bool cursorAiming;
     private float xRotation = 0f;
-    private bool needToSendY = false;
-    private bool needToSendX = false;
     private bool isLookingAtFloor;
 
     private void Awake()
@@ -113,13 +111,15 @@ public class CameraController : MonoBehaviour
         i.currentShakeHandler.m_AmplitudeGain = currentAmplitude;
     }
 
-    public void SetTarget(Transform shoulderTarget, Transform playerTransform)
+    public void Intialize(Player player)
     {
-        shoulderTransform = shoulderTarget;
-        this.playerTransform = playerTransform;
-        mainCamera.Follow = shoulderTarget;
-        aimCamera.Follow = shoulderTarget;
-        player = playerTransform.GetComponent<Player>();
+        print("Intialized");
+        PlayerBonesLinks links = player.GetComponent<PlayerBonesLinks>();
+        shoulderTransform = links.Shoulder;
+        playerTransform = player.transform;
+        mainCamera.Follow = links.Shoulder;
+        aimCamera.Follow = links.Shoulder;
+        this.player = player;
         playerStateMachine = player.GetComponent<PlayerStateMachine>();
     }
 

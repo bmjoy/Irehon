@@ -46,6 +46,7 @@ public class PlayerFallState : PlayerRotatableState
 
     public override PlayerState HandleInput(InputInfo input, bool isServer)
     {
+        Debug.Log("Falling");
         return this;
     }
 }
