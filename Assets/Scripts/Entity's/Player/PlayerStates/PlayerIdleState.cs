@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerIdleState : PlayerInteractableState
+public class PlayerIdleState : PlayerRotatableState
 {
     public PlayerIdleState(Player player) : base(player)
     {
@@ -13,13 +13,15 @@ public class PlayerIdleState : PlayerInteractableState
     public override float MovementSpeed => 0;
 
     public override bool CanInteract => true;
-
+    public override PlayerStateType Type => PlayerStateType.Idle;
     public override void Enter()
     {
+        Debug.Log("Enter in idle state");
     }
 
     public override void Exit()
     {
+        Debug.Log("Exit from idle state");
     }
 
     public override PlayerState HandleInput(InputInfo input, bool isServer)

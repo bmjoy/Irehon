@@ -5,6 +5,7 @@ using UnityEngine;
 public struct InputInfo
 {
     public List<KeyCode> PressedKeys;
+    public PlayerStateType PlayerStateType;
     public Vector2 CameraRotation;
     public Vector3 TargetPoint;
     public Vector3 Position;

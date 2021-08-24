@@ -17,26 +17,25 @@ public class PlayerWalkState : PlayerRotatableState
     public override bool CanRotateCamera => true;
     public override float MovementSpeed => 1;
     public override bool CanInteract => true;
+    public override PlayerStateType Type => PlayerStateType.Walk;
 
     public override void Enter()
     {
+        Debug.Log("Enter in walk scene");
         animator.SetBool("Walking", true);
-        Debug.Log("Enabled animator walking");
     }
 
     public override void Exit()
     {
+        Debug.Log("Exit in walk state");
         animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
-        Debug.Log("Disabled animator walking");
     }
 
     public override PlayerState HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
-
-        Debug.Log($"Movement input with = {input.GetMoveVector()}");
 
         if (input.IsKeyPressed(KeyCode.Space))
             return new PlayerJumpingState(player);

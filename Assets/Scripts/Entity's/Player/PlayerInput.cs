@@ -63,8 +63,12 @@ public class PlayerInput : NetworkBehaviour
             return;
 
         avaliablePackets--;
+
         playerStateMachine.InputInState(input);
+
         input.Position = transform.position;
+        input.PlayerStateType = playerStateMachine.CurrentState.Type;
+
         RecieveInputResponse(input);
     }
 
@@ -73,15 +77,28 @@ public class PlayerInput : NetworkBehaviour
     {
         sendedInputs.Dequeue();
 
-        PlayerState currentState = playerStateMachine.CurrentState;
+        float yPosition = transform.position.y;
+
+        PlayerState state = playerStateMachine.GetPlayerState(input.PlayerStateType);
+        playerStateMachine.ChangePlayerState(state);
         transform.position = input.Position;
 
         Quaternion rot = transform.rotation;
 
         foreach (var sendedInput in sendedInputs)
-            playerStateMachine.InputInState(input);
+            playerStateMachine.InputInState(sendedInput);
+
+        if (sendedInputs.Count > 0)
+        {
+            float delta = input.Position.y - sendedInputs.Peek().Position.y;
+            if (delta > 1f)
+                yPosition += delta;
+            if (delta > .00001f)
+                yPosition = Mathf.Lerp(yPosition, yPosition + (delta), 0.1f);
+        }
+
+        transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);
 
         transform.rotation = rot;
-        playerStateMachine.ChangePlayerState(currentState);
     }
 }

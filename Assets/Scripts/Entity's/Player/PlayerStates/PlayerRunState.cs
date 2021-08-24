@@ -14,17 +14,19 @@ public class PlayerRunState : PlayerRotatableState
     private PlayerMovement playerMovement;
 
     public override float MovementSpeed => 2;
-
+    public override PlayerStateType Type => PlayerStateType.Run;
     public override bool CanInteract => false;
 
     public override void Enter()
     {
         animator.SetBool("Sprint", true);
+        animator.SetBool("Walking", true);
     }
 
     public override void Exit()
     {
         animator.SetBool("Sprint", false);
+        animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
     }

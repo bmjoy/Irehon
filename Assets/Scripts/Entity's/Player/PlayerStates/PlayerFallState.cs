@@ -18,18 +18,19 @@ public class PlayerFallState : PlayerRotatableState
     private PlayerGroundDetector playerGroundDetector;
 
     public override bool CanRotateCamera => true;
-
     public override float MovementSpeed => 0;
-
+    public override PlayerStateType Type => PlayerStateType.Fall;
     public override bool CanInteract => false;
     public override void Enter()
     {
+        Debug.Log("Enter in dfalling state");
         animator.SetBool("Falling", true);
         playerGroundDetector.OnLand.AddListener(ChangeState);
     }
 
     public override void Exit()
     {
+        Debug.Log("Exit from dfalling state");
         animator.SetBool("Falling", false);
         playerGroundDetector.OnLand.RemoveListener(ChangeState);
     }
@@ -41,12 +42,12 @@ public class PlayerFallState : PlayerRotatableState
 
     public override void Update()
     {
+        Debug.Log("Fall");
         rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y - (velocityIncreasing * Time.fixedDeltaTime), rigidBody.velocity.z);
     }
 
     public override PlayerState HandleInput(InputInfo input, bool isServer)
     {
-        Debug.Log("Falling");
         return this;
     }
 }

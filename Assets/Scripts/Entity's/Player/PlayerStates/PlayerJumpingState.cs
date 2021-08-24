@@ -18,7 +18,7 @@ public class PlayerJumpingState : PlayerRotatableState
     private Animator animator;
 
     public override float MovementSpeed => 0.5f;
-
+    public override PlayerStateType Type => PlayerStateType.Jump;
     public override bool CanInteract => false;
 
     public override void Update()
@@ -40,13 +40,17 @@ public class PlayerJumpingState : PlayerRotatableState
 
     public override void Enter()
     {
-        rigidBody.velocity = new Vector3(rigidBody.velocity.x, jump_force, rigidBody.velocity.z);
+        Debug.Log("Enter in jumping state");
+        if (rigidBody.velocity.y < 1)
+        {     
+            rigidBody.velocity = new Vector3(rigidBody.velocity.x, jump_force, rigidBody.velocity.z);
+        }
         animator.SetTrigger("Jump");
     }
 
     public override void Exit()
     {
-
+        Debug.Log("Exit frmo jumping state");
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
     }

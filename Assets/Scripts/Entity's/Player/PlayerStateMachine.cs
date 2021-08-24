@@ -4,64 +4,73 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum PlayerStateType { Idle, Fall, Jump, Walk, Run, Death}
 
 public class PlayerStateMachine : NetworkBehaviour
 {
-    private enum PlayerStateType { Idle, Death}
     public PlayerState CurrentState => currentState;
+    public PlayerState PreviousState => previousState;
     public UnityEvent OnPlayerChangeState = new UnityEvent();
 
     private PlayerState currentState;
+    private PlayerState previousState;
     private Player player;
 
-    private void Start()
+    private void Awake()
     {
         player = GetComponent<Player>();
     }
 
     private void FixedUpdate()
     {
+        currentState.Update();
     }
 
-    public void InputInState(InputInfo input)
+    private void SetNewState(PlayerState state)
     {
-        print("Method call");
-        PlayerState previousState = currentState;
+        previousState = currentState;
+        currentState = state;
 
-        currentState = currentState.HandleInput(input, isServer);
-
-        if (previousState != currentState)
+        if (previousState == null)
         {
-            print($"Changged state");
-            print("Exit");
-            if (previousState != null)
-                previousState.Exit();
-            print("Enter");
+            currentState.Enter();
+
+            OnPlayerChangeState.Invoke();
+            return;
+        }
+
+        if (previousState.Type != currentState.Type)
+        {
+            previousState?.Exit();
             currentState.Enter();
 
             OnPlayerChangeState.Invoke();
         }
-        else
-            print("Not changed state");
+    }
+
+    public void InputInState(InputInfo input)
+    {
+        SetNewState(CurrentState.HandleInput(input, isServer));
     }
 
     public void ChangePlayerState(PlayerState state)
     {
-        if (currentState != null)
-            currentState.Exit();
+        SetNewState(state);
 
-        currentState = state;
-
-        state.Enter();
-        OnPlayerChangeState.Invoke();
+        if (isServer)
+            ChangePlayerStateRpc(currentState.Type);
     }
 
-    private PlayerState GetPlayerState(PlayerStateType state)
+    public PlayerState GetPlayerState(PlayerStateType state)
     {
         switch (state)
         {
             case PlayerStateType.Death: return new PlayerDeathState(player);
             case PlayerStateType.Idle: return new PlayerIdleState(player);
+            case PlayerStateType.Fall: return new PlayerFallState(player);
+            case PlayerStateType.Jump: return new PlayerJumpingState(player);
+            case PlayerStateType.Walk: return new PlayerWalkState(player);
+            case PlayerStateType.Run: return new PlayerRunState(player);
             default: return new PlayerIdleState(player);
         }
     }
@@ -71,13 +80,6 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         PlayerState state = GetPlayerState(stateType);
 
-        if (currentState != null)
-            currentState.Exit();
-
-        currentState = state;
-
-        state.Enter();
-
-        OnPlayerChangeState.Invoke();
+        SetNewState(state);
     }
 }

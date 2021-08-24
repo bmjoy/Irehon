@@ -13,6 +13,7 @@ public class PlayerDeathState : PlayerState
 
     public override bool CanTakeDamage => false;
     public override bool CanRotateCamera => false;
+    public override PlayerStateType Type => PlayerStateType.Death;
 
     public override float MovementSpeed => 0;
 
