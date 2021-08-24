@@ -36,10 +36,10 @@ public class EntityHealthbar : MonoBehaviour
 
     private IEnumerator GetInstanceKostil()
     {
-        while (CameraController.instance == null)
+        while (CameraController.i == null)
             yield return null;
-        cameraTransform = CameraController.instance.transform;
-        canvas.worldCamera = CameraController.instance.cameraComponent;
+        cameraTransform = CameraController.i.transform;
+        canvas.worldCamera = CameraController.i.cameraComponent;
     }
 
     private void ChangeHealthOnBar(int maxHealth, int health)

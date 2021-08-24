@@ -30,8 +30,8 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             previousInput = GetInput();
-            CameraController.instance.SetTarget(shoulder, transform);
-            CameraController.instance.OnChangeCursorState.AddListener(OnSelectingGame);
+            CameraController.i.SetTarget(shoulder, transform);
+            CameraController.i.OnChangeCursorState.AddListener(OnSelectingGame);
         }
         abilitySystem = GetComponent<AbilitySystem>();
         audioSource = GetComponent<AudioSource>();
@@ -164,7 +164,7 @@ public class PlayerController : NetworkBehaviour
 
     public void TakeDamageEffect(int damage)
     {
-        CameraController.instance.CreateShake(5f, .3f);
+        CameraController.i.CreateShake(5f, .3f);
     }
     #endregion
 
@@ -187,9 +187,9 @@ public class PlayerController : NetworkBehaviour
     protected void CheckAbilityTriggerKey(KeyCode key)
     {
         if (Input.GetKeyDown(key))
-            KeyPressed(key, CameraController.instance.GetLookingTargetPosition());
+            KeyPressed(key, CameraController.i.GetLookingTargetPosition());
         if (Input.GetKeyUp(key))
-            KeyUnpressed(key, CameraController.instance.GetLookingTargetPosition());
+            KeyUnpressed(key, CameraController.i.GetLookingTargetPosition());
     }
 
     public void BlockControll() => isControllAllow = false;

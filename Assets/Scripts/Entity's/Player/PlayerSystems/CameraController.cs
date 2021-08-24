@@ -13,10 +13,11 @@ public class OnChangeCursorHidingState : UnityEvent<bool>
 
 public class CameraController : MonoBehaviour
 {
-    public static CameraController instance;
-    public OnChangingTarget OnChangingTarget;
+    public static CameraController i;
+
     public OnChangeCursorHidingState OnChangeCursorState;
     public Camera cameraComponent { get; private set; } 
+
     private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
     private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
     [SerializeField]
@@ -29,8 +30,8 @@ public class CameraController : MonoBehaviour
     private float shakeTimer;
     private float shakeTimerTotal;
     private float currentIntensity;
-    private PlayerController playerController;
     private Player player;
+    private PlayerStateMachine playerStateMachine;
     private Transform playerTransform;
     private Transform shoulderTransform;
     private bool cursorAiming;
@@ -38,30 +39,23 @@ public class CameraController : MonoBehaviour
     private bool needToSendX = false;
     private bool isLookingAtFloor;
 
-    public static bool IsPointerOverUIObject()
-    {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
-    }
-
     private void Awake()
     {
-        instance = this;
+        if (i != null && i != this)
+            Destroy(this);
+        else
+            i = this;
+
         cameraComponent = GetComponent<Camera>();
     }
 
     private void Start()
     {
-        OnChangingTarget = new OnChangingTarget();
         OnChangeCursorState = new OnChangeCursorHidingState();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = false;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-        InvokeRepeating("SendRotationPacket", 3, 0.05f);
     }
 
     public void CreateShake(float power, float time)
@@ -71,34 +65,26 @@ public class CameraController : MonoBehaviour
         currentIntensity = power;
         currentShakeHandler.m_AmplitudeGain = currentIntensity;
     }
-
-    public void SendRotationPacket()
+    public Vector2 GetRotation()
     {
-        if (playerTransform == null)
-            return;
-        if (needToSendY)
-            playerController.UpdateYRotation(playerTransform.rotation.eulerAngles.y);
-        if (needToSendX)
-            playerController.UpdateXRotation(xRotation);
-        needToSendX = false;
-        needToSendY = false;
+        return new Vector2(xRotation, playerTransform.rotation.eulerAngles.y);
     }
 
     public bool IsTargetOnFloor()
     {
         return isLookingAtFloor;
     }
-    public Vector2 GetCurrentRotation()
+    public static Vector2 GetCurrentRotation()
     {
         Vector2 rotation = Vector2.zero;
-        rotation.x = shoulderTransform.rotation.eulerAngles.x;
-        rotation.y = playerTransform.eulerAngles.y;
+        rotation.x = i.shoulderTransform.rotation.eulerAngles.x;
+        rotation.y = i.playerTransform.eulerAngles.y;
         return rotation;
     }
 
-    public Vector3 GetLookingTargetPosition()
+    public static Vector3 GetLookingTargetPosition()
     {
-        return targetTransform.position;
+        return i.targetTransform.position;
     }
 
     public float GetPlayerYAxis()
@@ -134,11 +120,11 @@ public class CameraController : MonoBehaviour
         this.playerTransform = playerTransform;
         mainCamera.Follow = shoulderTarget;
         aimCamera.Follow = shoulderTarget;
-        playerController = playerTransform.GetComponent<PlayerController>();
         player = playerTransform.GetComponent<Player>();
+        playerStateMachine = player.GetComponent<PlayerStateMachine>();
     }
 
-    public void UpdateTarget()
+    private void UpdateLookingPoint()
     {
         RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
@@ -156,8 +142,20 @@ public class CameraController : MonoBehaviour
             isLookingAtFloor = false;
             oldPosition.z = 20;
         }
-        OnChangingTarget.Invoke(targetTransform.position);
         targetTransform.localPosition = oldPosition;
+    }
+
+    private void RotateCamera()
+    {
+        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
+        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
+
+        xRotation -= yMouse;
+        xRotation = Mathf.Clamp(xRotation, -85f, 85f);
+
+        shoulderTransform.localRotation = Quaternion.Euler(xRotation, -3.5f, 0f);
+
+        playerTransform.Rotate(Vector3.up * xMouse);
     }
 
     public void Update()
@@ -169,18 +167,7 @@ public class CameraController : MonoBehaviour
             else
                 DisableCursor();
         }
-        if (Input.GetKeyDown(KeyCode.E))
-            InteractAttemp();
     }
-
-    private void InteractAttemp()
-    {
-        RaycastHit hit;
-        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 4, 1 << 12))
-            return;
-        player.InterractAttempToServer(hit.point);
-    }
-
     private void EnableCursor()
     {
         OnChangeCursorState.Invoke(false);
@@ -208,32 +195,18 @@ public class CameraController : MonoBehaviour
             currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(currentIntensity, 0, (1 - shakeTimer / shakeTimerTotal));
         }
         else
-        {
             currentShakeHandler.m_AmplitudeGain = 0;
-        }
+
+        if (!cursorAiming || !playerStateMachine.CurrentState.CanRotateCamera)
+            return;
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
             UIController.instance.ShowInteractableHint();
         else
             UIController.instance.HideInteractableHint();
 
-        if (!cursorAiming || !playerController.IsControllAllowed())
-            return;
+        RotateCamera();
 
-        UpdateTarget();
-
-        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
-        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL* Time.deltaTime;
-
-        xRotation -= yMouse;
-        xRotation = Mathf.Clamp(xRotation, -75f, 75f);
-
-        shoulderTransform.localRotation = Quaternion.Euler(xRotation,-3.5f, 0f);
-        if (yMouse != 0)
-            needToSendX = true;
-
-        playerTransform.Rotate(Vector3.up * xMouse);
-        if (xMouse != 0)
-            needToSendY = true;
+        UpdateLookingPoint();
     }
 }

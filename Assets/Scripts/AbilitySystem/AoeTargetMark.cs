@@ -16,8 +16,8 @@ public class AoeTargetMark : NetworkBehaviour
     private void Start()
     {
         enabled = false;
-        if (isLocalPlayer)
-            CameraController.instance.OnChangingTarget.AddListener(MoveTargetCircle);
+        //if (isLocalPlayer)
+            //CameraController.i.OnChangingTarget.AddListener(MoveTargetCircle);
         parent = targetTransform.parent;
         particle = targetTransform.GetComponent<ParticleSystem>();
     }
@@ -35,7 +35,7 @@ public class AoeTargetMark : NetworkBehaviour
         targetTransform.localScale = new Vector3(size, size, size);
         currentMaxRange = range;
         enabled = true;
-        MoveTargetCircle(CameraController.instance.GetLookingTargetPosition()); 
+        MoveTargetCircle(CameraController.i.GetLookingTargetPosition()); 
     }
 
     public void DisableTarget()
@@ -51,7 +51,7 @@ public class AoeTargetMark : NetworkBehaviour
     {
         if (!enabled)
             return;
-        if (CameraController.instance.IsTargetOnFloor())
+        if (CameraController.i.IsTargetOnFloor())
         {
             targetTransform.gameObject.SetActive(true);
             if (!particle.isPlaying)
