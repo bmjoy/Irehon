@@ -21,38 +21,36 @@ public class PlayerWalkState : PlayerRotatableState
 
     public override void Enter()
     {
-        Debug.Log("Enter in walk scene");
         animator.SetBool("Walking", true);
     }
 
     public override void Exit()
     {
-        Debug.Log("Exit in walk state");
         animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
     }
 
-    public override PlayerState HandleInput(InputInfo input, bool isServer)
+    public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
 
         if (input.IsKeyPressed(KeyCode.Space))
-            return new PlayerJumpingState(player);
+            return PlayerStateType.Jump;
 
         if (isServer && input.IsKeyPressed(KeyCode.E))
             player.InterractAttempToServer(input.TargetPoint);
 
         if (input.GetMoveVector() == Vector2.zero)
-            return new PlayerIdleState(player);
+            return PlayerStateType.Idle;
 
         if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)
-            return new PlayerRunState(player);
+            return PlayerStateType.Run;
 
         playerMovement.Move(input.GetMoveVector(), MovementSpeed);
         animator.SetFloat("xMove", input.GetMoveVector().x);
         animator.SetFloat("zMove", input.GetMoveVector().y);
 
-        return this;
+        return this.Type;
     }
 }

@@ -113,7 +113,6 @@ public class CameraController : MonoBehaviour
 
     public void Intialize(Player player)
     {
-        print("Intialized");
         PlayerBonesLinks links = player.GetComponent<PlayerBonesLinks>();
         shoulderTransform = links.Shoulder;
         playerTransform = player.transform;

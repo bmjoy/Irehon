@@ -29,6 +29,7 @@ public class PlayerInput : NetworkBehaviour
         FillMovementKeysInput(ref currentInput);
         FillCameraInput(ref currentInput);
 
+        playerStateMachine.InputInState(currentInput);
         SendInputOnServer(currentInput);
         sendedInputs.Enqueue(currentInput);
     }
@@ -79,8 +80,8 @@ public class PlayerInput : NetworkBehaviour
 
         float yPosition = transform.position.y;
 
-        PlayerState state = playerStateMachine.GetPlayerState(input.PlayerStateType);
-        playerStateMachine.ChangePlayerState(state);
+        playerStateMachine.ChangePlayerState(input.PlayerStateType);
+
         transform.position = input.Position;
 
         Quaternion rot = transform.rotation;
@@ -91,10 +92,9 @@ public class PlayerInput : NetworkBehaviour
         if (sendedInputs.Count > 0)
         {
             float delta = input.Position.y - sendedInputs.Peek().Position.y;
-            if (delta > 1f)
-                yPosition += delta;
-            if (delta > .00001f)
-                yPosition = Mathf.Lerp(yPosition, yPosition + (delta), 0.1f);
+
+            if (delta > .1f)
+                yPosition = Mathf.Lerp(yPosition, sendedInputs.Peek().Position.y, 0.01f);
         }
 
         transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);

@@ -39,14 +39,12 @@ public class PlayerContainerController : NetworkBehaviour
         int deathContainer = 0;
         var outer = Task.Factory.StartNew(() =>
         {
-            print("started in new thread");
             List<int> playerContainers = new List<int>() 
             { 
                 characterData.containerId, 
                 characterData.equipmentContainerId 
             };
             deathContainer = MySql.ContainerData.MoveAllItemsInNewContainer(playerContainers);
-            print($"new death container id = {deathContainer}");
         });
         StartCoroutine(WaitTask());
         IEnumerator WaitTask()
@@ -54,7 +52,6 @@ public class PlayerContainerController : NetworkBehaviour
             while (!outer.IsCompleted)
                 yield return null;
             deathBody.GetComponent<Chest>().SetChestId(deathContainer);
-            print("done with spawn container");
         }
     }
 

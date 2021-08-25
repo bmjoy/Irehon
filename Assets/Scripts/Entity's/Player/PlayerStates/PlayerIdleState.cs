@@ -16,20 +16,18 @@ public class PlayerIdleState : PlayerRotatableState
     public override PlayerStateType Type => PlayerStateType.Idle;
     public override void Enter()
     {
-        Debug.Log("Enter in idle state");
     }
 
     public override void Exit()
     {
-        Debug.Log("Exit from idle state");
     }
 
-    public override PlayerState HandleInput(InputInfo input, bool isServer)
+    public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
 
         if (input.IsKeyPressed(KeyCode.Space))
-            return new PlayerJumpingState(player);
+            return PlayerStateType.Jump;
 
         if (isServer && input.IsKeyPressed(KeyCode.E))
             player.InterractAttempToServer(input.TargetPoint);
@@ -37,10 +35,10 @@ public class PlayerIdleState : PlayerRotatableState
         if (input.GetMoveVector() != Vector2.zero)
         {
             if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)
-                return new PlayerRunState(player);
+                return PlayerStateType.Run;
 
-            return new PlayerWalkState(player);
+            return PlayerStateType.Walk;
         }
-        return this;
+        return this.Type;
     }
 }

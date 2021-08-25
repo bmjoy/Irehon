@@ -29,8 +29,8 @@ public class PlayerDeathState : PlayerState
         playerBonesLinks.Model.gameObject.SetActive(true);
     }
 
-    public override PlayerState HandleInput(InputInfo input, bool isServer)
+    public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
-        return this;
+        return this.Type;
     }
 }

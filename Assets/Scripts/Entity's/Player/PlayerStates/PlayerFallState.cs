@@ -9,45 +9,44 @@ public class PlayerFallState : PlayerRotatableState
         animator = player.GetComponent<Animator>();
         playerGroundDetector = player.GetComponent<PlayerGroundDetector>();
         rigidBody = player.GetComponent<Rigidbody>();
+        playerMovement = player.GetComponent<PlayerMovement>();
     }
 
-    private const float velocityIncreasing = 8f;
+    private const float velocityIncreasing = 13f;
 
+    private PlayerMovement playerMovement;
     private Animator animator;
     private Rigidbody rigidBody;
     private PlayerGroundDetector playerGroundDetector;
 
     public override bool CanRotateCamera => true;
-    public override float MovementSpeed => 0;
+    public override float MovementSpeed => 0.5f;
     public override PlayerStateType Type => PlayerStateType.Fall;
     public override bool CanInteract => false;
     public override void Enter()
     {
-        Debug.Log("Enter in dfalling state");
         animator.SetBool("Falling", true);
-        playerGroundDetector.OnLand.AddListener(ChangeState);
     }
 
     public override void Exit()
     {
-        Debug.Log("Exit from dfalling state");
         animator.SetBool("Falling", false);
-        playerGroundDetector.OnLand.RemoveListener(ChangeState);
-    }
-
-    private void ChangeState()
-    {
-        player.GetComponent<PlayerStateMachine>().ChangePlayerState(new PlayerIdleState(player));
     }
 
     public override void Update()
     {
-        Debug.Log("Fall");
-        rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y - (velocityIncreasing * Time.fixedDeltaTime), rigidBody.velocity.z);
+        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y - (velocityIncreasing * Time.fixedDeltaTime), 0);
     }
 
-    public override PlayerState HandleInput(InputInfo input, bool isServer)
+    public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
-        return this;
+        base.HandleInput(input, isServer);
+
+        playerMovement.Move(input.GetMoveVector(), MovementSpeed);
+        
+        if (playerGroundDetector.isGrounded)
+            return PlayerStateType.Idle;
+        else
+            return this.Type;
     }
 }

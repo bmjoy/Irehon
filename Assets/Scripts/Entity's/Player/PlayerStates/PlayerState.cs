@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,6 @@ public abstract class PlayerState
     public PlayerState(Player player) 
     {
         this.player = player;
-        if (this.player == null)
-            Debug.LogError("PLAYER NULL");
     }
     public virtual bool CanTakeDamage => true;
     public abstract bool CanRotateCamera { get; }
@@ -20,5 +19,11 @@ public abstract class PlayerState
     public virtual void Update() { }
     public abstract void Enter();
     public abstract void Exit();
-    public abstract PlayerState HandleInput(InputInfo input, bool isServer);
+    public abstract PlayerStateType HandleInput(InputInfo input, bool isServer);
+
+    public override bool Equals(object obj)
+    {
+        return obj is PlayerState state &&
+               Type == state.Type;
+    }
 }

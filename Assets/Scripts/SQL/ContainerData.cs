@@ -6,6 +6,17 @@ using UnityEngine;
 
 namespace MySql
 {
+
+    public class PairValue<T, A>
+    {
+        public T FirstValue;
+        public A SecondValue;
+        public PairValue(T First, A Second)
+        {
+            FirstValue = First;
+            SecondValue = Second;
+        }
+    }
     public static class ContainerData
     {
 
@@ -37,7 +48,10 @@ namespace MySql
 
         public static int GetCharacterContainer(int characterId)
         {
-            return Convert.ToInt32(Connection.SingleSelect("characters", "container_id", "c_id", characterId.ToString()));
+            string command = "SELECT containers.slots FROM characters " +
+                "INNER JOIN containers " +
+                $"ON characters.c_id = {characterId} AND containers.id = characters.container_id";
+            return Convert.ToInt32(Connection.RecieveSingleData(command));
         }
 
         public static int GetEquipmentContainer(int characterId)

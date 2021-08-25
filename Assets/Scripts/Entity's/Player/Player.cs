@@ -99,7 +99,7 @@ public class Player : Entity
     protected override void SetDefaultState()
     {
         base.SetDefaultState();
-        stateMachine.ChangePlayerState(new PlayerIdleState(this));
+        stateMachine.ChangePlayerState(PlayerStateType.Idle);
     }
 
     protected override void Death() 

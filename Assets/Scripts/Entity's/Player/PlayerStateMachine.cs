@@ -1,8 +1,11 @@
-﻿using Mirror;
+﻿#define STATE_DEBUG
+
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
 
 public enum PlayerStateType { Idle, Fall, Jump, Walk, Run, Death}
 
@@ -12,6 +15,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public PlayerState PreviousState => previousState;
     public UnityEvent OnPlayerChangeState = new UnityEvent();
 
+    public Dictionary<PlayerStateType, PlayerState> PlayerStates { get; private set; }
+
     private PlayerState currentState;
     private PlayerState previousState;
     private Player player;
@@ -19,6 +24,15 @@ public class PlayerStateMachine : NetworkBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
+
+        PlayerStates = new Dictionary<PlayerStateType, PlayerState>();
+
+        PlayerStates.Add(PlayerStateType.Idle, new PlayerIdleState(player));
+        PlayerStates.Add(PlayerStateType.Fall, new PlayerFallState(player));
+        PlayerStates.Add(PlayerStateType.Death, new PlayerDeathState(player));
+        PlayerStates.Add(PlayerStateType.Jump, new PlayerJumpingState(player));
+        PlayerStates.Add(PlayerStateType.Walk, new PlayerWalkState(player));
+        PlayerStates.Add(PlayerStateType.Run, new PlayerRunState(player));
     }
 
     private void FixedUpdate()
@@ -26,10 +40,10 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.Update();
     }
 
-    private void SetNewState(PlayerState state)
+    private void SetNewState(PlayerStateType type)
     {
         previousState = currentState;
-        currentState = state;
+        currentState = PlayerStates[type];
 
         if (previousState == null)
         {
@@ -53,33 +67,14 @@ public class PlayerStateMachine : NetworkBehaviour
         SetNewState(CurrentState.HandleInput(input, isServer));
     }
 
-    public void ChangePlayerState(PlayerState state)
+    public void ChangePlayerState(PlayerStateType state)
     {
         SetNewState(state);
 
         if (isServer)
-            ChangePlayerStateRpc(currentState.Type);
-    }
-
-    public PlayerState GetPlayerState(PlayerStateType state)
-    {
-        switch (state)
-        {
-            case PlayerStateType.Death: return new PlayerDeathState(player);
-            case PlayerStateType.Idle: return new PlayerIdleState(player);
-            case PlayerStateType.Fall: return new PlayerFallState(player);
-            case PlayerStateType.Jump: return new PlayerJumpingState(player);
-            case PlayerStateType.Walk: return new PlayerWalkState(player);
-            case PlayerStateType.Run: return new PlayerRunState(player);
-            default: return new PlayerIdleState(player);
-        }
+            ChangePlayerStateRpc(state);
     }
 
     [TargetRpc]
-    private void ChangePlayerStateRpc(PlayerStateType stateType)
-    {
-        PlayerState state = GetPlayerState(stateType);
-
-        SetNewState(state);
-    }
+    private void ChangePlayerStateRpc(PlayerStateType stateType) => SetNewState(stateType);
 }
