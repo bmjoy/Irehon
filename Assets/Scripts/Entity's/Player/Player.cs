@@ -38,7 +38,7 @@ public class Player : Entity
         base.Start();
         if (isLocalPlayer)
         {
-            InventoryManager.instance.PlayerIntialize(this);
+            InventoryManager.i.PlayerIntialize(this);
             OnHealthChanged.AddListener(UpdateHealthBar);
             CameraController.i.Intialize(this);
             OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));

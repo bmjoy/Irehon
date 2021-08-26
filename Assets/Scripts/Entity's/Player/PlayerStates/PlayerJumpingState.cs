@@ -13,7 +13,7 @@ public class PlayerJumpingState : PlayerRotatableState
         playerGroundDetector = player.GetComponent<PlayerGroundDetector>();
     }
 
-    private const float jump_force = 8f;
+    private const float jump_force = 6.7f;
 
     private Rigidbody rigidBody;
     private PlayerGroundDetector playerGroundDetector;
@@ -25,27 +25,17 @@ public class PlayerJumpingState : PlayerRotatableState
     public override PlayerStateType Type => PlayerStateType.Jump;
     public override bool CanInteract => false;
 
-    public override void Update()
-    {
-        if (rigidBody.velocity.y < 0)
-            player.GetComponent<PlayerStateMachine>().ChangePlayerState(PlayerStateType.Fall);
-        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
-    }
-
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
 
-        playerMovement.Move(input.GetMoveVector(), MovementSpeed);
-
-        return this.Type;
+        return PlayerStateType.Fall;
     }
 
     public override void Enter()
     {
         if (playerGroundDetector.isGrounded)
         {
-            Debug.Log("Jumped");
             rigidBody.velocity = new Vector3(rigidBody.velocity.x, jump_force, rigidBody.velocity.z);
             animator.SetTrigger("Jump");
         }

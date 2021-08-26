@@ -37,15 +37,6 @@ public class TestUI : MonoBehaviour
     {
         MySql.ContainerData.GiveCharacterItem(Convert.ToInt32(characterId.text), Convert.ToInt32(itemId.text));
     }
-
-    public void ChangeItemOwner()
-    {
-        var outer = Task.Factory.StartNew(() =>
-        {
-            MySql.ContainerData.ChangeItemOwner(Convert.ToInt32(containerId.text), Convert.ToInt32(container2Id.text), Convert.ToInt32(objectId.text));
-        });
-    }
-
     public void CreateContainer()
     {
         MySql.ContainerData.CreateContainer(Convert.ToInt32(containerId.text));

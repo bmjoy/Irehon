@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
+using System.Linq;
 using System;
 
 public static class ItemDatabase
 {
 
-    private static List<Item> items;
+    private static Dictionary<int, Item> items;
 
     private static bool isDatabaseLoaded = false;
     private static JSONNode databaseResponse;
@@ -44,12 +45,15 @@ public static class ItemDatabase
 
     private static void ParseItems()
     {
-        items = new List<Item>();
+        items = new Dictionary<int, Item>();
         foreach (JSONNode item in databaseResponse)
-            items.Add(new Item(item));
+        {
+            Item newItem = new Item(item);
+            items[newItem.id] = newItem;
+        }
     }
 
-    public static Item GetItemById(int id) => items?.Find(x => x.id == id);
+    public static Item GetItemById(int id) => items[id];
 
-    public static Item GetItemBySlug(string slug) => items?.Find(x => x.slug == slug);
+    public static Item GetItemBySlug(string slug) => items?.Values.ToList().Find(x => x.slug == slug);
 }

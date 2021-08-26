@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum OpenedContainerType { Inventory, Equipment, OtherContainer}
+public enum ContainerType { Inventory, Equipment, Chest}
 
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField]
-    private UIWindow inventoryWindow;
+    private UIWindow chestWindow;
+
+    [Header("Spawn slots transform")]
     [SerializeField]
-    private UIWindow otherContainerWindow;
+    private RectTransform inventorySpawnSlotsTransform;
     [SerializeField]
-    private RectTransform inventory;
-    [SerializeField]
-    private RectTransform containerWindow;
+    private RectTransform chestSpawnSlotsTransform;
 
     [SerializeField]
     private GameObject inventorySlotPrefab;
@@ -26,18 +26,20 @@ public class InventoryManager : MonoBehaviour
 
     [SerializeField]
     private List<InventorySlotUI> equipmentSlots = new List<InventorySlotUI>();
+
     private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
+
     [SerializeField]
     private Canvas canvas; 
     private PlayerContainerController playerContainerController;
-    public static InventoryManager instance;
+    public static InventoryManager i;
 
     private void Awake()
     {
-        if (instance != this && instance != null)
+        if (i != this && i != null)
             Destroy(this);
         else
-            instance = this;
+            i = this;
     }
 
     public void PlayerIntialize(Player player)
@@ -57,15 +59,15 @@ public class InventoryManager : MonoBehaviour
         playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
-    public void OpenOtherContainer(Container container)
+    public void OpenChest(Container container)
     {
-        FillOtherContainer(containerWindow, container, OpenedContainerType.OtherContainer);
-        otherContainerWindow.Open();
+        FillOtherContainer(chestSpawnSlotsTransform, container, ContainerType.Chest);
+        chestWindow.Open();
     }
 
-    public void CloseOtherContainer()
+    public void CloseChest()
     {
-        otherContainerWindow.Close();
+        chestWindow.Close();
         CloseOtherContainerOnServer();
     }
 
@@ -79,7 +81,7 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < equipmentSlots.Count; i++)
         {
-            equipmentSlots[i].Intialize(container[i], canvas, OpenedContainerType.Equipment);
+            equipmentSlots[i].Intialize(container[i], canvas, ContainerType.Equipment);
         }
     }
 
@@ -91,17 +93,17 @@ public class InventoryManager : MonoBehaviour
             int diff = container.slots.Length - inventorySlots.Count;
             for (int i = 0; i < diff; i++)
             {
-                GameObject slot = Instantiate(inventorySlotPrefab, inventory);
+                GameObject slot = Instantiate(inventorySlotPrefab, inventorySpawnSlotsTransform);
                 inventorySlots.Add(slot.GetComponent<InventorySlotUI>());
             }
         }
         for (int i = 0; i < container.slots.Length; i++)
         {
-            inventorySlots[i].Intialize(container[i], canvas, OpenedContainerType.Inventory);
+            inventorySlots[i].Intialize(container[i], canvas, ContainerType.Inventory);
         }
     }
 
-    private void FillOtherContainer(RectTransform containerBG, Container container, OpenedContainerType type)
+    private void FillOtherContainer(RectTransform containerBG, Container container, ContainerType type)
     {
         foreach (Transform previousContainerSlot in containerBG)
                 Destroy(previousContainerSlot.gameObject);

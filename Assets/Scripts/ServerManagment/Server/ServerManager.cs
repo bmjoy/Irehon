@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Threading;
 
 namespace Server
 {
@@ -33,14 +34,22 @@ namespace Server
             manager = GetComponent<NetworkManager>();
             manager.clientLoadedScene = false;
             manager.StartServer();
-            ItemDatabase.DatabaseLoad();
             NetworkServer.RegisterHandler<CharacterOperationRequest>(CharacterOperationRequest, true);
+            InvokeRepeating("UpdateAllDataCycle", 90, 90);
+        }
+
+        public void UpdateAllDataCycle()
+        {
+            UpdateDatabase();
+        }
+
+        public static Task UpdateDatabase()
+        {
+            return MySql.ContainerData.UpdateDatabaseLoadedContainers();
         }
 
         public override void OnDestroy()
         {
-            //MySql.Connection.Shutdown();
-            //Shutdown();
         }
 
         public Player GetPlayer(int id)
@@ -209,6 +218,7 @@ namespace Server
                 }
                 else
                     connectedPlayersId.Add(data.playerId);
+
                 SceneMessage message = new SceneMessage
                 {
                     sceneName = "CharacterSelection",
@@ -233,7 +243,7 @@ namespace Server
         public override void OnStopServer()
         {
             base.OnStopServer();
-
+            UpdateDatabase().Wait();
         }
 
         public override void OnStartServer()

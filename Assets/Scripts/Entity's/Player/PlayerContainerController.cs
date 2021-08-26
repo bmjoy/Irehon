@@ -65,13 +65,13 @@ public class PlayerContainerController : NetworkBehaviour
     public void OpenAnotherContainer(string json)
     {
         Container container = new Container(json);
-        InventoryManager.instance.OpenOtherContainer(container);
+        InventoryManager.i.OpenChest(container);
     }
 
     [TargetRpc]
     private void CloseChest()
     {
-        InventoryManager.instance.CloseOtherContainer();
+        InventoryManager.i.CloseChest();
     }
 
     [Command]
@@ -96,13 +96,13 @@ public class PlayerContainerController : NetworkBehaviour
             OpenAnotherContainer(MySql.ContainerData.GetContainer(containerId).ToJson()));
     }
 
-    private int GetContainerId(OpenedContainerType type)
+    private int GetContainerId(ContainerType type)
     {
         switch (type)
         {
-            case OpenedContainerType.Inventory: return characterData.containerId;
-            case OpenedContainerType.OtherContainer: return openedContainerId;
-            case OpenedContainerType.Equipment: return characterData.equipmentContainerId;
+            case ContainerType.Inventory: return characterData.containerId;
+            case ContainerType.Chest: return openedContainerId;
+            case ContainerType.Equipment: return characterData.equipmentContainerId;
             default: return 0;
         };
     }
@@ -154,11 +154,11 @@ public class PlayerContainerController : NetworkBehaviour
         }
     }
 
-    private bool IsMoveLegal(OpenedContainerType firstType, OpenedContainerType secondType)
+    private bool IsMoveLegal(ContainerType firstType, ContainerType secondType)
     {
-        if (firstType == OpenedContainerType.Equipment && secondType != OpenedContainerType.Inventory)
+        if (firstType == ContainerType.Equipment && secondType != ContainerType.Inventory)
             return false;
-        if (secondType == OpenedContainerType.Equipment && firstType != OpenedContainerType.Inventory)
+        if (secondType == ContainerType.Equipment && firstType != ContainerType.Inventory)
             return false;
         else
             return true;
@@ -166,25 +166,28 @@ public class PlayerContainerController : NetworkBehaviour
 
     [Command]
     //from , to
-    public void MoveItem(OpenedContainerType firstType, int firstSlot, OpenedContainerType secondType, int secondSlot)
+    public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
     {
         if (!IsMoveLegal(firstType, secondType))
             return;
+
         int firstContainerId = GetContainerId(firstType);
         if (firstContainerId == 0)
             return;
+
         int secondContainerId = GetContainerId(secondType);
         if (secondContainerId == 0)
             return;
 
         Task.Run(() =>
         {
-            if (firstType == OpenedContainerType.Inventory && secondType == OpenedContainerType.Equipment)
+            if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
             {
                 Equip(secondSlot, firstSlot);
                 return;
             }
-            if (firstType == OpenedContainerType.Equipment && secondType == OpenedContainerType.Inventory)
+
+            if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
             {
                 MySql.ContainerData.MoveSlot(characterData.equipmentContainerId, firstSlot, characterData.containerId, secondSlot);
                 {
@@ -194,6 +197,7 @@ public class PlayerContainerController : NetworkBehaviour
                     player.SetCharacterData(characterData);
                 }
             }
+
             else if (firstContainerId == secondContainerId)
             {
                 MySql.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
@@ -213,7 +217,7 @@ public class PlayerContainerController : NetworkBehaviour
                 characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
                 characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
                 player.SetCharacterData(characterData);
-                if (firstType == OpenedContainerType.OtherContainer || secondType == OpenedContainerType.OtherContainer)
+                if (firstType == ContainerType.Chest || secondType == ContainerType.Chest)
                     chest?.OnContainerUpdate.Invoke();
             }
         });

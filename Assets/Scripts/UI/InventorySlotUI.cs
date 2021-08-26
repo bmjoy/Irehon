@@ -19,7 +19,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     protected int itemId;
     protected int itemQuantity;
     protected Item item;
-    public OpenedContainerType type { get; protected set; }
+    public ContainerType type { get; protected set; }
     public virtual int slotId { get; protected set; }
 
     public virtual void OnPointerClick(PointerEventData data)
@@ -32,7 +32,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         InventorySlotUI inventorySlot = data.pointerDrag.GetComponent<InventorySlotUI>();
         if (inventorySlot == null || inventorySlot.itemId == 0)
             return;
-        InventoryManager.instance.MoveSlots(inventorySlot, this);
+        InventoryManager.i.MoveSlots(inventorySlot, this);
     }
 
     public void OnBeginDrag(PointerEventData data)
@@ -40,9 +40,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (itemId == 0)
             return;
         TooltipWindowController.HideTooltip();
-        InventoryManager.instance.GetDragger().gameObject.SetActive(true);
-        InventoryManager.instance.GetDragger().position = GetComponent<RectTransform>().position;
-        InventoryManager.instance.GetDraggerImage().sprite = itemSprite.sprite;
+        InventoryManager.i.GetDragger().gameObject.SetActive(true);
+        InventoryManager.i.GetDragger().position = GetComponent<RectTransform>().position;
+        InventoryManager.i.GetDraggerImage().sprite = itemSprite.sprite;
     }
 
     public void OnDrag(PointerEventData data)
@@ -50,17 +50,17 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (itemId == 0)
             return;
         TooltipWindowController.HideTooltip();
-        InventoryManager.instance.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor; 
+        InventoryManager.i.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor; 
     }
 
     public void OnEndDrag(PointerEventData data)
     {
         if (itemId == 0)
             return;
-        InventoryManager.instance.GetDragger().gameObject.SetActive(false);
+        InventoryManager.i.GetDragger().gameObject.SetActive(false);
     }
 
-    public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, OpenedContainerType type)
+    public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
     {
         this.canvas = canvas;
         slotId = containerSlot.slotIndex;

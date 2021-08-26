@@ -74,10 +74,7 @@ public class Entity : NetworkBehaviour
     {
         isAlive = false;
         if (isServer)
-        {
-            GetComponent<PlayerContainerController>().SpawnDeathContainer();
             Invoke("Respawn", respawnTime);
-        }
     }
 
     public bool IsAlive() => isAlive;
@@ -88,23 +85,19 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    public virtual void Kill()
-    {
-        if (isAlive)
-            SetHealth(0);
-    }
-
-    [Server]
     protected virtual void SetHealth(int health)
     {
         this.health = health;
+        
         if (this.health > maxHealth)
             this.health = maxHealth;
+
         if (this.health <= 0)
         {
             this.health = 0;
             Death();
         }
+
         OnHealthChanged?.Invoke(maxHealth, this.health);
     }
 

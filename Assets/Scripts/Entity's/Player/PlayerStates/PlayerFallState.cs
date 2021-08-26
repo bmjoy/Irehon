@@ -12,7 +12,7 @@ public class PlayerFallState : PlayerRotatableState
         playerMovement = player.GetComponent<PlayerMovement>();
     }
 
-    private const float velocityIncreasing = 13f;
+    private const float gravity = 5f;
 
     private PlayerMovement playerMovement;
     private Animator animator;
@@ -20,7 +20,7 @@ public class PlayerFallState : PlayerRotatableState
     private PlayerGroundDetector playerGroundDetector;
 
     public override bool CanRotateCamera => true;
-    public override float MovementSpeed => 0.5f;
+    public override float MovementSpeed => 0.8f;
     public override PlayerStateType Type => PlayerStateType.Fall;
     public override bool CanInteract => false;
     public override void Enter()
@@ -35,7 +35,7 @@ public class PlayerFallState : PlayerRotatableState
 
     public override void Update()
     {
-        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y - (velocityIncreasing * Time.fixedDeltaTime), 0);
+        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y - (gravity * Time.fixedDeltaTime), 0);
     }
 
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)

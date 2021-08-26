@@ -4,31 +4,77 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
+public class PairValue<T, A>
+{
+    public T FirstValue;
+    public A SecondValue;
+    public PairValue(T First, A Second)
+    {
+        FirstValue = First;
+        SecondValue = Second;
+    }
+}
+
 namespace MySql
 {
-
-    public class PairValue<T, A>
-    {
-        public T FirstValue;
-        public A SecondValue;
-        public PairValue(T First, A Second)
-        {
-            FirstValue = First;
-            SecondValue = Second;
-        }
-    }
     public static class ContainerData
     {
+        public static class ContainerUpdateNotifier
+        {
+            private static Dictionary<int, List< Action<int, Container> > > subscribedListeners;
+
+            public static void Notify(int containerId)
+            {
+                List < Action<int, Container> > subscribers = subscribedListeners[containerId];
+
+                foreach (var subscriber in subscribers)
+                    subscriber(containerId, GetContainer(containerId));
+            }
+
+            public static void Subscribe(int containerId, Action<int, Container> subscriber)
+            {
+                if (!subscribedListeners[containerId].Contains(subscriber) && subscriber != null)
+                    subscribedListeners[containerId].Add(subscriber);
+            }
+            
+            public static void UnSubscribe(int containerId, Action<int, Container> unsubscriber)
+            {
+                if (subscribedListeners[containerId].Contains(unsubscriber) && unsubscriber != null)
+                    subscribedListeners[containerId].Remove(unsubscriber);
+            }
+        }
+
+        public static Dictionary<int, Container> LoadedContainers = new Dictionary<int, Container>();
+        
+        public static Task UpdateDatabaseLoadedContainers()
+        {
+            Task updateTask = Task.Factory.StartNew(() =>
+            {
+                Dictionary<int, Container> LoadedContainersCopy = new Dictionary<int, Container>(LoadedContainers);
+
+                string sqlCommand = "";
+                foreach (KeyValuePair<int, Container> IdContainer in LoadedContainers)
+                    sqlCommand += $"UPDATE containers SET slots = '{IdContainer.Value.ToJson()}' WHERE id = '{IdContainer.Key}';";
+
+                Connection.RecieveSingleData(sqlCommand);
+                Debug.Log("Updated all columns");
+            });
+            return updateTask;
+        }
 
         public static int CreateContainer(int capacity)
         {
             Container container = new Container(capacity);
-            return Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
+            int id = Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
+            LoadedContainers[id] = container;
+            return id;
         }
 
         public static int CreateContainer(Container container)
         {
-            return Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
+            int id = Convert.ToInt32(Connection.Insert("containers", "slots", container.ToJson()));
+            LoadedContainers[id] = container;
+            return id;
         }
 
         public static void MoveSlot(int oldContainerId, int oldSlot, int containerId, int slot)
@@ -43,15 +89,12 @@ namespace MySql
 
         public static void SaveContainer(int containerId, Container container)
         {
-            Connection.UpdateColumn("containers", "id", containerId.ToString(), "slots", container.ToJson());
+            LoadedContainers[containerId] = container;
         }
 
         public static int GetCharacterContainer(int characterId)
         {
-            string command = "SELECT containers.slots FROM characters " +
-                "INNER JOIN containers " +
-                $"ON characters.c_id = {characterId} AND containers.id = characters.container_id";
-            return Convert.ToInt32(Connection.RecieveSingleData(command));
+            return Convert.ToInt32(Connection.SingleSelect("characters", "container_id", "c_id", characterId.ToString()));
         }
 
         public static int GetEquipmentContainer(int characterId)
@@ -59,29 +102,20 @@ namespace MySql
             return Convert.ToInt32(Connection.SingleSelect("characters", "equipment_id", "c_id", characterId.ToString()));
         }
 
-        public static int GetItemOwner(int objectId)
-        {
-            return Convert.ToInt32(Connection.SingleSelect("object_items", "container_id", "id", objectId.ToString()));
-        }
-
         public static Container GetContainer(int containerId)
         {
-            string json = Connection.SingleSelect("containers", "slots", "id", containerId.ToString());
-            if (json == null)
-                return null;
-            return new Container(json);
-        }
-
-        public static bool ChangeItemOwner(int oldContainerId, int containerId, int objectId)
-        {
-            if (EmptySlotCount(containerId) == 0)
-                return false;
-            if (!UnassignItemFromContainer(oldContainerId, objectId))
-                return false;
-            ChangeContainerOnItem(objectId, containerId);
-            if (!MoveObjectToEmptySlot(containerId, objectId))
-                return false;
-            return true;
+            if (LoadedContainers.ContainsKey(containerId))
+            {
+                return LoadedContainers[containerId];
+            }
+            else
+            {
+                string json = Connection.SingleSelect("containers", "slots", "id", containerId.ToString());
+                if (json == null)
+                    return null;
+                LoadedContainers[containerId] = new Container(json);
+                return LoadedContainers[containerId];
+            }
         }
 
         public static bool GiveCharacterItem(Character character, int itemId, int count)
@@ -351,12 +385,7 @@ namespace MySql
             return container.GetEmptySlotsCount();
         }
 
-        private static void ChangeContainerOnItem(int containerId, int objectId)
-        {
-            Connection.UpdateColumn("object_items", "id", objectId.ToString(), "container_id", containerId.ToString());
-        }
-
-        private static void DeleteItem(int objectId)
+       private static void DeleteItem(int objectId)
         {
             Connection.Delete("object_items", "id", objectId.ToString());
         }
@@ -406,16 +435,6 @@ namespace MySql
             containerSlot.itemId = oldItemId;
             containerSlot.objectId = oldObjectItemId;
             containerSlot.itemQuantity = oldQuantity;
-        }
-
-        private static int GetItemIdById(int objectId)
-        {
-            return Convert.ToInt32(Connection.SingleSelect("object_items", "item_id", "id", objectId.ToString()));
-        }
-
-        private static int GetItemCount(int objectId)
-        {
-            return Convert.ToInt32(Connection.SingleSelect("object_items", "quantity", "id", objectId.ToString()));
         }
 
         private static ContainerSlot GetSlotInfo(int objectId)

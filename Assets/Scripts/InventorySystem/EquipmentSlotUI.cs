@@ -13,10 +13,10 @@ public class EquipmentSlotUI : InventorySlotUI
     [SerializeField]
     private Image baseSprite;
 
-    public override void Intialize(ContainerSlot containerSlot, Canvas canvas, OpenedContainerType type)
+    public override void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
     {
         this.canvas = canvas;
-        this.type = OpenedContainerType.Equipment;
+        this.type = ContainerType.Equipment;
 
         bool isSlotUpdated = true;
 
