@@ -1,15 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using Client;
 using Mirror;
-using UnityEngine.UI;
-using MySql.Data.MySqlClient;
-using System.Collections.Generic;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.Threading.Tasks;
-using Client;
 using Server;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using UnityEngine;
 
 public struct AuthRequestMessage : NetworkMessage
 {
@@ -118,6 +114,6 @@ public class ServerAuth : NetworkAuthenticator
 
     public override void OnClientAuthenticate()
     {
-        
+
     }
 }

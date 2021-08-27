@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
+using UnityEngine.Networking;
 
 namespace Server
 {
@@ -34,10 +35,16 @@ namespace Server
 
         IEnumerator LoadDatabase()
         {
-            var async = MySql.Database.GetItemsList();
-            yield return async.SendWebRequest();
-            string jsonString = async.downloadHandler.text;
-            Debug.Log(jsonString);
+            var www = MySql.Connection.ApiRequest("https://irehon.com/items.php");
+            yield return www.SendWebRequest();
+            if (www.isNetworkError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                ItemDatabase.DatabaseLoadJson(www.downloadHandler.text);
+            }
         }
 
         public override void Start()
