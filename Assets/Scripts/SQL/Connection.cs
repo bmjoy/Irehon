@@ -103,6 +103,7 @@ namespace MySql
             }
             command += $")) FROM {tableName}";
             string recieve = RecieveSingleData(command);
+            Debug.Log(recieve);
             return recieve;
         }
 

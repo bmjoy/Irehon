@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace MySql
 {
@@ -170,10 +171,11 @@ namespace MySql
             return c_id == "" ? 0 : Convert.ToInt32(c_id);
         }
 
-        public static string GetItemsList()
+        public static UnityWebRequest GetItemsList()
         {
-            string[] itemColumns = { "id", "slug", "stack", "type", "name", "description", "rarity", "modifiers", "metadata", "slot" };
-            return Connection.RecieveJson("items", itemColumns);
+            UnityWebRequest request = new UnityWebRequest("https://irehon.com/items.php");
+            request.SetRequestHeader("AUTH", "#i#Li`f2D[W?{$pSL`@4=gvy?1[?gLOyMOUc*TpPdZYKZhj`#%@D^CQ<aR@XwJM");
+            return request;
         }
     }
 }

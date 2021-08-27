@@ -27,6 +27,17 @@ namespace Server
                 Destroy(gameObject);
             else
                 i = this;
+
+            
+            StartCoroutine(LoadDatabase());
+        }
+
+        IEnumerator LoadDatabase()
+        {
+            var async = MySql.Database.GetItemsList();
+            yield return async.SendWebRequest();
+            string jsonString = async.downloadHandler.text;
+            Debug.Log(jsonString);
         }
 
         public override void Start()

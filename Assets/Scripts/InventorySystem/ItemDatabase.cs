@@ -36,11 +36,19 @@ public static class ItemDatabase
             Debug.Log("Second call of loading database err");
             return;
         }
-        jsonString = MySql.Database.GetItemsList();
-        databaseResponse = JSON.Parse(jsonString);
-        isDatabaseLoaded = true;
-
-        ParseItems();
+        
+        IEnumerator LoadDatabase()
+        {
+            var async = MySql.Database.GetItemsList();
+            yield return async;
+            //jsonString = async.webRequest.downloadHandler.text;
+            Debug.Log(jsonString);
+            databaseResponse = JSON.Parse(jsonString);
+            isDatabaseLoaded = true;
+            ParseItems();
+        }
+        //var load = LoadDatabase();
+        //while (LoadDatabase().MoveNext()) ;
     }
 
     private static void ParseItems()
