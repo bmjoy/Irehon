@@ -1,11 +1,13 @@
 ﻿using Client;
 using Mirror;
 using Server;
+using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
+using Utils;
 
 public struct AuthRequestMessage : NetworkMessage
 {
@@ -16,12 +18,33 @@ public struct AuthRequestMessage : NetworkMessage
 
 }
 
-public struct PlayerConnection
+public struct PlayerConnectionInfo : NetworkMessage
 {
     public int playerId;
-    public List<Character> characters;
+    public Character[] characters;
+
+    public CharacterInfo selectedCharacter;
+
     public int characterId;
     public Transform playerPrefab;
+
+    public PlayerConnectionInfo(int playerId)
+    {
+        this.playerId = playerId;
+        characters = new Character[0];
+        characterId = 0;
+        playerPrefab = null;
+        selectedCharacter = new CharacterInfo();
+    }
+    public PlayerConnectionInfo(JSONNode node)
+    {
+        playerId = node["id"].AsInt;
+        characters = JsonHelper.FromJson<Character>(node["characters"].ToString());
+        characterId = 0;
+        playerPrefab = null;
+        selectedCharacter = new CharacterInfo();
+    }
+
 }
 
 public class ServerAuth : NetworkAuthenticator
@@ -31,89 +54,89 @@ public class ServerAuth : NetworkAuthenticator
         NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
     }
 
-    public override void OnServerAuthenticate(NetworkConnection conn)
-    {
-    }
-
     public static int GetPassword(string password) => password.GetHashCode();
 
-    public static bool IsLoginValid(string login)
+    public static bool IsPasswordValid(string password) => password.Length > 3;
+
+    public static bool IsLoginValid(string login) => (login.Length < 20 && login.Length > 2) && Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
+
+    private void SendAuthResult(NetworkConnection con, bool isAuthenticated, string message)
     {
-        if (login.Length > 20)
-            return false;
-        return Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
+        if (isAuthenticated)
+        {
+            ServerManager.SendMessage(con, message, MessageType.AuthAccept);
+            ServerAccept(con);
+        }
+        else
+        {
+            ServerManager.SendMessage(con, message, MessageType.AuthReject);
+            IEnumerator WaitBeforeDisconnect()
+            {
+                yield return new WaitForSeconds(0.1f);
+                ServerReject(con);
+            }
+            StartCoroutine(WaitBeforeDisconnect());
+        }
+    }
+    
+    private void Register(NetworkConnection con, AuthRequestMessage msg)
+    {
+        StartCoroutine(LoginCoroutine());
+        IEnumerator LoginCoroutine()
+        {
+            int password = msg.Password.GetStableHashCode();
+            var www = Api.Request($"https://irehon.com/api/auth/?login={msg.Login}&password={password}");
+            yield return www.SendWebRequest();
+            var result = Api.GetResult(www);
+            if (result != null)
+            {
+                con.authenticationData = new PlayerConnectionInfo(result["id"].AsInt);
+                SendAuthResult(con, true, "Succesful");
+            }
+            else
+                SendAuthResult(con, false, "User with this login exist");
+        }
     }
 
-    public bool IsRequestValid(AuthRequestMessage msg, ref int loginResponse, out string response)
+    private void Login(NetworkConnection con, AuthRequestMessage msg)
+    {
+        StartCoroutine(LoginCoroutine());
+        IEnumerator LoginCoroutine()
+        {
+            int password = msg.Password.GetStableHashCode();
+            var www = Api.Request($"https://irehon.com/api/users/?login={msg.Login}&password={password}", ApiMethod.POST);
+            yield return www.SendWebRequest();
+            var result = Api.GetResult(www);
+            if (result != null)
+            {
+                con.authenticationData = new PlayerConnectionInfo(result);
+                var data = (PlayerConnectionInfo)con.authenticationData;
+                if (ServerManager.ConnectedPlayers.Contains(data.playerId))
+                {
+                    SendAuthResult(con, false, "Already connected");
+                    yield break;
+                }
+
+                SendAuthResult(con, true, "Succesful");
+            }
+            else
+                SendAuthResult(con, false, "Login or Password incorrect");
+        }
+    }
+
+    public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
         if (!IsLoginValid(msg.Login))
-        {
-            response = "Login can contain only letters or digits";
-            return false;
-        }
-        int passwordHash = msg.Password.GetStableHashCode();
-        switch (msg.Type)
-        {
-            case AuthRequestMessage.AuthType.Login:
-                loginResponse = MySql.Database.Login(msg.Login, passwordHash);
-                if (loginResponse > 0)
-                {
-                    response = "Succesful";
-                    return true;
-                }
-                response = "Login or Password incorrect";
-                return false;
-            case AuthRequestMessage.AuthType.Register:
-                loginResponse = MySql.Database.Register(msg.Login, passwordHash);
-                if (loginResponse > 0)
-                {
-                    response = "Succesful";
-                    return true;
-                }
-                response = "User with this login exist";
-                return false;
-        }
-        response = "Invalid auth request";
-        return false;
+            SendAuthResult(con, false, "Login can contain only letters or digits");
+        else if (!IsPasswordValid(msg.Password))
+            SendAuthResult(con, false, "Password too short");
+        else if (msg.Type == AuthRequestMessage.AuthType.Login)
+            Login(con, msg);
+        else if (msg.Type == AuthRequestMessage.AuthType.Register)
+            Register(con, msg);
     }
 
-    public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage msg)
-    {
-        var outer = Task.Factory.StartNew(() =>
-        {
-            int loginResponse = 0;
-            string responseText;
+    public override void OnClientAuthenticate() {}
 
-            bool result = IsRequestValid(msg, ref loginResponse, out responseText);
-
-            if (result)
-                ServerManager.SendMessage(conn, responseText, MessageType.AuthAccept);
-            else
-                ServerManager.SendMessage(conn, responseText, MessageType.AuthReject);
-
-            if (result)
-            {
-                conn.authenticationData = new PlayerConnection
-                {
-                    playerId = loginResponse,
-                    characterId = -1,
-                };
-                ServerAccept(conn);
-            }
-            else
-            {
-                IEnumerator WaitBeforeDisconnect()
-                {
-                    yield return new WaitForSeconds(0.1f);
-                    ServerReject(conn);
-                }
-                StartCoroutine(WaitBeforeDisconnect());
-            }
-        });
-    }
-
-    public override void OnClientAuthenticate()
-    {
-
-    }
+    public override void OnServerAuthenticate(NetworkConnection conn) { }
 }

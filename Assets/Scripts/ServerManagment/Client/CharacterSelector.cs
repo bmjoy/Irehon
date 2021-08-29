@@ -6,12 +6,11 @@ using UnityEngine.UI;
 using Client;
 using UnityEngine.EventSystems;
 
-public struct Character : NetworkMessage
+public struct Character
 {
     public int slot;
     public int id;
     public string name;
-    public Vector3 position;
 }
 
 namespace Client

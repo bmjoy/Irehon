@@ -8,21 +8,26 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace MySql
+
+
+public enum ApiMethod { GET, PUT, POST, DELETE };
+
+namespace Deprecated
 {
+    public enum ApiMethod { GET, POST, PUT, DELETE };
     public static class Connection
     {
         private const string API_KEY_COOKIE = "AUTH=#i#Li`f2D[W?{$pSL`@4=gvy?1[?gLOyMOUc*TpPdZYKZhj`#%@D^CQ<aR@XwJM";
-
-
-        public static UnityWebRequest ApiRequest(string request) 
+        public static IEnumerator Request(string request, ApiMethod method = ApiMethod.GET) 
         {
-            string uri = "https://irehon.com" + request;
-            var www = UnityWebRequest.Get(request);
-
+            string uri = "https://irehon.com/api" + request;
+            var www = new UnityWebRequest(request);
+            www.method = method.ToString();
             www.SetRequestHeader("Cookie", API_KEY_COOKIE);
-            
-            return www;
+
+            yield return www.SendWebRequest();
+
+
         }
     }
 }

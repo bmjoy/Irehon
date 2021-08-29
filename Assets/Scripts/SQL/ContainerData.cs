@@ -15,7 +15,7 @@ public class PairValue<T, A>
     }
 }
 
-namespace MySql
+namespace Deprecated
 {
     public static class ContainerData
     {

@@ -35,7 +35,7 @@ public class PlayerContainerController : NetworkBehaviour
         CharacterData newData = characterData;
         newData.equipment.Truncate();
         newData.inventory.Truncate();
-        player.SetCharacterData(newData);
+        player.SendCharacterInfo(newData);
         int deathContainer = 0;
         var outer = Task.Factory.StartNew(() =>
         {
@@ -44,7 +44,7 @@ public class PlayerContainerController : NetworkBehaviour
                 characterData.containerId, 
                 characterData.equipmentContainerId 
             };
-            deathContainer = MySql.ContainerData.MoveAllItemsInNewContainer(playerContainers);
+            deathContainer = Api.ContainerData.MoveAllItemsInNewContainer(playerContainers);
         });
         StartCoroutine(WaitTask());
         IEnumerator WaitTask()
@@ -93,7 +93,7 @@ public class PlayerContainerController : NetworkBehaviour
     {
         openedContainerId = containerId;
         Task.Run(() =>
-            OpenAnotherContainer(MySql.ContainerData.GetContainer(containerId).ToJson()));
+            OpenAnotherContainer(Api.ContainerData.GetContainer(containerId).ToJson()));
     }
 
     private int GetContainerId(ContainerType type)
@@ -145,12 +145,12 @@ public class PlayerContainerController : NetworkBehaviour
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
             return;
 
-        MySql.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
+        Api.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
         {
             CharacterData characterData = this.characterData;
-            characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
-            characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
-            player.SetCharacterData(characterData);
+            characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
+            characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
+            player.SendCharacterInfo(characterData);
         }
     }
 
@@ -189,34 +189,34 @@ public class PlayerContainerController : NetworkBehaviour
 
             if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
             {
-                MySql.ContainerData.MoveSlot(characterData.equipmentContainerId, firstSlot, characterData.containerId, secondSlot);
+                Api.ContainerData.MoveSlot(characterData.equipmentContainerId, firstSlot, characterData.containerId, secondSlot);
                 {
                     CharacterData characterData = this.characterData;
-                    characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
-                    characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
-                    player.SetCharacterData(characterData);
+                    characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
+                    characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
+                    player.SendCharacterInfo(characterData);
                 }
             }
 
             else if (firstContainerId == secondContainerId)
             {
-                MySql.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
+                Api.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
                 if (firstContainerId == characterData.containerId)
                 {
                     CharacterData characterData = this.characterData;
-                    characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
-                    player.SetCharacterData(characterData);
+                    characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
+                    player.SendCharacterInfo(characterData);
                 }
                 else
                     OpenContainer(firstContainerId);
             }
             else
             {
-                MySql.ContainerData.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
+                Api.ContainerData.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
                 CharacterData characterData = this.characterData;
-                characterData.inventory = MySql.ContainerData.GetContainer(characterData.containerId);
-                characterData.equipment = MySql.ContainerData.GetContainer(characterData.equipmentContainerId);
-                player.SetCharacterData(characterData);
+                characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
+                characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
+                player.SendCharacterInfo(characterData);
                 if (firstType == ContainerType.Chest || secondType == ContainerType.Chest)
                     chest?.OnContainerUpdate.Invoke();
             }

@@ -11,6 +11,7 @@ namespace Server
 {
     public class ServerManager : NetworkManager
     {
+        private const int MAX_CHARACTERS_PER_ACCOUNT = 7;
         public static ServerManager i;
 
         [SerializeField]
@@ -18,7 +19,7 @@ namespace Server
         private NetworkManager manager;
         [SerializeField]
         private GameObject mob;
-
+        public static List<int> ConnectedPlayers => i.connectedPlayersId;
         private List<int> connectedPlayersId = new List<int>();
         private Dictionary<int, Player> connectedCharacters = new Dictionary<int, Player>();
 
@@ -35,7 +36,7 @@ namespace Server
 
         IEnumerator LoadDatabase()
         {
-            var www = MySql.Connection.ApiRequest("https://irehon.com/items.php");
+            var www = Api.Connection.Request("https://irehon.com/items.php");
             yield return www.SendWebRequest();
             if (www.isNetworkError)
             {
@@ -63,7 +64,7 @@ namespace Server
 
         public static Task UpdateDatabase()
         {
-            return MySql.ContainerData.UpdateDatabaseLoadedContainers();
+            return Api.ContainerData.UpdateDatabaseLoadedContainers();
         }
 
         public override void OnDestroy()
@@ -97,7 +98,7 @@ namespace Server
         {
             Task.Factory.StartNew(() =>
             {
-                PlayerConnection data = (PlayerConnection)con.authenticationData;
+                PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
                 if (request.selectedSlot >= data.characters.Count)
                     return;
@@ -105,33 +106,32 @@ namespace Server
 
                 int c_id = 0;
 
-                c_id = MySql.Database.GetCharacterId(selectedCharacter.name);
+                c_id = Api.Requests.GetCharacterId(selectedCharacter.name);
 
-                MySql.Database.DeleteCharacter(c_id);
+                Api.Requests.DeleteCharacter(c_id);
 
-                SendCharacterListToPlayer(con);
+                SendPlayerInfo(con);
             });
         }
 
         //Insert data in tables and send it to player
         private void PlayerCharacterCreateRequest(NetworkConnection con, CharacterOperationRequest character)
         {
-            var outer = Task.Factory.StartNew(() =>
+            StartCoroutine(CreateRequest());
+            IEnumerator CreateRequest()
             {
-                PlayerConnection data = (PlayerConnection)con.authenticationData;
+                PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
                 
-                int p_id = data.playerId;
-
-                if (data.characters.Count > MySql.Database.MAX_CHARACTERS_PER_ACCOUNT)
-                    return;
+                if (data.characters.Length > MAX_CHARACTERS_PER_ACCOUNT)
+                    yield break;
 
                 if (!ServerAuth.IsLoginValid(character.nickname))
                 {
                     SendMessage(con, "Invalid symbols in nickname", MessageType.Error);
-                    return;
+                    yield break;
                 }
 
-                if (MySql.Database.GetCharacterId(character.nickname) != 0)
+                if (Api.Requests.GetCharacterId(character.nickname) != 0)
                 {
                     SendMessage(con, "Nickname already in use", MessageType.Error);
                     return;
@@ -142,8 +142,8 @@ namespace Server
                     name = character.nickname,
                     position = characterSpawnPoint,
                 };
-                MySql.Database.CreateNewCharacter(p_id, newCharacter);
-                SendCharacterListToPlayer(con);
+                Api.Requests.CreateNewCharacter(p_id, newCharacter);
+                SendPlayerInfo(con);
             });
         }
 
@@ -163,97 +163,70 @@ namespace Server
             StartCoroutine(SpawnPlayer());
             IEnumerator SpawnPlayer()
             {
-                if (request.selectedSlot > MySql.Database.MAX_CHARACTERS_PER_ACCOUNT)
-                    yield break;
-                SceneMessage message = new SceneMessage
-                {
-                    sceneName = "PvpScene",
-                };
-                con.Send(message);
-
-                PlayerConnection data = (PlayerConnection)con.authenticationData;
-
-                if (request.selectedSlot >= data.characters.Count)
+                if (request.selectedSlot > MAX_CHARACTERS_PER_ACCOUNT)
                     yield break;
 
-                Character selectedCharacter = data.characters[request.selectedSlot];
+                ChangeScene(con, "PvpScene");
 
-                int c_id = 0;
+                PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-                var outer = Task.Factory.StartNew(() => c_id = MySql.Database.GetCharacterId(selectedCharacter.name));
-                while (!outer.IsCompleted)
-                    yield return null;
-
-                if (c_id == 0)
+                if (request.selectedSlot >= data.characters.Length)
                     yield break;
 
-                data.characterId = c_id;
+                var www = Api.Request($"/characters/{data.characters[request.selectedSlot].id}");
 
-                GameObject playerObject = Instantiate(playerPrefab);
-                playerObject.transform.position = selectedCharacter.position;
+                yield return www.SendWebRequest();
 
-                Player playerComponent = playerObject.GetComponent<Player>();
+                CharacterInfo characterInfo = new CharacterInfo(Api.GetResult(www));
 
-                connectedCharacters.Add(c_id, playerComponent);
+                data.selectedCharacter = characterInfo;
 
-                playerComponent.SetName(selectedCharacter.name);
-
-                data.playerPrefab = playerObject.transform;
-
-                NetworkServer.AddPlayerForConnection(con, playerObject);
-
-                playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
-
-                CharacterData characterData = new CharacterData();
-
-                var charDataTask = Task.Factory.StartNew(() => characterData = MySql.Database.GetCharacterData(c_id));
-
-                while (!charDataTask.IsCompleted)
-                    yield return null;
-                playerComponent.SetCharacterData(characterData);
-
+                SpawnPlayerOnMap(con, characterInfo);
+                
                 con.authenticationData = data;
             }
         }
 
-        //Send characters and make him to choose one of them
-        public override void OnServerConnect(NetworkConnection conn)
+        public GameObject SpawnPlayerOnMap(NetworkConnection con, CharacterInfo characterInfo)
         {
-            var outer = Task.Factory.StartNew(() =>
-            {
-                PlayerConnection data = (PlayerConnection)conn.authenticationData;
+            GameObject playerObject = Instantiate(playerPrefab);
 
-                if (connectedPlayersId.Contains(data.playerId))
-                {
-                    SendMessage(conn, "Already connected", MessageType.Error);
-                    StartCoroutine(WaitBeforeDisconnect());
-                    IEnumerator WaitBeforeDisconnect()
-                    {
-                        yield return new WaitForSeconds(0.05f);
-                        conn.Disconnect();
-                    }
-                    return;
-                }
-                else
-                    connectedPlayersId.Add(data.playerId);
+            playerObject.transform.position = characterInfo.position;
 
-                SceneMessage message = new SceneMessage
-                {
-                    sceneName = "CharacterSelection",
-                };
-                conn.Send(message);
+            Player playerComponent = playerObject.GetComponent<Player>();
 
-                SendCharacterListToPlayer(conn);
-            });
+            connectedCharacters.Add(characterInfo.id, playerComponent);
+
+            playerComponent.SetName(characterInfo.name);
+
+            NetworkServer.AddPlayerForConnection(con, playerObject);
+
+            playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
+
+            playerComponent.SendCharacterInfo(characterInfo);
+
+            return playerObject;
+        }
+
+        //Send characters and make him to choose one of them
+        public override void OnServerConnect(NetworkConnection con)
+        {
+            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            connectedPlayersId.Add(data.playerId);
+            ChangeScene(con, "CharacterSelection");
+
+            SendPlayerInfo(con);
         }
 
         //Character list to choose on of them
-        private void SendCharacterListToPlayer(NetworkConnection con)
+        private void SendPlayerInfo(NetworkConnection con) => con.Send((PlayerConnectionInfo)con.authenticationData);
+        
+        private IEnumerator UpdatePlayerInfo(NetworkConnection con)
         {
-            PlayerConnection data = (PlayerConnection)con.authenticationData;
-            data.characters = MySql.Database.GetCharacters(data.playerId);
-            con.Send(new CharactersInfo { characters = data.characters.ToArray() });
-            con.authenticationData = data;
+            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            var www = Api.Request($"/users/{data.playerId}");
+            yield return www;
+            con.authenticationData = new PlayerConnectionInfo(Api.GetResult(www));
         }
 
         public override void OnServerAddPlayer(NetworkConnection conn) { }
@@ -279,20 +252,23 @@ namespace Server
                 base.OnServerDisconnect(conn);
                 return;
             }
-            PlayerConnection data = (PlayerConnection)conn.authenticationData;
+            PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
             var outer = Task.Factory.StartNew(() =>
             {
                 if (data.characterId >= 0)
                 {
                     int c_id = data.characterId;
                     Player player = data.playerPrefab.GetComponent<Player>();
-                    MySql.Database.UpdatePositionData(c_id, player.transform.position);
-                    MySql.Database.UpdateCharacterData(c_id, player.GetCharacterData());
+                    Api.Requests.UpdatePositionData(c_id, player.transform.position);
+                    Api.Requests.UpdateCharacterData(c_id, player.GetCharacterData());
                 }
             });
             connectedCharacters.Remove(data.characterId);
             connectedPlayersId.Remove(data.playerId);
             base.OnServerDisconnect(conn);
         }
+
+        private void ChangeScene(NetworkConnection con, string scene) => 
+            con.Send(new SceneMessage{sceneName = "CharacterSelection",});
     }
 }

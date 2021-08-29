@@ -25,21 +25,21 @@ public class TestUI : MonoBehaviour
 
     public void GiveItem()
     {
-        MySql.ContainerData.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text), Convert.ToInt32(count.text));
+        Api.ContainerData.GiveContainerItem(Convert.ToInt32(containerId.text), Convert.ToInt32(itemId.text), Convert.ToInt32(count.text));
     }
 
     public void RemoveItem()
     {
-        MySql.ContainerData.RemoveItem(Convert.ToInt32(containerId.text), Convert.ToInt32(objectId.text));
+        Api.ContainerData.RemoveItem(Convert.ToInt32(containerId.text), Convert.ToInt32(objectId.text));
     }
 
     public void GiveCharacterItem()
     {
-        MySql.ContainerData.GiveCharacterItem(Convert.ToInt32(characterId.text), Convert.ToInt32(itemId.text));
+        Api.ContainerData.GiveCharacterItem(Convert.ToInt32(characterId.text), Convert.ToInt32(itemId.text));
     }
     public void CreateContainer()
     {
-        MySql.ContainerData.CreateContainer(Convert.ToInt32(containerId.text));
+        Api.ContainerData.CreateContainer(Convert.ToInt32(containerId.text));
     }
 }
  

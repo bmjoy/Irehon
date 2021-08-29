@@ -75,7 +75,7 @@ public class Player : Entity
     }
 
     [Server]
-    public void SetCharacterData(CharacterData data)
+    public void SendCharacterInfo(CharacterInfo data)
     {
         characterData = data;
 
