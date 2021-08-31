@@ -1,4 +1,5 @@
 ﻿using System;
+using SimpleJSON;
 
 [Serializable]
 public class ContainerSlot
@@ -19,6 +20,13 @@ public class ContainerSlot
         objectId = 0;
         itemQuantity = 0;
         this.slotIndex = slotIndex;
+    }
+
+    public ContainerSlot(JSONNode node)
+    {
+        itemId = node["item_id"].AsInt;
+        objectId = node["id"].AsInt;
+        itemQuantity = node["quantity"].AsInt;
     }
 
     public void CopyContent(ContainerSlot slot)

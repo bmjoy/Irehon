@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum ContainerType { Inventory, Equipment, Chest}
+public enum ContainerType { Inventory, Equipment, Chest, None}
 
 public class InventoryManager : MonoBehaviour
 {
@@ -45,8 +45,6 @@ public class InventoryManager : MonoBehaviour
     public void PlayerIntialize(Player player)
     {
         playerContainerController = player.GetComponent<PlayerContainerController>();
-        player.OnCharacterDataUpdateEvent.AddListener(x => UpdateInventory(x.inventory));
-        player.OnCharacterDataUpdateEvent.AddListener(x => UpdateEquipment(x.equipment));
         if (player.isDataAlreadyRecieved)
         {
             UpdateInventory(player.GetCharacterData().inventory);

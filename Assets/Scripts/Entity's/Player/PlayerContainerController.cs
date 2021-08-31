@@ -14,58 +14,95 @@ public class PlayerContainerController : NetworkBehaviour
     private PlayerModelManager playerModelManager;
     private Chest chest;
 
-    private CharacterData characterData => player.GetCharacterData();
+    private Dictionary<ContainerType, int> containers;
+
+    private CharacterInfo characterData => player.GetCharacterData();
     private int openedContainerId;
 
     private void Awake()
     {
         player = GetComponent<Player>();
         playerModelManager = GetComponent<PlayerModelManager>();
+
+        if (isLocalPlayer)
+        {
+            if (!player.isDataAlreadyRecieved)
+                player.OnCharacterDataUpdateEvent.AddListener(Intialize);
+            else
+                Intialize(player.GetCharacterData());
+        }
+    }
+
+    public void Intialize(CharacterInfo info)
+    {
+        player.OnCharacterDataUpdateEvent.RemoveListener(Intialize);
+        containers[ContainerType.Equipment] = info.equipment_id;
+        containers[ContainerType.Inventory] = info.inventory_id;
+    }
+
+    private ContainerType GetContainerType(int containerId)
+    {
+        foreach (var keyValuePair in containers)
+        {
+            if (keyValuePair.Value == containerId)
+                return keyValuePair.Key;
+        }
+        return ContainerType.None;
+    }
+
+    [TargetRpc]
+    public void GetContainerData(int containerId, Container container)
+    {
+        ContainerType type = GetContainerType(containerId);
+
+        switch (type)
+        {
+            case ContainerType.Inventory:
+
+                break;
+            case ContainerType.Equipment:
+                break;
+            case ContainerType.Chest:
+                break;
+        }
     }
 
     [Server]
     public void SpawnDeathContainer()
     {
-        GameObject deathBody = Instantiate(deathPrefab);
-        NetworkServer.Spawn(deathBody);
-        deathBody.transform.position = player.GetMoldelPosition();
-        deathBody.transform.rotation = transform.rotation;
-        deathBody.GetComponent<RagdollController>().ChangeRagdollState(true);
-        deathBody.GetComponent<DeathContainer>().SetEquipment(characterData.equipment);
-        CharacterData newData = characterData;
-        newData.equipment.Truncate();
-        newData.inventory.Truncate();
-        player.SendCharacterInfo(newData);
-        int deathContainer = 0;
-        var outer = Task.Factory.StartNew(() =>
-        {
-            List<int> playerContainers = new List<int>() 
-            { 
-                characterData.containerId, 
-                characterData.equipmentContainerId 
-            };
-            deathContainer = Api.ContainerData.MoveAllItemsInNewContainer(playerContainers);
-        });
-        StartCoroutine(WaitTask());
-        IEnumerator WaitTask()
-        {
-            while (!outer.IsCompleted)
-                yield return null;
-            deathBody.GetComponent<Chest>().SetChestId(deathContainer);
-        }
+        //GameObject deathBody = Instantiate(deathPrefab);
+        //NetworkServer.Spawn(deathBody);
+        //deathBody.transform.position = player.GetMoldelPosition();
+        //deathBody.transform.rotation = transform.rotation;
+        //deathBody.GetComponent<RagdollController>().ChangeRagdollState(true);
+        //deathBody.GetComponent<DeathContainer>().SetEquipment(characterData.equipment);
+        //CharacterData newData = characterData;
+        //newData.equipment.Truncate();
+        //newData.inventory.Truncate();
+        //player.SendCharacterInfo(newData);
+        //int deathContainer = 0;
+        //var outer = Task.Factory.StartNew(() =>
+        //{
+        //    List<int> playerContainers = new List<int>() 
+        //    { 
+        //        characterData.containerId, 
+        //        characterData.equipmentContainerId 
+        //    };
+        //    deathContainer = Api.ContainerData.MoveAllItemsInNewContainer(playerContainers);
+        //});
+        //StartCoroutine(WaitTask());
+        //IEnumerator WaitTask()
+        //{
+        //    while (!outer.IsCompleted)
+        //        yield return null;
+        //    deathBody.GetComponent<Chest>().SetChestId(deathContainer);
+        //}
     }
 
     [TargetRpc]
     public void SendItemDatabase(string json)
     {
         ItemDatabase.DatabaseLoadJson(json);
-    }
-
-    [TargetRpc]
-    public void OpenAnotherContainer(string json)
-    {
-        Container container = new Container(json);
-        InventoryManager.i.OpenChest(container);
     }
 
     [TargetRpc]
@@ -100,9 +137,9 @@ public class PlayerContainerController : NetworkBehaviour
     {
         switch (type)
         {
-            case ContainerType.Inventory: return characterData.containerId;
+            case ContainerType.Inventory: return characterData.inventory_id;
             case ContainerType.Chest: return openedContainerId;
-            case ContainerType.Equipment: return characterData.equipmentContainerId;
+            case ContainerType.Equipment: return characterData.equipment_id;
             default: return 0;
         };
     }
@@ -119,8 +156,11 @@ public class PlayerContainerController : NetworkBehaviour
         OpenContainer(chest.ContainerId);
         openedContainerId = chest.ContainerId;
         chest.OnContainerUpdate.AddListener(UpdateChestData);
+        
         Vector3 chestPos = chest.transform.position;
+
         StartCoroutine(CheckChestDistance());
+
         IEnumerator CheckChestDistance()
         {
             while (openedContainerId != 0 && Vector3.Distance(chestPos, transform.position) < 4f)
@@ -145,13 +185,7 @@ public class PlayerContainerController : NetworkBehaviour
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
             return;
 
-        Api.ContainerData.MoveSlot(characterData.containerId, inventorySlot, characterData.equipmentContainerId, equipmentSlot);
-        {
-            CharacterData characterData = this.characterData;
-            characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
-            characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
-            player.SendCharacterInfo(characterData);
-        }
+        StartCoroutine(ContainerData.MoveSlotData(characterData.inventory_id, inventorySlot, characterData.equipment_id, equipmentSlot));
     }
 
     private bool IsMoveLegal(ContainerType firstType, ContainerType secondType)
@@ -179,47 +213,17 @@ public class PlayerContainerController : NetworkBehaviour
         if (secondContainerId == 0)
             return;
 
-        Task.Run(() =>
+        if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
         {
-            if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
-            {
-                Equip(secondSlot, firstSlot);
-                return;
-            }
+            Equip(secondSlot, firstSlot);
+            return;
+        }
 
-            if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
-            {
-                Api.ContainerData.MoveSlot(characterData.equipmentContainerId, firstSlot, characterData.containerId, secondSlot);
-                {
-                    CharacterData characterData = this.characterData;
-                    characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
-                    characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
-                    player.SendCharacterInfo(characterData);
-                }
-            }
-
-            else if (firstContainerId == secondContainerId)
-            {
-                Api.ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
-                if (firstContainerId == characterData.containerId)
-                {
-                    CharacterData characterData = this.characterData;
-                    characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
-                    player.SendCharacterInfo(characterData);
-                }
-                else
-                    OpenContainer(firstContainerId);
-            }
-            else
-            {
-                Api.ContainerData.MoveSlot(firstContainerId, firstSlot, secondContainerId, secondSlot);
-                CharacterData characterData = this.characterData;
-                characterData.inventory = Api.ContainerData.GetContainer(characterData.containerId);
-                characterData.equipment = Api.ContainerData.GetContainer(characterData.equipmentContainerId);
-                player.SendCharacterInfo(characterData);
-                if (firstType == ContainerType.Chest || secondType == ContainerType.Chest)
-                    chest?.OnContainerUpdate.Invoke();
-            }
-        });
+        if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
+            StartCoroutine(ContainerData.MoveSlotData(characterData.equipment_id, firstSlot, characterData.inventory_id, secondSlot));
+        else if (firstContainerId == secondContainerId)
+            StartCoroutine(ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot));
+        else
+            StartCoroutine(ContainerData.MoveSlotData(firstContainerId, firstSlot, secondContainerId, secondSlot));
     }
 }

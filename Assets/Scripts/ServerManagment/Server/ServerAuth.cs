@@ -25,14 +25,12 @@ public struct PlayerConnectionInfo : NetworkMessage
 
     public CharacterInfo selectedCharacter;
 
-    public int characterId;
     public Transform playerPrefab;
 
     public PlayerConnectionInfo(int playerId)
     {
         this.playerId = playerId;
         characters = new Character[0];
-        characterId = 0;
         playerPrefab = null;
         selectedCharacter = new CharacterInfo();
     }
@@ -40,7 +38,6 @@ public struct PlayerConnectionInfo : NetworkMessage
     {
         playerId = node["id"].AsInt;
         characters = JsonHelper.FromJson<Character>(node["characters"].ToString());
-        characterId = 0;
         playerPrefab = null;
         selectedCharacter = new CharacterInfo();
     }

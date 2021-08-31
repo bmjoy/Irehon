@@ -7,23 +7,14 @@ using Utils;
 using System.Threading.Tasks;
 using System.Collections;
 
-public struct CharacterData
-{
-    public Container inventory;
-    public Container equipment;
-    public int equipmentContainerId;
-    public int containerId;
-    public int characterId;
-}
-
-public class OnCharacterDataUpdate : UnityEvent<CharacterData> {}
+public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> {}
 
 public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
     private PlayerStateMachine stateMachine;
     private Equipment equipment = new Equipment();
-    private CharacterData characterData;
+    private CharacterInfo characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
 
 
@@ -56,20 +47,19 @@ public class Player : Entity
     }
 
     [TargetRpc]
-    private void UpdateCharacterData(NetworkConnection con, CharacterData data)
+    private void UpdateCharacterData(NetworkConnection con, CharacterInfo data)
     {
         isDataAlreadyRecieved = true;
         characterData = data;
-        equipment.Update(data.equipment);
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
     public Vector3 GetMoldelPosition() => Vector3.zero;
 
     [ClientRpc]
-    private void GetPublicCharacterData(CharacterData data)
+    private void GetPublicCharacterData(CharacterInfo data)
     {
-        CharacterData sharedData = new CharacterData();
+        CharacterInfo sharedData = new CharacterInfo();
         sharedData.equipment = characterData.equipment;
         GetComponent<PlayerModelManager>().UpdateEquipmentContainer(data.equipment);
     }
@@ -83,13 +73,13 @@ public class Player : Entity
 
         UpdateCharacterData(connectionToClient, characterData);
 
-        CharacterData sharedData = new CharacterData();
+        CharacterInfo sharedData = new CharacterInfo();
         sharedData.equipment = data.equipment;
 
         GetPublicCharacterData(sharedData);
     }
 
-    public CharacterData GetCharacterData() => characterData;
+    public CharacterInfo GetCharacterData() => characterData;
 
     protected void UpdateHealthBar(int oldHealth, int newHealth)
     {

@@ -18,6 +18,17 @@ public static class Api
         return www;
     }
 
+    public static UnityWebRequest SqlRequest(string request, ApiMethod method = ApiMethod.GET)
+    {
+        string uri = "https://irehon.com" + request;
+        var www = new UnityWebRequest(uri);
+        www.downloadHandler = new DownloadHandlerBuffer();
+        www.method = method.ToString();
+        www.SetRequestHeader("Cookie", API_KEY_COOKIE);
+
+        return www;
+    }
+
     public static JSONNode GetResult(UnityWebRequest request)
     {
         if (request.responseCode == 200)
