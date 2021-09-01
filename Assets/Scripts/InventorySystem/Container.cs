@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
@@ -6,16 +8,24 @@ public class Container
 {
     public ContainerSlot[] slots;
 
-    public Container(string json)
+    public Container(JSONNode node)
     {
-        slots = JsonHelper.FromJson<ContainerSlot>(json);
+        slots = new ContainerSlot[node.Count];
+        for (int i = 0; i < slots.Length; i++)
+            slots[i] = new ContainerSlot(node[i], i);
     }
 
     public Container() {}
 
-    public void FromJsonUpdate(string json) => slots = JsonHelper.FromJson<ContainerSlot>(json);
+    public JSONNode ToJson()
+    {
+        JSONArray containerJson = new JSONArray();
 
-    public string ToJson() => JsonHelper.ToJson(slots);
+        for (int i = 0; i < slots.Length; i++)
+            containerJson.Add(slots[i].ToJson());
+
+        return containerJson;
+    }
 
     public Container(ContainerSlot[] slots)
     {
@@ -42,16 +52,12 @@ public class Container
     public void Truncate()
     {
         ContainerSlot[] slots = GetFilledSlots();
-        Debug.Log($"{GetFilledSlotsCount()} filled slots length before truncate");
-        Debug.Log($"{GetEmptySlotsCount()} empty slots length before truncate");
         foreach (ContainerSlot slot in slots)
         {
             slot.itemId = 0;
             slot.itemQuantity = 0;
             slot.objectId = 0;
         }
-        Debug.Log($"{GetFilledSlotsCount()} filled slots length before truncate");
-        Debug.Log($"{GetEmptySlotsCount()} empty slots length before truncate");
     }
 
     public ContainerSlot FindItem(int itemId) => Array.Find(slots, x => x.itemId == itemId);

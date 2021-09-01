@@ -22,8 +22,8 @@ public struct CharacterInfo
         name = json["name"].Value;
         inventory_id = json["inventory_id"].AsInt;
         equipment_id = json["equipment_id"].AsInt;
-        inventory = null;
-        equipment = null;
+        inventory = new Container(json["inventory"]);
+        equipment = new Container(json["equipment"]);
         JSONNode pos = json["position"];
         position = new Vector3(pos["x"].AsFloat, pos["y"].AsFloat, pos["z"].AsFloat);
     }

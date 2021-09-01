@@ -51,14 +51,13 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void GetContainerData(int containerId, Container container)
+    public void SendContainerData(int containerId, Container container)
     {
         ContainerType type = GetContainerType(containerId);
 
         switch (type)
         {
             case ContainerType.Inventory:
-
                 break;
             case ContainerType.Equipment:
                 break;
@@ -67,70 +66,31 @@ public class PlayerContainerController : NetworkBehaviour
         }
     }
 
-    [Server]
-    public void SpawnDeathContainer()
-    {
-        //GameObject deathBody = Instantiate(deathPrefab);
-        //NetworkServer.Spawn(deathBody);
-        //deathBody.transform.position = player.GetMoldelPosition();
-        //deathBody.transform.rotation = transform.rotation;
-        //deathBody.GetComponent<RagdollController>().ChangeRagdollState(true);
-        //deathBody.GetComponent<DeathContainer>().SetEquipment(characterData.equipment);
-        //CharacterData newData = characterData;
-        //newData.equipment.Truncate();
-        //newData.inventory.Truncate();
-        //player.SendCharacterInfo(newData);
-        //int deathContainer = 0;
-        //var outer = Task.Factory.StartNew(() =>
-        //{
-        //    List<int> playerContainers = new List<int>() 
-        //    { 
-        //        characterData.containerId, 
-        //        characterData.equipmentContainerId 
-        //    };
-        //    deathContainer = Api.ContainerData.MoveAllItemsInNewContainer(playerContainers);
-        //});
-        //StartCoroutine(WaitTask());
-        //IEnumerator WaitTask()
-        //{
-        //    while (!outer.IsCompleted)
-        //        yield return null;
-        //    deathBody.GetComponent<Chest>().SetChestId(deathContainer);
-        //}
-    }
-
     [TargetRpc]
     public void SendItemDatabase(string json)
     {
+        Debug.Log(json);
         ItemDatabase.DatabaseLoadJson(json);
-    }
-
-    [TargetRpc]
-    private void CloseChest()
-    {
-        InventoryManager.i.CloseChest();
     }
 
     [Command]
     public void OtherContainerClosedRpc()
     {
-        chest?.OnContainerUpdate.RemoveListener(UpdateChestData);
+        chest?.OnContainerUpdate.RemoveListener(SendChestData);
         chest = null;
         openedContainerId = 0;
     }
 
     [Server]
-    private void UpdateChestData()
+    private void SendChestData()
     {
-        OpenContainer(openedContainerId);
-    }
+        StartCoroutine(Send());
+        IEnumerator Send(){
+            yield return ContainerData.LoadContainer(chest.ContainerId);
+            Container container = ContainerData.LoadedContainers[chest.ContainerId];
 
-    [Server]
-    public void OpenContainer(int containerId)
-    {
-        openedContainerId = containerId;
-        Task.Run(() =>
-            OpenAnotherContainer(Api.ContainerData.GetContainer(containerId).ToJson()));
+            SendContainerData(openedContainerId, container);
+        }
     }
 
     private int GetContainerId(ContainerType type)
@@ -147,16 +107,18 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     public void OpenChest(Chest chest)
     {
-        if (openedContainerId != 0 || chest == null ||
-                Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
+
+        if (openedContainerId != 0 || chest == null || Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
             return;
 
         this.chest = chest;
 
-        OpenContainer(chest.ContainerId);
         openedContainerId = chest.ContainerId;
-        chest.OnContainerUpdate.AddListener(UpdateChestData);
-        
+
+        SendChestData();
+             
+        chest.OnContainerUpdate.AddListener(SendChestData);
+
         Vector3 chestPos = chest.transform.position;
 
         StartCoroutine(CheckChestDistance());
@@ -168,9 +130,8 @@ public class PlayerContainerController : NetworkBehaviour
                 yield return null;
             }
             openedContainerId = 0;
-            chest.OnContainerUpdate.RemoveListener(UpdateChestData);
+            chest.OnContainerUpdate.RemoveListener(SendChestData);
             chest = null;
-            CloseChest();
         }
     }
 

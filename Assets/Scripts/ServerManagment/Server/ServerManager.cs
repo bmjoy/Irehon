@@ -47,7 +47,7 @@ namespace Server
 
         IEnumerator LoadDatabase()
         {
-            var www = Api.Request("https://irehon.com/api/items");
+            var www = Api.Request("/items");
             yield return www.SendWebRequest();
             var json = Api.GetResult(www).ToString();
             ItemDatabase.DatabaseLoadJson(json);
@@ -116,7 +116,7 @@ namespace Server
                     yield break;
                 }
 
-                var www = Api.Request($"/characters/?name={character.nickname}&player_id={data.playerId}");
+                var www = Api.Request($"/characters/?name={character.nickname}&player_id={data.playerId}", ApiMethod.POST);
 
                 yield return www.SendWebRequest();
 
@@ -203,7 +203,7 @@ namespace Server
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
             var www = Api.Request($"/users/{data.playerId}");
-            yield return www;
+            yield return www.SendWebRequest();
             con.authenticationData = new PlayerConnectionInfo(Api.GetResult(www));
         }
 
@@ -260,7 +260,7 @@ namespace Server
         }
 
         private void ChangeScene(NetworkConnection con, string scene) => 
-            con.Send(new SceneMessage{sceneName = "CharacterSelection",});
+            con.Send(new SceneMessage{sceneName = scene,});
 
         public static void SendMessage(NetworkConnection con, string msg, MessageType type)
         {

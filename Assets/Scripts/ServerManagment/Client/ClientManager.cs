@@ -55,7 +55,7 @@ namespace Client
         {
             base.OnStartClient();
             NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
-            NetworkClient.RegisterHandler<CharactersInfo>(SaveCharacter, true);
+            NetworkClient.RegisterHandler<PlayerConnectionInfo>(SaveCharacter, true);
         }
 
         private void ServerMessageEvent(ServerMessage msg)
@@ -63,14 +63,11 @@ namespace Client
             OnGetServerMessage.Invoke(msg);
         }
 
-        private void SaveCharacter(CharactersInfo charactersInfo)
+        private void SaveCharacter(PlayerConnectionInfo charactersInfo)
         {
-            print(charactersInfo.characters.Length);
             charactersList = new List<Character>(charactersInfo.characters);
             OnUpdateCharacterList.Invoke(charactersList);
         }
-
-
 
         public List<Character> GetCharacters() => charactersList;
 

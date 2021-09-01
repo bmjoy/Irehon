@@ -4,13 +4,19 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 using Client;
+using SimpleJSON;
 using UnityEngine.EventSystems;
 
 public struct Character
 {
-    public int slot;
     public int id;
     public string name;
+
+    public Character(JSONNode node)
+    {
+        id = node["id"].AsInt;
+        name = node["name"].Value;
+    }
 }
 
 namespace Client

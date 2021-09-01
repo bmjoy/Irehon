@@ -21,7 +21,6 @@ public static class ItemDatabase
         databaseResponse = JSON.Parse(jsonString);
         isDatabaseLoaded = true;
         ItemDatabase.jsonString = jsonString;
-        Debug.Log(jsonString);
         ParseItems();
     }
 
@@ -30,6 +29,7 @@ public static class ItemDatabase
         items = new Dictionary<int, Item>();
         foreach (JSONNode item in databaseResponse)
         {
+            Debug.Log($"Loaded {item}");
             Item newItem = new Item(item);
             items[newItem.id] = newItem;
         }

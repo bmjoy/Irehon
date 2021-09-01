@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.48488915, g: 0.56461126, b: 0.8491659, a: 1}
+  m_IndirectSpecularColor: {r: 0.48496425, g: 0.56464803, b: 0.849163, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1772,10 +1772,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cd3d5d6b80644439875e521f38a9aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryWindow: {fileID: 1139975685}
-  otherContainerWindow: {fileID: 2028366247}
-  inventory: {fileID: 1139975684}
-  containerWindow: {fileID: 2028366246}
+  chestWindow: {fileID: 2028366247}
+  inventorySpawnSlotsTransform: {fileID: 1139975684}
+  chestSpawnSlotsTransform: {fileID: 2028366246}
   inventorySlotPrefab: {fileID: 6503387125378953986, guid: 12300ac08279c4985bf44f32f01cd783,
     type: 3}
   dragger: {fileID: 6503387124079719185}
@@ -6339,18 +6338,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1139975682}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1139975685 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6889746706794659496, guid: dd9487b98d2e44a84b35749c4b5c0647,
-    type: 3}
-  m_PrefabInstance: {fileID: 1139975682}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4fe5777b693841019c557c1c94aa0b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1139975686 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8231307662580720714, guid: dd9487b98d2e44a84b35749c4b5c0647,
@@ -9300,7 +9287,7 @@ PrefabInstance:
     - target: {fileID: 2126353036337086563, guid: dd9487b98d2e44a84b35749c4b5c0647,
         type: 3}
       propertyPath: m_Name
-      value: OtherContainerWindow
+      value: ChestContainerWindow
       objectReference: {fileID: 0}
     - target: {fileID: 2126353036337086563, guid: dd9487b98d2e44a84b35749c4b5c0647,
         type: 3}

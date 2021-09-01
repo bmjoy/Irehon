@@ -37,8 +37,16 @@ public struct PlayerConnectionInfo : NetworkMessage
     public PlayerConnectionInfo(JSONNode node)
     {
         playerId = node["id"].AsInt;
-        characters = JsonHelper.FromJson<Character>(node["characters"].ToString());
+
+        List<Character> characters = new List<Character>();
+
+        foreach (JSONNode character in node["characters"])
+            characters.Add(new Character(character));
+        
+        this.characters = characters.ToArray();
+
         playerPrefab = null;
+        
         selectedCharacter = new CharacterInfo();
     }
 
@@ -82,11 +90,14 @@ public class ServerAuth : NetworkAuthenticator
         IEnumerator LoginCoroutine()
         {
             int password = msg.Password.GetStableHashCode();
-            var www = Api.Request($"https://irehon.com/api/auth/?login={msg.Login}&password={password}");
+
+            var www = Api.Request($"/users/?login={msg.Login}&password={password}", ApiMethod.POST);
             yield return www.SendWebRequest();
             var result = Api.GetResult(www);
+            
             if (result != null)
             {
+                Debug.Log($"{result}, {result["id"].AsInt}");
                 con.authenticationData = new PlayerConnectionInfo(result["id"].AsInt);
                 SendAuthResult(con, true, "Succesful");
             }
@@ -101,13 +112,18 @@ public class ServerAuth : NetworkAuthenticator
         IEnumerator LoginCoroutine()
         {
             int password = msg.Password.GetStableHashCode();
-            var www = Api.Request($"https://irehon.com/api/users/?login={msg.Login}&password={password}", ApiMethod.POST);
+            
+            var www = Api.Request($"/auth/?login={msg.Login}&password={password}");
             yield return www.SendWebRequest();
             var result = Api.GetResult(www);
+
             if (result != null)
             {
                 con.authenticationData = new PlayerConnectionInfo(result);
                 var data = (PlayerConnectionInfo)con.authenticationData;
+
+                Debug.Log($"{result}, {result["id"].AsInt}");
+
                 if (ServerManager.ConnectedPlayers.Contains(data.playerId))
                 {
                     SendAuthResult(con, false, "Already connected");

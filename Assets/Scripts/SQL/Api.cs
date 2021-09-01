@@ -1,4 +1,5 @@
 ﻿using SimpleJSON;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public static class Api
@@ -10,6 +11,7 @@ public static class Api
     public static UnityWebRequest Request(string request, ApiMethod method = ApiMethod.GET)
     {
         string uri = "https://irehon.com/api" + request;
+        Debug.Log(uri);
         var www = new UnityWebRequest(uri);
         www.downloadHandler = new DownloadHandlerBuffer();
         www.method = method.ToString();
@@ -36,6 +38,10 @@ public static class Api
             return JSON.Parse(request.downloadHandler.text);
         }
         else
+        {
+            Debug.Log(request.downloadHandler.text);
+            Debug.Log($"bad request = {request.uri}, code = {request.responseCode}");
             return null;
+        }
     }
 }

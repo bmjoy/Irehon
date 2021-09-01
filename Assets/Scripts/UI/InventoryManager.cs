@@ -59,7 +59,7 @@ public class InventoryManager : MonoBehaviour
 
     public void OpenChest(Container container)
     {
-        FillOtherContainer(chestSpawnSlotsTransform, container, ContainerType.Chest);
+        FillChestWindow(container);
         chestWindow.Open();
     }
 
@@ -101,14 +101,14 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void FillOtherContainer(RectTransform containerBG, Container container, ContainerType type)
+    private void FillChestWindow(Container container)
     {
-        foreach (Transform previousContainerSlot in containerBG)
+        foreach (Transform previousContainerSlot in chestSpawnSlotsTransform)
                 Destroy(previousContainerSlot.gameObject);
         foreach (ContainerSlot containerSlot in container.slots)
         {
-            GameObject slot = Instantiate(inventorySlotPrefab, containerBG);
-            slot.GetComponent<InventorySlotUI>().Intialize(containerSlot, canvas, type);
+            GameObject slot = Instantiate(inventorySlotPrefab, chestSpawnSlotsTransform);
+            slot.GetComponent<InventorySlotUI>().Intialize(containerSlot, canvas, ContainerType.Chest);
         }
     }
 }

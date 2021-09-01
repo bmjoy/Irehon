@@ -29,6 +29,23 @@ public class ContainerSlot
         itemQuantity = node["quantity"].AsInt;
     }
 
+    public JSONObject ToJson()
+    {
+        JSONObject json = new JSONObject();
+
+        json.Add("item_id", itemId);
+        json.Add("id", objectId);
+        json.Add("quantity", itemQuantity);
+        return json;
+    }
+
+    public ContainerSlot(JSONNode node, int index)
+    {
+        itemId = node["item_id"].AsInt;
+        objectId = node["id"].AsInt;
+        slotIndex = index;
+        itemQuantity = node["quantity"].AsInt;
+    }
     public void CopyContent(ContainerSlot slot)
     {
         itemId = slot.itemId;
