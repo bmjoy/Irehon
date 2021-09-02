@@ -7,14 +7,10 @@ using System.Collections.Generic;
 
 public class PlayerContainerController : NetworkBehaviour
 {
-    [SerializeField]
-    private GameObject deathPrefab;
-
     private Player player;
-    private PlayerModelManager playerModelManager;
     private Chest chest;
 
-    private Dictionary<ContainerType, int> containers;
+    private Dictionary<ContainerType, int> containers = new Dictionary<ContainerType, int>();
 
     private CharacterInfo characterData => player.GetCharacterData();
     private int openedContainerId;
@@ -22,15 +18,11 @@ public class PlayerContainerController : NetworkBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
-        playerModelManager = GetComponent<PlayerModelManager>();
 
-        if (isLocalPlayer)
-        {
-            if (!player.isDataAlreadyRecieved)
-                player.OnCharacterDataUpdateEvent.AddListener(Intialize);
-            else
-                Intialize(player.GetCharacterData());
-        }
+        if (!player.isDataAlreadyRecieved)
+            player.OnCharacterDataUpdateEvent.AddListener(Intialize);
+        else
+            Intialize(player.GetCharacterData());
     }
 
     public void Intialize(CharacterInfo info)
@@ -54,12 +46,14 @@ public class PlayerContainerController : NetworkBehaviour
     public void SendContainerData(int containerId, Container container)
     {
         ContainerType type = GetContainerType(containerId);
-
+        print($"Got new data for {type}");
         switch (type)
         {
             case ContainerType.Inventory:
+                InventoryManager.i.UpdateInventory(container);
                 break;
             case ContainerType.Equipment:
+                InventoryManager.i.UpdateEquipment(container);
                 break;
             case ContainerType.Chest:
                 break;
@@ -69,7 +63,6 @@ public class PlayerContainerController : NetworkBehaviour
     [TargetRpc]
     public void SendItemDatabase(string json)
     {
-        Debug.Log(json);
         ItemDatabase.DatabaseLoadJson(json);
     }
 
@@ -107,7 +100,6 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     public void OpenChest(Chest chest)
     {
-
         if (openedContainerId != 0 || chest == null || Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
             return;
 
@@ -137,16 +129,19 @@ public class PlayerContainerController : NetworkBehaviour
 
     //from , to
     [Server]
-    private void Equip(int equipmentSlot, int inventorySlot)
+    private IEnumerator Equip(int equipmentSlot, int inventorySlot)
     {
-        Item equipableItem = ItemDatabase.GetItemById(characterData.inventory[inventorySlot].itemId);
+        yield return ContainerData.LoadContainer(characterData.inventory_id);
+        Container inventory = ContainerData.LoadedContainers[characterData.inventory_id];
+
+        Item equipableItem = ItemDatabase.GetItemById(inventory[inventorySlot].itemId);
 
         if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
-            return;
+            yield break;
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
-            return;
+            yield break;
 
-        StartCoroutine(ContainerData.MoveSlotData(characterData.inventory_id, inventorySlot, characterData.equipment_id, equipmentSlot));
+        yield return ContainerData.MoveSlotData(characterData.inventory_id, inventorySlot, characterData.equipment_id, equipmentSlot);
     }
 
     private bool IsMoveLegal(ContainerType firstType, ContainerType secondType)
@@ -175,12 +170,8 @@ public class PlayerContainerController : NetworkBehaviour
             return;
 
         if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
-        {
-            Equip(secondSlot, firstSlot);
-            return;
-        }
-
-        if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
+            StartCoroutine(Equip(secondSlot, firstSlot));
+        else if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
             StartCoroutine(ContainerData.MoveSlotData(characterData.equipment_id, firstSlot, characterData.inventory_id, secondSlot));
         else if (firstContainerId == secondContainerId)
             StartCoroutine(ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot));

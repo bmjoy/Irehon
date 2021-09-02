@@ -45,11 +45,6 @@ public class InventoryManager : MonoBehaviour
     public void PlayerIntialize(Player player)
     {
         playerContainerController = player.GetComponent<PlayerContainerController>();
-        if (player.isDataAlreadyRecieved)
-        {
-            UpdateInventory(player.GetCharacterData().inventory);
-            UpdateEquipment(player.GetCharacterData().equipment);
-        }
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
@@ -75,16 +70,18 @@ public class InventoryManager : MonoBehaviour
 
     public Image GetDraggerImage() => draggerImage;
 
-    private void UpdateEquipment(Container container)
+    public void UpdateEquipment(Container container)
     {
+        Debug.Log($"Updated equipment {container.ToJson()}");
         for (int i = 0; i < equipmentSlots.Count; i++)
         {
             equipmentSlots[i].Intialize(container[i], canvas, ContainerType.Equipment);
         }
     }
 
-    private void UpdateInventory(Container container)
+    public void UpdateInventory(Container container)
     {
+        Debug.Log($"Updated inventory {container.ToJson()}");
         if (container.slots.Length > inventorySlots.Count)
         {
 

@@ -12,79 +12,86 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> {}
 public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
-    private PlayerStateMachine stateMachine;
-    private Equipment equipment = new Equipment();
-    private CharacterInfo characterData;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
+
+    private PlayerStateMachine stateMachine;
+    private PlayerContainerController containerController;
+    private CharacterInfo characterData;
 
 
     protected override void Awake()
     {
         base.Awake();
         stateMachine = GetComponent<PlayerStateMachine>();
+        containerController = GetComponent<PlayerContainerController>();
     }
 
     protected override void Start()
     {
         base.Start();
+
         if (isLocalPlayer)
         {
             InventoryManager.i.PlayerIntialize(this);
-            OnHealthChanged.AddListener(UpdateHealthBar);
             CameraController.i.Intialize(this);
+            
+            OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth));
+
             OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
         }
     }
 
-    private void Update()
+    [Server]
+    private void ServerIntialize(CharacterInfo data)
     {
-        //if (isServer && Input.GetKeyDown(KeyCode.Minus))
-        //    TakeDamage(new DamageMessage()
-        //    {
-        //        damage = 123,
-        //        target = this
-        //    });
+        ContainerData.ContainerUpdateNotifier.Subscribe(data.inventory_id, containerController.SendContainerData);
+        ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, containerController.SendContainerData);
+        ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, SendEquipmentInfo);
+    }
+
+    [Server]
+    public void SendCharacterInfo(CharacterInfo data)
+    {
+        StartCoroutine(SendInfo());
+
+        if (!isDataAlreadyRecieved)
+            ServerIntialize(data);
+
+        isDataAlreadyRecieved = true;
+
+        IEnumerator SendInfo()
+        {
+            yield return ContainerData.LoadContainer(data.equipment_id);
+            Container equipment = ContainerData.LoadedContainers[data.equipment_id];
+
+            yield return ContainerData.LoadContainer(data.inventory_id);
+            Container inventory = ContainerData.LoadedContainers[data.inventory_id];
+
+            characterData = data;
+            UpdateCharacterData(characterData);
+
+            containerController.SendContainerData(data.inventory_id, inventory);
+            containerController.SendContainerData(data.equipment_id, equipment);
+
+            SendEquipmentInfo(data.equipment_id, equipment);
+        }
     }
 
     [TargetRpc]
-    private void UpdateCharacterData(NetworkConnection con, CharacterInfo data)
+    private void UpdateCharacterData(CharacterInfo data)
     {
         isDataAlreadyRecieved = true;
         characterData = data;
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
-    public Vector3 GetMoldelPosition() => Vector3.zero;
-
     [ClientRpc]
-    private void GetPublicCharacterData(CharacterInfo data)
+    private void SendEquipmentInfo(int id, Container equipment)
     {
-        CharacterInfo sharedData = new CharacterInfo();
-        sharedData.equipment = characterData.equipment;
-        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(data.equipment);
-    }
-
-    [Server]
-    public void SendCharacterInfo(CharacterInfo data)
-    {
-        characterData = data;
-
-        equipment.Update(data.equipment);
-
-        UpdateCharacterData(connectionToClient, characterData);
-
-        CharacterInfo sharedData = new CharacterInfo();
-        sharedData.equipment = data.equipment;
-
-        GetPublicCharacterData(sharedData);
+        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(equipment);
     }
 
     public CharacterInfo GetCharacterData() => characterData;
-
-    protected void UpdateHealthBar(int oldHealth, int newHealth)
-    {
-        UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth);
-    }
 
     protected override void SetDefaultState()
     {
@@ -138,5 +145,16 @@ public class Player : Entity
     {
         base.TakeDamage(damageMessage);
         TakeDamageEvent(connectionToClient, damageMessage.damage);
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("Invoked");
+        if (isServer)
+        {
+            ContainerData.ContainerUpdateNotifier.UnSubscribe(characterData.inventory_id, containerController.SendContainerData);
+            ContainerData.ContainerUpdateNotifier.UnSubscribe(characterData.equipment_id, containerController.SendContainerData);
+            ContainerData.ContainerUpdateNotifier.UnSubscribe(characterData.equipment_id, SendEquipmentInfo);
+        }
     }
 }

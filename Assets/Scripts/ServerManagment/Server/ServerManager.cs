@@ -212,8 +212,12 @@ namespace Server
         public override void OnStopServer()
         {
             base.OnStopServer();
-            var coroutine = UpdateDatabase();
-            while (coroutine.MoveNext()) ;
+            StartCoroutine(OnStopServerCoroutine());
+
+            IEnumerator OnStopServerCoroutine()
+            {
+                yield return UpdateDatabase();
+            }
         }
 
         public override void OnStartServer()
@@ -234,8 +238,9 @@ namespace Server
 
         private IEnumerator CharacterLeaveFromWorld(int id)
         {
-            connectedCharacters.Remove(id);
             yield return UpdateCharacterData(id);
+
+            connectedCharacters.Remove(id);
         }
 
         //Update character data on DB on disconneect
@@ -254,6 +259,7 @@ namespace Server
 
                 if (data.selectedCharacter.id != 0)
                     yield return CharacterLeaveFromWorld(data.selectedCharacter.id);
+
                 connectedPlayersId.Remove(data.playerId);
                 base.OnServerDisconnect(conn);
             }
@@ -272,7 +278,7 @@ namespace Server
             con.Send(serverMessage);
         }
 
-        public Player GetPlayer(int id) => connectedCharacters[id];
+        public Player GetPlayer(int id) => connectedCharacters.ContainsKey(id) ? connectedCharacters[id] : null;
 
         public bool IsPlayerConnected(int p_id) => connectedPlayersId.Contains(p_id);
     }

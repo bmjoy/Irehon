@@ -20,7 +20,7 @@ public static class ContainerData
 {
     public static class ContainerUpdateNotifier
     {
-        private static Dictionary<int, List< Action<int, Container> > > subscribedListeners;
+        private static Dictionary<int, List< Action<int, Container> > > subscribedListeners = new Dictionary<int, List<Action<int, Container>>>();
 
         public static void Notify(int containerId)
         {
@@ -32,14 +32,36 @@ public static class ContainerData
 
         public static void Subscribe(int containerId, Action<int, Container> subscriber)
         {
-            if (!subscribedListeners[containerId].Contains(subscriber) && subscriber != null)
+            if (subscriber == null)
+                return;
+
+            if (subscribedListeners.ContainsKey(containerId))
+            {
+                if (!subscribedListeners[containerId].Contains(subscriber))
+                    subscribedListeners[containerId].Add(subscriber);
+            }
+            else
+            {
+                subscribedListeners[containerId] = new List<Action<int, Container>>();
                 subscribedListeners[containerId].Add(subscriber);
+            }
         }
             
         public static void UnSubscribe(int containerId, Action<int, Container> unsubscriber)
         {
+            if (unsubscriber == null)
+                return;
+
+            if (!subscribedListeners.ContainsKey(containerId))
+                return;
+
             if (subscribedListeners[containerId].Contains(unsubscriber) && unsubscriber != null)
                 subscribedListeners[containerId].Remove(unsubscriber);
+        }
+
+        public static void RemoveAllSubscribers(int containerId)
+        {
+            subscribedListeners[containerId].Clear();
         }
     }
 
@@ -50,11 +72,11 @@ public static class ContainerData
         Dictionary<int, Container> LoadedContainersCopy = new Dictionary<int, Container>(LoadedContainers);
 
         string sqlCommand = "";
-        foreach (KeyValuePair<int, Container> IdContainer in LoadedContainers)
+        foreach (KeyValuePair<int, Container> IdContainer in LoadedContainersCopy)
             sqlCommand += $"UPDATE containers SET slots = '{IdContainer.Value.ToJson()}' WHERE id = '{IdContainer.Key}';";
 
         yield return Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
-        Debug.Log("Updated all columns");
+        Debug.Log($"Updated all items");
         yield return null;
     }
 
@@ -66,19 +88,23 @@ public static class ContainerData
     public static void SaveContainer(int containerId, Container container)
     {
         LoadedContainers[containerId] = container;
+        ContainerUpdateNotifier.Notify(containerId);
     }
 
     public static IEnumerator LoadContainer(int containerId)
     {
         if (LoadedContainers.ContainsKey(containerId))
+        {
             yield break;
+        }
 
         var www = Api.Request($"/containers/{containerId}");
         yield return www.SendWebRequest();
         var result = Api.GetResult(www);
+        
         if (result != null)
         {
-            LoadedContainers[containerId] = new Container(result.ToString());
+            LoadedContainers[containerId] = new Container(result);
         }
 
         yield return null;
@@ -119,6 +145,11 @@ public static class ContainerData
         SaveContainer(id, newContainer);
     }
 
+    public static IEnumerator GiveContainerItem(int containerId, int itemId)
+    {
+        yield return GiveContainerItem(containerId, itemId, 1);
+    }
+
     //Создает и помещает такой то предмет в контейнер
     public static IEnumerator GiveContainerItem(int containerId, int itemId, int count)
     {
@@ -127,8 +158,8 @@ public static class ContainerData
 
         yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
-        Item item = ItemDatabase.GetItemById(itemId);
 
+        Item item = ItemDatabase.GetItemById(itemId);
 
         ContainerSlot[] slots = container.FindItemSlots(itemId);
 
@@ -196,11 +227,12 @@ public static class ContainerData
         {
             int creatingItemCount = itemCounts > item.maxInStack ? item.maxInStack : itemCounts;
             itemCounts -= creatingItemCount;
+
             var www = CreateItem(containerId, itemId, creatingItemCount);
             yield return www.SendWebRequest();
             int objectId = Api.GetResult(www)["id"].AsInt;
 
-            MoveObjectToEmptySlot(containerId, objectId);
+            yield return MoveObjectToEmptySlot(containerId, objectId);
         }
     }
 
@@ -210,12 +242,16 @@ public static class ContainerData
         Container container = LoadedContainers[containerId];
 
         if (container == null)
+        {
             yield break;
+        }
 
-        var slot = container.GetEmptySlot();
+        ContainerSlot slot = container.GetEmptySlot();
 
         if (slot == null)
+        {
             yield break;
+        }
 
         var www = GetSlotInfo(objectId);
         yield return www.SendWebRequest();
@@ -223,11 +259,8 @@ public static class ContainerData
         
         slot.itemId = info.itemId;
         slot.itemQuantity = info.itemQuantity;
-        slot.objectId = objectId;
         
         SaveContainer(containerId, container);
-
-        yield break;
     }
 
     private static UnityWebRequest CreateItem(int containerId, int itemId, int count)
@@ -235,7 +268,7 @@ public static class ContainerData
         if (itemId <= 0 || count <= 0)
             return null;
 
-        return Api.Request($"/items/?quantity={count}&container_id={containerId}&item_id={itemId}");
+        return Api.Request($"/items/?quantity={count}&container_id={containerId}&item_id={itemId}", ApiMethod.POST);
     }
 
     public static IEnumerator MoveSlotData(int containerId, int from, int to)

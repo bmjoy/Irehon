@@ -122,8 +122,6 @@ public class ServerAuth : NetworkAuthenticator
                 con.authenticationData = new PlayerConnectionInfo(result);
                 var data = (PlayerConnectionInfo)con.authenticationData;
 
-                Debug.Log($"{result}, {result["id"].AsInt}");
-
                 if (ServerManager.ConnectedPlayers.Contains(data.playerId))
                 {
                     SendAuthResult(con, false, "Already connected");
