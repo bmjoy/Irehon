@@ -36,6 +36,7 @@ public class PlayerInput : NetworkBehaviour
 
     private void FillMovementKeysInput(ref InputInfo input)
     {
+        CheckInputKey(KeyCode.E, ref input);
         CheckInputKey(KeyCode.W, ref input);
         CheckInputKey(KeyCode.A, ref input);
         CheckInputKey(KeyCode.S, ref input);

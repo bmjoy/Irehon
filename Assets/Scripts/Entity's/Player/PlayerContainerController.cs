@@ -46,32 +46,31 @@ public class PlayerContainerController : NetworkBehaviour
     public void SendContainerData(int containerId, Container container)
     {
         ContainerType type = GetContainerType(containerId);
-        print($"Got new data for {type}");
         switch (type)
         {
             case ContainerType.Inventory:
-                InventoryManager.i.UpdateInventory(container);
+                ContainerWindowManager.i.UpdateInventory(container);
                 break;
             case ContainerType.Equipment:
-                InventoryManager.i.UpdateEquipment(container);
+                ContainerWindowManager.i.UpdateEquipment(container);
                 break;
             case ContainerType.Chest:
+                ContainerWindowManager.i.OpenChest(container);
                 break;
         }
+    }
+
+    [TargetRpc]
+    private void SendChestData(int containerId, Container container)
+    {
+        containers[ContainerType.Chest] = containerId;
+        ContainerWindowManager.i.OpenChest(container);
     }
 
     [TargetRpc]
     public void SendItemDatabase(string json)
     {
         ItemDatabase.DatabaseLoadJson(json);
-    }
-
-    [Command]
-    public void OtherContainerClosedRpc()
-    {
-        chest?.OnContainerUpdate.RemoveListener(SendChestData);
-        chest = null;
-        openedContainerId = 0;
     }
 
     [Server]
@@ -82,7 +81,7 @@ public class PlayerContainerController : NetworkBehaviour
             yield return ContainerData.LoadContainer(chest.ContainerId);
             Container container = ContainerData.LoadedContainers[chest.ContainerId];
 
-            SendContainerData(openedContainerId, container);
+            SendChestData(openedContainerId, container);
         }
     }
 
@@ -97,10 +96,30 @@ public class PlayerContainerController : NetworkBehaviour
         };
     }
 
+    [TargetRpc]
+    private void CloseChestRpc()
+    {
+        containers[ContainerType.Chest] = 0;
+        ContainerWindowManager.i.CloseChest();
+    }
+
+    [Server]
+    private void CloseChest()
+    {
+        chest?.OnContainerUpdate.RemoveListener(SendChestData);
+        chest = null;
+        openedContainerId = 0;
+
+        CloseChestRpc();
+    }
+
+    [Command]
+    public void ChestCloseUIRpc() => CloseChest();
+
     [Server]
     public void OpenChest(Chest chest)
     {
-        if (openedContainerId != 0 || chest == null || Vector3.Distance(chest.gameObject.transform.position, transform.position) > 4f)
+        if (openedContainerId != 0 || chest == null || Vector3.Distance(chest.gameObject.transform.position, transform.position) > 8f)
             return;
 
         this.chest = chest;
@@ -117,13 +136,10 @@ public class PlayerContainerController : NetworkBehaviour
 
         IEnumerator CheckChestDistance()
         {
-            while (openedContainerId != 0 && Vector3.Distance(chestPos, transform.position) < 4f)
-            {
+            while (openedContainerId != 0 && Vector3.Distance(chestPos, transform.position) < 8f)
                 yield return null;
-            }
-            openedContainerId = 0;
-            chest.OnContainerUpdate.RemoveListener(SendChestData);
-            chest = null;
+
+            CloseChest();
         }
     }
 

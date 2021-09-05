@@ -32,7 +32,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         InventorySlotUI inventorySlot = data.pointerDrag.GetComponent<InventorySlotUI>();
         if (inventorySlot == null || inventorySlot.itemId == 0)
             return;
-        InventoryManager.i.MoveSlots(inventorySlot, this);
+        ContainerWindowManager.i.MoveSlots(inventorySlot, this);
     }
 
     public void OnBeginDrag(PointerEventData data)
@@ -40,9 +40,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (itemId == 0)
             return;
         TooltipWindowController.HideTooltip();
-        InventoryManager.i.GetDragger().gameObject.SetActive(true);
-        InventoryManager.i.GetDragger().position = GetComponent<RectTransform>().position;
-        InventoryManager.i.GetDraggerImage().sprite = itemSprite.sprite;
+        ContainerWindowManager.i.GetDragger().gameObject.SetActive(true);
+        ContainerWindowManager.i.GetDragger().position = GetComponent<RectTransform>().position;
+        ContainerWindowManager.i.GetDraggerImage().sprite = itemSprite.sprite;
     }
 
     public void OnDrag(PointerEventData data)
@@ -50,14 +50,14 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (itemId == 0)
             return;
         TooltipWindowController.HideTooltip();
-        InventoryManager.i.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor; 
+        ContainerWindowManager.i.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor; 
     }
 
     public void OnEndDrag(PointerEventData data)
     {
         if (itemId == 0)
             return;
-        InventoryManager.i.GetDragger().gameObject.SetActive(false);
+        ContainerWindowManager.i.GetDragger().gameObject.SetActive(false);
     }
 
     public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)

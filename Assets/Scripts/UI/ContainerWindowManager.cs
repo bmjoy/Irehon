@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum ContainerType { Inventory, Equipment, Chest, None}
 
-public class InventoryManager : MonoBehaviour
+public class ContainerWindowManager : MonoBehaviour
 {
     [SerializeField]
     private UIWindow chestWindow;
@@ -32,7 +32,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private Canvas canvas; 
     private PlayerContainerController playerContainerController;
-    public static InventoryManager i;
+    public static ContainerWindowManager i;
 
     private void Awake()
     {
@@ -58,13 +58,9 @@ public class InventoryManager : MonoBehaviour
         chestWindow.Open();
     }
 
-    public void CloseChest()
-    {
-        chestWindow.Close();
-        CloseOtherContainerOnServer();
-    }
+    public void CloseChest() => chestWindow.Close();
 
-    public void CloseOtherContainerOnServer() => playerContainerController.OtherContainerClosedRpc();
+    public void CloseChestOnServer() => playerContainerController.ChestCloseUIRpc();
 
     public RectTransform GetDragger() => dragger;
 
@@ -72,7 +68,6 @@ public class InventoryManager : MonoBehaviour
 
     public void UpdateEquipment(Container container)
     {
-        Debug.Log($"Updated equipment {container.ToJson()}");
         for (int i = 0; i < equipmentSlots.Count; i++)
         {
             equipmentSlots[i].Intialize(container[i], canvas, ContainerType.Equipment);
@@ -81,7 +76,6 @@ public class InventoryManager : MonoBehaviour
 
     public void UpdateInventory(Container container)
     {
-        Debug.Log($"Updated inventory {container.ToJson()}");
         if (container.slots.Length > inventorySlots.Count)
         {
 

@@ -32,7 +32,7 @@ public class Player : Entity
 
         if (isLocalPlayer)
         {
-            InventoryManager.i.PlayerIntialize(this);
+            ContainerWindowManager.i.PlayerIntialize(this);
             CameraController.i.Intialize(this);
             
             OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth));
@@ -133,11 +133,13 @@ public class Player : Entity
 
     public void InterractAttempToServer(Vector3 interractPos)
     {
-        if (Vector3.Distance(interractPos, transform.position) > 3f)
+        if (Vector3.Distance(interractPos, transform.position) > 8f)
             return;
         RaycastHit hit;
+
         if (!Physics.Raycast(interractPos + Vector3.up, Vector3.down * 3, out hit, 3, 1 << 12))
             return;
+
         hit.collider.GetComponent<IInteractable>().Interact(this);
     }
 

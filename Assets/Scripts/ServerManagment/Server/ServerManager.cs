@@ -50,7 +50,13 @@ namespace Server
             var www = Api.Request("/items");
             yield return www.SendWebRequest();
             var json = Api.GetResult(www).ToString();
+
             ItemDatabase.DatabaseLoadJson(json);
+
+            www = Api.Request("/recipes");
+            yield return www.SendWebRequest();
+            json = Api.GetResult(www).ToString();
+            CraftDatabase.DatabaseLoadJson(json);
         }
 
         public void UpdateAllDataCycle()
@@ -231,8 +237,7 @@ namespace Server
         {
             Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
-            var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}");
-
+            var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
             yield return www.SendWebRequest();
         }
 
