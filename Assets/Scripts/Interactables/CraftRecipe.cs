@@ -13,6 +13,12 @@ public class CraftRecipe
         public int itemId;
         public int itemQuantity;
 
+        public CraftRecipeRequirment()
+        {
+            itemId = 0;
+            itemQuantity = 0;
+        }
+
         public CraftRecipeRequirment(JSONObject json)
         {
             itemId = json["item_id"].AsInt;
@@ -32,5 +38,9 @@ public class CraftRecipe
             requirments.Add(new CraftRecipeRequirment(requirmentJson));
 
         requirment = requirments.ToArray();
+    }
+
+    public CraftRecipe()
+    {
     }
 }

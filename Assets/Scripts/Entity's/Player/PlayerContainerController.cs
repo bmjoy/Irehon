@@ -194,4 +194,10 @@ public class PlayerContainerController : NetworkBehaviour
         else
             StartCoroutine(ContainerData.MoveSlotData(firstContainerId, firstSlot, secondContainerId, secondSlot));
     }
+
+    [TargetRpc]
+    public void SendCraftList(CraftRecipe[] recipes)
+    {
+        CraftWindowManager.ShowRecipes(recipes);
+    }
 }

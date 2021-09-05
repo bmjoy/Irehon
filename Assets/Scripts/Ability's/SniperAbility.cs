@@ -9,13 +9,13 @@ public class SniperAbility : AbilityBase
 
     private Bow bow;
 
-    private Transform rightHand => boneLinks.RightHand;
-    private Transform shoulderForwardPoint => boneLinks.Shoulder;
-    private GameObject arrow => bow.Arrow;
-    private AudioClip tenseSound => bow.TenseSound;
-    private GameObject arrowInHand => bow.ArrowInHand;
-    private Transform bowStringBone => bow.BowStringBone;
-    private ParticleSystem aimingParticles => bow.AimingParticles;
+    private Transform RightHand => boneLinks.RightHand;
+    private Transform ShoulderForwardPoint => boneLinks.Shoulder;
+    private GameObject Arrow => bow.Arrow;
+    private AudioClip TenseSound => bow.TenseSound;
+    private GameObject ArrowInHand => bow.ArrowInHand;
+    private Transform BowStringBone => bow.BowStringBone;
+    private ParticleSystem AimingParticles => bow.AimingParticles;
 
     private Vector3 aimingChestOffset = new Vector3(0, -5f, -86f);
 
@@ -37,13 +37,13 @@ public class SniperAbility : AbilityBase
     {
         base.Setup(abilitySystem);
         bow = weapon as Bow;
-        bowBoneStartPosition = bowStringBone.localPosition;
+        bowBoneStartPosition = BowStringBone.localPosition;
         player = abilitySystem.PlayerComponent;
         abilityAudioSource = abilitySystem.AudioSource;
         movement = abilitySystem.GetComponent<PlayerMovement>();
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
-        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, arrow);
+        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow);
     }
 
     private void LateUpdate()
@@ -57,7 +57,7 @@ public class SniperAbility : AbilityBase
         if (aiming || additionalyChestOffsetTime > 0)
         {
             additionalyChestOffsetTime -= Time.deltaTime;
-            chestBone.LookAt(shoulderForwardPoint);
+            chestBone.LookAt(ShoulderForwardPoint);
             chestBone.rotation *= Quaternion.Euler(aimingChestOffset);
         } 
     }
@@ -86,15 +86,15 @@ public class SniperAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
-        abilityAudioSource.clip = tenseSound;
+        abilityAudioSource.clip = TenseSound;
         abilityAudioSource.Play();
         aiming = true;
-        arrowInHand.SetActive(true);
-        aimingParticles.Play();
+        ArrowInHand.SetActive(true);
+        AimingParticles.Play();
         holdingTime = 0;
         while (aiming)
         {
-            bowStringBone.position = rightHand.position;
+            BowStringBone.position = RightHand.position;
             yield return null;
         }
     }
@@ -103,7 +103,7 @@ public class SniperAbility : AbilityBase
     {
         Arrow releasedArrow = quiver.GetArrowFromQuiver();
         float power = GetHoldingPowerPercent();
-        releasedArrow.transform.position = arrowInHand.transform.position;
+        releasedArrow.transform.position = ArrowInHand.transform.position;
         releasedArrow.transform.LookAt(target);
         releasedArrow.SetPower(GetHoldingPowerPercent());
         releasedArrow.TriggerReleaseEffect();
@@ -114,7 +114,7 @@ public class SniperAbility : AbilityBase
 
     protected override void StopHoldingAbility(Vector3 target)
     {
-        if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
+        if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
         if (aiming && holdingTime > MIN_HOLDING_TIME)
         {
@@ -124,10 +124,10 @@ public class SniperAbility : AbilityBase
         }
         else
             additionalyChestOffsetTime = 0.05f;
-        aimingParticles.Stop();
-        bowStringBone.localPosition = bowBoneStartPosition;
+        AimingParticles.Stop();
+        BowStringBone.localPosition = bowBoneStartPosition;
         abilitySystem.AllowTrigger();
-        arrowInHand.SetActive(false);
+        ArrowInHand.SetActive(false);
         aiming = false;
         animator.SetBool("Aiming", false);
         animator.SetBool("AimingMovement", false);
@@ -144,11 +144,11 @@ public class SniperAbility : AbilityBase
     {
         if (isLocalPlayer)
             UIController.instance.EnableDefaultCrosshair();
-        if (abilityAudioSource.clip == tenseSound && abilityAudioSource.isPlaying)
+        if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
         additionalyChestOffsetTime = 0;
         abilitySystem.AllowTrigger();
-        bowStringBone.localPosition = bowBoneStartPosition;
+        BowStringBone.localPosition = bowBoneStartPosition;
         aiming = false;
         animator.ResetTrigger("Shoot");
         animator.SetBool("Aiming", false);
