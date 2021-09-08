@@ -12,10 +12,21 @@ public class CraftVendor : NetworkBehaviour, IInteractable
 
     private void Start()
     {
+        StartCoroutine(GetRecipes());
+    }
+
+    private IEnumerator GetRecipes()
+    {
+        while (!CraftDatabase.IsLoaded)
+            yield return null;
+
+        print("Got recipes");
         recipes = CraftDatabase.GetRecipes(recipesId);
+        print($"Recipes count = {recipes.Length}, 0 id = {recipes[0].itemId}");
     }
     public void Interact(Player player)
     {
+        print("Interract");
         player.GetComponent<PlayerContainerController>().SendCraftList(recipes);
     }
 }

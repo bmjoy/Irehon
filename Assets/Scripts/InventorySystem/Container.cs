@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
@@ -48,6 +49,13 @@ public class Container
     public ContainerSlot FindObject(int objectId) => Array.Find(slots, x => x.objectId == objectId);
 
     public ContainerSlot[] GetFilledSlots() => Array.FindAll(slots, x => x.objectId != 0 && x.itemId != 0);
+
+    public int GetItemCount(int itemId)
+    {
+        int count = 0;
+        Array.FindAll(slots, x => x.itemId == itemId).ToList().ForEach(x => count += x.itemQuantity);
+        return count;
+    }
 
     public void Truncate()
     {

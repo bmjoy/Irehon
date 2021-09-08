@@ -7,6 +7,7 @@ using UnityEngine;
 public static class CraftDatabase
 {
     private static Dictionary<int, CraftRecipe> recipes;
+    public static bool IsLoaded = false;
     public static void DatabaseLoadJson(string jsonString)
     {
         ParseCrafts(JSON.Parse(jsonString));
@@ -20,6 +21,8 @@ public static class CraftDatabase
             CraftRecipe recipe = new CraftRecipe(recipeJson);
             recipes[recipe.id] = recipe;
         }
+
+        IsLoaded = true;
     }
 
     public static CraftRecipe GetRecipe(int id) => recipes[id];
@@ -30,7 +33,7 @@ public static class CraftDatabase
 
         foreach (int id in recipeId)
             recipesList.Add(recipes[id]);
-        
+
         return recipesList.ToArray();
     }
 }

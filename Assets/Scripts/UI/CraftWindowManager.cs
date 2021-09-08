@@ -11,20 +11,32 @@ public class CraftWindowManager : MonoBehaviour
     [SerializeField]
     private GameObject craftTabPrefab;
     [SerializeField]
+    private GameObject craftRequrimentTabPrefab;
+    [SerializeField]
     private RectTransform craftTabTransform;
+    [SerializeField]
+    private RectTransform craftRequirmentTabTransform;
     [SerializeField]
     private UIWindow craftWindow;
     [SerializeField]
     private ToggleGroup toggleGroup;
 
     [SerializeField]
-    private Text recipeName;
+    private Text craftingItemName;
+    [SerializeField]
+    private Image craftingItemIcon;
+    [SerializeField]
+    private Text craftingItemAmount;
+    [SerializeField]
+    private Text requiredGold;
 
     private Player player;
 
     private CraftRecipe selectedRecipe;
 
-    private List<GameObject> spawnedTabs;
+    private List<GameObject> spawnedTabs = new List<GameObject>();
+    private List<GameObject> spawnedRequirmentTabs = new List<GameObject>();
+
 
     private void Awake()
     {
@@ -68,6 +80,21 @@ public class CraftWindowManager : MonoBehaviour
 
         Item craftingItem = ItemDatabase.GetItemById(recipe.itemId);
 
-        i.recipeName.text = craftingItem.name;
+        i.craftingItemName.text = craftingItem.name;
+        i.craftingItemIcon.sprite = craftingItem.sprite;
+        i.craftingItemAmount.text = recipe.itemQuantity > 1 ? recipe.itemQuantity.ToString() : "";
+        i.requiredGold.text = recipe.goldRequirment.ToString();
+
+        foreach (GameObject tab in i.spawnedRequirmentTabs)
+            Destroy(tab);
+
+        i.spawnedRequirmentTabs.Clear();
+
+        foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
+        {
+            GameObject tab = Instantiate(i.craftRequrimentTabPrefab, i.craftRequirmentTabTransform);
+            tab.GetComponent<CraftRequirmentTab>().Intialize(i.player.ContainerController.Containers[ContainerType.Inventory], requirment);
+            i.spawnedRequirmentTabs.Add(tab);
+        }
     }
 }

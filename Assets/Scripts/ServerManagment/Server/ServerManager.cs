@@ -238,7 +238,9 @@ namespace Server
             Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
             var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
+            print(www.uri);
             yield return www.SendWebRequest();
+            print(www.responseCode);
         }
 
         private IEnumerator CharacterLeaveFromWorld(int id)

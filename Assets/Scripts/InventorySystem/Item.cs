@@ -33,6 +33,7 @@ public class Item
         modifiers = json["modifiers"];
         metadata = json["metadata"];
         equipmentSlot = (EquipmentSlot)Enum.Parse(typeof(EquipmentSlot), json["slot"].Value);
+        sprite = Resources.Load<Sprite>("Items/" + slug);
     }
 
     private Color GetRarityColor(ItemRarity rarity)

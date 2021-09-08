@@ -79,12 +79,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
         if (isSlotUpdated)
         {
-            quantityText.text = itemQuantity.ToString();
+            quantityText.text = itemQuantity > 1 ? itemQuantity.ToString() : "";
             itemSprite.color = Color.white;
             item = ItemDatabase.GetItemById(itemId);
-            string slug = item?.slug;
-            if (slug != null)
-                itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
+            itemSprite.sprite = item.sprite;
         }
     }
 

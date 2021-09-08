@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public class PlayerContainerController : NetworkBehaviour
 {
+    public Dictionary<ContainerType, Container> Containers { get; private set; } = new Dictionary<ContainerType, Container>();
+
     private Player player;
     private Chest chest;
 
@@ -46,6 +48,7 @@ public class PlayerContainerController : NetworkBehaviour
     public void SendContainerData(int containerId, Container container)
     {
         ContainerType type = GetContainerType(containerId);
+        Containers[type] = container;
         switch (type)
         {
             case ContainerType.Inventory:

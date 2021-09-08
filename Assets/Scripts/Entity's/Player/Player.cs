@@ -13,6 +13,7 @@ public class Player : Entity
 {
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
+    public PlayerContainerController ContainerController => containerController;
 
     private PlayerStateMachine stateMachine;
     private PlayerContainerController containerController;
@@ -34,6 +35,7 @@ public class Player : Entity
         {
             ContainerWindowManager.i.PlayerIntialize(this);
             CameraController.i.Intialize(this);
+            CraftWindowManager.Intialize(this);
             
             OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth));
 
