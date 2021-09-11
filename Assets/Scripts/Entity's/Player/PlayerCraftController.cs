@@ -56,9 +56,14 @@ public class PlayerCraftController : NetworkBehaviour
             {
                 if (inventory.GetItemCount(requirment.itemId) < requirment.itemQuantity)
                     yield break;
-
-
             }
+
+            foreach (var requirment in recipe.requirment)
+            {
+                yield return ContainerData.RemoveItemsFromInventory(characterData.inventory_id, requirment.itemId, requirment.itemQuantity);
+            }
+
+            yield return ContainerData.GiveContainerItem(characterData.inventory_id, recipe.itemId, recipe.itemQuantity);
         }
     }
 }

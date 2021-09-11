@@ -18,18 +18,20 @@ public class CraftTab : MonoBehaviour, IPointerClickHandler
 
     private CraftRecipe currentRecipe;
     private Item craftingItem;
+    private int index;
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        CraftWindowManager.SelectRecipe(currentRecipe);
+        CraftWindowManager.SelectRecipe(currentRecipe, index);
     }
 
-    public void Intialize(CraftRecipe recipe, ToggleGroup group)
+    public void Intialize(CraftRecipe recipe, ToggleGroup group, int tabIndex)
     {
+        index = tabIndex;
         currentRecipe = recipe;
         craftingItem = ItemDatabase.GetItemById(recipe.itemId);
         recipeName.text = craftingItem.name;
-        quantity.text = recipe.itemQuantity.ToString();
+        quantity.text = recipe.itemQuantity > 0 ? recipe.itemQuantity.ToString() : "";
         recipeIcon.sprite = craftingItem.sprite;
 
         GetComponent<Toggle>().group = group;

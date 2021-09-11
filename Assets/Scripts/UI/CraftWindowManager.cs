@@ -31,8 +31,10 @@ public class CraftWindowManager : MonoBehaviour
     private Text requiredGold;
 
     private Player player;
+    private int selectedRecipeIndex;
 
     private CraftRecipe selectedRecipe;
+    private Container inventory;
 
     private List<GameObject> spawnedTabs = new List<GameObject>();
     private List<GameObject> spawnedRequirmentTabs = new List<GameObject>();
@@ -49,6 +51,14 @@ public class CraftWindowManager : MonoBehaviour
     public static void Intialize(Player player)
     {
         i.player = player;
+        player.GetComponent<PlayerContainerController>().OnInventoryUpdate.AddListener(x => i.UpdateInventory(x));
+    }
+
+    private void UpdateInventory(Container inventory)
+    {
+        this.inventory = inventory;
+        if (selectedRecipe != null)
+            UpdateRequirmentTab(selectedRecipe.requirment);
     }
 
     public static void CloseCraftWindow()
@@ -68,20 +78,22 @@ public class CraftWindowManager : MonoBehaviour
 
         i.spawnedTabs.Clear();
 
-        foreach (CraftRecipe recipe in recipes)
+
+        for (int x = 0; x < recipes.Length; x++)
         {
             GameObject tab = Instantiate(i.craftTabPrefab, i.craftTabTransform);
-            tab.GetComponent<CraftTab>().Intialize(recipe, i.toggleGroup);
+            tab.GetComponent<CraftTab>().Intialize(recipes[x], i.toggleGroup, x);
             i.spawnedTabs.Add(tab);
         }
 
-        i.spawnedTabs[0].GetComponent<Toggle>().isOn = true;
-        SelectRecipe(recipes[0]);
+        SelectRecipe(recipes[0], 0);
+        i.spawnedTabs[i.selectedRecipeIndex].GetComponent<Toggle>().isOn = true;
     }
 
-    public static void SelectRecipe(CraftRecipe recipe)
+    public static void SelectRecipe(CraftRecipe recipe, int index)
     {
         i.selectedRecipe = recipe;
+        i.selectedRecipeIndex = index;
 
         Item craftingItem = ItemDatabase.GetItemById(recipe.itemId);
 
@@ -90,16 +102,26 @@ public class CraftWindowManager : MonoBehaviour
         i.craftingItemAmount.text = recipe.itemQuantity > 1 ? recipe.itemQuantity.ToString() : "";
         i.requiredGold.text = recipe.goldRequirment.ToString();
 
+        UpdateRequirmentTab(recipe.requirment);
+    }
+
+    private static void UpdateRequirmentTab(CraftRecipe.CraftRecipeRequirment[] requirments)
+    {
         foreach (GameObject tab in i.spawnedRequirmentTabs)
             Destroy(tab);
 
         i.spawnedRequirmentTabs.Clear();
 
-        foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
+        foreach (CraftRecipe.CraftRecipeRequirment requirment in requirments)
         {
             GameObject tab = Instantiate(i.craftRequrimentTabPrefab, i.craftRequirmentTabTransform);
-            tab.GetComponent<CraftRequirmentTab>().Intialize(i.player.ContainerController.Containers[ContainerType.Inventory], requirment);
+            tab.GetComponent<CraftRequirmentTab>().Intialize(i.inventory, requirment);
             i.spawnedRequirmentTabs.Add(tab);
         }
+    }
+
+    public void CraftSelectedRecipe()
+    {
+        player.GetComponent<PlayerCraftController>().Craft(selectedRecipeIndex);
     }
 }

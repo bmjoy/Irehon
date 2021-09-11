@@ -147,8 +147,8 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
-        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
+        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.fixedDeltaTime;
+        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.fixedDeltaTime;
 
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -85f, 85f);
@@ -175,6 +175,7 @@ public class CameraController : MonoBehaviour
         i.cursorAiming = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        UIController.instance.HideHint();
     }
 
     public static void DisableCursor()
@@ -182,6 +183,7 @@ public class CameraController : MonoBehaviour
         i.cursorAiming = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        TooltipWindowController.HideTooltip();
     }
 
     private void FixedUpdate()
@@ -197,7 +199,7 @@ public class CameraController : MonoBehaviour
         else
             currentShakeHandler.m_AmplitudeGain = 0;
 
-        if (!interacter.isInteracting)
+        if (interacter.isInteracting)
             UIController.instance.HideHint();
 
         if (!cursorAiming || !playerStateMachine.CurrentState.CanRotateCamera)

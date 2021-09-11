@@ -4,6 +4,7 @@ using Mirror;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class PlayerContainerController : NetworkBehaviour
 {
@@ -13,6 +14,8 @@ public class PlayerContainerController : NetworkBehaviour
     private Chest chest;
 
     private Dictionary<ContainerType, int> containers = new Dictionary<ContainerType, int>();
+
+    public OnContainerUpdate OnInventoryUpdate { get; private set; } = new OnContainerUpdate();
 
     private CharacterInfo characterData => player.GetCharacterData();
     private int openedContainerId;
@@ -52,6 +55,7 @@ public class PlayerContainerController : NetworkBehaviour
         switch (type)
         {
             case ContainerType.Inventory:
+                OnInventoryUpdate.Invoke(container);
                 ContainerWindowManager.i.UpdateInventory(container);
                 break;
             case ContainerType.Equipment:
@@ -77,7 +81,7 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [Server]
-    private void SendChestData()
+    private void SendChestData(Container data)
     {
         StartCoroutine(Send());
         IEnumerator Send(){
@@ -126,7 +130,13 @@ public class PlayerContainerController : NetworkBehaviour
 
         openedContainerId = chest.ContainerId;
 
-        SendChestData();
+        StartCoroutine(LoadAndSendChestData());
+        IEnumerator LoadAndSendChestData()
+        {
+            yield return ContainerData.LoadContainer(chest.ContainerId);
+            Container chestContainer = ContainerData.LoadedContainers[chest.ContainerId];
+            SendChestData(chestContainer);
+        }
 
         chest.OnContainerUpdate.AddListener(SendChestData);
     }

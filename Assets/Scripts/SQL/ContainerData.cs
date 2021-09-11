@@ -238,7 +238,41 @@ public static class ContainerData
 
     public static IEnumerator RemoveItemsFromInventory(int containerId, int itemId, int count)
     {
+        yield return LoadContainer(containerId);
+        Container container = LoadedContainers[containerId];
 
+        foreach (ContainerSlot slot in container.slots)
+        {
+            if (slot.itemId == itemId)
+            {
+                if (slot.itemQuantity >= count)
+                {
+                    slot.itemQuantity -= count;
+                    
+                    if (slot.itemQuantity == 0)
+                    {
+                        slot.itemId = 0;
+                        slot.objectId = 0;
+                    }
+
+                    SaveContainer(containerId, container);
+                    
+                    yield break;
+                }
+                else
+                {
+                    count -= slot.itemQuantity;
+
+                    slot.itemQuantity = 0;
+                    slot.itemId = 0;
+                    slot.objectId = 0;
+                    
+                    continue;
+                }
+            }
+        }
+
+        SaveContainer(containerId, container);
     }
 
     private static IEnumerator MoveObjectToEmptySlot(int containerId, int objectId)

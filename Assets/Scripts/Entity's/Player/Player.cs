@@ -143,7 +143,6 @@ public class Player : Entity
 
     private void OnDestroy()
     {
-        Debug.Log("Invoked");
         if (isServer)
         {
             ContainerData.ContainerUpdateNotifier.UnSubscribe(characterData.inventory_id, containerController.SendContainerData);

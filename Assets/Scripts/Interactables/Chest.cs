@@ -4,7 +4,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class OnContainerUpdate : UnityEvent { }
+public class OnContainerUpdate : UnityEvent<Container> { }
 
 public class Chest : NetworkBehaviour, IInteractable
 {
@@ -19,7 +19,7 @@ public class Chest : NetworkBehaviour, IInteractable
             ContainerData.ContainerUpdateNotifier.Subscribe(containerId, ContainerUpdateEvent);
     }
 
-    private void ContainerUpdateEvent(int containerId, Container container) => OnContainerUpdate.Invoke();
+    private void ContainerUpdateEvent(int containerId, Container container) => OnContainerUpdate.Invoke(container);
 
     public void SetChestId(int containerId)
     {
@@ -34,13 +34,11 @@ public class Chest : NetworkBehaviour, IInteractable
 
     public void Interact(Player player)
     {
-        print("Interract");
         player.GetComponent<PlayerContainerController>().OpenChest(this);
     }
 
     public void StopInterract(Player player)
     {
-        print("Stop interract on chest");
         player.GetComponent<PlayerContainerController>().CloseChest();
     }
 }

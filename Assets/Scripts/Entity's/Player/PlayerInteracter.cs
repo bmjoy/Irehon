@@ -43,22 +43,19 @@ public class PlayerInteracter : NetworkBehaviour
 
         Vector3 direction = interractPos - currentPos;
 
-        print($"Ray casting from {currentPos} to {interractPos}");
         if (!Physics.Raycast(currentPos, direction, out hit, 10f, 1 << 12))
             return;
 
-        print("Interracting");
         currentInteractable = hit.collider.GetComponent<IInteractable>();
         isInteracting = true;
-        this.interractPosition = hit.collider.transform.position;
+        interractPosition = hit.collider.transform.position;
         currentInteractable.Interact(player);
     }
 
     [Server]
     public void StopInterracting()
     {
-        print("Stopped interract");
-        if (currentInteractable != null)
+       if (currentInteractable != null)
             currentInteractable.StopInterract(player);
         currentInteractable = null;
         isInteracting = false;
@@ -67,7 +64,6 @@ public class PlayerInteracter : NetworkBehaviour
     [Command]
     public void StopInterractRpc()
     {
-        print("Rpc to stop");
         StopInterracting();
     }
 }
