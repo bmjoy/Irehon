@@ -25,6 +25,7 @@ public class PlayerFallState : PlayerRotatableState
     public override bool CanInteract => false;
     public override void Enter()
     {
+        playerInteracter.StopInterracting();
         animator.SetBool("Falling", true);
     }
 

@@ -22,8 +22,8 @@ namespace Server
         private GameObject mob;
 
         private NetworkManager manager;
-        private List<int> connectedPlayersId = new List<int>();
-        private Dictionary<int, Player> connectedCharacters = new Dictionary<int, Player>();
+        private List<int> connectedPlayersId;
+        private Dictionary<int, Player> connectedCharacters;
 
         public override void Awake()
         {
@@ -32,6 +32,8 @@ namespace Server
             else
                 i = this;
 
+            connectedCharacters = new Dictionary<int, Player>();
+            connectedPlayersId = new List<int>();
             
             StartCoroutine(LoadDatabase());
         }
@@ -238,9 +240,7 @@ namespace Server
             Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
             var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
-            print(www.uri);
             yield return www.SendWebRequest();
-            print(www.responseCode);
         }
 
         private IEnumerator CharacterLeaveFromWorld(int id)

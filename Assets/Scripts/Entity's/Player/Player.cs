@@ -11,6 +11,7 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> {}
 
 public class Player : Entity
 {
+    public PlayerBonesLinks PlayerBonesLinks { get; private set; }
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
     public PlayerContainerController ContainerController => containerController;
@@ -25,6 +26,7 @@ public class Player : Entity
         base.Awake();
         stateMachine = GetComponent<PlayerStateMachine>();
         containerController = GetComponent<PlayerContainerController>();
+        PlayerBonesLinks = GetComponent<PlayerBonesLinks>();
     }
 
     protected override void Start()
@@ -131,18 +133,6 @@ public class Player : Entity
             target = target
         };
         target.TakeDamage(damageMessage);
-    }
-
-    public void InterractAttempToServer(Vector3 interractPos)
-    {
-        if (Vector3.Distance(interractPos, transform.position) > 8f)
-            return;
-        RaycastHit hit;
-
-        if (!Physics.Raycast(interractPos + Vector3.up, Vector3.down * 3, out hit, 3, 1 << 12))
-            return;
-
-        hit.collider.GetComponent<IInteractable>().Interact(this);
     }
 
     public override void TakeDamage(DamageMessage damageMessage)

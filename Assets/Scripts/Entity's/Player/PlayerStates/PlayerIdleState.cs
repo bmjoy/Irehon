@@ -30,7 +30,7 @@ public class PlayerIdleState : PlayerRotatableState
             return PlayerStateType.Jump;
 
         if (isServer && input.IsKeyPressed(KeyCode.E))
-            player.InterractAttempToServer(input.TargetPoint);
+            playerInteracter.InterractAttemp(input.TargetPoint);
 
         if (input.GetMoveVector() != Vector2.zero)
         {

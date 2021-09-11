@@ -34,6 +34,13 @@ public class Chest : NetworkBehaviour, IInteractable
 
     public void Interact(Player player)
     {
+        print("Interract");
         player.GetComponent<PlayerContainerController>().OpenChest(this);
+    }
+
+    public void StopInterract(Player player)
+    {
+        print("Stop interract on chest");
+        player.GetComponent<PlayerContainerController>().CloseChest();
     }
 }

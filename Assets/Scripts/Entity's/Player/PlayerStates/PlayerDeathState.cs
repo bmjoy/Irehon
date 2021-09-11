@@ -21,6 +21,7 @@ public class PlayerDeathState : PlayerState
 
     public override void Enter()
     {
+        playerInteracter.StopInterracting();
         playerBonesLinks.Model.gameObject.SetActive(false);
     }
 

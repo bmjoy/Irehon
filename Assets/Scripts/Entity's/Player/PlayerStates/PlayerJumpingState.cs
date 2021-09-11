@@ -34,6 +34,7 @@ public class PlayerJumpingState : PlayerRotatableState
 
     public override void Enter()
     {
+        playerInteracter.StopInterracting();
         if (playerGroundDetector.isGrounded)
         {
             rigidBody.velocity = new Vector3(rigidBody.velocity.x, jump_force, rigidBody.velocity.z);

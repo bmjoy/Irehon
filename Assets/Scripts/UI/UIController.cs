@@ -57,12 +57,13 @@ public class UIController : MonoBehaviour
         triangleAimingRectangle.sizeDelta = new Vector2(size, size);
     }
 
-    public void ShowInteractableHint()
+    public void ShowHint(string header, string content)
     {
         interactableHint.SetActive(true);
+        interactableHint.GetComponent<HintUI>().UpdateHint(header, content);
     }
 
-    public void HideInteractableHint()
+    public void HideHint()
     {
         interactableHint.SetActive(false);
     }

@@ -32,6 +32,7 @@ public class CameraController : MonoBehaviour
     private float currentIntensity;
     private Player player;
     private PlayerStateMachine playerStateMachine;
+    private PlayerInteracter interacter;
     private Transform playerTransform;
     private Transform shoulderTransform;
     private bool cursorAiming;
@@ -119,6 +120,7 @@ public class CameraController : MonoBehaviour
         mainCamera.Follow = links.Shoulder;
         aimCamera.Follow = links.Shoulder;
         this.player = player;
+        interacter = player.GetComponent<PlayerInteracter>();
         playerStateMachine = player.GetComponent<PlayerStateMachine>();
     }
 
@@ -127,7 +129,7 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 12))
         {
             oldPosition.z = hit.distance;
             if (hit.collider.CompareTag("Floor") || hit.collider.CompareTag("Walkable"))
@@ -168,16 +170,16 @@ public class CameraController : MonoBehaviour
     }
 
     //TODO: перевести в UI controller
-    private void EnableCursor()
+    public static void EnableCursor()
     {
-        cursorAiming = false;
+        i.cursorAiming = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
-    private void DisableCursor()
+    public static void DisableCursor()
     {
-        cursorAiming = true;
+        i.cursorAiming = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -195,13 +197,16 @@ public class CameraController : MonoBehaviour
         else
             currentShakeHandler.m_AmplitudeGain = 0;
 
+        if (!interacter.isInteracting)
+            UIController.instance.HideHint();
+
         if (!cursorAiming || !playerStateMachine.CurrentState.CanRotateCamera)
             return;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
-            UIController.instance.ShowInteractableHint();
+        if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
+            UIController.instance.ShowHint("Interact", "Press E to interract with this object");
         else
-            UIController.instance.HideInteractableHint();
+            UIController.instance.HideHint();
 
         RotateCamera();
 

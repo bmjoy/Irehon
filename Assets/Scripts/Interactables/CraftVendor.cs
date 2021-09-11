@@ -20,13 +20,15 @@ public class CraftVendor : NetworkBehaviour, IInteractable
         while (!CraftDatabase.IsLoaded)
             yield return null;
 
-        print("Got recipes");
         recipes = CraftDatabase.GetRecipes(recipesId);
-        print($"Recipes count = {recipes.Length}, 0 id = {recipes[0].itemId}");
     }
     public void Interact(Player player)
     {
-        print("Interract");
-        player.GetComponent<PlayerContainerController>().SendCraftList(recipes);
+        player.GetComponent<PlayerCraftController>().SendRecipeList(recipes);
+    }
+
+    public void StopInterract(Player player)
+    {
+        player.GetComponent<PlayerCraftController>().CloseCrafts();
     }
 }

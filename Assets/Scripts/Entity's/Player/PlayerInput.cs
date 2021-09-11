@@ -36,7 +36,7 @@ public class PlayerInput : NetworkBehaviour
 
     private void FillMovementKeysInput(ref InputInfo input)
     {
-        CheckInputKey(KeyCode.E, ref input);
+        CheckSinglePressKey(KeyCode.E, ref input);
         CheckInputKey(KeyCode.W, ref input);
         CheckInputKey(KeyCode.A, ref input);
         CheckInputKey(KeyCode.S, ref input);
@@ -58,11 +58,20 @@ public class PlayerInput : NetworkBehaviour
             input.PressedKeys.Add(key);
     }
 
+    private void CheckSinglePressKey(KeyCode key, ref InputInfo input)
+    {
+        if (Input.GetKeyDown(key) && !input.PressedKeys.Contains(key))
+            input.PressedKeys.Add(key);
+    }
+
     [Command]
     private void SendInputOnServer(InputInfo input)
     {
         if (avaliablePackets <= 0)
+        {
+            DropInput();
             return;
+        }
 
         avaliablePackets--;
 
@@ -72,6 +81,13 @@ public class PlayerInput : NetworkBehaviour
         input.PlayerStateType = playerStateMachine.CurrentState.Type;
 
         RecieveInputResponse(input);
+    }
+
+    [TargetRpc]
+    private void DropInput()
+    {
+        print("Dropped input");
+        sendedInputs.Dequeue();
     }
 
     [TargetRpc]

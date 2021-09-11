@@ -60,7 +60,7 @@ public class ContainerWindowManager : MonoBehaviour
 
     public void CloseChest() => chestWindow.Close();
 
-    public void CloseChestOnServer() => playerContainerController.ChestCloseUIRpc();
+    public void StopInterractOnServer() => playerContainerController.GetComponent<PlayerInteracter>().StopInterractRpc();
 
     public RectTransform GetDragger() => dragger;
 

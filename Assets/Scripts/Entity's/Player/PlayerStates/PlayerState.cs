@@ -8,6 +8,7 @@ public abstract class PlayerState
     public PlayerState(Player player) 
     {
         this.player = player;
+        this.playerInteracter = player.GetComponent<PlayerInteracter>();
     }
     public virtual bool CanTakeDamage => true;
     public abstract bool CanRotateCamera { get; }
@@ -16,6 +17,7 @@ public abstract class PlayerState
     public abstract PlayerStateType Type { get; }
 
     protected Player player;
+    protected PlayerInteracter playerInteracter;
     public virtual void Update() { }
     public abstract void Enter();
     public abstract void Exit();

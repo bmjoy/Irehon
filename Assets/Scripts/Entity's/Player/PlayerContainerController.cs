@@ -107,7 +107,7 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [Server]
-    private void CloseChest()
+    public void CloseChest()
     {
         chest?.OnContainerUpdate.RemoveListener(SendChestData);
         chest = null;
@@ -115,9 +115,6 @@ public class PlayerContainerController : NetworkBehaviour
 
         CloseChestRpc();
     }
-
-    [Command]
-    public void ChestCloseUIRpc() => CloseChest();
 
     [Server]
     public void OpenChest(Chest chest)
@@ -132,18 +129,6 @@ public class PlayerContainerController : NetworkBehaviour
         SendChestData();
 
         chest.OnContainerUpdate.AddListener(SendChestData);
-
-        Vector3 chestPos = chest.transform.position;
-
-        StartCoroutine(CheckChestDistance());
-
-        IEnumerator CheckChestDistance()
-        {
-            while (openedContainerId != 0 && Vector3.Distance(chestPos, transform.position) < 8f)
-                yield return null;
-
-            CloseChest();
-        }
     }
 
     //from , to
@@ -196,11 +181,5 @@ public class PlayerContainerController : NetworkBehaviour
             StartCoroutine(ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot));
         else
             StartCoroutine(ContainerData.MoveSlotData(firstContainerId, firstSlot, secondContainerId, secondSlot));
-    }
-
-    [TargetRpc]
-    public void SendCraftList(CraftRecipe[] recipes)
-    {
-        CraftWindowManager.ShowRecipes(recipes);
     }
 }

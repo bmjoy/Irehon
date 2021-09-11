@@ -50,6 +50,16 @@ public class Container
 
     public ContainerSlot[] GetFilledSlots() => Array.FindAll(slots, x => x.objectId != 0 && x.itemId != 0);
 
+    public bool IsEnoughSpaceForItem(int itemId, int count)
+    {
+        Item item = ItemDatabase.GetItemById(itemId);
+
+        int requiredSlotCount = count / item.maxInStack;
+        requiredSlotCount += count % item.maxInStack == 0 ? 0 : 1;
+
+        return GetEmptySlotsCount() >= requiredSlotCount;
+    }
+
     public int GetItemCount(int itemId)
     {
         int count = 0;

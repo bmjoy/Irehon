@@ -51,6 +51,11 @@ public class CraftWindowManager : MonoBehaviour
         i.player = player;
     }
 
+    public static void CloseCraftWindow()
+    {
+        i.craftWindow.Close();
+    }
+
     public static void ShowRecipes(CraftRecipe[] recipes)
     {
         if (recipes.Length <= 0)

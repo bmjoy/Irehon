@@ -236,6 +236,11 @@ public static class ContainerData
         }
     }
 
+    public static IEnumerator RemoveItemsFromInventory(int containerId, int itemId, int count)
+    {
+
+    }
+
     private static IEnumerator MoveObjectToEmptySlot(int containerId, int objectId)
     {
         yield return LoadContainer(containerId);

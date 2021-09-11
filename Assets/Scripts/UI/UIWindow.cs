@@ -11,6 +11,8 @@ public class UIWindow : SerializedMonoBehaviour
 {
     [SerializeField]
     private KeyCode TriggerKey;
+    [SerializeField]
+    private bool isClosingStoppingInterract;
     private bool isEnabled;
 
     public UnityEvent OnCloseWindow;
@@ -19,6 +21,8 @@ public class UIWindow : SerializedMonoBehaviour
 
     private GameObject windowObject;
 
+    private static int openedWindowsCount = 0;
+
     private void Awake()
     {
         windowObject = transform.GetChild(0).gameObject;
@@ -26,17 +30,31 @@ public class UIWindow : SerializedMonoBehaviour
 
     public void Open()
     {
+        if (!isEnabled)
+            openedWindowsCount++;
+        print(openedWindowsCount);
+
         isEnabled = true;
         windowObject.SetActive(true);
         OnOpenWindow?.Invoke();
+        CameraController.EnableCursor();
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)windowObject.transform);
     }
 
     public void Close()
     {
+        if (isEnabled)
+            openedWindowsCount--;
+        
+        if (openedWindowsCount == 0)
+            CameraController.DisableCursor();
+
         isEnabled = false;
         windowObject.SetActive(false);
         OnCloseWindow?.Invoke();
+        if (isClosingStoppingInterract)
+            ContainerWindowManager.i.StopInterractOnServer();
+        
     }
 
     private void Update()

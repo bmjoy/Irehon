@@ -11,4 +11,9 @@ public class InteractLink : SerializedMonoBehaviour, IInteractable
     {
         interactableOrigin.Interact(player);
     }
+
+    public void StopInterract(Player player)
+    {
+        interactableOrigin.StopInterract(player);
+    }
 }
