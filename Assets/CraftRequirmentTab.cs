@@ -19,4 +19,9 @@ public class CraftRequirmentTab : MonoBehaviour
         itemQuantity.text = $"{requirment.itemQuantity}/{inventory.GetItemCount(requirmentItem.id)}";
         itemIcon.sprite = requirmentItem.sprite;
     }
+
+    private void Start()
+    {
+        
+    }
 }

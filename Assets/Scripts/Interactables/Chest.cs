@@ -21,7 +21,7 @@ public class Chest : NetworkBehaviour, IInteractable
 
     private void ContainerUpdateEvent(int containerId, Container container) => OnContainerUpdate.Invoke(container);
 
-    public void SetChestId(int containerId)
+    public virtual void SetChestId(int containerId)
     {
         if (containerId != 0)
             ContainerData.ContainerUpdateNotifier.Subscribe(containerId, ContainerUpdateEvent);
@@ -40,5 +40,11 @@ public class Chest : NetworkBehaviour, IInteractable
     public void StopInterract(Player player)
     {
         player.GetComponent<PlayerContainerController>().CloseChest();
+    }
+
+    private void OnDestroy()
+    {
+        if (containerId != 0)
+            ContainerData.ContainerUpdateNotifier.UnSubscribe(containerId, ContainerUpdateEvent);
     }
 }

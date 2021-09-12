@@ -1,4 +1,4 @@
-﻿using Mirror;
+using Mirror;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -11,6 +11,8 @@ public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> {}
 
 public class Player : Entity
 {
+    [SerializeField]
+    private GameObject deathContainerPrefab;
     public PlayerBonesLinks PlayerBonesLinks { get; private set; }
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -32,7 +34,7 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
-
+        
         if (isLocalPlayer)
         {
             ContainerWindowManager.i.PlayerIntialize(this);
@@ -106,8 +108,44 @@ public class Player : Entity
     protected override void Death() 
     {
         base.Death();
+
+        if (isServer)
+            StartCoroutine(SpawnDeathContainer());
+        
         if (isServerOnly)
             DeathOnClient();
+    }
+
+    IEnumerator SpawnDeathContainer()
+    {
+        List<int> characterContainersId = new List<int>();
+
+        characterContainersId.Add(characterData.equipment_id);
+        characterContainersId.Add(characterData.inventory_id);
+
+        var www = Api.Request("/containers/?quantity=1");
+        yield return www.SendWebRequest();
+        int newContainerId = Api.GetResult(www)["id"].AsInt;
+
+        yield return ContainerData.MoveAllItemsInNewContainer(characterContainersId, newContainerId);
+
+        GameObject deadBody = Instantiate(deathContainerPrefab);
+        NetworkServer.Spawn(deadBody);
+
+        deadBody.transform.position = transform.position;
+        deadBody.transform.rotation = transform.rotation;
+
+        deadBody.GetComponent<RagdollController>().ChangeRagdollState(true);
+
+        yield return ContainerData.LoadContainer(characterData.equipment_id);
+        Container equipment = ContainerData.LoadedContainers[characterData.equipment_id];
+
+        deadBody.GetComponent<DeathContainer>().SetEquipment(equipment);
+
+        yield return ContainerData.TruncateContainer(characterData.equipment_id);
+        yield return ContainerData.TruncateContainer(characterData.inventory_id);
+
+        deadBody.GetComponent<Chest>().SetChestId(newContainerId);
     }
 
     protected override void Respawn()

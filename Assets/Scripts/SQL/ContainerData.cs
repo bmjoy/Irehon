@@ -91,6 +91,16 @@ public static class ContainerData
         ContainerUpdateNotifier.Notify(containerId);
     }
 
+    public static IEnumerator TruncateContainer(int containerId)
+    {
+        yield return LoadContainer(containerId);
+        Container container = LoadedContainers[containerId];
+
+        container.Truncate();
+
+        SaveContainer(containerId, container);
+    }
+
     public static IEnumerator LoadContainer(int containerId)
     {
         if (LoadedContainers.ContainsKey(containerId))
@@ -110,7 +120,7 @@ public static class ContainerData
         yield return null;
     }
 
-    public static IEnumerator MoveAllItemsInNewContainer(List<int> containersId)
+    public static IEnumerator MoveAllItemsInNewContainer(List<int> containersId, int newContainerId)
     {
         List<Container> containers = new List<Container>();
 
@@ -138,11 +148,7 @@ public static class ContainerData
             SaveContainer(containersId[i], containers[i]);
         }
 
-        var www = Api.Request($"/containers/?quantity={newContainer.slots.Length}");
-        yield return www.SendWebRequest();
-        int id = Api.GetResult(www)["id"].AsInt;
-        
-        SaveContainer(id, newContainer);
+        SaveContainer(newContainerId, newContainer);
     }
 
     public static IEnumerator GiveContainerItem(int containerId, int itemId)

@@ -44,5 +44,6 @@ public class PlayerJumpingState : PlayerRotatableState
 
     public override void Exit()
     {
+        
     }
 }
