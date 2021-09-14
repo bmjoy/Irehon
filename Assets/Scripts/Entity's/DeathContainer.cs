@@ -5,9 +5,31 @@ using UnityEngine;
 
 public class DeathContainer : Chest
 {
+    private void Start()
+    {
+        if (isServer)
+        {
+            OnContainerUpdate.AddListener(CheckIsContainerEmpty);
+            StartCoroutine(SelfDestroyOnTime(15f));
+        }
+    }
+
+    private void CheckIsContainerEmpty(Container container)
+    {
+        print(container.GetFilledSlotsCount());
+        if (container.GetFilledSlotsCount() == 0)
+            StartCoroutine(SelfDestroyOnTime(4f));
+    }
+
+    private IEnumerator SelfDestroyOnTime(float time)
+    {
+        print("Started self destroy in " + time.ToString());
+        yield return new WaitForSeconds(time);
+        NetworkServer.Destroy(this.gameObject);
+    }
+
     public override void SetChestId(int containerId) {
         base.SetChestId(containerId);
-        
     }
     public void SetEquipment(Container equipment)
     {

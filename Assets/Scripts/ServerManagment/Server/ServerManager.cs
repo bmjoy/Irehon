@@ -149,7 +149,7 @@ namespace Server
                 if (request.selectedSlot > MAX_CHARACTERS_PER_ACCOUNT)
                     yield break;
 
-                ChangeScene(con, "PvpScene");
+                ChangeScene(con, "DevTestScene");
 
                 PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
