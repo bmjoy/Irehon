@@ -24,7 +24,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     public virtual void OnPointerClick(PointerEventData data)
     {
-        
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            ContainerWindowManager.i.FastMoveSlot(this);
+        }
     }
 
     public virtual void OnDrop(PointerEventData data)

@@ -48,7 +48,7 @@ public class Container
 
     public ContainerSlot FindObject(int objectId) => Array.Find(slots, x => x.objectId == objectId);
 
-    public ContainerSlot[] GetFilledSlots() => Array.FindAll(slots, x => x.objectId != 0 && x.itemId != 0);
+    public ContainerSlot[] GetFilledSlots() => Array.FindAll(slots, x => x.itemId != 0);
 
     public bool IsEnoughSpaceForItem(int itemId, int count)
     {

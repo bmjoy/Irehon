@@ -52,6 +52,26 @@ public class ContainerWindowManager : MonoBehaviour
         playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
+    public void FastMoveSlot(InventorySlotUI from)
+    {
+        if (from.type == ContainerType.Chest)
+        {
+            var slot = playerContainerController.Containers[ContainerType.Inventory].GetEmptySlot();
+            if (slot != null)
+                playerContainerController.MoveItem(from.type, from.slotId, ContainerType.Inventory, slot.slotIndex);
+        }
+
+        if (from.type == ContainerType.Inventory)
+        {
+            if (playerContainerController.Containers[ContainerType.Chest] != null)
+            {
+                var slot = playerContainerController.Containers[ContainerType.Chest].GetEmptySlot();
+                if (slot != null)
+                    playerContainerController.MoveItem(from.type, from.slotId, ContainerType.Chest, slot.slotIndex);
+            }
+        }
+    }
+
     public void OpenChest(Container container)
     {
         FillChestWindow(container);

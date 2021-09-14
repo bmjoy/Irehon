@@ -71,6 +71,7 @@ public class PlayerContainerController : NetworkBehaviour
     private void SendChestData(int containerId, Container container)
     {
         containers[ContainerType.Chest] = containerId;
+        Containers[ContainerType.Chest] = container;
         ContainerWindowManager.i.OpenChest(container);
     }
 
@@ -107,6 +108,7 @@ public class PlayerContainerController : NetworkBehaviour
     private void CloseChestRpc()
     {
         containers[ContainerType.Chest] = 0;
+        Containers[ContainerType.Chest] = null;
         ContainerWindowManager.i.CloseChest();
     }
 

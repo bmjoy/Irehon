@@ -1,10 +1,14 @@
-﻿using Mirror;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathContainer : NetworkBehaviour
+public class DeathContainer : Chest
 {
+    public override void SetChestId(int containerId) {
+        base.SetChestId(containerId);
+        
+    }
     public void SetEquipment(Container equipment)
     {
         GetComponent<PlayerModelManager>().UpdateEquipmentContainer(equipment);

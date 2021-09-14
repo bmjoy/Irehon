@@ -47,6 +47,12 @@ public class Player : Entity
         }
     }
 
+    private void Update()
+    {
+        if (isServer && Input.GetKeyDown(KeyCode.Minus))
+            TakeDamage(new DamageMessage{damage = 70, source = this, target = this});
+    }
+
     [Server]
     private void ServerIntialize(CharacterInfo data)
     {
@@ -109,41 +115,40 @@ public class Player : Entity
     {
         base.Death();
 
+
         if (isServer)
+        {
+            stateMachine.ChangePlayerState(PlayerStateType.Death);
             StartCoroutine(SpawnDeathContainer());
-        
+        }
+
         if (isServerOnly)
             DeathOnClient();
     }
 
     IEnumerator SpawnDeathContainer()
     {
-        List<int> characterContainersId = new List<int>();
-
-        characterContainersId.Add(characterData.equipment_id);
-        characterContainersId.Add(characterData.inventory_id);
-
-        var www = Api.Request("/containers/?quantity=1");
-        yield return www.SendWebRequest();
-        int newContainerId = Api.GetResult(www)["id"].AsInt;
-
-        yield return ContainerData.MoveAllItemsInNewContainer(characterContainersId, newContainerId);
-
         GameObject deadBody = Instantiate(deathContainerPrefab);
         NetworkServer.Spawn(deadBody);
 
         deadBody.transform.position = transform.position;
         deadBody.transform.rotation = transform.rotation;
 
-        deadBody.GetComponent<RagdollController>().ChangeRagdollState(true);
-
         yield return ContainerData.LoadContainer(characterData.equipment_id);
         Container equipment = ContainerData.LoadedContainers[characterData.equipment_id];
 
         deadBody.GetComponent<DeathContainer>().SetEquipment(equipment);
 
-        yield return ContainerData.TruncateContainer(characterData.equipment_id);
-        yield return ContainerData.TruncateContainer(characterData.inventory_id);
+        var www = Api.Request("/containers/?quantity=1", ApiMethod.POST);
+        yield return www.SendWebRequest();
+        int newContainerId = Api.GetResult(www)["id"].AsInt;
+
+        List<int> characterContainersId = new List<int>();
+
+        characterContainersId.Add(characterData.equipment_id);
+        characterContainersId.Add(characterData.inventory_id);
+        
+        yield return ContainerData.MoveAllItemsInNewContainer(characterContainersId, newContainerId);
 
         deadBody.GetComponent<Chest>().SetChestId(newContainerId);
     }
@@ -151,6 +156,7 @@ public class Player : Entity
     protected override void Respawn()
     {
         base.Respawn();
+
         if (isServer)
             RespawnOnClient();
     }

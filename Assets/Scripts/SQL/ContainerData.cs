@@ -24,6 +24,8 @@ public static class ContainerData
 
         public static void Notify(int containerId)
         {
+            if (!subscribedListeners.ContainsKey(containerId))
+                return;
             List < Action<int, Container> > subscribers = subscribedListeners[containerId];
 
             foreach (var subscriber in subscribers)
@@ -130,10 +132,18 @@ public static class ContainerData
             containers.Add(LoadedContainers[containerId]);
         }
 
+        Debug.Log($"{containersId.Count}, {containers.Count}, {containers[0].slots.Length}");
+
         List<ContainerSlot> filledSlots = new List<ContainerSlot>();
 
         foreach (Container container in containers)
+        {
+            Debug.Log(container.slots.Length);
+            Debug.Log(container.GetEmptySlotsCount());
+            Debug.Log(container.GetFilledSlots().Length);
             filledSlots.AddRange(container.GetFilledSlots());
+        }
+        Debug.Log(filledSlots.Count);
 
         int requiredSlotCount = filledSlots.Count;
 
