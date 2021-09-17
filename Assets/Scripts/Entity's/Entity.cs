@@ -20,18 +20,26 @@ public class Entity : NetworkBehaviour
 {
     public string NickName { get => name; }
     public int Health { get => health; }
+
     [SerializeField]
     protected float respawnTime;
+
     [SerializeField, SyncVar]
     protected new string name;
+
     protected Vector3 spawnPosition;
+
     [SyncVar(hook = "OnChangeHealth")]
     protected int health;
+
     [SerializeField]
     protected int maxHealth;
+
     protected HitConfirmEvent HitConfirmEvent = new HitConfirmEvent();
+
     [SerializeField]
     protected List<Collider> hitboxColliders = new List<Collider>();
+
     protected bool isAlive;
     public OnTakeDamage OnTakeDamageEvent = new OnTakeDamage();
     public HealthChangedEvent OnHealthChanged;

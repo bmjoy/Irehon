@@ -40,13 +40,11 @@ public class Container
             slots[i] = new ContainerSlot(i);
     }
 
-    public int GetEmptySlotsCount() => Array.FindAll(slots, x => x.objectId == 0 && x.itemId == 0).Length;
+    public int GetEmptySlotsCount() => Array.FindAll(slots, x => x.itemId == 0).Length;
 
-    public ContainerSlot GetEmptySlot() => Array.Find(slots, x => x.objectId == 0 && x.itemId == 0);
+    public ContainerSlot GetEmptySlot() => Array.Find(slots, x => x.itemId == 0);
 
     public int GetFilledSlotsCount() => GetFilledSlots().Length;
-
-    public ContainerSlot FindObject(int objectId) => Array.Find(slots, x => x.objectId == objectId);
 
     public ContainerSlot[] GetFilledSlots() => Array.FindAll(slots, x => x.itemId != 0);
 
@@ -74,7 +72,6 @@ public class Container
         {
             slot.itemId = 0;
             slot.itemQuantity = 0;
-            slot.objectId = 0;
         }
     }
 

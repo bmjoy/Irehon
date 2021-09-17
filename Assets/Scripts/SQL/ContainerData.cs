@@ -244,11 +244,7 @@ public static class ContainerData
             int creatingItemCount = itemCounts > item.maxInStack ? item.maxInStack : itemCounts;
             itemCounts -= creatingItemCount;
 
-            var www = CreateItem(containerId, itemId, creatingItemCount);
-            yield return www.SendWebRequest();
-            int objectId = Api.GetResult(www)["id"].AsInt;
-
-            yield return MoveObjectToEmptySlot(containerId, objectId);
+            yield return MoveObjectToEmptySlot(containerId, itemId, creatingItemCount);
         }
     }
 
@@ -268,7 +264,6 @@ public static class ContainerData
                     if (slot.itemQuantity == 0)
                     {
                         slot.itemId = 0;
-                        slot.objectId = 0;
                     }
 
                     SaveContainer(containerId, container);
@@ -281,7 +276,6 @@ public static class ContainerData
 
                     slot.itemQuantity = 0;
                     slot.itemId = 0;
-                    slot.objectId = 0;
                     
                     continue;
                 }
@@ -291,7 +285,7 @@ public static class ContainerData
         SaveContainer(containerId, container);
     }
 
-    private static IEnumerator MoveObjectToEmptySlot(int containerId, int objectId)
+    private static IEnumerator MoveObjectToEmptySlot(int containerId, int itemId, int itemQuantity)
     {
         yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
@@ -307,23 +301,11 @@ public static class ContainerData
         {
             yield break;
         }
-
-        var www = GetSlotInfo(objectId);
-        yield return www.SendWebRequest();
-        ContainerSlot info = new ContainerSlot(Api.GetResult(www));
         
-        slot.itemId = info.itemId;
-        slot.itemQuantity = info.itemQuantity;
+        slot.itemId = itemId;
+        slot.itemQuantity = itemQuantity;
         
         SaveContainer(containerId, container);
-    }
-
-    private static UnityWebRequest CreateItem(int containerId, int itemId, int count)
-    {
-        if (itemId <= 0 || count <= 0)
-            return null;
-
-        return Api.Request($"/items/?quantity={count}&container_id={containerId}&item_id={itemId}", ApiMethod.POST);
     }
 
     public static IEnumerator MoveSlotData(int containerId, int from, int to)
@@ -381,7 +363,6 @@ public static class ContainerData
                 containerSlot.itemQuantity += oldContainerSlot.itemQuantity;
 
                 oldContainerSlot.itemId = 0;
-                oldContainerSlot.objectId = 0;
                 oldContainerSlot.itemQuantity = 0;
             }
             else
@@ -395,7 +376,6 @@ public static class ContainerData
                 if (oldContainerSlot.itemQuantity <= 0)
                 {
                     oldContainerSlot.itemId = 0;
-                    oldContainerSlot.objectId = 0;
                 }
             }
         }
@@ -404,15 +384,12 @@ public static class ContainerData
     private static void SwapSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
     {
         int oldItemId = oldContainerSlot.itemId;
-        int oldObjectItemId = oldContainerSlot.objectId;
         int oldQuantity = oldContainerSlot.itemQuantity;
 
         oldContainerSlot.itemId = containerSlot.itemId;
-        oldContainerSlot.objectId = containerSlot.objectId;
         oldContainerSlot.itemQuantity = containerSlot.itemQuantity;
 
         containerSlot.itemId = oldItemId;
-        containerSlot.objectId = oldObjectItemId;
         containerSlot.itemQuantity = oldQuantity;
     }
 

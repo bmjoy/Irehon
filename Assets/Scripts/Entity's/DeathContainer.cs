@@ -23,7 +23,6 @@ public class DeathContainer : Chest
 
     private IEnumerator SelfDestroyOnTime(float time)
     {
-        print("Started self destroy in " + time.ToString());
         yield return new WaitForSeconds(time);
         NetworkServer.Destroy(this.gameObject);
     }
@@ -33,13 +32,13 @@ public class DeathContainer : Chest
     }
     public void SetEquipment(Container equipment)
     {
-        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(equipment);
+        GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(equipment);
         SetEquipmentRpc(equipment);
     }
 
     [ClientRpc]
     private void SetEquipmentRpc(Container container)
     {
-        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(container);
+        GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(container);
     }
 }
