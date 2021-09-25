@@ -154,6 +154,10 @@ public class PlayerContainerController : NetworkBehaviour
 
         Item equipableItem = ItemDatabase.GetItemById(inventory[inventorySlot].itemId);
 
+        print(equipableItem.slug + equipableItem.equipmentSlot);
+        print((EquipmentSlot)equipmentSlot);
+        print(equipableItem.type);
+
         if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
             yield break;
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
@@ -176,6 +180,7 @@ public class PlayerContainerController : NetworkBehaviour
     //from , to
     public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
     {
+        print($"from {firstType} {firstSlot} to {secondType} {secondSlot}");
         if (!IsMoveLegal(firstType, secondType))
             return;
 

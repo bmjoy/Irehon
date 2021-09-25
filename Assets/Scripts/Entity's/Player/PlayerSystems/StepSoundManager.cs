@@ -15,4 +15,7 @@ public class StepSoundManager : MonoBehaviour
         stepSource.clip = stepPool[Random.Range(0, stepPool.Length)];
         stepSource.Play();
     }
+
+    public void FootR() => Step();
+    public void FootL() => Step();
 }

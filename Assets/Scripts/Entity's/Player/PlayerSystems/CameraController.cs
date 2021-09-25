@@ -172,10 +172,13 @@ public class CameraController : MonoBehaviour
     //TODO: перевести в UI controller
     public static void EnableCursor()
     {
-        i.cursorAiming = false;
+        if (i != null)
+        {
+            i.cursorAiming = false;
+            UIController.instance.HideHint();
+        }
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        UIController.instance.HideHint();
     }
 
     public static void DisableCursor()

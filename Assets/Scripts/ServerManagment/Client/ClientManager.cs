@@ -88,6 +88,7 @@ namespace Client
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
+            CameraController.EnableCursor();
             SceneManager.LoadScene("LoginScene");
         }
 

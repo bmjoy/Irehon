@@ -7,7 +7,7 @@ public class Bow : Weapon
     private PlayerBonesLinks playerBonesLinks;
 
     [SerializeField]
-    private SniperAbility ability;
+    private HoldReleaseArrowAbility ability;
 
     public GameObject Arrow;
     public AudioClip TenseSound;
@@ -19,12 +19,22 @@ public class Bow : Weapon
     [SerializeField]
     private GameObject arrowInHandPrefab;
 
+    [SerializeField]
+    private AnimatorOverrideController animator;
+
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
         playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
+        var localPos = transform.localPosition;
+        var localRotation = transform.localRotation;
+        transform.parent = playerBonesLinks.LeftHand;
+        transform.localPosition = localPos;
+        transform.localRotation = localRotation;
         AimingParticles.transform.parent = abilitySystem.AbilityPoolObject.transform;
         ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
-        
+
+        abilitySystem.AnimatorComponent.runtimeAnimatorController = animator; 
+
         ability.Setup(abilitySystem);
         
         return ability;

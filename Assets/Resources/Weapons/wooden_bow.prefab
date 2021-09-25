@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 8047767856245959456}
   - component: {fileID: 8420996218892468766}
   m_Layer: 10
-  m_Name: Bow
+  m_Name: wooden_bow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,6 +178,7 @@ MonoBehaviour:
   ArrowInHand: {fileID: 0}
   arrowInHandPrefab: {fileID: 6909357992046919145, guid: bc3d03c2adaf54c95a101c7c7a893aaf,
     type: 3}
+  animator: {fileID: 22100000, guid: 63ecb8ede2145ac45a16c0630ffbb3e5, type: 2}
 --- !u!114 &8420996218892468766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownTime: 2
   triggerOnKey: 324
+  chestBone: {fileID: 0}
 --- !u!1 &4009445472527859342
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SniperAbility : AbilityBase
+public class HoldReleaseArrowAbility : AbilityBase
 {
     private const float MAX_HOLDING_TIME = 1.7f;
     private const float MIN_HOLDING_TIME = 0.6f;

@@ -14,9 +14,6 @@ public class Player : Entity
     [SerializeField]
     private GameObject deathContainerPrefab;
 
-    [SyncVar(hook = nameof(OnEquipmentUpdate))]
-    private Container equipment;
-
     public PlayerBonesLinks PlayerBonesLinks { get; private set; }
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -51,6 +48,11 @@ public class Player : Entity
 
             OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
         }
+
+        OnPublicEquipmentUpdate.AddListener(x => print($"Got equip info {x.ToJson()}"));
+
+        if (!isServer)
+            OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
     }
 
     [Server]
@@ -59,11 +61,6 @@ public class Player : Entity
         ContainerData.ContainerUpdateNotifier.Subscribe(data.inventory_id, containerController.SendContainerData);
         ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, containerController.SendContainerData);
         ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, SendEquipmentInfo);
-    }
-
-    private void OnEquipmentUpdate(Container oldContainer, Container newEquipmentContainer)
-    {
-        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(newEquipmentContainer);
     }
 
     [Server]
@@ -102,19 +99,17 @@ public class Player : Entity
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
+
     [Server]
-    private void SendEquipmentInfo(int id, Container equip)
+    private void SendEquipmentInfo(int id, Container equip) 
     {
-        equipment = equip;
-        
+        GetComponent<PlayerWeaponEquipment>().UpdateWeapon(equip);
         SendEquipmentInfoRpc(equip);
     }
 
     [ClientRpc]
-    private void SendEquipmentInfoRpc(Container equipment)
-    {
-        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(equipment);
-    }
+    private void SendEquipmentInfoRpc(Container equipment) => OnPublicEquipmentUpdate.Invoke(equipment);
+
 
     public CharacterInfo GetCharacterData() => characterData;
 

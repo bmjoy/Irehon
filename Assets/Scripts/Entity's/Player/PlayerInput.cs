@@ -80,6 +80,8 @@ public class PlayerInput : NetworkBehaviour
 
         playerStateMachine.InputInState(input);
 
+        print($"{input.IsKeyPressed(abilitySystem.ListeningKey)}");
+
         input.Position = transform.position;
         input.PlayerStateType = playerStateMachine.CurrentState.Type;
 
