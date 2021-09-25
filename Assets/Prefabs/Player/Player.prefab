@@ -57837,6 +57837,7 @@ GameObject:
   - component: {fileID: 7114342697689382973}
   - component: {fileID: 6832558188326207792}
   - component: {fileID: -2305688943581599191}
+  - component: {fileID: 6664168882743005173}
   m_Layer: 10
   m_Name: Player
   m_TagString: EntityBase
@@ -57899,7 +57900,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: 553def14bf12a0c4db2e3da74a1151d5
   hasSpawned: 0
 --- !u!65 &5789036800629056985
 BoxCollider:
@@ -58074,6 +58075,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  ListeningKey: 0
   weaponPrefab: {fileID: 3949065004473256211, guid: 9bd33ced44f434c9cb5fd592e5009073,
     type: 3}
 --- !u!114 &1057096722151939023
@@ -59555,6 +59557,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ecfb8eef3709bbe4f859066d74986ff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &6664168882743005173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff3675382b50654b86b90382d75cf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0

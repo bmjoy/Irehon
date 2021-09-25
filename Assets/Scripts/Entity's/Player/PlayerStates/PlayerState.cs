@@ -8,6 +8,7 @@ public abstract class PlayerState
     public PlayerState(Player player) 
     {
         this.player = player;
+        this.abilitySystem = player.GetComponent<AbilitySystem>();
         this.playerInteracter = player.GetComponent<PlayerInteracter>();
     }
     public virtual bool CanTakeDamage => true;
@@ -18,6 +19,7 @@ public abstract class PlayerState
 
     protected Player player;
     protected PlayerInteracter playerInteracter;
+    protected AbilitySystem abilitySystem;
     public virtual void Update() { }
     public abstract void Enter();
     public abstract void Exit();

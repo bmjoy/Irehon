@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using System;
+using System.Net.Sockets;
 
 namespace Client
 {
@@ -28,6 +31,9 @@ namespace Client
         public OnUpdateCharacterList OnUpdateCharacterList;
         public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
         private List<Character> charactersList = new List<Character>();
+        public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
+        [SerializeField]
+        private ServerData serverData;
 
         public override void Awake()
         {
@@ -79,10 +85,20 @@ namespace Client
         {
         }
 
+        public override void OnClientDisconnect(NetworkConnection conn)
+        {
+            base.OnClientDisconnect(conn);
+            SceneManager.LoadScene("LoginScene");
+        }
+
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
             base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
             NetworkClient.PrepareToSpawnSceneObjects();
+        }
+
+        public override void OnClientError(Exception exception)
+        {
         }
     }
 

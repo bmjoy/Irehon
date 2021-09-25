@@ -120,4 +120,11 @@ public class UIController : MonoBehaviour
             }
         }
     }
+
+    public static void SetDefaultUI()
+    {
+        instance.EnableDefaultCrosshair();
+        CameraController.DisableAimCamera();
+        CameraController.EnableCursor();
+    }
 }

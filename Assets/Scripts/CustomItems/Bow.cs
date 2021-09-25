@@ -24,13 +24,18 @@ public class Bow : Weapon
         playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
         AimingParticles.transform.parent = abilitySystem.AbilityPoolObject.transform;
         ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
+        
         ability.Setup(abilitySystem);
+        
         return ability;
     }
 
-    private void OnDestroy()
+    public override WeaponType GetType() => WeaponType.Bow;
+
+    public override void UnSetup(AbilitySystem abilitySystem)
     {
         Destroy(ArrowInHand);
         Destroy(AimingParticles);
+        Destroy(gameObject);
     }
 }

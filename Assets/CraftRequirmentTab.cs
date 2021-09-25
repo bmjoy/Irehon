@@ -15,6 +15,9 @@ public class CraftRequirmentTab : MonoBehaviour
     public void Intialize(Container inventory, CraftRecipe.CraftRecipeRequirment requirment)
     {
         Item requirmentItem = ItemDatabase.GetItemById(requirment.itemId);
+        print(inventory == null);
+        print(requirment == null);
+        print(requirmentItem == null);
         itemName.text = requirmentItem.name;
         itemQuantity.text = $"{requirment.itemQuantity}/{inventory.GetItemCount(requirmentItem.id)}";
         itemIcon.sprite = requirmentItem.sprite;

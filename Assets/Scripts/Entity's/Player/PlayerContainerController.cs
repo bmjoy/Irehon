@@ -16,6 +16,7 @@ public class PlayerContainerController : NetworkBehaviour
     private Dictionary<ContainerType, int> containers = new Dictionary<ContainerType, int>();
 
     public OnContainerUpdate OnInventoryUpdate { get; private set; } = new OnContainerUpdate();
+    public OnContainerUpdate OnEquipmentUpdate { get; private set; } = new OnContainerUpdate();
 
     private CharacterInfo characterData => player.GetCharacterData();
     private int openedContainerId;
@@ -28,6 +29,8 @@ public class PlayerContainerController : NetworkBehaviour
             player.OnCharacterDataUpdateEvent.AddListener(Intialize);
         else
             Intialize(player.GetCharacterData());
+        OnInventoryUpdate.AddListener(ContainerWindowManager.i.UpdateInventory);
+        OnEquipmentUpdate.AddListener(ContainerWindowManager.i.UpdateEquipment);
     }
 
     public void Intialize(CharacterInfo info)
@@ -56,10 +59,9 @@ public class PlayerContainerController : NetworkBehaviour
         {
             case ContainerType.Inventory:
                 OnInventoryUpdate.Invoke(container);
-                ContainerWindowManager.i.UpdateInventory(container);
                 break;
             case ContainerType.Equipment:
-                ContainerWindowManager.i.UpdateEquipment(container);
+                OnEquipmentUpdate.Invoke(container);
                 break;
             case ContainerType.Chest:
                 ContainerWindowManager.i.OpenChest(container);

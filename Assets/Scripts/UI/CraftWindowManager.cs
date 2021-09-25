@@ -51,11 +51,16 @@ public class CraftWindowManager : MonoBehaviour
     public static void Intialize(Player player)
     {
         i.player = player;
+        if (player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory] != null)
+            i.UpdateInventory(player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory]);
+
         player.GetComponent<PlayerContainerController>().OnInventoryUpdate.AddListener(x => i.UpdateInventory(x));
     }
 
     private void UpdateInventory(Container inventory)
     {
+        print("updated inventory");
+        print(inventory == null);
         this.inventory = inventory;
         if (selectedRecipe != null)
             UpdateRequirmentTab(selectedRecipe.requirment);

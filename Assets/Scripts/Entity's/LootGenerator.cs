@@ -14,7 +14,7 @@ public struct Loot
 public class LootGenerator : SerializedMonoBehaviour
 {
     [SerializeField]
-    private List<Loot> lootPool;
+    private List<Loot> lootPool = new List<Loot>();
 
     public Container GenerateLoot()
     {

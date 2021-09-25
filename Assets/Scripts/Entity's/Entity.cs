@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -82,7 +83,23 @@ public class Entity : NetworkBehaviour
     {
         isAlive = false;
         if (isServer)
-            Invoke("Respawn", respawnTime);
+        {
+            if (respawnTime > 0)
+                Invoke("Respawn", respawnTime);
+            else
+                StartCoroutine(SelfDestroy());
+        }
+    }
+
+    private IEnumerator SelfDestroy()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            i++;
+            transform.Translate(Vector3.down * 0.15f);
+            yield return new WaitForSeconds(0.1f);
+        }
+        NetworkServer.Destroy(gameObject);
     }
 
     public bool IsAlive() => isAlive;
@@ -116,7 +133,7 @@ public class Entity : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void TakeDamageEvent(NetworkConnection con, int damage)
+    public void TakeDamageEvent(int damage)
     {
         OnTakeDamageEvent.Invoke(damage);
     }
@@ -133,6 +150,7 @@ public class Entity : NetworkBehaviour
             health = 0;
         }
         OnHealthChanged?.Invoke(maxHealth, this.health);
-        damageMessage.source?.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
+        if (damageMessage.source != this)
+            damageMessage.source?.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
     }
 }

@@ -32,7 +32,6 @@ public class UIWindow : SerializedMonoBehaviour
     {
         if (!isEnabled)
             openedWindowsCount++;
-        print(openedWindowsCount);
 
         isEnabled = true;
         windowObject.SetActive(true);
@@ -67,10 +66,9 @@ public class UIWindow : SerializedMonoBehaviour
 
     public void SwitchWindowState()
     {
-        isEnabled = !isEnabled;
         if (isEnabled)
-            Open();
-        else
             Close();
+        else
+            Open();
     }
 }

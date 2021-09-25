@@ -13,11 +13,15 @@ public class Player : Entity
 {
     [SerializeField]
     private GameObject deathContainerPrefab;
+
+    [SyncVar(hook = nameof(OnEquipmentUpdate))]
+    private Container equipment;
+
     public PlayerBonesLinks PlayerBonesLinks { get; private set; }
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
     public PlayerContainerController ContainerController => containerController;
-
+    public OnContainerUpdate OnPublicEquipmentUpdate { get; private set; } = new OnContainerUpdate();
     private PlayerStateMachine stateMachine;
     private PlayerContainerController containerController;
     private CharacterInfo characterData;
@@ -37,6 +41,8 @@ public class Player : Entity
         
         if (isLocalPlayer)
         {
+            HitConfirmEvent.AddListener(x => UIController.instance.ShowHitMarker());
+
             ContainerWindowManager.i.PlayerIntialize(this);
             CameraController.i.Intialize(this);
             CraftWindowManager.Intialize(this);
@@ -47,18 +53,17 @@ public class Player : Entity
         }
     }
 
-    private void Update()
-    {
-        if (isServer && Input.GetKeyDown(KeyCode.Minus))
-            TakeDamage(new DamageMessage{damage = 70, source = this, target = this});
-    }
-
     [Server]
     private void ServerIntialize(CharacterInfo data)
     {
         ContainerData.ContainerUpdateNotifier.Subscribe(data.inventory_id, containerController.SendContainerData);
         ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, containerController.SendContainerData);
         ContainerData.ContainerUpdateNotifier.Subscribe(data.equipment_id, SendEquipmentInfo);
+    }
+
+    private void OnEquipmentUpdate(Container oldContainer, Container newEquipmentContainer)
+    {
+        GetComponent<PlayerModelManager>().UpdateEquipmentContainer(newEquipmentContainer);
     }
 
     [Server]
@@ -97,8 +102,16 @@ public class Player : Entity
         OnCharacterDataUpdateEvent.Invoke(characterData);
     }
 
+    [Server]
+    private void SendEquipmentInfo(int id, Container equip)
+    {
+        equipment = equip;
+        
+        SendEquipmentInfoRpc(equip);
+    }
+
     [ClientRpc]
-    private void SendEquipmentInfo(int id, Container equipment)
+    private void SendEquipmentInfoRpc(Container equipment)
     {
         GetComponent<PlayerModelManager>().UpdateEquipmentContainer(equipment);
     }
@@ -182,7 +195,7 @@ public class Player : Entity
     public override void TakeDamage(DamageMessage damageMessage)
     {
         base.TakeDamage(damageMessage);
-        TakeDamageEvent(connectionToClient, damageMessage.damage);
+        TakeDamageEvent(damageMessage.damage);
     }
 
     private void OnDestroy()

@@ -17,15 +17,15 @@ public class SniperAbility : AbilityBase
     private Transform BowStringBone => bow.BowStringBone;
     private ParticleSystem AimingParticles => bow.AimingParticles;
 
-    private Vector3 aimingChestOffset = new Vector3(0, -5f, -86f);
+    private Vector3 aimingChestOffset = new Vector3(331.6f, 260.2f, -150.2f);
 
     private Vector3 bowBoneStartPosition;
     private AudioSource abilityAudioSource;
+    [SerializeField]
     private Transform chestBone;
     private Animator animator;
     private Quiver quiver;
     private Player player;
-    private PlayerMovement movement;
 
     private float holdingTime;
     private float additionalyChestOffsetTime;
@@ -40,7 +40,6 @@ public class SniperAbility : AbilityBase
         bowBoneStartPosition = BowStringBone.localPosition;
         player = abilitySystem.PlayerComponent;
         abilityAudioSource = abilitySystem.AudioSource;
-        movement = abilitySystem.GetComponent<PlayerMovement>();
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
         quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow);
@@ -75,7 +74,9 @@ public class SniperAbility : AbilityBase
         animator.SetBool("Aiming", true);
         animator.SetBool("AimingMovement", true);
         currentAnimationEvent = () => StartCoroutine(ArrowInHandAnimation());
-        
+
+
+        print(isLocalPlayer);
         if (isLocalPlayer)
         {
             UIController.instance.EnableTriangleCrosshair();
@@ -143,7 +144,13 @@ public class SniperAbility : AbilityBase
     protected override void InterruptAbility()
     {
         if (isLocalPlayer)
+        {
+            CameraController.DisableAimCamera();
             UIController.instance.EnableDefaultCrosshair();
+        }
+        ArrowInHand.SetActive(false);
+
+        AimingParticles.Stop();
         if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
         additionalyChestOffsetTime = 0;

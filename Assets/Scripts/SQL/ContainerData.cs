@@ -383,18 +383,25 @@ public static class ContainerData
 
     private static void SwapSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
     {
-        int oldItemId = oldContainerSlot.itemId;
-        int oldQuantity = oldContainerSlot.itemQuantity;
+        if (containerSlot.itemId == 0)
+        {
+            containerSlot.itemId = oldContainerSlot.itemId;
+            Item item = ItemDatabase.GetItemById(containerSlot.itemId);
+            containerSlot.itemQuantity = oldContainerSlot.itemQuantity > item.maxInStack ? item.maxInStack : oldContainerSlot.itemQuantity;
+            oldContainerSlot.itemQuantity -= oldContainerSlot.itemQuantity > item.maxInStack ? item.maxInStack : oldContainerSlot.itemQuantity;
+            if (oldContainerSlot.itemQuantity == 0)
+                oldContainerSlot.itemId = 0;
+        }
+        else
+        {
+            int oldItemId = oldContainerSlot.itemId;
+            int oldQuantity = oldContainerSlot.itemQuantity;
 
-        oldContainerSlot.itemId = containerSlot.itemId;
-        oldContainerSlot.itemQuantity = containerSlot.itemQuantity;
+            oldContainerSlot.itemId = containerSlot.itemId;
+            oldContainerSlot.itemQuantity = containerSlot.itemQuantity;
 
-        containerSlot.itemId = oldItemId;
-        containerSlot.itemQuantity = oldQuantity;
-    }
-
-    private static UnityWebRequest GetSlotInfo(int objectId)
-    {
-        return Api.Request($"/items/{objectId}");
+            containerSlot.itemId = oldItemId;
+            containerSlot.itemQuantity = oldQuantity;
+        }
     }
 }

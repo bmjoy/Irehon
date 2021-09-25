@@ -19,6 +19,7 @@ public class PlayerRunState : PlayerRotatableState
 
     public override void Enter()
     {
+        abilitySystem.AbilityInterrupt();
         playerInteracter.StopInterracting();
         animator.SetBool("Sprint", true);
         animator.SetBool("Walking", true);

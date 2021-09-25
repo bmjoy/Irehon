@@ -10,7 +10,7 @@ public class DeathContainer : Chest
         if (isServer)
         {
             OnContainerUpdate.AddListener(CheckIsContainerEmpty);
-            StartCoroutine(SelfDestroyOnTime(15f));
+            StartCoroutine(SelfDestroyOnTime(240f));
         }
     }
 

@@ -35,6 +35,9 @@ public class PlayerWalkState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
+        if (isServer)
+            abilitySystem.SendAbilityKeyStatus(input.IsKeyPressed(abilitySystem.ListeningKey), input.TargetPoint);
+
         if (input.IsKeyPressed(KeyCode.Space))
             return PlayerStateType.Jump;
 

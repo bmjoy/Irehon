@@ -4,7 +4,7 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public class AbilitySystem : NetworkBehaviour, IAbilitySystem
+public class AbilitySystem : NetworkBehaviour
 {
     public GameObject AbilityPoolObject => abilityPoolObject;
     public AudioSource AudioSource => audioSource;
@@ -12,6 +12,9 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     public Player PlayerComponent => player;
     public PlayerMovement PlayerMovementComponent => playerMovement;
     public PlayerBonesLinks PlayerBonesLinks => boneLinks;
+
+
+    public KeyCode ListeningKey;
 
     private PlayerBonesLinks boneLinks;
     private PlayerMovement playerMovement;
@@ -30,22 +33,14 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     [SyncVar]
     private bool isAbilityCasting;
 
-    private float abilityCooldown;
-
     public bool IsAbilityCasting() => isAbilityCasting;
-
-    private void Update()
-    {
-        abilityCooldown -= Time.deltaTime;
-    }
 
     public void SetWeapon(Weapon weapon)
     {
         if (currentAbility != null)
-        {
             currentAbility.Interrupt();
-        }
         currentAbility = weapon.Setup(this);
+        ListeningKey = currentAbility.TriggerKey;
     }
 
     private void Awake()
@@ -64,43 +59,39 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     private void Start()
     {
         weapon = Instantiate(weaponPrefab, boneLinks.LeftHand);
-        currentAbility = weapon.GetComponent<Weapon>().Setup(this);
-        if (!isLocalPlayer && !isServer)
-            return;
+        SetWeapon(weapon.GetComponent<Weapon>());
     }
 
-    public void AbilityKeyDown(KeyCode key, Vector3 target)
+    public void SendAbilityKeyStatus(bool isKeyPressed, Vector3 target)
     {
-        if (abilityCooldown > 0 || isAbilityCasting)
-            return;
-        if (currentAbility.TriggerKey == key)
-        {
-            currentAbility.TriggerKeyDown(target);
-            AbilityKeyDownRPC(target);
-        }
+        if (!isAbilityCasting && isKeyPressed)
+            AbilityKeyDown(target);
+        else if (isAbilityCasting && !isKeyPressed)
+            AbilityKeyUp(target);
+    }
+
+    public void AbilityKeyDown(Vector3 target)
+    {
+        currentAbility.TriggerKeyDown(target);
+        AbilityKeyDownRPC(target);
     }
 
     [ClientRpc]
     private void AbilityKeyDownRPC(Vector3 target)
     {
-        if (!isServer)
-            currentAbility.TriggerKeyDown(target);
+        currentAbility.TriggerKeyDown(target);
     }
 
     [ClientRpc]
     private void AbilityKeyUpRPC(Vector3 target)
     {
-        if (!isServer)
-            currentAbility.TriggerKeyUp(target);
+        currentAbility.TriggerKeyUp(target);
     }
 
-    public void AbilityKeyUp(KeyCode key, Vector3 target)
+    public void AbilityKeyUp(Vector3 target)
     {
-        if (currentAbility.TriggerKey == key)
-        {
-            currentAbility.TriggerKeyUp(target);
-            AbilityKeyUpRPC(target);
-        }
+        currentAbility.TriggerKeyUp(target);
+        AbilityKeyUpRPC(target);
     }
 
     public void AllowTrigger()
@@ -113,6 +104,20 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
         isAbilityCasting = true;
     }
 
+    public void AbilityInterrupt()
+    {
+        if (!isServer)
+            return;
+        currentAbility?.Interrupt();
+        AbilityInterruptRpc();
+    }
+
+    [ClientRpc]
+    private void AbilityInterruptRpc()
+    {
+        currentAbility?.Interrupt();
+    }
+
     [Server]
     public void AnimationEventTrigger()
     {
@@ -123,7 +128,6 @@ public class AbilitySystem : NetworkBehaviour, IAbilitySystem
     [ClientRpc]
     private void AnimationEventRPC()
     {
-        if (!isServer)
-            currentAbility.AnimationEvent();
+        currentAbility.AnimationEvent();
     }
 }

@@ -16,17 +16,19 @@ public class LootableEntity : Entity
 
     protected override void Death()
     {
-        base.Death();
-        StartCoroutine(SpawnDeathContainer());
-    }
-
-    IEnumerator SpawnDeathContainer()
-    {
         GameObject deadBody = Instantiate(lootContainerPrefab);
         NetworkServer.Spawn(deadBody);
-
+        
         deadBody.transform.position = transform.position;
         deadBody.transform.rotation = transform.rotation;
+
+        deadBody.GetComponent<Chest>().StartCoroutine(SpawnDeathContainer(deadBody));
+        
+        base.Death();
+    }
+
+    IEnumerator SpawnDeathContainer(GameObject deadBody)
+    {
 
         var www = Api.Request("/containers/?quantity=1", ApiMethod.POST);
         yield return www.SendWebRequest();

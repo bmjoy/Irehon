@@ -10,9 +10,11 @@ public class PlayerInput : NetworkBehaviour
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
 
     private PlayerStateMachine playerStateMachine;
+    private AbilitySystem abilitySystem;
 
     private void Start()
     {
+        abilitySystem = GetComponent<AbilitySystem>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
 
@@ -37,6 +39,7 @@ public class PlayerInput : NetworkBehaviour
     private void FillMovementKeysInput(ref InputInfo input)
     {
         CheckSinglePressKey(KeyCode.E, ref input);
+        CheckInputKey(abilitySystem.ListeningKey, ref input);
         CheckInputKey(KeyCode.W, ref input);
         CheckInputKey(KeyCode.A, ref input);
         CheckInputKey(KeyCode.S, ref input);

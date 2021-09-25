@@ -34,6 +34,7 @@ public class PlayerJumpingState : PlayerRotatableState
 
     public override void Enter()
     {
+        abilitySystem.AbilityInterrupt();
         playerInteracter.StopInterracting();
         if (playerGroundDetector.isGrounded)
         {
