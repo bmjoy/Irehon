@@ -200,7 +200,7 @@ namespace Server
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
             connectedPlayersId.Add(data.playerId);
-            print("change scene sended");
+            
             ChangeScene(con, "CharacterSelection");
 
             StartCoroutine(SendPlayerInfo(con));
@@ -279,7 +279,6 @@ namespace Server
 
         private void ChangeScene(NetworkConnection con, string scene)
         {
-            print("Sended to " + scene);
             con.Send(new SceneMessage { sceneName = scene, });
         }
 

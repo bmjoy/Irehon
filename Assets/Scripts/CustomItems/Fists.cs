@@ -14,10 +14,12 @@ public class Fists : Weapon
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
         abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
+        ability.Setup(abilitySystem);
         return ability;
     }
 
     public override void UnSetup(AbilitySystem abilitySystem)
     {
+        ability.DestroyColliders();
     }
 }

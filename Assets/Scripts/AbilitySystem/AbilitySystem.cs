@@ -62,7 +62,6 @@ public class AbilitySystem : NetworkBehaviour
 
     public void SendAbilityKeyStatus(bool isKeyPressed, Vector3 target)
     {
-        print(isKeyPressed);
         if (!isAbilityCasting && isKeyPressed)
             AbilityKeyDown(target);
         else if (isAbilityCasting && !isKeyPressed)

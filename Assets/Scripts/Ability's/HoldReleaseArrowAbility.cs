@@ -75,8 +75,6 @@ public class HoldReleaseArrowAbility : AbilityBase
         animator.SetBool("AimingMovement", true);
         currentAnimationEvent = () => StartCoroutine(ArrowInHandAnimation());
 
-
-        print(isLocalPlayer);
         if (isLocalPlayer)
         {
             UIController.instance.EnableTriangleCrosshair();
@@ -103,12 +101,13 @@ public class HoldReleaseArrowAbility : AbilityBase
     private void ShootArrow(Vector3 target)
     {
         Arrow releasedArrow = quiver.GetArrowFromQuiver();
-        float power = GetHoldingPowerPercent();
+        
         releasedArrow.transform.position = ArrowInHand.transform.position;
         releasedArrow.transform.LookAt(target);
         releasedArrow.SetPower(GetHoldingPowerPercent());
         releasedArrow.TriggerReleaseEffect();
         releasedArrow.rigidBody.velocity = releasedArrow.transform.forward * (20 + GetHoldingPowerPercent() * 30);
+        
         if (isLocalPlayer)
             CameraController.CreateShake(5, .1f);
     }

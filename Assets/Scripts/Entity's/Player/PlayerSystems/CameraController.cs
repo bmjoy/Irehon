@@ -14,6 +14,7 @@ public class OnChangeCursorHidingState : UnityEvent<bool>
 public class CameraController : MonoBehaviour
 {
     public static CameraController i;
+    public static bool IsCursosLocked => i.cursorAiming;
 
     public OnChangeCursorHidingState OnChangeCursorState;
     public Camera cameraComponent { get; private set; } 

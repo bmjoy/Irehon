@@ -57,6 +57,8 @@ public class PlayerInput : NetworkBehaviour
 
     private void CheckInputKey(KeyCode key, ref InputInfo input)
     {
+        if ((key == KeyCode.Mouse1 || key == KeyCode.Mouse0) && !CameraController.IsCursosLocked)
+            return;
         if (Input.GetKey(key) && !input.PressedKeys.Contains(key))
             input.PressedKeys.Add(key);
     }
@@ -80,8 +82,6 @@ public class PlayerInput : NetworkBehaviour
 
         playerStateMachine.InputInState(input);
 
-        print($"{input.IsKeyPressed(abilitySystem.ListeningKey)}");
-
         input.Position = transform.position;
         input.PlayerStateType = playerStateMachine.CurrentState.Type;
 
@@ -91,7 +91,6 @@ public class PlayerInput : NetworkBehaviour
     [TargetRpc]
     private void DropInput()
     {
-        print("Dropped input");
         sendedInputs.Dequeue();
     }
 

@@ -4,19 +4,62 @@ using UnityEngine;
 
 public class FistPunchAbility : AbilityBase
 {
+    [SerializeField]
+    private GameObject handFistColliderPrefab;
+
+    private MeleeWeaponCollider leftHandCollider;
+    private MeleeWeaponCollider rightHandCollider;
+
     public override void Setup(AbilitySystem abilitySystem)
     {
         base.Setup(abilitySystem);
-        print("setuped"); ;
+        leftHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.LeftHand).GetComponent<MeleeWeaponCollider>();
+        rightHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.RightHand).GetComponent<MeleeWeaponCollider>();
+
+        leftHandCollider.transform.localPosition = Vector3.zero;
+        rightHandCollider.transform.localPosition = Vector3.zero;
+
+        leftHandCollider.Intialize(abilitySystem.PlayerComponent.GetHitBoxColliderList());
+        rightHandCollider.Intialize(abilitySystem.PlayerComponent.GetHitBoxColliderList());
+
+        currentAnimationEvent = DamageEntitiesInArea;
     }
     protected override void Ability(Vector3 target)
     {
-        print("Punch");
+        abilitySystem.AnimatorComponent.SetTrigger("Skill1");
+        AbilityStart();
+    }
+
+    private void DamageEntitiesInArea()
+    {
+        if (isLocalPlayer)
+            CameraController.CreateShake(3, .65f);
+
+        if (!isServer)
+            return;
+
+        foreach (Entity entity in leftHandCollider.GetHittableEntities())
+            abilitySystem.PlayerComponent.DoDamage(entity, GetDamage());
+
+        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        AbilityEnd();
+    }
+
+    private int GetDamage()
+    {
+        return 20;
+    }
+
+    public void DestroyColliders()
+    {
+        Destroy(leftHandCollider.gameObject);
+        Destroy(rightHandCollider.gameObject);
     }
 
     protected override void InterruptAbility()
     {
-        print("Punch interrupt");
+        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        AbilityEnd();
     }
 
     protected override void StopHoldingAbility(Vector3 target)

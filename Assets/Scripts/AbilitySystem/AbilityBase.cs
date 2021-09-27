@@ -13,6 +13,7 @@ public abstract class AbilityBase : MonoBehaviour
     public KeyCode TriggerKey { get => triggerOnKey; }
 
     protected bool isLocalPlayer { get => abilitySystem.isLocalPlayer; }
+    protected bool isServer { get => abilitySystem.isServer; }
 
     protected Coroutine cooldownCoroutine;
     protected AbilitySystem abilitySystem;
