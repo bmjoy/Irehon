@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
 using System.Net.Sockets;
+using DuloGames.UI;
 
 namespace Client
 {
@@ -85,11 +86,17 @@ namespace Client
         {
         }
 
+        protected override void ChangeScene(string scene, AsyncOperation ao)
+        {
+            UILoadingOverlayManager.Instance.Create().LoadSceneAsync(scene);
+        }
+
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
             CameraController.EnableCursor();
-            SceneManager.LoadScene("LoginScene");
+            if (SceneManager.GetActiveScene().name != "LoginScene")
+                SceneManager.LoadScene("LoginScene");
         }
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)

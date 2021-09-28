@@ -32,6 +32,8 @@ namespace Client
     public class CharacterSelector : MonoBehaviour
     {
         [SerializeField]
+        private GameObject playButton;
+        [SerializeField]
         private Text nicknameField;
         [SerializeField]
         private RectTransform createCharacterTransform;
@@ -85,12 +87,16 @@ namespace Client
 
         private void UpdateCharacterListUI(List<Character> characterList)
         {
+            playButton.SetActive(false);
             foreach (GameObject tab in createdCharacterTabs)
                 Destroy(tab);
 
             createdCharacterTabs.Clear();
 
             int slotId = 0;
+
+            if (characterList.Count > 0)
+                playButton.SetActive(true);
 
             foreach (Character character in characterList)
                 createdCharacterTabs.Add(CreateCharacterTab(character, slotId++));

@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public static UIController instance;
+    public static UIController i;
+
+    [SerializeField]
+    private Image cursorHint;
 
     private float defaultTriangleSize = 150;
     private float healthBarUpdateDelay = 0.5f;
@@ -34,7 +37,15 @@ public class UIController : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        if (i != null && i != this)
+            Destroy(gameObject);
+        else
+            i = this;
+    }
+
+    private void Start()
+    {
+        CameraController.OnChangeCursorStateEvent.AddListener(ChangeCursorHintStatus);
     }
 
     public void EnableDefaultCrosshair()
@@ -121,9 +132,18 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void ChangeCursorHintStatus(bool isCursorEnabled)
+    {
+        float alpha = isCursorEnabled ? 0.9f : 0.3f;
+
+        var color = Color.white;
+        color.a = alpha;
+        cursorHint.color = color;
+    }
+
     public static void SetDefaultUI()
     {
-        instance.EnableDefaultCrosshair();
+        i.EnableDefaultCrosshair();
         CameraController.DisableAimCamera();
         CameraController.EnableCursor();
     }

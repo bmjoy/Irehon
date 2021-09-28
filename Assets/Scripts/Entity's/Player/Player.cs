@@ -38,13 +38,13 @@ public class Player : Entity
         
         if (isLocalPlayer)
         {
-            HitConfirmEvent.AddListener(x => UIController.instance.ShowHitMarker());
+            HitConfirmEvent.AddListener(x => UIController.i.ShowHitMarker());
 
             ContainerWindowManager.i.PlayerIntialize(this);
             CameraController.i.Intialize(this);
             CraftWindowManager.Intialize(this);
             
-            OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.instance.SetHealthBarValue(1f * newHealth / maxHealth));
+            OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth));
 
             OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
         }

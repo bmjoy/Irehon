@@ -804,7 +804,6 @@ namespace Mirror
             // Debug.Log("ClientChangeScene newSceneName:" + newSceneName + " networkSceneName:" + networkSceneName);
 
             // Let client prepare for scene change
-            OnClientChangeScene(newSceneName, sceneOperation, customHandling);
 
             // After calling OnClientChangeScene, exit if server since server is already doing
             // the actual scene change, and we don't need to do it for the host client
@@ -833,6 +832,7 @@ namespace Mirror
             {
                 case SceneOperation.Normal:
                     loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+                    ChangeScene(newSceneName, loadingSceneAsync);
                     break;
                 case SceneOperation.LoadAdditive:
                     // Ensure additive scene is not already loaded on client by name or path
@@ -865,6 +865,10 @@ namespace Mirror
             // don't change the client's current networkSceneName when loading additive scene content
             if (sceneOperation == SceneOperation.Normal)
                 networkSceneName = newSceneName;
+        }
+
+        protected virtual void ChangeScene(string scene, AsyncOperation ao)
+        {
         }
 
         // support additive scene loads:

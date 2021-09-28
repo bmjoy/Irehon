@@ -52,7 +52,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         if (holdingTime > MAX_HOLDING_TIME)
             holdingTime = MAX_HOLDING_TIME;
         if (holdingTime > MIN_HOLDING_TIME && isLocalPlayer)
-            UIController.instance.ChangeTriangleAimSize(GetHoldingPowerPercent());
+            UIController.i.ChangeTriangleAimSize(GetHoldingPowerPercent());
         if (aiming || additionalyChestOffsetTime > 0)
         {
             additionalyChestOffsetTime -= Time.deltaTime;
@@ -77,9 +77,9 @@ public class HoldReleaseArrowAbility : AbilityBase
 
         if (isLocalPlayer)
         {
-            UIController.instance.EnableTriangleCrosshair();
+            UIController.i.EnableTriangleCrosshair();
             CameraController.EnableAimCamera();
-            UIController.instance.ChangeTriangleAimSize(holdingTime / MAX_HOLDING_TIME);
+            UIController.i.ChangeTriangleAimSize(holdingTime / MAX_HOLDING_TIME);
         }
     }
 
@@ -136,7 +136,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         if (isLocalPlayer)
         {
             CameraController.DisableAimCamera();
-            UIController.instance.EnableDefaultCrosshair();
+            UIController.i.EnableDefaultCrosshair();
         }
     }
 
@@ -145,7 +145,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         if (isLocalPlayer)
         {
             CameraController.DisableAimCamera();
-            UIController.instance.EnableDefaultCrosshair();
+            UIController.i.EnableDefaultCrosshair();
         }
         ArrowInHand.SetActive(false);
 

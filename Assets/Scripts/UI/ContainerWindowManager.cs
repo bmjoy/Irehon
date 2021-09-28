@@ -63,7 +63,7 @@ public class ContainerWindowManager : MonoBehaviour
 
         if (from.type == ContainerType.Inventory)
         {
-            if (playerContainerController.Containers[ContainerType.Chest] != null)
+            if (playerContainerController.Containers.ContainsKey(ContainerType.Chest) && playerContainerController.Containers[ContainerType.Chest] != null)
             {
                 var slot = playerContainerController.Containers[ContainerType.Chest].GetEmptySlot();
                 if (slot != null)

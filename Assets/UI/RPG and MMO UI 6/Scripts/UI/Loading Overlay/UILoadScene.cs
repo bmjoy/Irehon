@@ -46,10 +46,10 @@ namespace DuloGames.UI
 
                     if (loadingOverlay != null)
                     {
-                        if (isNumeric)
-                            loadingOverlay.LoadScene(id);
-                        else
-                            loadingOverlay.LoadScene(this.m_Scene);
+                        //if (isNumeric)
+                        //    loadingOverlay.LoadScene(id);
+                        //else
+                        //    loadingOverlay.LoadScene(this.m_Scene);
                     }
                 }
                 else

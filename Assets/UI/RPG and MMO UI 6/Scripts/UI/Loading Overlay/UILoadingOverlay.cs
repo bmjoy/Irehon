@@ -24,7 +24,7 @@ namespace DuloGames.UI
 	    [SerializeField] private float m_TransitionDuration = 0.4f;
 
         private bool m_Showing = false;
-        private int m_LoadSceneId = 0;
+        private string m_LoadSceneName = null;
 
         // Tween controls
 	    [System.NonSerialized] private readonly TweenRunner<FloatTween> m_FloatTweenRunner;
@@ -80,24 +80,16 @@ namespace DuloGames.UI
         /// Shows the loading overlay and loads the scene.
         /// </summary>
         /// <param name="sceneName">The scene name.</param>
-        public void LoadScene(string sceneName)
+        public void LoadScene(int a)
         {
-            Scene scene = SceneManager.GetSceneByName(sceneName);
 
-            if (scene != null)
-                this.LoadScene(scene.buildIndex);
         }
 
-        /// <summary>
-        /// Shows the loading overlay and loads the scene.
-        /// </summary>
-        /// <param name="sceneIndex">The scene build index.</param>
-        public void LoadScene(int sceneIndex)
+        public void LoadSceneAsync(string sceneName)
         {
+            this.m_LoadSceneName = sceneName;
             this.m_Showing = true;
-            this.m_LoadSceneId = sceneIndex;
 
-            // Update the progress bar
             if (this.m_ProgressBar != null)
                 this.m_ProgressBar.fillAmount = 0f;
 
@@ -105,7 +97,6 @@ namespace DuloGames.UI
             if (this.m_CanvasGroup != null)
                 this.m_CanvasGroup.alpha = 0f;
 
-            // Start the tween
             this.StartAlphaTween(1f, this.m_TransitionDuration, true);
         }
 
@@ -150,7 +141,6 @@ namespace DuloGames.UI
             if (this.m_Showing)
             {
                 this.m_Showing = false;
-                StartCoroutine(AsynchronousLoad());
             }
             else
             {
@@ -158,41 +148,14 @@ namespace DuloGames.UI
                 Destroy(this.gameObject);
             }
         }
-        
-        IEnumerator AsynchronousLoad()
-        {
-            yield return null;
-
-            AsyncOperation ao = SceneManager.LoadSceneAsync(this.m_LoadSceneId);
-            ao.allowSceneActivation = false;
-
-            while (!ao.isDone)
-            {
-                // [0, 0.9] > [0, 1]
-                float progress = Mathf.Clamp01(ao.progress / 0.9f);
-                
-                // Update the progress bar
-                if (this.m_ProgressBar != null)
-                {
-                    this.m_ProgressBar.fillAmount = progress;
-                }
-                
-                // Loading completed
-                if (ao.progress == 0.9f)
-                {
-                    ao.allowSceneActivation = true;
-                }
-
-                yield return null;
-            }
-        }
 
         private void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
         {
-            if (scene.buildIndex != this.m_LoadSceneId)
+            if (scene.name != this.m_LoadSceneName)
                 return;
 
             // Hide the loading overlay
+            this.m_Showing = false;
             this.StartAlphaTween(0f, this.m_TransitionDuration, true);
         }
     }

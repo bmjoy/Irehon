@@ -33,7 +33,7 @@ public class FistPunchAbility : AbilityBase
     private void DamageEntitiesInArea()
     {
         if (isLocalPlayer)
-            CameraController.CreateShake(3, .65f);
+            CameraController.CreateShake(1, .3f);
 
         if (!isServer)
             return;

@@ -29,6 +29,7 @@ public class PlayerWalkState : PlayerRotatableState
         animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);
         animator.SetFloat("zMove", 0);
+        animator.SetBool("CastingMovement", false);
     }
 
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
@@ -37,6 +38,8 @@ public class PlayerWalkState : PlayerRotatableState
 
         if (isServer)
             abilitySystem.SendAbilityKeyStatus(input.IsKeyPressed(abilitySystem.ListeningKey), input.TargetPoint);
+
+        animator.SetBool("CastingMovement", abilitySystem.IsAbilityCasting());
 
         if (input.IsKeyPressed(KeyCode.Space))
             return PlayerStateType.Jump;
@@ -50,7 +53,7 @@ public class PlayerWalkState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)
             return PlayerStateType.Run;
 
-        playerMovement.Move(input.GetMoveVector(), MovementSpeed);
+        playerMovement.Move(input.GetMoveVector(), abilitySystem.IsAbilityCasting() ? MovementSpeed / 3 : MovementSpeed);
         animator.SetFloat("xMove", input.GetMoveVector().x);
         animator.SetFloat("zMove", input.GetMoveVector().y);
 

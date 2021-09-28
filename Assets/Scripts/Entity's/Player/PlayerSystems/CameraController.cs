@@ -15,8 +15,9 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController i;
     public static bool IsCursosLocked => i.cursorAiming;
+    public static OnChangeCursorHidingState OnChangeCursorStateEvent => i.OnChangeCursorState;
 
-    public OnChangeCursorHidingState OnChangeCursorState;
+    public OnChangeCursorHidingState OnChangeCursorState = new OnChangeCursorHidingState();
     public Camera cameraComponent { get; private set; } 
 
     private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
@@ -52,7 +53,6 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        OnChangeCursorState = new OnChangeCursorHidingState();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = false;
@@ -176,14 +176,16 @@ public class CameraController : MonoBehaviour
         if (i != null)
         {
             i.cursorAiming = false;
-            UIController.instance.HideHint();
+            UIController.i.HideHint();
         }
+        i.OnChangeCursorState.Invoke(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
     public static void DisableCursor()
     {
+        i.OnChangeCursorState.Invoke(false);
         i.cursorAiming = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -204,15 +206,15 @@ public class CameraController : MonoBehaviour
             currentShakeHandler.m_AmplitudeGain = 0;
 
         if (interacter.isInteracting)
-            UIController.instance.HideHint();
+            UIController.i.HideHint();
 
         if (!cursorAiming || !playerStateMachine.CurrentState.CanRotateCamera)
             return;
 
         if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
-            UIController.instance.ShowHint("Interact", "Press E to interract with this object");
+            UIController.i.ShowHint("Interact", "Press E to interract with this object");
         else
-            UIController.instance.HideHint();
+            UIController.i.HideHint();
 
         RotateCamera();
 
