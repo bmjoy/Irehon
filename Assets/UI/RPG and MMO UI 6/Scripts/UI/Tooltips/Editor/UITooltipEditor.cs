@@ -17,6 +17,7 @@ namespace DuloGamesEditor.UI
 		private SerializedProperty m_TransitionProperty;
 		private SerializedProperty m_TransitionEasingProperty;
 		private SerializedProperty m_TransitionDurationProperty;
+        //private SerializedProperty m_OnAnchorEventProperty;
 
         protected virtual void OnEnable()
 		{
@@ -30,6 +31,7 @@ namespace DuloGamesEditor.UI
 			this.m_TransitionProperty = this.serializedObject.FindProperty("m_Transition");
 			this.m_TransitionEasingProperty = this.serializedObject.FindProperty("m_TransitionEasing");
 			this.m_TransitionDurationProperty = this.serializedObject.FindProperty("m_TransitionDuration");
+            //this.m_OnAnchorEventProperty = this.serializedObject.FindProperty("onAnchorEvent");
         }
 		
 		public override void OnInspectorGUI()
@@ -42,6 +44,8 @@ namespace DuloGamesEditor.UI
 			EditorGUILayout.Separator();
 			this.DrawTransitionProperties();
             EditorGUILayout.Separator();
+            //EditorGUILayout.PropertyField(this.m_OnAnchorEventProperty, new GUIContent("On Anchor Event"), true);
+            //EditorGUILayout.Separator();
             this.serializedObject.ApplyModifiedProperties();
 		}
 		

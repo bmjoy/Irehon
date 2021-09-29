@@ -5,11 +5,13 @@ namespace DuloGames.UI
 {
     public class Demo_Spellbook_SpellRow : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private UISpellSlot m_Slot;
         [SerializeField] private Text m_NameText;
         [SerializeField] private Text m_RankText;
         [SerializeField] private Text m_DescriptionText;
         [SerializeField] private bool m_IsDemo = false;
+        #pragma warning restore 0649
 
         void Start()
         {

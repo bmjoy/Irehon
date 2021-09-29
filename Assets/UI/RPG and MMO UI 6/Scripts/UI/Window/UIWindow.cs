@@ -200,7 +200,7 @@ namespace DuloGames.UI
 
             // Transition to the starting state
             if (Application.isPlaying)
-                this.ApplyInitialVisualState(this.m_StartingState);
+                this.ApplyVisualState(this.m_StartingState);
         }
 		
 		protected virtual void Start()
@@ -208,7 +208,21 @@ namespace DuloGames.UI
 			// Assign new custom ID
 			if (this.CustomID == 0)
 				this.CustomID = UIWindow.NextUnusedCustomID;
-		}
+            
+            // Make sure we have a window manager in the scene if required
+            if (this.m_EscapeKeyAction != EscapeKeyAction.None)
+            {
+                UIWindowManager manager = Component.FindObjectOfType<UIWindowManager>();
+
+                // Add a manager if not present
+                if (manager == null)
+                {
+                    GameObject newObj = new GameObject("Window Manager");
+                    newObj.AddComponent<UIWindowManager>();
+                    newObj.transform.SetAsFirstSibling();
+                }
+            }
+        }
 		
         protected virtual void OnEnable()
         {
@@ -236,26 +250,6 @@ namespace DuloGames.UI
         protected virtual void OnValidate()
 		{
 			this.m_TransitionDuration = Mathf.Max(this.m_TransitionDuration, 0f);
-			
-			// Make sure we have a window manager in the scene if required
-			if (this.m_EscapeKeyAction != EscapeKeyAction.None)
-			{
-				UIWindowManager manager = Component.FindObjectOfType<UIWindowManager>();
-				
-				// Add a manager if not present
-				if (manager == null)
-				{
-					GameObject newObj = new GameObject("Window Manager");
-					newObj.AddComponent<UIWindowManager>();
-					newObj.transform.SetAsFirstSibling();
-				}
-			}
-			
-			// Apply starting state
-			if (this.m_CanvasGroup != null)
-			{
-				this.m_CanvasGroup.alpha = (this.m_StartingState == VisualState.Hidden) ? 0f : 1f;
-			}
 		}
 #endif
 		
@@ -421,14 +415,13 @@ namespace DuloGames.UI
 		}
 
         /// <summary>
-        /// Applies the initial visual state.
+        /// Instantly applies the visual state.
         /// </summary>
         /// <param name="state">The state to transition to.</param>
-        /// <param name="instant">If set to <c>true</c> instant.</param>
-        protected virtual void ApplyInitialVisualState(VisualState state)
+        public virtual void ApplyVisualState(VisualState state)
         {
             float targetAlpha = (state == VisualState.Shown) ? 1f : 0f;
-            
+
             // Set the alpha directly
             this.SetCanvasAlpha(targetAlpha);
 
@@ -440,6 +433,11 @@ namespace DuloGames.UI
             {
                 this.m_CanvasGroup.blocksRaycasts = true;
                 //this.m_CanvasGroup.interactable = true;
+            }
+            else
+            {
+                this.m_CanvasGroup.blocksRaycasts = false;
+                //this.m_CanvasGroup.interactable = false;
             }
         }
 
@@ -466,7 +464,7 @@ namespace DuloGames.UI
 		/// Sets the canvas alpha.
 		/// </summary>
 		/// <param name="alpha">Alpha.</param>
-		protected void SetCanvasAlpha(float alpha)
+		public void SetCanvasAlpha(float alpha)
 		{
 			if (this.m_CanvasGroup == null)
 				return;

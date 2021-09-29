@@ -15,7 +15,7 @@ namespace DuloGames.UI
         }
 
         /// <summary>
-        /// Brings the game object to the front.
+        /// Brings the game object to the front while specifing if re-parenting is allowed.
         /// </summary>
         /// <param name="go">The Game Object.</param>
         /// <param name="allowReparent">Should we allow the method to change the Game Object's parent.</param>

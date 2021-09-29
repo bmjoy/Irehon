@@ -5,8 +5,10 @@ namespace DuloGames.UI
     [ExecuteInEditMode]
     public class UIWorldCanvasScaleByCamera : MonoBehaviour {
     
+        #pragma warning disable 0649
         [SerializeField] private Camera m_Camera;
         [SerializeField] private Canvas m_Canvas;
+        #pragma warning restore 0649
 
         protected void Update()
         {

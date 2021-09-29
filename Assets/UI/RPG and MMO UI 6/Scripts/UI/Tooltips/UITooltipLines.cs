@@ -10,7 +10,6 @@ namespace DuloGames.UI
 		{
             Default,
 			Title,
-			Attribute,
 			Description,
             Custom
 		}

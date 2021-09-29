@@ -1,6 +1,7 @@
 using UnityEngine;
 using DuloGames.UI;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace DuloGamesEditor.UI
 {
@@ -36,8 +37,16 @@ namespace DuloGamesEditor.UI
 
                 if (style == UITooltipLines.LineStyle.Custom)
                 {
-                    EditorGUI.PropertyField(position, property.FindPropertyRelative("CustomLineStyle"), new GUIContent("Style Name"));
-                    position = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + Spacing, position.width, EditorGUIUtility.singleLineHeight);
+                    if (UITooltipManager.Instance != null)
+                    {
+                        this.DrawCustomStyleField(position, property.FindPropertyRelative("CustomLineStyle"));
+                        position = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + Spacing, position.width, EditorGUIUtility.singleLineHeight);
+                    }
+                    else
+                    {
+                        EditorGUI.PropertyField(position, property.FindPropertyRelative("CustomLineStyle"), new GUIContent("Style Name"));
+                        position = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + Spacing, position.width, EditorGUIUtility.singleLineHeight);
+                    }
                 }
 
                 EditorGUI.PropertyField(position, property.FindPropertyRelative("Content"), new GUIContent("Content"));
@@ -65,6 +74,35 @@ namespace DuloGamesEditor.UI
                 return base.GetPropertyHeight(property, label) + (EditorGUIUtility.singleLineHeight * 4f) + (Spacing * 3f);
 
             return base.GetPropertyHeight(property, label) + (EditorGUIUtility.singleLineHeight * 3f) + (Spacing * 2f);
+        }
+
+        public void DrawCustomStyleField(Rect position, SerializedProperty property)
+        {
+            if (UITooltipManager.Instance.customStyles.Length == 0)
+            {
+                EditorGUI.LabelField(position, "Please add custom styles to the tooltip manager.");
+                return;
+            }
+
+            int selected = 0;
+            List<string> options = new List<string>();
+
+            var index = 0;
+            foreach (UITooltipLineStyle style in UITooltipManager.Instance.customStyles)
+            {
+                options.Add(style.Name);
+
+                if (style.Name == property.stringValue)
+                    selected = index;
+
+                index++;
+            }
+
+            GUI.changed = false;
+            int newSelected = EditorGUI.Popup(position, "Style Name", selected, options.ToArray());
+
+            if (GUI.changed)
+                property.stringValue = UITooltipManager.Instance.customStyles[newSelected].Name;
         }
     }
 }

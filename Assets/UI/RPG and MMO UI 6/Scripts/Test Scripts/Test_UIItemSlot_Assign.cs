@@ -4,8 +4,10 @@ namespace DuloGames.UI
 {
     public class Test_UIItemSlot_Assign : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private UIItemSlot slot;
         [SerializeField] private int assignItem;
+        #pragma warning restore 0649
 
         void Awake()
         {

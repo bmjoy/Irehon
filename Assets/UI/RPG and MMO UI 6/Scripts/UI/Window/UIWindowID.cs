@@ -12,6 +12,7 @@ namespace DuloGames.UI
         SpellBook = 7,
         Dialog = 8,
         QuestLog = 9,
-        Vendor = 10
+        Vendor = 10,
+        Loot = 11
 	}
 }

@@ -16,10 +16,12 @@ namespace DuloGames.UI
             Jump
         }
         
+        #pragma warning disable 0649
         [SerializeField] private string m_Scene;
         [SerializeField] private bool m_UseLoadingOverlay = false;
         [SerializeField] private InputKey m_InputKey = InputKey.None;
         [SerializeField] private Button m_HookToButton;
+        #pragma warning restore 0649
 
         protected void OnEnable()
         {
@@ -40,16 +42,20 @@ namespace DuloGames.UI
                 int id;
                 bool isNumeric = int.TryParse(this.m_Scene, out id);
                 
-                if (this.m_UseLoadingOverlay)
+                if (this.m_UseLoadingOverlay && UILoadingOverlayManager.Instance != null)
                 {
                     UILoadingOverlay loadingOverlay = UILoadingOverlayManager.Instance.Create();
 
                     if (loadingOverlay != null)
                     {
-                        //if (isNumeric)
-                        //    loadingOverlay.LoadScene(id);
+                        if (isNumeric)
+                            loadingOverlay.LoadScene(id);
                         //else
                         //    loadingOverlay.LoadScene(this.m_Scene);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Failed to instantiate the loading overlay prefab, make sure it's assigned on the manager.");
                     }
                 }
                 else
@@ -83,6 +89,10 @@ namespace DuloGames.UI
                 if (UIWindowManager.Instance != null && UIWindowManager.Instance.escapeInputName == "Cancel" && UIWindowManager.Instance.escapedUsed)
                     return;
             }
+
+            // Check if we are using the escape input for this and if we have an active modal box
+            if (this.m_InputKey == InputKey.Cancel && UIModalBoxManager.Instance != null && UIModalBoxManager.Instance.activeBoxes.Length > 0)
+                return;
 
             string buttonName = string.Empty;
 

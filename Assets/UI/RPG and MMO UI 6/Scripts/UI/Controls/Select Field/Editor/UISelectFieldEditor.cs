@@ -14,6 +14,7 @@ namespace DuloGamesEditor.UI
         public const string PREFS_KEY = "UISelectFieldEditor_";
         private bool showSelectLayout = true;
         private bool showListLayout = true;
+        private bool showScrollRectLayout = true;
         private bool showListSeparatorLayout = true;
         private bool showOptionLayout = true;
         private bool showOptionBackgroundLayout = true;
@@ -36,7 +37,7 @@ namespace DuloGamesEditor.UI
 		private SerializedProperty m_ListMarginsProperty;
 		private SerializedProperty m_ListPaddingProperty;
 		private SerializedProperty m_ListSpacingProperty;
-		private SerializedProperty m_ListSeparatorSpriteProperty;
+        private SerializedProperty m_ListSeparatorSpriteProperty;
 		private SerializedProperty m_ListSeparatorTypeProperty;
 		private SerializedProperty m_ListSeparatorColorProperty;
 		private SerializedProperty m_ListSeparatorHeightProperty;
@@ -72,8 +73,18 @@ namespace DuloGamesEditor.UI
         private SerializedProperty m_OptionPressOverlayColorProperty;
         private SerializedProperty m_OptionPressOverlayColorBlockProperty;
         private SerializedProperty m_OnChangeProperty;
-		
-		protected override void OnEnable()
+        private SerializedProperty m_AllowScrollRectProperty;
+        private SerializedProperty m_ScrollMovementTypeProperty;
+        private SerializedProperty m_ScrollElasticityProperty;
+        private SerializedProperty m_ScrollInertiaProperty;
+        private SerializedProperty m_ScrollDecelerationRateProperty;
+        private SerializedProperty m_ScrollSensitivityProperty;
+        private SerializedProperty m_ScrollMinOptionsProperty;
+        private SerializedProperty m_ScrollListHeightProperty;
+        private SerializedProperty m_ScrollBarPrefabProperty;
+        private SerializedProperty m_ScrollbarSpacingProperty;
+
+        protected override void OnEnable()
 		{
 			base.OnEnable();
 
@@ -84,6 +95,7 @@ namespace DuloGamesEditor.UI
             this.showOptionBackgroundLayout = EditorPrefs.GetBool(PREFS_KEY + "5", true);
             this.showOptionHover = EditorPrefs.GetBool(PREFS_KEY + "6", true);
             this.showOptionPress = EditorPrefs.GetBool(PREFS_KEY + "7", true);
+            this.showScrollRectLayout = EditorPrefs.GetBool(PREFS_KEY + "8", true);
 
             this.m_TargetGraphicProperty = base.serializedObject.FindProperty("m_TargetGraphic");
 			this.m_InteractableProperty = base.serializedObject.FindProperty("m_Interactable");
@@ -100,7 +112,7 @@ namespace DuloGamesEditor.UI
 			this.m_ListMarginsProperty = this.serializedObject.FindProperty("listMargins");
 			this.m_ListPaddingProperty = this.serializedObject.FindProperty("listPadding");
 			this.m_ListSpacingProperty = this.serializedObject.FindProperty("listSpacing");
-			this.m_ListSeparatorSpriteProperty = this.serializedObject.FindProperty("listSeparatorSprite");
+            this.m_ListSeparatorSpriteProperty = this.serializedObject.FindProperty("listSeparatorSprite");
 			this.m_ListSeparatorTypeProperty = this.serializedObject.FindProperty("listSeparatorType");
 			this.m_ListSeparatorColorProperty = this.serializedObject.FindProperty("listSeparatorColor");
 			this.m_ListSeparatorHeightProperty = this.serializedObject.FindProperty("listSeparatorHeight");
@@ -136,6 +148,17 @@ namespace DuloGamesEditor.UI
             this.m_OptionPressOverlayColorProperty = this.serializedObject.FindProperty("optionPressOverlayColor");
             this.m_OptionPressOverlayColorBlockProperty = this.serializedObject.FindProperty("optionPressOverlayColorBlock");
 
+            this.m_AllowScrollRectProperty = this.serializedObject.FindProperty("allowScrollRect");
+            this.m_ScrollMovementTypeProperty = this.serializedObject.FindProperty("scrollMovementType");
+            this.m_ScrollElasticityProperty = this.serializedObject.FindProperty("scrollElasticity");
+            this.m_ScrollInertiaProperty = this.serializedObject.FindProperty("scrollInertia");
+            this.m_ScrollDecelerationRateProperty = this.serializedObject.FindProperty("scrollDecelerationRate");
+            this.m_ScrollSensitivityProperty = this.serializedObject.FindProperty("scrollSensitivity");
+            this.m_ScrollMinOptionsProperty = this.serializedObject.FindProperty("scrollMinOptions");
+            this.m_ScrollListHeightProperty = this.serializedObject.FindProperty("scrollListHeight");
+            this.m_ScrollBarPrefabProperty = this.serializedObject.FindProperty("scrollBarPrefab");
+            this.m_ScrollbarSpacingProperty = this.serializedObject.FindProperty("scrollbarSpacing");
+
             this.m_OnChangeProperty = this.serializedObject.FindProperty("onChange");
 		}
 		
@@ -163,6 +186,8 @@ namespace DuloGamesEditor.UI
 			EditorGUILayout.Separator();
 			this.DrawListLayoutProperties();
 			EditorGUILayout.Separator();
+            this.DrawScrollRectProperties();
+            EditorGUILayout.Separator();
 			this.DrawListSeparatorLayoutProperties();
 			EditorGUILayout.Separator();
 			this.DrawOptionLayoutProperties();
@@ -213,10 +238,10 @@ namespace DuloGamesEditor.UI
 				
 				string[] split = modified.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
 				
-				select.options.Clear();
+				select.ClearOptions();
 				
 				foreach (string s in split)
-					select.options.Add(s);
+					select.AddOption(s);
 				
 				if (string.IsNullOrEmpty(select.value) || !select.options.Contains(select.value))
 				{
@@ -387,7 +412,53 @@ namespace DuloGamesEditor.UI
                 EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);
             }
 		}
-		
+
+        /// <summary>
+        /// Draws the scroll rect properties.
+        /// </summary>
+        public void DrawScrollRectProperties()
+        {
+            bool newState = EditorGUILayout.Foldout(this.showScrollRectLayout, "Scrolling Properties", this.m_FoldoutStyle);
+
+            if (newState != this.showScrollRectLayout)
+            {
+                EditorPrefs.SetBool(PREFS_KEY + "8", newState);
+                this.showScrollRectLayout = newState;
+            }
+
+            if (this.showScrollRectLayout)
+            {
+                EditorGUI.indentLevel = (EditorGUI.indentLevel + 1);
+
+                EditorGUILayout.PropertyField(this.m_AllowScrollRectProperty, new GUIContent("Allow Scroll Rect"));
+                EditorGUILayout.PropertyField(this.m_ScrollMovementTypeProperty, new GUIContent("Movement Type"));
+
+                if (this.m_ScrollMovementTypeProperty.enumValueIndex == 1)
+                {
+                    EditorGUI.indentLevel = (EditorGUI.indentLevel + 1);
+                    EditorGUILayout.PropertyField(this.m_ScrollElasticityProperty, new GUIContent("Elasticity"));
+                    EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);
+                }
+
+                EditorGUILayout.PropertyField(this.m_ScrollInertiaProperty, new GUIContent("Inertia"));
+
+                if (this.m_ScrollInertiaProperty.boolValue)
+                {
+                    EditorGUI.indentLevel = (EditorGUI.indentLevel + 1);
+                    EditorGUILayout.PropertyField(this.m_ScrollDecelerationRateProperty, new GUIContent("Deceleration Rate"));
+                    EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);
+                }
+
+                EditorGUILayout.PropertyField(this.m_ScrollSensitivityProperty, new GUIContent("Scroll Sensitivity"));
+                EditorGUILayout.PropertyField(this.m_ScrollMinOptionsProperty, new GUIContent("Minimum Options", "The number of options required to use the scroll rect."));
+                EditorGUILayout.PropertyField(this.m_ScrollListHeightProperty, new GUIContent("List Height"));
+                EditorGUILayout.PropertyField(this.m_ScrollBarPrefabProperty, new GUIContent("Scroll Bar Prefab"));
+                EditorGUILayout.PropertyField(this.m_ScrollbarSpacingProperty, new GUIContent("Scroll Bar Spacing"));
+
+                EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);
+            }
+        }
+
 		/// <summary>
 		/// Draws the list separator layout properties.
 		/// </summary>

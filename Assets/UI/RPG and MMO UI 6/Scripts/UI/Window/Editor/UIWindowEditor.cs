@@ -63,8 +63,14 @@ namespace DuloGamesEditor.UI
 			{
 				EditorGUILayout.PropertyField(this.m_CustomWindowIdProperty, new GUIContent("Custom ID"));
 			}
-			EditorGUILayout.PropertyField(this.m_StartingStateProperty, new GUIContent("Starting State"));
-			EditorGUILayout.PropertyField(this.m_EscapeKeyActionProperty, new GUIContent("Escape Key Action"));
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(this.m_StartingStateProperty, new GUIContent("Starting State"));
+            if (EditorGUI.EndChangeCheck())
+            {
+                //foreach (Object target in this.targets)
+                //    (target as UIWindow).ApplyVisualState((UIWindow.VisualState)this.m_StartingStateProperty.enumValueIndex);
+            }
+            EditorGUILayout.PropertyField(this.m_EscapeKeyActionProperty, new GUIContent("Escape Key Action"));
             EditorGUILayout.PropertyField(this.m_UseBlackOverlayProperty, new GUIContent("Use Black Overlay"));
             
 			EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);

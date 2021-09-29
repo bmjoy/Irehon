@@ -18,6 +18,7 @@ namespace DuloGames.UI
             Active
         }
 
+        #pragma warning disable 0649
         [SerializeField, Tooltip("Graphic that will have the selected transtion applied.")]
         private BaseMeshEffect m_TargetEffect;
 
@@ -30,12 +31,14 @@ namespace DuloGames.UI
         [SerializeField] private bool m_UseToggle = false;
         [SerializeField] private Toggle m_TargetToggle;
         [SerializeField] private Color m_ActiveColor = ColorBlock.defaultColorBlock.highlightedColor;
+        #pragma warning restore 0649
 
         private bool m_Highlighted = false;
         private bool m_Selected = false;
         private bool m_Pressed = false;
         private bool m_Active = false;
 
+        private Selectable m_Selectable;
         private bool m_GroupsAllowInteraction = true;
 
         // Tween controls
@@ -62,6 +65,8 @@ namespace DuloGames.UI
                 if (this.m_TargetToggle != null)
                     this.m_Active = this.m_TargetToggle.isOn;
             }
+
+            this.m_Selectable = this.gameObject.GetComponent<Selectable>();
         }
 
         protected void OnEnable()
@@ -122,16 +127,19 @@ namespace DuloGames.UI
                 t = t.parent;
             }
 
-            if (groupAllowInteraction != m_GroupsAllowInteraction)
+            if (groupAllowInteraction != this.m_GroupsAllowInteraction)
             {
-                m_GroupsAllowInteraction = groupAllowInteraction;
+                this.m_GroupsAllowInteraction = groupAllowInteraction;
                 this.InternalEvaluateAndTransitionToNormalState(true);
             }
         }
 
         public virtual bool IsInteractable()
         {
-            return m_GroupsAllowInteraction;
+            if (this.m_Selectable != null)
+                return this.m_Selectable.IsInteractable() && this.m_GroupsAllowInteraction;
+
+            return this.m_GroupsAllowInteraction;
         }
 
         protected void OnToggleValueChange(bool value)

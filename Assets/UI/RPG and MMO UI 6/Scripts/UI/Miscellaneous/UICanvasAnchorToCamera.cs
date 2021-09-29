@@ -6,7 +6,9 @@ namespace DuloGames.UI
     [RequireComponent(typeof(RectTransform))]
     public class UICanvasAnchorToCamera : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Camera m_Camera;
+        #pragma warning restore 0649
         [SerializeField][Range(0f, 1f)] float m_Vertical = 0f;
         [SerializeField][Range(0f, 1f)] float m_Horizontal = 0f;
 

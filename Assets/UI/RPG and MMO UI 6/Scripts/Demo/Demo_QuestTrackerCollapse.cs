@@ -7,6 +7,7 @@ namespace DuloGames.UI
     [ExecuteInEditMode]
     public class Demo_QuestTrackerCollapse : UIBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private GameObject m_Content;
         [SerializeField] private Toggle m_Toggle;
         [SerializeField] private UIFlippable m_ArrowFlippable;
@@ -14,6 +15,7 @@ namespace DuloGames.UI
         [SerializeField] private bool m_ArrowInvertFlip = false;
         [SerializeField] private Vector2 m_ActiveOffset = Vector2.zero;
         [SerializeField] private Vector2 m_InactiveOffset = Vector2.zero;
+        #pragma warning restore 0649
 
         #region Unity Lifetime calls
         

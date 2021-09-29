@@ -5,7 +5,10 @@ namespace DuloGames.UI
 {
 	public class Test_CastBar : MonoBehaviour {
 		
+        #pragma warning disable 0649
 		[SerializeField] private UICastBar m_CastBar;
+        #pragma warning restore 0649
+
 		private UISpellInfo spell1;
 		private UISpellInfo spell2;
 		

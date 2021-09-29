@@ -4,12 +4,14 @@ namespace DuloGames.UI
 {
     public class Demo_CastManager : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private UICastBar m_CastBar;
         [SerializeField] private Transform[] m_SlotContainers;
+        #pragma warning restore 0649
 
         protected void Start()
         {
-            if (this.m_SlotContainers.Length > 0)
+            if (this.m_SlotContainers != null && this.m_SlotContainers.Length > 0)
             {
                 foreach (Transform t in this.m_SlotContainers)
                 {

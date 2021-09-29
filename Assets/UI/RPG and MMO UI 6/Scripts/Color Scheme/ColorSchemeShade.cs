@@ -2,12 +2,18 @@ namespace DuloGames.UI
 {
     public enum ColorSchemeShade
     {
+        Primary,
+        Secondary,
         Light,
         Dark,
-        Lightest,
-        Darkest,
-        Tribal,
-        Button,
+        Effect,
+        BordersPrimary,
+        BordersSecondary,
+        ButtonPrimary,
+        ButtonSecondary,
         WindowHeader,
+        LogoPrimary,
+        LogoEffect,
+        WindowHeaderEffect
     }
 }

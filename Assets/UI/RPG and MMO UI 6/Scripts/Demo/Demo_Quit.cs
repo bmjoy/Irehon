@@ -8,8 +8,10 @@ namespace DuloGames.UI
 {
     public class Demo_Quit : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Button m_HookToButton;
-        
+        #pragma warning restore 0649
+
         protected void OnEnable()
         {
             if (this.m_HookToButton != null)

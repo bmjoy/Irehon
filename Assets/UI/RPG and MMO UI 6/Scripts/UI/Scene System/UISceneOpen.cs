@@ -20,10 +20,12 @@ namespace DuloGames.UI
             Jump
         }
 
+        #pragma warning disable 0649
         [SerializeField] private ActionType m_ActionType = ActionType.SpecificID;
         [SerializeField] private int m_SceneId = 0;
         [SerializeField] private InputKey m_InputKey = InputKey.None;
         [SerializeField] private Button m_HookToButton;
+        #pragma warning restore 0649
 
         protected void OnEnable()
         {
@@ -68,6 +70,10 @@ namespace DuloGames.UI
                 if (UIWindowManager.Instance != null && UIWindowManager.Instance.escapeInputName == "Cancel" && UIWindowManager.Instance.escapedUsed)
                     return;
             }
+
+            // Check if we are using the escape input for this and if we have an active modal box
+            if (this.m_InputKey == InputKey.Cancel && UIModalBoxManager.Instance != null && UIModalBoxManager.Instance.activeBoxes.Length > 0)
+                return;
 
             string buttonName = string.Empty;
 

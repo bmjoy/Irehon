@@ -38,6 +38,11 @@ namespace DuloGamesEditor.UI
             }
             EditorGUI.indentLevel = (EditorGUI.indentLevel - 1);
 
+            EditorGUILayout.Space();
+            EditorGUILayout.PropertyField(this.serializedObject.FindProperty("onBeginDrag"), true);
+            EditorGUILayout.PropertyField(this.serializedObject.FindProperty("onEndDrag"), true);
+            EditorGUILayout.PropertyField(this.serializedObject.FindProperty("onDrag"), true);
+
             this.serializedObject.ApplyModifiedProperties();
         }
     }

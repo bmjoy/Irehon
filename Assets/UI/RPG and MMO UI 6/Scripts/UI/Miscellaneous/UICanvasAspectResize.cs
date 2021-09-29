@@ -2,12 +2,13 @@ using UnityEngine;
 
 namespace DuloGames.UI
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(RectTransform))]
+    [ExecuteInEditMode][RequireComponent(typeof(RectTransform))]
     public class UICanvasAspectResize : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Camera m_Camera;
-        
+        #pragma warning restore 0649
+
         private RectTransform m_RectTransform;
 
         protected void Awake()

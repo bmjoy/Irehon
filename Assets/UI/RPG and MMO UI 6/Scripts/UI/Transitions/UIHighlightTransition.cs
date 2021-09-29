@@ -24,9 +24,11 @@ namespace DuloGames.UI
 			ColorTint,
 			SpriteSwap,
 			Animation,
-            TextColor
+            TextColor,
+            CanvasGroup
 		}
 		
+        #pragma warning disable 0649
 		[SerializeField] private Transition m_Transition = Transition.None;
 		
 		[SerializeField] private Color m_NormalColor = ColorBlock.defaultColorBlock.normalColor;
@@ -36,8 +38,7 @@ namespace DuloGames.UI
         [SerializeField] private Color m_ActiveColor = ColorBlock.defaultColorBlock.highlightedColor;
 		[SerializeField] private float m_Duration = 0.1f;
 		
-		[SerializeField, Range(1f, 6f)] 
-		private float m_ColorMultiplier = 1f;
+		[SerializeField, Range(1f, 6f)] private float m_ColorMultiplier = 1f;
 		
 		[SerializeField] private Sprite m_HighlightedSprite;
 		[SerializeField] private Sprite m_SelectedSprite;
@@ -50,20 +51,31 @@ namespace DuloGames.UI
 		[SerializeField] private string m_PressedTrigger = "Pressed";
         [SerializeField] private string m_ActiveBool = "Active";
 
+        [SerializeField][Range(0f, 1f)] private float m_NormalAlpha = 0f;
+        [SerializeField][Range(0f, 1f)] private float m_HighlightedAlpha = 1f;
+        [SerializeField][Range(0f, 1f)] private float m_SelectedAlpha = 1f;
+        [SerializeField][Range(0f, 1f)] private float m_PressedAlpha = 1f;
+        [SerializeField][Range(0f, 1f)] private float m_ActiveAlpha = 1f;
+
         [SerializeField, Tooltip("Graphic that will have the selected transtion applied.")]
 		private Graphic m_TargetGraphic;
 		
 		[SerializeField, Tooltip("GameObject that will have the selected transtion applied.")]
 		private GameObject m_TargetGameObject;
-		
+
+        [SerializeField, Tooltip("CanvasGroup that will have the selected transtion applied.")]
+        private CanvasGroup m_TargetCanvasGroup;
+
         [SerializeField] private bool m_UseToggle = false;
         [SerializeField] private Toggle m_TargetToggle;
+        #pragma warning restore 0649
 
 		private bool m_Highlighted = false;
 		private bool m_Selected = false;
         private bool m_Pressed = false;
         private bool m_Active = false;
 
+        private Selectable m_Selectable;
         private bool m_GroupsAllowInteraction = true;
 
         /// <summary>
@@ -113,7 +125,23 @@ namespace DuloGames.UI
 				this.m_TargetGameObject = value;
 			}
 		}
-		
+
+        /// <summary>
+        /// Gets or sets the target canvas group.
+        /// </summary>
+        /// <value>The target canvas group.</value>
+        public CanvasGroup targetCanvasGroup
+        {
+            get
+            {
+                return this.m_TargetCanvasGroup;
+            }
+            set
+            {
+                this.m_TargetCanvasGroup = value;
+            }
+        }
+
 		/// <summary>
 		/// Gets the animator.
 		/// </summary>
@@ -133,6 +161,8 @@ namespace DuloGames.UI
         // Tween controls
         [System.NonSerialized]
         private readonly TweenRunner<ColorTween> m_ColorTweenRunner;
+        [System.NonSerialized]
+        private readonly TweenRunner<FloatTween> m_FloatTweenRunner;
 
         // Called by Unity prior to deserialization, 
         // should not be called by users
@@ -141,7 +171,11 @@ namespace DuloGames.UI
             if (this.m_ColorTweenRunner == null)
                 this.m_ColorTweenRunner = new TweenRunner<ColorTween>();
 
+            if (this.m_FloatTweenRunner == null)
+                this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+
             this.m_ColorTweenRunner.Init(this);
+            this.m_FloatTweenRunner.Init(this);
         }
 
         protected void Awake()
@@ -154,6 +188,8 @@ namespace DuloGames.UI
                 if (this.m_TargetToggle != null)
                     this.m_Active = this.m_TargetToggle.isOn;
             }
+
+            this.m_Selectable = this.gameObject.GetComponent<Selectable>();
         }
         
         protected void OnEnable()
@@ -171,16 +207,27 @@ namespace DuloGames.UI
 
             this.InstantClearState();
 		}
-		
+
+        /// <summary>
+		/// Internally evaluates and transitions to normal state.
+		/// </summary>
+		/// <param name="instant">If set to <c>true</c> instant.</param>
+		private void InternalEvaluateAndTransitionToNormalState(bool instant)
+        {
+            this.DoStateTransition(this.m_Active ? VisualState.Active : VisualState.Normal, instant);
+        }
+
 #if UNITY_EDITOR
-		protected void OnValidate()
+        protected void OnValidate()
 		{
 			this.m_Duration = Mathf.Max(this.m_Duration, 0f);
 			
 			if (this.isActiveAndEnabled)
 			{
 				this.DoSpriteSwap(null);
-				this.InternalEvaluateAndTransitionToNormalState(true);
+
+                if (this.m_Transition != Transition.CanvasGroup)
+				    this.InternalEvaluateAndTransitionToNormalState(true);
 			}
 		}
 #endif
@@ -217,16 +264,19 @@ namespace DuloGames.UI
                 t = t.parent;
             }
 
-            if (groupAllowInteraction != m_GroupsAllowInteraction)
+            if (groupAllowInteraction != this.m_GroupsAllowInteraction)
             {
-                m_GroupsAllowInteraction = groupAllowInteraction;
+                this.m_GroupsAllowInteraction = groupAllowInteraction;
                 this.InternalEvaluateAndTransitionToNormalState(true);
             }
         }
 
         public virtual bool IsInteractable()
         {
-            return m_GroupsAllowInteraction;
+            if (this.m_Selectable != null)
+                return this.m_Selectable.IsInteractable() && this.m_GroupsAllowInteraction;
+
+            return this.m_GroupsAllowInteraction;
         }
 
         protected void OnToggleValueChange(bool value)
@@ -262,22 +312,13 @@ namespace DuloGames.UI
 				case Transition.SpriteSwap:
 					this.DoSpriteSwap(null);
 					break;
-				case Transition.Animation:
-					this.TriggerAnimation(this.m_NormalTrigger);
-					break;
                 case Transition.TextColor:
                     this.SetTextColor(this.m_NormalColor);
                     break;
+                case Transition.CanvasGroup:
+                    this.SetCanvasGroupAlpha(1f);
+                    break;
             }
-		}
-		
-		/// <summary>
-		/// Internally evaluates and transitions to normal state.
-		/// </summary>
-		/// <param name="instant">If set to <c>true</c> instant.</param>
-		private void InternalEvaluateAndTransitionToNormalState(bool instant)
-		{
-			this.DoStateTransition(this.m_Active ? VisualState.Active : VisualState.Normal, instant);
 		}
 		
 		public void OnSelect(BaseEventData eventData)
@@ -324,6 +365,9 @@ namespace DuloGames.UI
             if (!this.m_Highlighted)
                 return;
 
+            if (this.m_Active)
+                return;
+
             this.m_Pressed = true;
             this.DoStateTransition(VisualState.Pressed, false);
         }
@@ -367,11 +411,12 @@ namespace DuloGames.UI
             // Check if it's interactable
             if (!this.IsInteractable())
                 state = VisualState.Normal;
-
+               
             Color color = this.m_NormalColor;
 			Sprite newSprite = null;
 			string triggername = this.m_NormalTrigger;
-			
+            float alpha = this.m_NormalAlpha;
+
 			// Prepare the transition values
 			switch (state)
 			{
@@ -379,26 +424,30 @@ namespace DuloGames.UI
 					color = this.m_NormalColor;
 					newSprite = null;
 					triggername = this.m_NormalTrigger;
-					break;
+                    alpha = this.m_NormalAlpha;
+                    break;
 				case VisualState.Highlighted:
 					color = this.m_HighlightedColor;
 					newSprite = this.m_HighlightedSprite;
 					triggername = this.m_HighlightedTrigger;
-					break;
+                    alpha = this.m_HighlightedAlpha;
+                    break;
 				case VisualState.Selected:
 					color = this.m_SelectedColor;
 					newSprite = this.m_SelectedSprite;
 					triggername = this.m_SelectedTrigger;
-					break;
+                    alpha = this.m_SelectedAlpha;
+                    break;
                 case VisualState.Pressed:
                     color = this.m_PressedColor;
                     newSprite = this.m_PressedSprite;
                     triggername = this.m_PressedTrigger;
+                    alpha = this.m_PressedAlpha;
                     break;
                 case VisualState.Active:
                     color = this.m_ActiveColor;
                     newSprite = this.m_ActiveSprite;
-                    triggername = this.m_HighlightedTrigger;
+                    alpha = this.m_ActiveAlpha;
                     break;
 			}
             
@@ -416,6 +465,9 @@ namespace DuloGames.UI
 					break;
                 case Transition.TextColor:
                     this.StartTextColorTween(color, false);
+                    break;
+                case Transition.CanvasGroup:
+                    this.StartCanvasGroupTween(alpha, instant);
                     break;
             }
 		}
@@ -452,7 +504,7 @@ namespace DuloGames.UI
 		
 		private void TriggerAnimation(string triggername)
 		{
-			if (this.targetGameObject == null || this.animator == null || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || string.IsNullOrEmpty(triggername))
+			if (this.targetGameObject == null || this.animator == null || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
 				return;
             
             this.animator.ResetTrigger(this.m_HighlightedTrigger);
@@ -496,6 +548,42 @@ namespace DuloGames.UI
             {
                 (this.m_TargetGraphic as Text).color = targetColor;
             }
+        }
+
+        /// <summary>
+		/// Starts the color tween.
+		/// </summary>
+		/// <param name="targetAlpha">Target alpha.</param>
+		/// <param name="instant">If set to <c>true</c> instant.</param>
+		private void StartCanvasGroupTween(float targetAlpha, bool instant)
+        {
+            if (this.m_TargetCanvasGroup == null)
+                return;
+
+            if (instant || this.m_Duration == 0f || !Application.isPlaying)
+            {
+                this.SetCanvasGroupAlpha(targetAlpha);
+            }
+            else
+            {
+                var floatTween = new FloatTween { duration = this.m_Duration, startFloat = this.m_TargetCanvasGroup.alpha, targetFloat = targetAlpha };
+                floatTween.AddOnChangedCallback(SetCanvasGroupAlpha);
+                floatTween.ignoreTimeScale = true;
+
+                this.m_FloatTweenRunner.StartTween(floatTween);
+            }
+        }
+
+        /// <summary>
+        /// Sets the canvas group alpha value.
+        /// </summary>
+        /// <param name="alpha">The alpha value.</param>
+        private void SetCanvasGroupAlpha(float alpha)
+        {
+            if (this.m_TargetCanvasGroup == null)
+                return;
+
+            this.m_TargetCanvasGroup.alpha = alpha;
         }
     }
 }

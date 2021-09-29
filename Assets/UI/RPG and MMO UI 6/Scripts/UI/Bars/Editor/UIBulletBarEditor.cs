@@ -99,7 +99,8 @@ namespace DuloGamesEditor.UI
 
             if (GUILayout.Button("Generate Bullets"))
             {
-                (this.target as UIBulletBar).ConstructBullets();
+                foreach (Object target in this.targets)
+                    (target as UIBulletBar).ConstructBullets();
             }
 
             EditorGUILayout.Space();

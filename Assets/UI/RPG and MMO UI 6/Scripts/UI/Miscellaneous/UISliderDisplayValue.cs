@@ -11,11 +11,13 @@ namespace DuloGames.UI
             Percentage
         }
 
+        #pragma warning disable 0649
         [SerializeField] private Slider m_slider;
         [SerializeField] private Text m_Text;
         [SerializeField] private DisplayValue m_Display = DisplayValue.Percentage;
         [SerializeField] private string m_Format = "0";
         [SerializeField] private string m_Append = "%";
+        #pragma warning restore 0649
 
         protected void Awake()
         {

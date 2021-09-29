@@ -6,12 +6,14 @@ namespace DuloGames.UI
 	[AddComponentMenu("UI/Pagination", 82)]
 	public class UIPagination : MonoBehaviour {
 		
+        #pragma warning disable 0649
 		[SerializeField] private Transform m_PagesContainer;
 		[SerializeField] private Button m_ButtonPrev;
 		[SerializeField] private Button m_ButtonNext;
 		[SerializeField] private Text m_LabelText;
 		[SerializeField] private Color m_LabelActiveColor = Color.white;
-		
+		#pragma warning restore 0649
+
 		private int activePage = 0;
 		
 		void Start()

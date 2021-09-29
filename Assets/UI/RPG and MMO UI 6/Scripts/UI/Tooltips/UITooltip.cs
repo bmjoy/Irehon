@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using DuloGames.UI.Tweens;
 using System;
 
@@ -58,6 +59,7 @@ namespace DuloGames.UI
         /// </summary>
         public const ContentSizeFitter.FitMode DefaultHorizontalFitMode = ContentSizeFitter.FitMode.Unconstrained;
 		
+        #pragma warning disable 0649
 		[SerializeField, Tooltip("Used when no width is specified for the current tooltip display.")]
 		private float m_DefaultWidth = 257f;
 		
@@ -78,8 +80,12 @@ namespace DuloGames.UI
 		[SerializeField] private Transition m_Transition = Transition.None;
 		[SerializeField] private TweenEasing m_TransitionEasing = TweenEasing.Linear;
 		[SerializeField] private float m_TransitionDuration = 0.1f;
-		
-		private RectTransform m_Rect;
+		#pragma warning restore 0649
+
+        [Serializable] public class AnchorEvent : UnityEvent<Anchor> { }
+        public AnchorEvent onAnchorEvent = new AnchorEvent();
+
+        private RectTransform m_Rect;
 		private CanvasGroup m_CanvasGroup;
 		private ContentSizeFitter m_SizeFitter;
 		private Canvas m_Canvas;
@@ -495,9 +501,8 @@ namespace DuloGames.UI
                 rt.anchorMin = this.m_Rect.pivot;
 
                 // Update it's local position to the defined offset
-                rt.localPosition = new Vector3(((this.m_Rect.pivot.x == 1f) ? (this.m_AnchorGraphicOffset.x * -1f) : this.m_AnchorGraphicOffset.x),
-                                               ((this.m_Rect.pivot.y == 1f) ? (this.m_AnchorGraphicOffset.y * -1f) : this.m_AnchorGraphicOffset.y),
-                                               rt.localPosition.z);
+                rt.anchoredPosition = new Vector2(((this.m_Rect.pivot.x == 1f) ? (this.m_AnchorGraphicOffset.x * -1f) : this.m_AnchorGraphicOffset.x),
+                                               ((this.m_Rect.pivot.y == 1f) ? (this.m_AnchorGraphicOffset.y * -1f) : this.m_AnchorGraphicOffset.y));
 
                 // Flip the anchor graphic based on the pivot
                 rt.localScale = new Vector3(((this.m_Rect.pivot.x == 0f) ? 1f : -1f), ((this.m_Rect.pivot.y == 0f) ? 1f : -1f), rt.localScale.z);
@@ -510,33 +515,37 @@ namespace DuloGames.UI
                         rt.pivot = new Vector2(0f, 0.5f);
                         rt.anchorMax = new Vector2(0f, 0.5f);
                         rt.anchorMin = new Vector2(0f, 0.5f);
-                        rt.localPosition = new Vector3(this.m_AnchorGraphicOffset.x, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
+                        rt.anchoredPosition3D = new Vector3(this.m_AnchorGraphicOffset.x, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
                         rt.localScale = new Vector3(1f, 1f, rt.localScale.z);
                         break;
                     case Anchor.Right:
                         rt.pivot = new Vector2(1f, 0.5f);
                         rt.anchorMax = new Vector2(1f, 0.5f);
                         rt.anchorMin = new Vector2(1f, 0.5f);
-                        rt.localPosition = new Vector3((this.m_AnchorGraphicOffset.x * -1f) - rt.rect.width, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
+                        rt.anchoredPosition3D = new Vector3((this.m_AnchorGraphicOffset.x * -1f) - rt.rect.width, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
                         rt.localScale = new Vector3(-1f, 1f, rt.localScale.z);
                         break;
                     case Anchor.Bottom:
                         rt.pivot = new Vector2(0.5f, 0f);
                         rt.anchorMax = new Vector2(0.5f, 0f);
                         rt.anchorMin = new Vector2(0.5f, 0f);
-                        rt.localPosition = new Vector3(this.m_AnchorGraphicOffset.x, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
+                        rt.anchoredPosition3D = new Vector3(this.m_AnchorGraphicOffset.x, this.m_AnchorGraphicOffset.y, rt.localPosition.z);
                         rt.localScale = new Vector3(1f, 1f, rt.localScale.z);
                         break;
                     case Anchor.Top:
                         rt.pivot = new Vector2(0.5f, 1f);
                         rt.anchorMax = new Vector2(0.5f, 1f);
                         rt.anchorMin = new Vector2(0.5f, 1f);
-                        rt.localPosition = new Vector3(this.m_AnchorGraphicOffset.x, (this.m_AnchorGraphicOffset.y * -1f) - rt.rect.height, rt.localPosition.z);
+                        rt.anchoredPosition3D = new Vector3(this.m_AnchorGraphicOffset.x, (this.m_AnchorGraphicOffset.y * -1f) - rt.rect.height, rt.localPosition.z);
                         rt.localScale = new Vector3(1f, -1f, rt.localScale.z);
                         break;
                 }
             }
-		}
+
+            // Invoke the on anchor event
+            if (this.onAnchorEvent != null)
+                this.onAnchorEvent.Invoke(this.m_CurrentAnchor);
+        }
 		
 		/// <summary>
 		/// Shows the tooltip.
@@ -711,19 +720,9 @@ namespace DuloGames.UI
 			if (this.m_LinesTemplate == null || this.m_LinesTemplate.lineList.Count == 0)
 				return;
 			
-			// We need to apply top padding on the first attribute line for desgin puprpose
-			bool firstAttr = true;
-			
 			// Loop through our attributes
 			foreach (UITooltipLines.Line line in this.m_LinesTemplate.lineList)
 			{
-				// Check if this is the first attribute line
-				if (line.style == UITooltipLines.LineStyle.Attribute && firstAttr)
-				{
-					firstAttr = false;
-					line.padding.top += 3;
-				}
-				
 				// Create new row object
 				GameObject lineObject = this.CreateLine(line.padding);
 				
@@ -782,20 +781,12 @@ namespace DuloGames.UI
             // Set the pivot to top left
             (obj.transform as RectTransform).pivot = new Vector2(0f, 1f);
 			
-			// Set a fixed size for attribute columns
-			if (style == UITooltipLines.LineStyle.Attribute)
-			{
-				VerticalLayoutGroup vlg = this.gameObject.GetComponent<VerticalLayoutGroup>();
-				HorizontalLayoutGroup phlg = parent.gameObject.GetComponent<HorizontalLayoutGroup>();
-				LayoutElement le = obj.AddComponent<LayoutElement>();
-				le.preferredWidth = (this.m_Rect.sizeDelta.x - vlg.padding.horizontal - phlg.padding.horizontal) / 2f;
-			}
-			
 			// Prepare the text component
 			Text text = obj.AddComponent<Text>();
 			text.text = content;
 			text.supportRichText = true;
-            
+            text.raycastTarget = false;
+
             // Get the line style
             UITooltipLineStyle lineStyle = UITooltipManager.Instance.defaultLineStyle;
             
@@ -804,9 +795,6 @@ namespace DuloGames.UI
 			    case UITooltipLines.LineStyle.Title:
                     lineStyle = UITooltipManager.Instance.titleLineStyle;
 				    break;
-			    case UITooltipLines.LineStyle.Attribute:
-                    lineStyle = UITooltipManager.Instance.attributeLineStyle;
-                    break;
 			    case UITooltipLines.LineStyle.Description:
                     lineStyle = UITooltipManager.Instance.descriptionLineStyle;
                     break;
@@ -1182,15 +1170,30 @@ namespace DuloGames.UI
         /// <param name="rel">Relative game object used to find the canvas.</param>
         public static void InstantiateIfNecessary(GameObject rel)
         {
-            if (mInstance != null || UITooltipManager.Instance.prefab == null)
+            if (UITooltipManager.Instance == null || UITooltipManager.Instance.prefab == null)
                 return;
 
+            // Get the canvas
             Canvas canvas = UIUtility.FindInParents<Canvas>(rel);
 
-            if (canvas != null)
+            if (canvas == null)
+                return;
+
+            // If we have a tooltip check if the canvas of the current tooltip is matching this one
+            if (mInstance != null)
             {
-                Instantiate(UITooltipManager.Instance.prefab, canvas.transform, false);
+                Canvas prevTooltipCanvas = UIUtility.FindInParents<Canvas>(mInstance.gameObject);
+
+                // If we have previous tooltip in the same canvas return
+                if (prevTooltipCanvas != null && prevTooltipCanvas.Equals(canvas))
+                    return;
+
+                // Destroy the previous tooltip
+                Destroy(mInstance.gameObject);
             }
+            
+            // Instantiate a tooltip
+            Instantiate(UITooltipManager.Instance.prefab, canvas.transform, false);
         }
 
         /// <summary>

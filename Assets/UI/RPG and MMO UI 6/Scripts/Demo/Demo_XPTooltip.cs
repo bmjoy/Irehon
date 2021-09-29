@@ -7,10 +7,12 @@ namespace DuloGames.UI
 {
     public class Demo_XPTooltip : UIBehaviour, IEventSystemHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        #pragma warning disable 0649
         [SerializeField] private GameObject m_TooltipObject;
         [SerializeField] private UIProgressBar m_ProgressBar;
         [SerializeField] private Text m_PercentText;
         [SerializeField] private float m_OffsetY = 0f;
+        #pragma warning restore 0649
 
         [SerializeField, Tooltip("How long of a delay to expect before showing the tooltip."), Range(0f, 10f)]
         private float m_Delay = 1f;
@@ -49,24 +51,8 @@ namespace DuloGames.UI
 
         private void OnProgressChange(float value)
         {
-            if (this.m_TooltipObject == null || this.m_ProgressBar == null)
-                return;
-
-            RectTransform tooltipRect = (this.m_TooltipObject.transform as RectTransform);
-            RectTransform fillRect = (this.m_ProgressBar.type == UIProgressBar.Type.Filled ? (this.m_ProgressBar.targetImage.transform as RectTransform) : this.m_ProgressBar.targetTransform);
-
-            // Change the parent so we can calculate the position correctly
-            tooltipRect.SetParent(fillRect, true);
-
-            // Change the position based on fill
-            tooltipRect.anchoredPosition = new Vector2(fillRect.rect.width * value, this.m_OffsetY);
-
-            // Bring to top
-            UIUtility.BringToFront(this.m_TooltipObject);
-
-            // Set the percent text
-            if (this.m_PercentText != null)
-                this.m_PercentText.text = (value * 100f).ToString("0") + "%";
+            // Update tooltip position
+            this.UpdatePosition();
         }
 
         /// <summary>
@@ -80,8 +66,8 @@ namespace DuloGames.UI
             
             if (show)
             {
-                // Bring to top
-                UIUtility.BringToFront(this.m_TooltipObject);
+                // Update tooltip position
+                this.UpdatePosition();
 
                 // Enable the tooltip
                 this.m_TooltipObject.SetActive(true);
@@ -158,5 +144,29 @@ namespace DuloGames.UI
             yield return new WaitForSeconds(this.m_Delay);
             this.InternalShowTooltip();
         }
+
+        public void UpdatePosition()
+        {
+            if (this.m_ProgressBar == null || this.m_TooltipObject == null)
+                return;
+            
+            RectTransform tooltipRect = (this.m_TooltipObject.transform as RectTransform);
+            RectTransform fillRect = (this.m_ProgressBar.type == UIProgressBar.Type.Filled ? (this.m_ProgressBar.targetImage.transform as RectTransform) : (this.m_ProgressBar.targetTransform.parent as RectTransform));
+
+            Transform parent = tooltipRect.parent;
+
+            // Change the parent so we can calculate the position correctly
+            tooltipRect.SetParent(fillRect, true);
+
+            // Change the position based on fill
+            tooltipRect.anchoredPosition = new Vector2(fillRect.rect.width * this.m_ProgressBar.fillAmount, this.m_OffsetY);
+
+            // Bring to top
+            tooltipRect.SetParent(parent, true);
+
+            // Set the percent text
+            if (this.m_PercentText != null)
+                this.m_PercentText.text = (this.m_ProgressBar.fillAmount * 100f).ToString("0") + "%";
+        } 
     }
 }

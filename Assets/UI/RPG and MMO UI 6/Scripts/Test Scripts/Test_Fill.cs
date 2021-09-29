@@ -7,9 +7,11 @@ namespace DuloGames.UI
 {
     public class Test_Fill : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Image imageComponent;
         [SerializeField] private float Duration = 5f;
         [SerializeField] private TweenEasing Easing = TweenEasing.InOutQuint;
+        #pragma warning restore 0649
 
         // Tween controls
         [NonSerialized]

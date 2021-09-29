@@ -144,9 +144,6 @@ namespace DuloGames.UI
                 case Selectable.Transition.SpriteSwap:
                     this.DoSpriteSwap(null);
                     break;
-                case Selectable.Transition.Animation:
-                    this.TriggerAnimation(this.m_AnimationTriggers.normalTrigger);
-                    break;
             }
         }
 
@@ -244,7 +241,7 @@ namespace DuloGames.UI
         {
             Animator animator = this.GetComponent<Animator>();
 
-            if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || string.IsNullOrEmpty(trigger))
+            if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables || string.IsNullOrEmpty(trigger))
                 return;
 
             animator.ResetTrigger(this.animationTriggers.normalTrigger);

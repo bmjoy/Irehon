@@ -12,7 +12,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [SerializeField]
     protected Image itemSprite;
     [SerializeField]
-    protected TMPro.TMP_Text quantityText;
+    protected Text quantityText;
     [SerializeField]
     protected Canvas canvas;
     [SerializeField]

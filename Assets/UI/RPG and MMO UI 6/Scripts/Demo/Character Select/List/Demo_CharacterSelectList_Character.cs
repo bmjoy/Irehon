@@ -12,6 +12,7 @@ namespace DuloGames.UI
         [System.Serializable]
         public class OnCharacterDeleteEvent : UnityEvent<Demo_CharacterSelectList_Character> { }
 
+        #pragma warning disable 0649
         [SerializeField] private Toggle m_Toggle;
         [SerializeField] private Button m_Delete;
 
@@ -21,6 +22,7 @@ namespace DuloGames.UI
         [SerializeField] private Text m_RaceText;
         [SerializeField] private Text m_ClassText;
         [SerializeField] private Image m_Avatar;
+        #pragma warning restore 0649
 
         private Demo_CharacterInfo m_CharacterInfo;
         private OnCharacterSelectEvent m_OnCharacterSelected;
@@ -51,7 +53,10 @@ namespace DuloGames.UI
         protected void OnEnable()
         {
             if (this.m_Toggle != null)
+            {
+                this.m_Toggle.isOn = false;
                 this.m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
+            }
 
             if (this.m_Delete != null)
                 this.m_Delete.onClick.AddListener(OnDeleteClick);

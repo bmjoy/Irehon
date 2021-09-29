@@ -4,7 +4,9 @@ namespace DuloGames.UI
 {
     public class Test_UIItemSlot_AssignAll : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Transform m_Container;
+        #pragma warning restore 0649
 
         void Start()
         {

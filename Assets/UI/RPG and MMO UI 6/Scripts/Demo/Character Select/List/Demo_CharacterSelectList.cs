@@ -13,8 +13,10 @@ namespace DuloGames.UI
         [System.Serializable]
         public class OnCharacterDeleteEvent : UnityEvent<Demo_CharacterInfo> { }
 
+        #pragma warning disable 0649
         [SerializeField] private GameObject m_CharacterPrefab;
         [SerializeField] private Transform m_CharactersContainer;
+        #pragma warning restore 0649
 
         [Header("Demo Properties")]
         [SerializeField] private bool m_IsDemo = false;
@@ -81,7 +83,7 @@ namespace DuloGames.UI
             
             // Get the character component
             Demo_CharacterSelectList_Character character = model.GetComponent<Demo_CharacterSelectList_Character>();
-
+            
             if (character != null)
             {
                 // Set the info

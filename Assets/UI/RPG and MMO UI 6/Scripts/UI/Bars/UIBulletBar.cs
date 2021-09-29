@@ -15,6 +15,7 @@ namespace DuloGames.UI
             Radial
         }
 
+        #pragma warning disable 0649
         [SerializeField] private BarType m_BarType = BarType.Horizontal;
 
         [SerializeField] private bool m_FixedSize = false;
@@ -36,8 +37,9 @@ namespace DuloGames.UI
         [SerializeField][Range(0f, 1f)] private float m_FillAmount = 1f;
         [SerializeField] private bool m_InvertFill = true;
 
-        [SerializeField][HideInInspector] private GameObject m_BulletsContainer;
+        [SerializeField][HideInInspector] private GameObject m_BulletsContainer = null;
         [SerializeField][HideInInspector] private List<GameObject> m_FillBullets;
+        #pragma warning restore 0649
 
         /// <summary>
         /// Gets or sets the fill amount (0 to 1).

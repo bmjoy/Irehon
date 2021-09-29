@@ -77,12 +77,44 @@ namespace DuloGames.UI
 		{
 			return this.m_ItemInfo;
 		}
+        
+        protected override void OnEnable()
+        {
+            base.OnEnable();
 
-		/// <summary>
-		/// Determines whether this slot is assigned.
-		/// </summary>
-		/// <returns><c>true</c> if this instance is assigned; otherwise, <c>false</c>.</returns>
-		public override bool IsAssigned()
+#if UNITY_EDITOR
+            if (!this.IsInPrefabStage())
+            {
+                // Check for duplicate id
+                List<UIItemSlot> slots = GetSlotsInGroup(this.m_SlotGroup);
+                UIItemSlot duplicate = slots.Find(x => x.ID == this.m_ID && !x.Equals(this));
+
+                if (duplicate != null)
+                {
+                    int oldId = this.m_ID;
+                    this.AutoAssignID();
+                    Debug.LogWarning("Item Slot with duplicate ID: " + oldId + " in Group: " + this.m_SlotGroup + ", generating and assigning new ID: " + this.m_ID + ".");
+                }
+            }
+#endif
+        }
+
+#if UNITY_EDITOR
+        private bool IsInPrefabStage()
+        {
+#if UNITY_2018_3_OR_NEWER
+                return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
+#else
+                return false;
+#endif
+        }
+#endif
+
+        /// <summary>
+        /// Determines whether this slot is assigned.
+        /// </summary>
+        /// <returns><c>true</c> if this instance is assigned; otherwise, <c>false</c>.</returns>
+        public override bool IsAssigned()
 		{
 			return (this.m_ItemInfo != null);
 		}
@@ -271,6 +303,62 @@ namespace DuloGames.UI
             }
         }
 
+        /// <summary>
+		/// This method is raised when the slot is denied to be thrown away and returned to it's source.
+		/// </summary>
+        protected override void OnThrowAwayDenied()
+        {
+            if (!this.IsAssigned())
+                return;
+
+            if (UIModalBoxManager.Instance == null)
+            {
+                Debug.LogWarning("Could not load the modal box manager while creating a modal box.");
+                return;
+            }
+
+            UIModalBox box = UIModalBoxManager.Instance.Create(this.gameObject);
+            if (box != null)
+            {
+                box.SetText1("Do you really want to destroy \"" + this.m_ItemInfo.Name + "\"?");
+                box.SetText2("You wont be able to reverse this operation and your item will be permamently removed.");
+                box.SetConfirmButtonText("DESTROY");
+                box.onConfirm.AddListener(Unassign);
+                box.Show();
+            }
+        }
+
+        /// <summary>
+        /// Automatically generate and assign slot ID.
+        /// </summary>
+        [ContextMenu("Auto Assign ID")]
+        public void AutoAssignID()
+        {
+            // Get the active slots in the slot's group
+            List<UIItemSlot> slots = GetSlotsInGroup(this.m_SlotGroup);
+
+            if (slots.Count > 0)
+            {
+                slots.Reverse();
+                this.m_ID = slots[0].ID + 1;
+            }
+            else
+            {
+                // If we have no slots
+                this.m_ID = 1;
+            }
+
+            slots.Clear();
+        }
+
+#if UNITY_EDITOR
+        [ContextMenu("Auto Assign ID By Sibling Index")]
+        public void AutoAssignIDBySiblingIndex()
+        {
+			this.m_ID = this.transform.GetSiblingIndex() + 1;
+        }
+#endif
+
         #region Static Methods
         /// <summary>
         /// Gets all the item slots.
@@ -327,7 +415,13 @@ namespace DuloGames.UI
 				if (s.gameObject.activeInHierarchy && s.slotGroup == group)
 					slots.Add(s);
 			}
-			
+
+            // Sort the slots by id
+            slots.Sort(delegate (UIItemSlot a, UIItemSlot b)
+            {
+                return a.ID.CompareTo(b.ID);
+            });
+
 			return slots;
 		}
 		

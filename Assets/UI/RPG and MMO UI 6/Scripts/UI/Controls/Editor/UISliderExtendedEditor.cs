@@ -79,7 +79,8 @@ namespace DuloGamesEditor.UI
 			
 			// Detect change in the text effect
 			if (!effect.Equals((UISliderExtended.TextEffectType)this.serializedObject.FindProperty("m_OptionTextEffect").enumValueIndex))
-				(this.target as UISliderExtended).RebuildTextEffects();
+                foreach (Object target in this.targets)
+                    (target as UISliderExtended).RebuildTextEffects();
 		}
 		
 		/// <summary>

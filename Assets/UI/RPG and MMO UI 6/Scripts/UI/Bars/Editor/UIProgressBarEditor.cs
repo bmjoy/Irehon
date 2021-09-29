@@ -6,8 +6,10 @@ namespace DuloGamesEditor.UI
 {
 	[CanEditMultipleObjects, CustomEditor(typeof(UIProgressBar), true)]
 	public class UIProgressBarEditor : Editor {
-		
-		private SerializedProperty m_Type;
+
+        private UIProgressBar bar;
+
+        private SerializedProperty m_Type;
 		private SerializedProperty m_TargetImage;
         private SerializedProperty m_Sprites;
 		private SerializedProperty m_TargetTransform;
@@ -20,7 +22,9 @@ namespace DuloGamesEditor.UI
 		
 		protected void OnEnable()
 		{
-			this.m_Type = base.serializedObject.FindProperty("m_Type");
+            this.bar = target as UIProgressBar;
+
+            this.m_Type = base.serializedObject.FindProperty("m_Type");
 			this.m_TargetImage = base.serializedObject.FindProperty("m_TargetImage");
             this.m_Sprites = base.serializedObject.FindProperty("m_Sprites");
             this.m_TargetTransform = base.serializedObject.FindProperty("m_TargetTransform");
@@ -87,7 +91,8 @@ namespace DuloGamesEditor.UI
 			
 			if (amountChanged)
 			{
-				(this.target as UIProgressBar).onChange.Invoke(this.m_FillAmount.floatValue);
+                this.bar.UpdateBarFill();
+                this.bar.onChange.Invoke(this.m_FillAmount.floatValue);
 			}
 		}
 	}

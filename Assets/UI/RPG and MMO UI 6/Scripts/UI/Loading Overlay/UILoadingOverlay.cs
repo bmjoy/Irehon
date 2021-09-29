@@ -21,23 +21,23 @@ namespace DuloGames.UI
 
         [Header("Transition")]
         [SerializeField] private TweenEasing m_TransitionEasing = TweenEasing.InOutQuint;
-	    [SerializeField] private float m_TransitionDuration = 0.4f;
+        [SerializeField] private float m_TransitionDuration = 0.4f;
 
         private bool m_Showing = false;
         private string m_LoadSceneName = null;
 
         // Tween controls
-	    [System.NonSerialized] private readonly TweenRunner<FloatTween> m_FloatTweenRunner;
-		
-	    // Called by Unity prior to deserialization, 
-	    // should not be called by users
-	    protected UILoadingOverlay()
-	    {
-		    if (this.m_FloatTweenRunner == null)
-			    this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
-			
-		    this.m_FloatTweenRunner.Init(this);
-	    }
+        [System.NonSerialized] private readonly TweenRunner<FloatTween> m_FloatTweenRunner;
+
+        // Called by Unity prior to deserialization, 
+        // should not be called by users
+        protected UILoadingOverlay()
+        {
+            if (this.m_FloatTweenRunner == null)
+                this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+
+            this.m_FloatTweenRunner.Init(this);
+        }
 
         protected void Awake()
         {

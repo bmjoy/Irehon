@@ -18,7 +18,9 @@ namespace DuloGames.UI
         }
         #endregion
 
+        #pragma warning disable 0649
         [SerializeField] private GameObject m_BlackOverlayPrefab;
+        #pragma warning restore 0649
 
         /// <summary>
         /// Gets the black overlay prefab.

@@ -28,6 +28,7 @@ namespace DuloGames.UI
             public ScrollRect scrollRect;
         }
 
+        #pragma warning disable 0649
         [SerializeField] private InputField m_InputField;
         [Header("Buttons")]
         [SerializeField] private Button m_Submit;
@@ -47,6 +48,7 @@ namespace DuloGames.UI
         [SerializeField] private TextEffect m_TextEffect = TextEffect.None;
         [SerializeField] private Color m_TextEffectColor = Color.black;
         [SerializeField] private Vector2 m_TextEffectDistance = new Vector2(1f, -1f);
+        #pragma warning restore 0649
 
         [Header("Events")]
         /// <summary>

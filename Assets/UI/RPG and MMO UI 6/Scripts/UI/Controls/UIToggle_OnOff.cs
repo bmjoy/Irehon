@@ -13,12 +13,14 @@ namespace DuloGames.UI
             Reposition
         }
 
+        #pragma warning disable 0649
 		[SerializeField] private Image m_Target;
         [SerializeField] private Transition m_Transition = Transition.SpriteSwap;
         [SerializeField] private Sprite m_ActiveSprite;
         [SerializeField] private Vector2 m_InactivePosition = Vector2.zero;
         [SerializeField] private Vector2 m_ActivePosition = Vector2.zero;
-		
+		#pragma warning restore 0649
+
 		public Toggle toggle {
 			get { return this.gameObject.GetComponent<Toggle>(); }
 		}

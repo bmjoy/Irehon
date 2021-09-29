@@ -8,12 +8,14 @@ namespace DuloGames.UI
     [ExecuteInEditMode, DisallowMultipleComponent, AddComponentMenu("UI/Switch Select Field", 58)]
     public class UISwitchSelect : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private Text m_Text;
         [SerializeField] private Button m_PrevButton;
         [SerializeField] private Button m_NextButton;
 
         // Currently selected item
 		[HideInInspector][SerializeField] private string m_SelectedItem;
+        #pragma warning restore 0649
 
         /// <summary>
 		/// New line-delimited list of items.

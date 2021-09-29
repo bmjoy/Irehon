@@ -13,13 +13,15 @@ namespace DuloGames.UI
 			Hidden
 		}
 		
+        #pragma warning disable 0649
 		[SerializeField] private Transform m_SlotsContainer;
 		
 		[SerializeField] private Text m_HintText;
 		[SerializeField] private bool m_Fading = true;
 		[SerializeField] private float m_FadeDuration = 0.15f;
 		[SerializeField] private HintState m_HintState = HintState.Hidden;
-		
+		#pragma warning restore 0649
+
 		protected override void Start()
 		{
 			// Make sure we have a container

@@ -38,7 +38,7 @@ namespace DuloGames.UI
     }
 
     [Serializable]
-    public class UITooltipLineStyle
+    public class UITooltipLineStyle : IComparable<UITooltipLineStyle>
     {
         public string Name;
         public Font TextFont;
@@ -49,7 +49,20 @@ namespace DuloGames.UI
         public Color TextFontColor;
         public UITooltipTextEffect[] TextEffects;
 
+        public bool DisplayName = true;
+
         public UITooltipLineStyle()
+        {
+            this.Defaults();
+        }
+
+        public UITooltipLineStyle(bool displayName)
+        {
+            this.Defaults();
+            this.DisplayName = displayName;
+        }
+
+        private void Defaults()
         {
             this.Name = "";
             this.TextFont = FontData.defaultFontData.font;
@@ -59,6 +72,11 @@ namespace DuloGames.UI
             this.OverrideTextAlignment = OverrideTextAlignment.No;
             this.TextFontColor = Color.white;
             this.TextEffects = new UITooltipTextEffect[0];
+        }
+
+        public int CompareTo(UITooltipLineStyle other)
+        {
+            return this.Name.CompareTo(other.Name);
         }
     }
 }

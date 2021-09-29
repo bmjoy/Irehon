@@ -14,6 +14,7 @@ namespace DuloGames.UI
 			public float amount;
 		}
 		
+        #pragma warning disable 0649
 		[SerializeField] private List<GameObject> m_StepsGameObjects = new List<GameObject>();
 		[SerializeField] private List<StepFillInfo> m_OverrideFillList = new List<StepFillInfo>();
 		
@@ -33,7 +34,8 @@ namespace DuloGames.UI
 		[SerializeField] private RectTransform m_BubbleRect;
 		[SerializeField] private Vector2 m_BubbleOffset = Vector2.zero;
 		[SerializeField] private Text m_BubbleText;
-		
+		#pragma warning restore 0649
+
 		/// <summary>
 		/// Gets or sets the current step.
 		/// </summary>
@@ -75,6 +77,9 @@ namespace DuloGames.UI
 
             // Update the steps properties
             this.UpdateStepsProperties();
+
+            // Update the bubble
+            this.UpdateBubble();
         }
 
 		/// <summary>
@@ -88,7 +93,7 @@ namespace DuloGames.UI
 			if (this.m_CurrentStep > this.m_StepsCount) this.m_CurrentStep = this.m_StepsCount + 1;
 			
 			// Create the steps grid if required
-			this.CreateStepsGrid();
+			//this.CreateStepsGrid();
 			
 			// Update the grid properties
 			this.UpdateGridProperties();
@@ -289,7 +294,10 @@ namespace DuloGames.UI
 			// Set the bubble as last sibling
 			if (this.m_BubbleRect != null)
 				this.m_BubbleRect.SetAsLastSibling();
-		}
+
+            // Clear the steps game objects list
+            this.m_StepsGameObjects.Clear();
+        }
 		
 		/// <summary>
 		/// Updates the grid properties.
@@ -328,9 +336,9 @@ namespace DuloGames.UI
 		{
 			if (this.m_StepsGridGameObject == null)
 				return;
-			
+            
 			// Check if we already have the steps
-			if (this.m_StepsGameObjects.Count == this.m_StepsCount)
+			if (this.m_StepsGameObjects.Count == (this.m_StepsCount + 2))
 				return;
 			
 			// Destroy the steps

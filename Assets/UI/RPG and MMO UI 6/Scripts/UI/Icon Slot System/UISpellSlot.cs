@@ -83,6 +83,38 @@ namespace DuloGames.UI
             get { return this.m_Cooldown; }
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+
+#if UNITY_EDITOR
+            if (!this.IsInPrefabStage())
+            {
+                // Check for duplicate id
+                List<UISpellSlot> slots = GetSlotsInGroup(this.m_SlotGroup);
+                UISpellSlot duplicate = slots.Find(x => x.ID == this.m_ID && !x.Equals(this));
+
+                if (duplicate != null)
+                {
+                    int oldId = this.m_ID;
+                    this.AutoAssignID();
+                    Debug.LogWarning("Spell Slot with duplicate ID: " + oldId + " in Group: " + this.m_SlotGroup + ", generating and assigning new ID: " + this.m_ID + ".");
+                }
+            }
+#endif
+        }
+
+#if UNITY_EDITOR
+        private bool IsInPrefabStage()
+        {
+#if UNITY_2018_3_OR_NEWER
+                return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
+#else
+                return false;
+#endif
+        }
+#endif
+
         /// <summary>
         /// Determines whether this slot is assigned.
         /// </summary>
@@ -250,9 +282,32 @@ namespace DuloGames.UI
 		{
 			this.m_Cooldown = cooldown;
 		}
-		
-		#region Static Methods
-		public static void PrepareTooltip(UISpellInfo spellInfo)
+
+        /// <summary>
+        /// Automatically generate and assign slot ID.
+        /// </summary>
+        [ContextMenu("Auto Assign ID")]
+        public void AutoAssignID()
+        {
+            // Get the active slots in the slot's group
+            List<UISpellSlot> slots = GetSlotsInGroup(this.m_SlotGroup);
+
+            if (slots.Count > 0)
+            {
+                slots.Reverse();
+                this.m_ID = slots[0].ID + 1;
+            }
+            else
+            {
+                // If we have no slots
+                this.m_ID = 1;
+            }
+
+            slots.Clear();
+        }
+
+        #region Static Methods
+        public static void PrepareTooltip(UISpellInfo spellInfo)
 		{
 			// Make sure we have spell info, otherwise game might crash
 			if (spellInfo == null)
@@ -263,7 +318,7 @@ namespace DuloGames.UI
                 UITooltip.SetWidth(UITooltipManager.Instance.spellTooltipWidth);
 
             // Set the spell name as title
-            UITooltip.AddTitle(spellInfo.Name);
+            UITooltip.AddLine(spellInfo.Name, "SpellTitle");
 
             // Spacer
             UITooltip.AddSpacer();
@@ -271,7 +326,7 @@ namespace DuloGames.UI
 			// Prepare some attributes
 			if (spellInfo.Flags.Has(UISpellInfo_Flags.Passive))
 			{
-				UITooltip.AddLine("Passive");
+				UITooltip.AddLine("Passive", "SpellAttribute");
 			}
 			else
 			{
@@ -279,36 +334,36 @@ namespace DuloGames.UI
 				if (spellInfo.PowerCost > 0f)
 				{
 					if (spellInfo.Flags.Has(UISpellInfo_Flags.PowerCostInPct))
-						UITooltip.AddLineColumn(spellInfo.PowerCost.ToString("0") + "% Energy");
+						UITooltip.AddLineColumn(spellInfo.PowerCost.ToString("0") + "% Energy", "SpellAttribute");
 					else
-						UITooltip.AddLineColumn(spellInfo.PowerCost.ToString("0") + " Energy");
+						UITooltip.AddLineColumn(spellInfo.PowerCost.ToString("0") + " Energy", "SpellAttribute");
 				}
 				
 				// Range
 				if (spellInfo.Range > 0f)
 				{
 					if (spellInfo.Range == 1f)
-						UITooltip.AddLineColumn("Melee range");
+						UITooltip.AddLineColumn("Melee range", "SpellAttribute");
 					else
-						UITooltip.AddLineColumn(spellInfo.Range.ToString("0") + " yd range");
+						UITooltip.AddLineColumn(spellInfo.Range.ToString("0") + " yd range", "SpellAttribute");
 				}
 				
 				// Cast time
 				if (spellInfo.CastTime == 0f)
-					UITooltip.AddLineColumn("Instant");
+					UITooltip.AddLineColumn("Instant", "SpellAttribute");
 				else
-					UITooltip.AddLineColumn(spellInfo.CastTime.ToString("0.0") + " sec cast");
+					UITooltip.AddLineColumn(spellInfo.CastTime.ToString("0.0") + " sec cast", "SpellAttribute");
 				
 				// Cooldown
 				if (spellInfo.Cooldown > 0f)
-					UITooltip.AddLineColumn(spellInfo.Cooldown.ToString("0.0") + " sec cooldown");
+					UITooltip.AddLineColumn(spellInfo.Cooldown.ToString("0.0") + " sec cooldown", "SpellAttribute");
 			}
 
             // Set the spell description if not empty
             if (!string.IsNullOrEmpty(spellInfo.Description))
             {
                 UITooltip.AddSpacer();
-                UITooltip.AddDescription(spellInfo.Description);
+                UITooltip.AddLine(spellInfo.Description, "SpellDescription");
             }
 		}
 		
@@ -367,8 +422,14 @@ namespace DuloGames.UI
 				if (s.gameObject.activeInHierarchy && s.slotGroup == group)
 					slots.Add(s);
 			}
-			
-			return slots;
+
+            // Sort the slots by id
+            slots.Sort(delegate (UISpellSlot a, UISpellSlot b)
+            {
+                return a.ID.CompareTo(b.ID);
+            });
+
+            return slots;
 		}
 		
 		/// <summary>

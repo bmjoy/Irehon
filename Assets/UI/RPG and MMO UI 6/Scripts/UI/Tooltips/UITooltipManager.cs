@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace DuloGames.UI
 {
@@ -18,7 +19,9 @@ namespace DuloGames.UI
         }
         #endregion
 
+        #pragma warning disable 0649
         [SerializeField] private GameObject m_TooltipPrefab;
+        #pragma warning restore 0649
 
         /// <summary>
         /// Gets the tooltip prefab.
@@ -45,10 +48,9 @@ namespace DuloGames.UI
         public int spellTooltipWidth { get { return this.m_SpellTooltipWidth; } }
 
         [Header("Styles")]
-        [SerializeField] private UITooltipLineStyle m_DefaultLineStyle = new UITooltipLineStyle();
-        [SerializeField] private UITooltipLineStyle m_TitleLineStyle = new UITooltipLineStyle();
-        [SerializeField] private UITooltipLineStyle m_AttributeLineStyle = new UITooltipLineStyle();
-        [SerializeField] private UITooltipLineStyle m_DescriptionLineStyle = new UITooltipLineStyle();
+        [SerializeField] private UITooltipLineStyle m_DefaultLineStyle = new UITooltipLineStyle(false);
+        [SerializeField] private UITooltipLineStyle m_TitleLineStyle = new UITooltipLineStyle(false);
+        [SerializeField] private UITooltipLineStyle m_DescriptionLineStyle = new UITooltipLineStyle(false);
         [SerializeField] private UITooltipLineStyle[] m_CustomStyles = new UITooltipLineStyle[0];
 
         /// <summary>
@@ -60,12 +62,7 @@ namespace DuloGames.UI
         /// Title line style used for the tooltip title.
         /// </summary>
         public UITooltipLineStyle titleLineStyle { get { return this.m_TitleLineStyle; } }
-
-        /// <summary>
-        /// Attribute line style.
-        /// </summary>
-        public UITooltipLineStyle attributeLineStyle { get { return this.m_AttributeLineStyle; } }
-
+        
         /// <summary>
         /// Description line style used for the description.
         /// </summary>
@@ -93,6 +90,12 @@ namespace DuloGames.UI
             }
 
             return this.m_DefaultLineStyle;
+        }
+
+        [ContextMenu("Sort Custom Styles")]
+        public void SortCustomStyles()
+        {
+            Array.Sort<UITooltipLineStyle>(this.m_CustomStyles);
         }
     }
 }

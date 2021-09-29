@@ -60,6 +60,8 @@ namespace DuloGamesEditor.UI
                 this.m_FoldoutStyle.fontStyle = FontStyle.Bold;
             }
 
+            EditorGUI.BeginChangeCheck();
+
 			this.serializedObject.Update();
 			EditorGUILayout.Space();
 			EditorGUILayout.PropertyField(this.m_TargetContentProperty, new GUIContent("Target Content"));
@@ -70,6 +72,10 @@ namespace DuloGamesEditor.UI
 			this.serializedObject.ApplyModifiedProperties();
 			EditorGUILayout.Space();
 			this.DrawToggleProperties();
+
+            if (EditorGUI.EndChangeCheck())
+                foreach (Object target in this.targets)
+                    (target as UITab).OnProperyChange_Editor();
 		}
 
         private void DrawTargetImageProperties()

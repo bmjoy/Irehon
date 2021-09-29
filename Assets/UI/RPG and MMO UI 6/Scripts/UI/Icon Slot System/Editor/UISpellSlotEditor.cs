@@ -34,8 +34,10 @@ namespace DuloGamesEditor.UI
             this.serializedObject.ApplyModifiedProperties();
 			
 			base.OnInspectorGUI();
-			
-			this.serializedObject.Update();
+
+            EditorGUILayout.Separator();
+
+            this.serializedObject.Update();
 			EditorGUILayout.PropertyField(this.onAssignProperty, new GUIContent("On Assign"), true);
 			EditorGUILayout.PropertyField(this.onUnassignProperty, new GUIContent("On Unassign"), true);
 			EditorGUILayout.PropertyField(this.onClickProperty, new GUIContent("On Click"), true);

@@ -30,6 +30,12 @@ namespace DuloGamesEditor.UI
         private SerializedProperty m_ActiveColorProperty;
         private SerializedProperty m_ActiveSpriteProperty;
         private SerializedProperty m_ActiveBoolProperty;
+        private SerializedProperty m_TargetCanvasGroupProperty;
+        private SerializedProperty m_NormalAlphaProperty;
+        private SerializedProperty m_HighlightedAlphaProperty;
+        private SerializedProperty m_SelectedAlphaProperty;
+        private SerializedProperty m_PressedAlphaProperty;
+        private SerializedProperty m_ActiveAlphaProperty;
 
         protected void OnEnable()
 		{
@@ -54,6 +60,12 @@ namespace DuloGamesEditor.UI
             this.m_ActiveColorProperty = this.serializedObject.FindProperty("m_ActiveColor");
             this.m_ActiveSpriteProperty = this.serializedObject.FindProperty("m_ActiveSprite");
             this.m_ActiveBoolProperty = this.serializedObject.FindProperty("m_ActiveBool");
+            this.m_TargetCanvasGroupProperty = this.serializedObject.FindProperty("m_TargetCanvasGroup");
+            this.m_NormalAlphaProperty = this.serializedObject.FindProperty("m_NormalAlpha");
+            this.m_HighlightedAlphaProperty = this.serializedObject.FindProperty("m_HighlightedAlpha");
+            this.m_SelectedAlphaProperty = this.serializedObject.FindProperty("m_SelectedAlpha");
+            this.m_PressedAlphaProperty = this.serializedObject.FindProperty("m_PressedAlpha");
+            this.m_ActiveAlphaProperty = this.serializedObject.FindProperty("m_ActiveAlpha");
         }
 		
 		public override void OnInspectorGUI()
@@ -63,8 +75,9 @@ namespace DuloGamesEditor.UI
             UIHighlightTransition.Transition transition = (UIHighlightTransition.Transition)this.m_TransitionProperty.enumValueIndex;
 			Graphic graphic = this.m_TargetGraphicProperty.objectReferenceValue as Graphic;
 			GameObject targetGameObject = this.m_TargetGameObjectProperty.objectReferenceValue as GameObject;
-			
-			EditorGUILayout.Space();
+            CanvasGroup targetCanvasGroup = this.m_TargetCanvasGroupProperty.objectReferenceValue as CanvasGroup;
+
+            EditorGUILayout.Space();
 			EditorGUILayout.PropertyField(this.m_TransitionProperty, new GUIContent("Transition"));
 			EditorGUI.indentLevel++;
 			
@@ -165,6 +178,27 @@ namespace DuloGamesEditor.UI
 					}
 				}
 			}
+            else if (transition == UIHighlightTransition.Transition.CanvasGroup)
+            {
+                EditorGUILayout.PropertyField(this.m_TargetCanvasGroupProperty, new GUIContent("Target Canvas Group"));
+
+                if (targetCanvasGroup == null)
+                {
+                    EditorGUILayout.HelpBox("You must have a CanvasGroup target in order to use this transition.", MessageType.Info);
+                }
+                else
+                {
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(this.m_NormalAlphaProperty, true);
+                    if (EditorGUI.EndChangeCheck())
+                        targetCanvasGroup.alpha = this.m_NormalAlphaProperty.floatValue;
+
+                    EditorGUILayout.PropertyField(this.m_HighlightedAlphaProperty, true);
+                    EditorGUILayout.PropertyField(this.m_SelectedAlphaProperty, true);
+                    EditorGUILayout.PropertyField(this.m_PressedAlphaProperty, true);
+                    EditorGUILayout.PropertyField(this.m_DurationProperty, true);
+                }
+            }
 
             EditorGUILayout.PropertyField(this.m_UseToggleProperty, true);
 
@@ -187,6 +221,10 @@ namespace DuloGamesEditor.UI
                 else if (transition == UIHighlightTransition.Transition.Animation)
                 {
                     EditorGUILayout.PropertyField(this.m_ActiveBoolProperty, true);
+                }
+                else if (transition == UIHighlightTransition.Transition.CanvasGroup)
+                {
+                    EditorGUILayout.PropertyField(this.m_ActiveAlphaProperty, true);
                 }
             }
 

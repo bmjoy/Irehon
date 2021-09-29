@@ -21,6 +21,7 @@ namespace DuloGames.UI
         [System.Serializable]
         public class OnCharacterDeleteEvent : UnityEvent<Demo_CharacterInfo> { }
 
+        #pragma warning disable 0649
         [SerializeField] private int m_IngameSceneId = 0;
 
         [Header("Camera Properties")]
@@ -47,6 +48,7 @@ namespace DuloGames.UI
         [Header("Events")]
         [SerializeField] private OnCharacterSelectedEvent m_OnCharacterSelected = new OnCharacterSelectedEvent();
         [SerializeField] private OnCharacterDeleteEvent m_OnCharacterDelete = new OnCharacterDeleteEvent();
+        #pragma warning restore 0649
 
         private int m_SelectedIndex = -1;
         private Transform m_SelectedTransform;
@@ -210,6 +212,22 @@ namespace DuloGames.UI
             // Check if already selected
             if (this.m_SelectedIndex == slot.index)
                 return;
+            
+            // Deselect
+            if (this.m_SelectedIndex > -1)
+            {
+                // Get the slot
+                Transform selectedSlotTrans = this.m_Slots[this.m_SelectedIndex];
+
+                if (selectedSlotTrans != null)
+                {
+                    // Get the character script
+                    Demo_CharacterSelectSlot selectedSlot = selectedSlotTrans.gameObject.GetComponent<Demo_CharacterSelectSlot>();
+
+                    // Deselect
+                    if (selectedSlot != null) selectedSlot.OnDeselected();
+                }
+            }
 
             // Set the selected
             this.m_SelectedIndex = slot.index;
@@ -235,6 +253,8 @@ namespace DuloGames.UI
                 if (this.m_RaceText != null) this.m_RaceText.text = "";
                 if (this.m_ClassText != null) this.m_ClassText.text = "";
             }
+
+            slot.OnSelected();
         }
 
         /// <summary>
@@ -347,6 +367,9 @@ namespace DuloGames.UI
             // Unset the character info
             if (slot != null) slot.info = null;
 
+            // Deselect
+            if (slot != null) slot.OnDeselected();
+
             // Remove the child objects
             foreach (Transform child in slotTrans)
             {
@@ -376,7 +399,7 @@ namespace DuloGames.UI
                 this.RemoveCharacter(this.m_SelectedIndex);
             }
         }
-
+        
         public void OnPlayClick()
         {
             UILoadingOverlay loadingOverlay = UILoadingOverlayManager.Instance.Create();

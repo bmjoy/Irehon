@@ -8,11 +8,7 @@ using System.Collections.Generic;
 namespace DuloGames.UI
 {
 	[AddComponentMenu("UI/Effects/Nicer Outline")]
-#if UNITY_5_2 || UNITY_5_3_OR_NEWER
     public class NicerOutline : BaseMeshEffect
-#else
-	public class NicerOutline : BaseVertexEffect
-#endif
 	{
 		[SerializeField]
 		private Color m_EffectColor = new Color (0f, 0f, 0f, 0.5f);
@@ -132,8 +128,7 @@ namespace DuloGames.UI
 				verts [i] = uIVertex;
 			}
 		}
-
-#if UNITY_5_2 || UNITY_5_3_OR_NEWER
+        
         public override void ModifyMesh(VertexHelper vertexHelper)
         {
             if (!this.IsActive())
@@ -147,13 +142,8 @@ namespace DuloGames.UI
 			vertexHelper.Clear();
             vertexHelper.AddUIVertexTriangleStream(list);
         }
-#endif
-
-#if UNITY_5_2 || UNITY_5_3_OR_NEWER
+        
         public void ModifyVertices(List<UIVertex> verts)
-#else
-        public override void ModifyVertices(List<UIVertex> verts)
-#endif
         {
             if (!this.IsActive() || verts.Count == 0)
 				return;

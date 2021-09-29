@@ -7,12 +7,14 @@ namespace DuloGames.UI
     [AddComponentMenu("UI/Modal Box Create", 8), DisallowMultipleComponent]
     public class UIModalBoxCreate : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private string m_Text1;
-        [SerializeField] private string m_Text2;
+        [SerializeField][TextArea] private string m_Text2;
         [SerializeField] private string m_ConfirmText;
         [SerializeField] private string m_CancelText;
 
         [SerializeField] private Button m_HookToButton;
+        #pragma warning restore 0649
 
         [Header("Events")]
         public UnityEvent onConfirm = new UnityEvent();
@@ -32,6 +34,12 @@ namespace DuloGames.UI
 
         public void CreateAndShow()
         {
+            if (UIModalBoxManager.Instance == null)
+            {
+                Debug.LogWarning("Could not load the modal box manager while creating a modal box.");
+                return;
+            }
+            
             UIModalBox box = UIModalBoxManager.Instance.Create(this.gameObject);
             if (box != null)
             {

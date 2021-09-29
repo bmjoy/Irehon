@@ -174,9 +174,6 @@ namespace DuloGames.UI
                 this.m_TargetTransform.anchorMax = this.m_TargetTransform.pivot;
                 this.m_TargetTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
             }
-
-            // Update the bar fill
-            this.UpdateBarFill();
 		}
 		
 		protected void Reset()

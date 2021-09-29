@@ -2,16 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using System;
 
 namespace DuloGames.UI
 {
     public class UIInputEvent : MonoBehaviour
     {
+        #pragma warning disable 0649
         [SerializeField] private string m_InputName;
 
         [SerializeField] private UnityEvent m_OnButton;
         [SerializeField] private UnityEvent m_OnButtonDown;
         [SerializeField] private UnityEvent m_OnButtonUp;
+        #pragma warning restore 0649
 
         private Selectable m_Selectable;
 
@@ -39,14 +42,22 @@ namespace DuloGames.UI
             if (UIWindowManager.Instance != null && UIWindowManager.Instance.escapeInputName == this.m_InputName && UIWindowManager.Instance.escapedUsed)
                 return;
 
-            if (Input.GetButton(this.m_InputName))
-                this.m_OnButton.Invoke();
+            try
+            {
+                if (Input.GetButton(this.m_InputName))
+                    this.m_OnButton.Invoke();
 
-            if (Input.GetButtonDown(this.m_InputName))
-                this.m_OnButtonDown.Invoke();
+                if (Input.GetButtonDown(this.m_InputName))
+                    this.m_OnButtonDown.Invoke();
 
-            if (Input.GetButtonUp(this.m_InputName))
-                this.m_OnButtonUp.Invoke();
+                if (Input.GetButtonUp(this.m_InputName))
+                    this.m_OnButtonUp.Invoke();
+            }
+            catch (ArgumentException)
+            {
+                this.enabled = false;
+                Debug.LogWarning("Input \"" + this.m_InputName + "\" used by game object \"" + gameObject.name + "\" is not defined.");
+            }
         }
     }
 }

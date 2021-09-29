@@ -140,6 +140,9 @@ namespace DuloGames.UI
 		/// <param name="info">Info.</param>
 		public virtual bool CheckEquipType(UIItemInfo info)
 		{
+            if (info == null)
+                return false;
+
 			if (info.EquipType != this.equipType)
 				return false;
 			
@@ -245,13 +248,42 @@ namespace DuloGames.UI
 				else UITooltip.Hide();
 			}
 		}
-		
-		#region Static Methods
-		/// <summary>
-		/// Equip type to string convertion.
+
+        /// <summary>
+		/// This method is raised when the slot is denied to be thrown away and returned to it's source.
 		/// </summary>
-		/// <returns>The string.</returns>
-		public static string EquipTypeToString(UIEquipmentType type)
+        protected override void OnThrowAwayDenied()
+        {
+            if (!this.IsAssigned())
+                return;
+
+            // Find free inventory slot
+            List<UIItemSlot> itemSlots = UIItemSlot.GetSlotsInGroup(UIItemSlot_Group.Inventory);
+
+            if (itemSlots.Count > 0)
+            {
+                // Get the first free one
+                foreach (UIItemSlot slot in itemSlots)
+                {
+                    if (!slot.IsAssigned())
+                    {
+                        // Assign this equip slot to the item slot
+                        slot.Assign(this);
+
+                        // Unassing this equip slot
+                        this.Unassign();
+                        break;
+                    }
+                }
+            }
+        }
+
+        #region Static Methods
+        /// <summary>
+        /// Equip type to string convertion.
+        /// </summary>
+        /// <returns>The string.</returns>
+        public static string EquipTypeToString(UIEquipmentType type)
 		{
 			string str = "Undefined";
 			

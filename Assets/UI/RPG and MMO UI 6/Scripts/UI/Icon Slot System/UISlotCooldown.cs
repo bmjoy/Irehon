@@ -24,12 +24,14 @@ namespace DuloGames.UI
 		
 		private static Dictionary<int, CooldownInfo> spellCooldowns = new Dictionary<int, CooldownInfo>();
 		
+        #pragma warning disable 0649
 		[SerializeField] private UISlotBase m_TargetSlot;
 		[SerializeField] private Image m_TargetGraphic;
 		[SerializeField] private Text m_TargetText;
 		[SerializeField] private Image m_FinishGraphic;
 		[SerializeField] private float m_FinishOffsetY = 0f;
 		[SerializeField] private float m_FinishFadingPct = 25f;
+        #pragma warning restore 0649
 
         private IUISlotHasCooldown m_CooldownSlot;
 		private bool m_IsOnCooldown = false;

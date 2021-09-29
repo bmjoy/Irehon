@@ -14,8 +14,10 @@ namespace DuloGames.UI
             public Color color;
         }
 
+        #pragma warning disable 0649
         [SerializeField] private Graphic m_Target;
-        
+        #pragma warning restore 0649
+
         private UIItemSlot m_Slot;
 
         protected void Awake()
@@ -40,7 +42,7 @@ namespace DuloGames.UI
             if (this.m_Target == null && slot.GetItemInfo() != null)
                 return;
             
-            this.m_Target.canvasRenderer.SetColor(UIItemQualityColor.GetColor(slot.GetItemInfo().Quality));
+            this.m_Target.color = UIItemQualityColor.GetColor(slot.GetItemInfo().Quality);
         }
 
         public void OnSlotUnassign(UIItemSlot slot)
@@ -48,7 +50,7 @@ namespace DuloGames.UI
             if (this.m_Target == null)
                 return;
 
-            this.m_Target.canvasRenderer.SetColor(Color.white);
+            this.m_Target.color = Color.clear;
         }
     }
 }

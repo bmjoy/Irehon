@@ -7,6 +7,7 @@ namespace DuloGames.UI
     [RequireComponent(typeof(UIWindow)), RequireComponent(typeof(UIAlwaysOnTop))]
     public class UIModalBox : MonoBehaviour
     {
+        #pragma warning disable 0649
         [Header("Texts")]
         [SerializeField] private Text m_Text1;
         [SerializeField] private Text m_Text2;
@@ -18,6 +19,7 @@ namespace DuloGames.UI
         [Header("Inputs")]
         [SerializeField] private string m_ConfirmInput = "Submit";
         [SerializeField] private string m_CancelInput = "Cancel";
+        #pragma warning restore 0649
 
         private UIWindow m_Window;
         private bool m_IsActive = false;
@@ -131,6 +133,9 @@ namespace DuloGames.UI
         {
             this.m_IsActive = true;
 
+            if (UIModalBoxManager.Instance != null)
+                UIModalBoxManager.Instance.RegisterActiveBox(this);
+
             // Show the modal
             if (this.m_Window != null)
             {
@@ -143,13 +148,7 @@ namespace DuloGames.UI
         /// </summary>
         public void Close()
         {
-            this.m_IsActive = false;
-
-            // Hide the modal
-            if (this.m_Window != null)
-            {
-                this.m_Window.Hide();
-            }
+            this._Hide();
 
             // Invoke the cancel event
             if (this.onCancel != null)
@@ -160,18 +159,26 @@ namespace DuloGames.UI
 
         public void Confirm()
         {
-            this.m_IsActive = false;
-
-            // Hide the modal
-            if (this.m_Window != null)
-            {
-                this.m_Window.Hide();
-            }
+            this._Hide();
 
             // Invoke the confirm event
             if (this.onConfirm != null)
             {
                 this.onConfirm.Invoke();
+            }
+        }
+
+        private void _Hide()
+        {
+            this.m_IsActive = false;
+
+            if (UIModalBoxManager.Instance != null)
+                UIModalBoxManager.Instance.UnregisterActiveBox(this);
+
+            // Hide the modal
+            if (this.m_Window != null)
+            {
+                this.m_Window.Hide();
             }
         }
 

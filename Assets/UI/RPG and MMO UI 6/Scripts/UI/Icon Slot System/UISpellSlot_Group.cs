@@ -13,6 +13,7 @@ namespace DuloGames.UI
         Main_5 = 5,
         Main_6 = 6,
 		Extra = 7,
-        SpellBook = 8
+        SpellBook = 8,
+        Talents = 9
 	}
 }

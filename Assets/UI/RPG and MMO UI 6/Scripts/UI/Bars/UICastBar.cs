@@ -31,6 +31,7 @@ namespace DuloGames.UI
 			public Color timeColor = Color.white;
 		}
 		
+        #pragma warning disable 0649
 		[SerializeField] private UIProgressBar m_ProgressBar;
 		[SerializeField] private Text m_TitleLabel;
 		[SerializeField] private Text m_TimeLabel;
@@ -55,7 +56,8 @@ namespace DuloGames.UI
         [SerializeField] private Transition m_OutTransition = Transition.Fade;
 		[SerializeField] private float m_OutTransitionDuration = 0.1f;
 		[SerializeField] private float m_HideDelay = 0.3f;
-		
+		#pragma warning restore 0649
+
 		private bool m_IsCasting = false;
 		
 		/// <summary>
@@ -98,7 +100,7 @@ namespace DuloGames.UI
 			this.m_CanvasGroup = this.gameObject.GetComponent<CanvasGroup>();
 		}
 		
-		protected virtual void OnEnable()
+		protected virtual void Start()
 		{
 			if (this.isActiveAndEnabled)
 			{
@@ -285,9 +287,12 @@ namespace DuloGames.UI
 				
 				yield return 0;
 			}
-			
-			// Make sure it's maxed
-			if (this.m_TimeLabel != null)
+
+            // Update the fill sprite to full
+            this.SetFillAmount(1f);
+
+            // Make sure it's maxed
+            if (this.m_TimeLabel != null)
 				this.m_TimeLabel.text = ((this.m_DisplayTime == DisplayTime.Elapsed) ? this.currentCastDuration.ToString(this.m_TimeFormat) : 0f.ToString(this.m_TimeFormat));
 			
 			// Call that we finished

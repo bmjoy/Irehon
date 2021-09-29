@@ -25,6 +25,7 @@ namespace DuloGames.UI
             TextColor
         }
 
+        #pragma warning disable 0649
         [SerializeField] private Transition m_Transition = Transition.None;
 
         [SerializeField] private Color m_NormalColor = ColorBlock.defaultColorBlock.normalColor;
@@ -43,7 +44,9 @@ namespace DuloGames.UI
 
         [SerializeField, Tooltip("GameObject that will have the selected transtion applied.")]
         private GameObject m_TargetGameObject;
+        #pragma warning restore 0649
 
+        private Selectable m_Selectable;
         private bool m_GroupsAllowInteraction = true;
 
         /// <summary>
@@ -124,6 +127,11 @@ namespace DuloGames.UI
             this.m_ColorTweenRunner.Init(this);
         }
 
+        protected void Awake()
+        {
+            this.m_Selectable = this.gameObject.GetComponent<Selectable>();
+        }
+
         protected void OnEnable()
         {
             this.InternalEvaluateAndTransitionToNormalState(true);
@@ -179,16 +187,19 @@ namespace DuloGames.UI
                 t = t.parent;
             }
 
-            if (groupAllowInteraction != m_GroupsAllowInteraction)
+            if (groupAllowInteraction != this.m_GroupsAllowInteraction)
             {
-                m_GroupsAllowInteraction = groupAllowInteraction;
+                this.m_GroupsAllowInteraction = groupAllowInteraction;
                 this.InternalEvaluateAndTransitionToNormalState(true);
             }
         }
 
         public virtual bool IsInteractable()
         {
-            return m_GroupsAllowInteraction;
+            if (this.m_Selectable != null)
+                return this.m_Selectable.IsInteractable() && this.m_GroupsAllowInteraction;
+
+            return this.m_GroupsAllowInteraction;
         }
 
         /// <summary>
@@ -203,9 +214,6 @@ namespace DuloGames.UI
                     break;
                 case Transition.SpriteSwap:
                     this.DoSpriteSwap(null);
-                    break;
-                case Transition.Animation:
-                    this.TriggerAnimation(this.m_NormalTrigger);
                     break;
                 case Transition.TextColor:
                     this.SetTextColor(Color.white);
@@ -327,7 +335,7 @@ namespace DuloGames.UI
             if (this.targetGameObject == null)
                 return;
 
-            if (this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || string.IsNullOrEmpty(triggername))
+            if (this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
                 return;
 
             this.animator.ResetTrigger(this.m_PressedTrigger);

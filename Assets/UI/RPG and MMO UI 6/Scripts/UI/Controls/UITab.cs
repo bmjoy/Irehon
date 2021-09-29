@@ -14,10 +14,11 @@ namespace DuloGames.UI
 			ColorTint
 		}
 		
+		#pragma warning disable 0649
 		[SerializeField] private GameObject m_TargetContent;
 		
 		[SerializeField] private Image m_ImageTarget;
-		[SerializeField] private Transition m_ImageTransition = Transition.None;
+		[SerializeField] private Selectable.Transition m_ImageTransition = Selectable.Transition.None;
 		[SerializeField] private ColorBlockExtended m_ImageColors = ColorBlockExtended.defaultColorBlock;
 		[SerializeField] private SpriteStateExtended m_ImageSpriteState;
 		[SerializeField] private AnimationTriggersExtended m_ImageAnimationTriggers = new AnimationTriggersExtended();
@@ -25,8 +26,91 @@ namespace DuloGames.UI
 		[SerializeField] private Text m_TextTarget;
 		[SerializeField] private TextTransition m_TextTransition = TextTransition.None;
 		[SerializeField] private ColorBlockExtended m_TextColors = ColorBlockExtended.defaultColorBlock;
+		#pragma warning restore 0649
 
-		private Selectable.SelectionState m_CurrentState = Selectable.SelectionState.Normal;
+        /// <summary>
+        /// Gets or sets the target content game object.
+        /// </summary>
+        public GameObject targetContent
+        {
+            get { return this.m_TargetContent; }
+            set { this.m_TargetContent = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the image target.
+        /// </summary>
+        public Image imageTarget
+        {
+            get { return this.m_ImageTarget; }
+            set { this.m_ImageTarget = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the image transition.
+        /// </summary>
+        public Transition imageTransition
+        {
+            get { return this.m_ImageTransition; }
+            set { this.m_ImageTransition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the image color block.
+        /// </summary>
+        public ColorBlockExtended imageColors
+        {
+            get { return this.m_ImageColors; }
+            set { this.m_ImageColors = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the image sprite state.
+        /// </summary>
+        public SpriteStateExtended imageSpriteState
+        {
+            get { return this.m_ImageSpriteState; }
+            set { this.m_ImageSpriteState = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the image animation triggers.
+        /// </summary>
+        public AnimationTriggersExtended imageAnimationTriggers
+        {
+            get { return this.m_ImageAnimationTriggers; }
+            set { this.m_ImageAnimationTriggers = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the text target.
+        /// </summary>
+        public Text textTarget
+        {
+            get { return this.m_TextTarget; }
+            set { this.m_TextTarget = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the text transition.
+        /// </summary>
+        public TextTransition textTransition
+        {
+            get { return this.m_TextTransition; }
+            set { this.m_TextTransition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the text colors block.
+        /// </summary>
+        public ColorBlockExtended textColors
+        {
+            get { return this.m_TextColors; }
+            set { this.m_TextColors = value; }
+        }
+
+
+        private Selectable.SelectionState m_CurrentState = Selectable.SelectionState.Normal;
 		
 		// Tween controls
 		[NonSerialized] private readonly TweenRunner<ColorTween> m_ColorTweenRunner;
@@ -89,13 +173,19 @@ namespace DuloGames.UI
 			
 			this.m_ImageColors.fadeDuration = Mathf.Max(this.m_ImageColors.fadeDuration, 0f);
 			this.m_TextColors.fadeDuration = Mathf.Max(this.m_TextColors.fadeDuration, 0f);
-			
-			if (this.isActiveAndEnabled)
-			{
-				this.DoSpriteSwap(this.m_ImageTarget, null);
-				this.InternalEvaluateAndTransitionState(true);
-			}
 		}
+
+        /// <summary>
+        /// Raises the property change event from the editor.
+        /// </summary>
+        public void OnProperyChange_Editor()
+        {
+            if (!this.isActiveAndEnabled)
+                return;
+            
+            this.DoSpriteSwap(this.m_ImageTarget, null);
+            this.InternalEvaluateAndTransitionState(true);
+        }
 #endif
 		
 		/// <summary>
@@ -113,7 +203,7 @@ namespace DuloGames.UI
 		/// <summary>
 		/// Evaluates and toggles the content visibility.
 		/// </summary>
-		private void EvaluateAndToggleContent()
+		public void EvaluateAndToggleContent()
 		{
 			if (this.m_TargetContent != null)
 				m_TargetContent.SetActive(this.isOn);
@@ -130,6 +220,7 @@ namespace DuloGames.UI
 
             // Toggle the content
             this.EvaluateAndToggleContent();
+
 #if UNITY_EDITOR
             // Transition the active graphic
             // Hackfix because unity is not toggling it in edit mode
@@ -138,6 +229,7 @@ namespace DuloGames.UI
                 this.graphic.canvasRenderer.SetAlpha((!this.isOn) ? 0f : 1f);
             }
 #endif
+
             // Transition the active graphic children
             if (this.graphic != null && this.graphic.transform.childCount > 0)
 			{
@@ -321,7 +413,7 @@ namespace DuloGames.UI
 				
 			Animator animator = target.GetComponent<Animator>();
 			
-			if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || string.IsNullOrEmpty(triggername))
+			if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
 				return;
 
 			animator.ResetTrigger(this.m_ImageAnimationTriggers.normalTrigger);

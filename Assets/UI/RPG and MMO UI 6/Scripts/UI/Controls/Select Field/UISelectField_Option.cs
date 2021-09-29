@@ -6,7 +6,7 @@ using System;
 
 namespace DuloGames.UI
 {
-	public class UISelectField_Option : Toggle {
+	public class UISelectField_Option : Toggle, IPointerClickHandler {
 		
 		[Serializable] public class SelectOptionEvent : UnityEvent<string> { }
 		[Serializable] public class PointerUpEvent : UnityEvent<BaseEventData> { }
@@ -21,8 +21,6 @@ namespace DuloGames.UI
 		/// </summary>
 		public Text textComponent;
 		
-		private bool m_HasInitialized = false;
-
 		/// <summary>
 		/// The On Select Option event.
 		/// </summary>
@@ -58,26 +56,7 @@ namespace DuloGames.UI
 		{
 			this.selectField = select;
 			this.textComponent = text;
-			this.m_HasInitialized = true;
 			this.OnEnable();
-		}
-		
-		protected override void OnEnable()
-		{
-			// Prevent initial state before variables are set
-			if (this.m_HasInitialized)
-			{
-				base.OnEnable();
-				
-				// Hook the select handler
-				this.onValueChanged.AddListener(OnValueChanged);
-			}
-		}
-		
-		protected override void OnDisable()
-		{
-			base.OnDisable();
-			this.onValueChanged.RemoveListener(OnValueChanged);
 		}
 		
 #if UNITY_EDITOR
@@ -120,23 +99,21 @@ namespace DuloGames.UI
 			if (this.onPointerUp != null)
 				this.onPointerUp.Invoke(eventData);
 		}
-		
-		/// <summary>
-		/// Raises the value changed event.
-		/// </summary>
-		/// <param name="state">If set to <c>true</c> state.</param>
-		private void OnValueChanged(bool state)
-		{
-			// Transition to the correct state
+
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            base.OnPointerClick(eventData);
+
+            // Transition to the correct state
 			this.DoStateTransition(SelectionState.Normal, false);
-		
+            
 			// Invoke the select event
-			if (state && this.onSelectOption != null && this.textComponent != null)
+			if (this.onSelectOption != null && this.textComponent != null)
 			{
 				this.onSelectOption.Invoke(this.textComponent.text);
 			}
-		}
-		
+        }
+        
 		/// <summary>
 		/// Does the state transition.
 		/// </summary>
@@ -274,7 +251,7 @@ namespace DuloGames.UI
 		/// <param name="trigger">Trigger.</param>
 		private void TriggerAnimation(string trigger)
 		{
-			if (this.selectField == null || this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || string.IsNullOrEmpty(trigger))
+			if (this.selectField == null || this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(trigger))
 				return;
 			
 			this.animator.ResetTrigger(this.selectField.optionBackgroundAnimationTriggers.normalTrigger);

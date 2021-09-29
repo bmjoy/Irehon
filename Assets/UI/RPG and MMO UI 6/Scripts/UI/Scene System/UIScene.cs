@@ -33,6 +33,7 @@ namespace DuloGames.UI
         private UISceneRegistry m_SceneManager;
         private bool m_AnimationState = false;
 
+        #pragma warning disable 0649
         [SerializeField] private int m_Id = 0;
         [SerializeField] private bool m_IsActivated = true;
         [SerializeField] private Type m_Type = Type.Preloaded;
@@ -45,6 +46,7 @@ namespace DuloGames.UI
         [SerializeField] private string m_AnimateInTrigger = "AnimateIn";
         [SerializeField] private string m_AnimateOutTrigger = "AnimateOut";
         [SerializeField] private GameObject m_FirstSelected;
+        #pragma warning restore 0649
 
         /// <summary>
         /// Gets the scene id.
@@ -714,7 +716,7 @@ namespace DuloGames.UI
             // Get the animator on the target game object
             Animator animator = this.gameObject.GetComponent<Animator>();
 
-            if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || string.IsNullOrEmpty(triggername))
+            if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
                 return;
 
             animator.ResetTrigger(this.m_AnimateInTrigger);

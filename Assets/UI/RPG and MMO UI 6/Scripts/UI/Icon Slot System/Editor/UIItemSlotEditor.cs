@@ -4,9 +4,11 @@ using UnityEditor;
 
 namespace DuloGamesEditor.UI
 {
-	[CustomEditor(typeof(UIItemSlot), true)]
+	[CanEditMultipleObjects, CustomEditor(typeof(UIItemSlot), true)]
 	public class UIItemSlotEditor : UISlotBaseEditor {
 
+        private SerializedProperty m_SlotGroupProperty;
+        private SerializedProperty m_IDProperty;
         private SerializedProperty onRightClickProperty;
         private SerializedProperty onDoubleClickProperty;
         private SerializedProperty onAssignProperty;
@@ -16,6 +18,8 @@ namespace DuloGamesEditor.UI
 		protected override void OnEnable()
 		{
 			base.OnEnable();
+            this.m_SlotGroupProperty = this.serializedObject.FindProperty("m_SlotGroup");
+            this.m_IDProperty = this.serializedObject.FindProperty("m_ID");
             this.onRightClickProperty = this.serializedObject.FindProperty("onRightClick");
             this.onDoubleClickProperty = this.serializedObject.FindProperty("onDoubleClick");
 			this.onAssignProperty = this.serializedObject.FindProperty("onAssign");
@@ -25,7 +29,14 @@ namespace DuloGamesEditor.UI
 		
 		public override void OnInspectorGUI()
 		{
-			base.OnInspectorGUI();
+            this.serializedObject.Update();
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(this.m_SlotGroupProperty, new GUIContent("Slot Group"));
+            EditorGUILayout.PropertyField(m_IDProperty, new GUIContent("Slot ID"));
+            EditorGUILayout.Separator();
+            this.serializedObject.ApplyModifiedProperties();
+
+            base.OnInspectorGUI();
 			
 			EditorGUILayout.Separator();
 			
