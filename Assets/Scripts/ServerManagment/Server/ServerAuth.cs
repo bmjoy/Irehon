@@ -119,14 +119,15 @@ public class ServerAuth : NetworkAuthenticator
 
             if (result != null)
             {
-                con.authenticationData = new PlayerConnectionInfo(result);
-                var data = (PlayerConnectionInfo)con.authenticationData;
-
+                var data = new PlayerConnectionInfo(result);
+                
                 if (ServerManager.ConnectedPlayers.Contains(data.playerId))
                 {
                     SendAuthResult(con, false, "Already connected");
                     yield break;
                 }
+
+                con.authenticationData = data;
 
                 SendAuthResult(con, true, "Succesful");
             }

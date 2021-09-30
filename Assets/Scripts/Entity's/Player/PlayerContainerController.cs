@@ -108,7 +108,7 @@ public class PlayerContainerController : NetworkBehaviour
         openedContainerId = chest.ContainerId;
 
         SendChestData();
-             
+
         chest.OnContainerUpdate.AddListener(SendChestData);
 
         Vector3 chestPos = chest.transform.position;
