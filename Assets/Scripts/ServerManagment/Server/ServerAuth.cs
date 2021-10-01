@@ -61,9 +61,10 @@ public class ServerAuth : NetworkAuthenticator
 
     public static int GetPassword(string password) => password.GetHashCode();
 
-    public static bool IsPasswordValid(string password) => password.Length > 3;
+    public static bool IsPasswordValid(string password) => password.Length > 5;
 
-    public static bool IsLoginValid(string login) => (login.Length < 20 && login.Length > 2) && Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
+    public static bool IsLoginSymbolsValid(string login) => Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
+    public static bool IsLengthLoginValid(string login) => (login.Length < 15 && login.Length > 2);
 
     private void SendAuthResult(NetworkConnection con, bool isAuthenticated, string message)
     {
@@ -138,8 +139,10 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
-        if (!IsLoginValid(msg.Login))
+        if (!IsLoginSymbolsValid(msg.Login))
             SendAuthResult(con, false, "Login can contain only letters or digits");
+        else if (!IsLengthLoginValid(msg.Login))
+            SendAuthResult(con, false, "Invalid login length");
         else if (!IsPasswordValid(msg.Password))
             SendAuthResult(con, false, "Password too short");
         else if (msg.Type == AuthRequestMessage.AuthType.Login)

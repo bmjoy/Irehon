@@ -11,7 +11,7 @@ public class SkyboxExtendedShaderGUI : ShaderGUI
         //base.OnGUI(materialEditor, props);
 
         var material0 = materialEditor.target as Material;
-        
+
         DrawDynamicInspector(material0, materialEditor, props);
     }
 
@@ -34,35 +34,7 @@ public class SkyboxExtendedShaderGUI : ShaderGUI
         {
             var prop = customPropsList[i];
 
-            if (prop.type == MaterialProperty.PropType.Texture)
-            {
-                EditorGUI.BeginChangeCheck();
-
-                EditorGUI.showMixedValue = prop.hasMixedValue;
-
-                Texture tex = null;
-
-                if (prop.textureDimension == UnityEngine.Rendering.TextureDimension.Tex2D)
-                {
-                    tex = (Texture2D)EditorGUILayout.ObjectField(prop.displayName, prop.textureValue, typeof(Texture2D), false, GUILayout.Height(50));
-                }
-
-                if (prop.textureDimension == UnityEngine.Rendering.TextureDimension.Cube)
-                {
-                    tex = (Cubemap)EditorGUILayout.ObjectField(prop.displayName, prop.textureValue, typeof(Cubemap), false, GUILayout.Height(50));
-                }
-
-                EditorGUI.showMixedValue = false;
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    prop.textureValue = tex;
-                }
-            }
-            else
-            {
-                materialEditor.ShaderProperty(customPropsList[i], customPropsList[i].displayName);
-            }
+            materialEditor.ShaderProperty(prop, prop.displayName);
         }
 
         GUILayout.Space(10);

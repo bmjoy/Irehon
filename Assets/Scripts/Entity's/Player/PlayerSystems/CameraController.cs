@@ -177,8 +177,8 @@ public class CameraController : MonoBehaviour
         {
             i.cursorAiming = false;
             UIController.i.HideHint();
+            i.OnChangeCursorState.Invoke(true);
         }
-        i.OnChangeCursorState.Invoke(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }

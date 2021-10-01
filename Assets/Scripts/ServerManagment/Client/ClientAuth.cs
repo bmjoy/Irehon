@@ -8,11 +8,6 @@ namespace Client
 {
     public class ClientAuth : NetworkAuthenticator
     {
-        [SerializeField]
-        private InputField Email;
-        [SerializeField]
-        private InputField Password;
-
         public override void OnClientAuthenticate()
         {
             NetworkClient.Send(currentRequest);
@@ -33,8 +28,8 @@ namespace Client
         {
             currentRequest = new AuthRequestMessage()
             {
-                Login = Email.text,
-                Password = Password.text,
+                Login = LoginSceneUI.LoginField.text,
+                Password = LoginSceneUI.PasswordField.text,
                 Type = AuthRequestMessage.AuthType.Register
             };
 
@@ -47,8 +42,8 @@ namespace Client
         {
             currentRequest = new AuthRequestMessage()
             {
-                Login = Email.text,
-                Password = Password.text,
+                Login = LoginSceneUI.LoginField.text,
+                Password = LoginSceneUI.PasswordField.text,
                 Type = AuthRequestMessage.AuthType.Login
             };
 

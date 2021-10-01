@@ -57,12 +57,16 @@ namespace Server
             yield return www.SendWebRequest();
             var json = Api.GetResult(www).ToString();
 
+            Debug.Log("Loaded item database");
+
             ItemDatabase.DatabaseLoadJson(json);
 
             www = Api.Request("/recipes");
             yield return www.SendWebRequest();
             json = Api.GetResult(www).ToString();
             CraftDatabase.DatabaseLoadJson(json);
+            Debug.Log("Loaded crafts database");
+
         }
 
         public void UpdateAllDataCycle()
@@ -122,9 +126,15 @@ namespace Server
                 if (data.characters.Length > MAX_CHARACTERS_PER_ACCOUNT)
                     yield break;
 
-                if (!ServerAuth.IsLoginValid(character.nickname))
+                if (!ServerAuth.IsLoginSymbolsValid(character.nickname))
                 {
                     SendMessage(con, "Invalid symbols in nickname", MessageType.Error);
+                    yield break;
+                }
+
+                if (character.nickname.Length == 0 || character.nickname.Length > 10)
+                {
+                    SendMessage(con, "Invalid nickname length", MessageType.Error);
                     yield break;
                 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum WeaponType { Fist, Bow };
+public enum WeaponType { Fist, Bow, Sword, Axe };
 public abstract class Weapon : MonoBehaviour
 {
     new public abstract WeaponType GetType();

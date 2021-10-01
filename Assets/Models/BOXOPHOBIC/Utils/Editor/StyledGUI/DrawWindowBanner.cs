@@ -14,7 +14,7 @@ namespace Boxophobic.StyledGUI
 
             var bannerFullRect = GUILayoutUtility.GetRect(0, 0, 36, 0);
             var bannerBeginRect = new Rect(bannerFullRect.position.x + 20, bannerFullRect.position.y, 20, 36);
-            var bannerMiddleRect = new Rect(bannerFullRect.position.x + 40, bannerFullRect.position.y, bannerFullRect.xMax - 75, 36);
+            var bannerMiddleRect = new Rect(bannerFullRect.position.x + 36, bannerFullRect.position.y, bannerFullRect.xMax - 70, 36);
             var bannerEndRect = new Rect(bannerFullRect.xMax - 36, bannerFullRect.position.y, 20, 36);
             var iconRect = new Rect(bannerFullRect.xMax - 51, bannerFullRect.position.y + 5, 30, 26);
 

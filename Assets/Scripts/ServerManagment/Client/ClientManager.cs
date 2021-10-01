@@ -95,8 +95,7 @@ namespace Client
         {
             base.OnClientDisconnect(conn);
             CameraController.EnableCursor();
-            if (SceneManager.GetActiveScene().name != "LoginScene")
-                SceneManager.LoadScene("LoginScene");
+            SceneManager.LoadScene("LoginScene");
         }
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)

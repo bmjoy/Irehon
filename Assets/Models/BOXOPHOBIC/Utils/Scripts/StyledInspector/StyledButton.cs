@@ -10,7 +10,7 @@ namespace Boxophobic.StyledGUI
         public float Top = 0;
         public float Down = 0;
 
-        public StyledButton(string Text, string Message)
+        public StyledButton(string Text)
         {
             this.Text = Text;
             this.Top = 0;

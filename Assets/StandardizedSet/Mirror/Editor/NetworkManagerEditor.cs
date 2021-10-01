@@ -37,7 +37,6 @@ namespace Mirror
             Init();
             DrawDefaultInspector();
             EditorGUI.BeginChangeCheck();
-            spawnList.DoLayoutList();
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
