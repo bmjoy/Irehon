@@ -11,6 +11,8 @@ public class LoginSceneUI : MonoBehaviour
     public static InputField PasswordField { get; private set; }
 
     [SerializeField]
+    private Button but;
+    [SerializeField]
     private InputField loginField;
     [SerializeField]
     private InputField passwordField;
