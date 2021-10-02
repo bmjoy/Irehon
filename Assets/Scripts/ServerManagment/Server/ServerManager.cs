@@ -192,6 +192,7 @@ namespace Server
 
             Player playerComponent = playerObject.GetComponent<Player>();
 
+            print($"Spawning character id{characterInfo.id}");
             connectedCharacters.Add(characterInfo.id, playerComponent);
 
             playerComponent.SetName(characterInfo.name);
@@ -209,6 +210,8 @@ namespace Server
         public override void OnServerConnect(NetworkConnection con)
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            
+            print($"Connect player id{data.playerId}");
             connectedPlayersId.Add(data.playerId);
             
             ChangeScene(con, "CharacterSelection");
@@ -261,7 +264,7 @@ namespace Server
         private IEnumerator CharacterLeaveFromWorld(int id)
         {
             yield return UpdateCharacterData(id);
-
+            print($"Unspawnd character id{id}");
             connectedCharacters.Remove(id);
         }
 
@@ -281,7 +284,8 @@ namespace Server
 
                 if (data.selectedCharacter.id != 0)
                     yield return CharacterLeaveFromWorld(data.selectedCharacter.id);
-
+                
+                print($"Disconnect player id{data.playerId}");
                 connectedPlayersId.Remove(data.playerId);
                 base.OnServerDisconnect(conn);
             }

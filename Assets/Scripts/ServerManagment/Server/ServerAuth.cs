@@ -98,8 +98,8 @@ public class ServerAuth : NetworkAuthenticator
             
             if (result != null)
             {
-                Debug.Log($"{result}, {result["id"].AsInt}");
                 con.authenticationData = new PlayerConnectionInfo(result["id"].AsInt);
+                Debug.Log($"Registered user id{result["id"].AsInt}");
                 SendAuthResult(con, true, "Succesful");
             }
             else
