@@ -37,10 +37,10 @@ namespace Mirror
             Init();
             DrawDefaultInspector();
             EditorGUI.BeginChangeCheck();
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-            }
+            //if (EditorGUI.EndChangeCheck())
+            //{
+            //    serializedObject.ApplyModifiedProperties();
+            //}
         }
 
         static void DrawHeader(Rect headerRect)

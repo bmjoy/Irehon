@@ -17,14 +17,14 @@ namespace Client
         public string message;
     }
 
-    public class OnUpdateCharacterList : UnityEvent<List<Character>> { }
+    //public class OnUpdateCharacterList : UnityEvent<List<Character>> { }
 
     public class OnGetServerMessage : UnityEvent<ServerMessage> { }
 
     public class ClientManager : NetworkManager
     {
         public static ClientManager i;
-        public OnUpdateCharacterList OnUpdateCharacterList;
+        //public OnUpdateCharacterList OnUpdateCharacterList;
         public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
         [SerializeField]
@@ -47,8 +47,6 @@ namespace Client
         public override void Start()
         {
             base.Start();
-            if (OnUpdateCharacterList == null)
-                OnUpdateCharacterList = new OnUpdateCharacterList();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
         }
 

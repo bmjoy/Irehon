@@ -36,6 +36,7 @@ public class ServerAuth : NetworkAuthenticator
 {
     public override void OnStartServer()
     {
+        SteamServer.OnValidateAuthTicketResponse += OnAuthTicketResponse;
         NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
     }
 
@@ -63,11 +64,18 @@ public class ServerAuth : NetworkAuthenticator
         if (con.authenticationData != null)
             return;
 
-        if (!SteamServer.BeginAuthSession(msg.AuthData, msg.Id))
-            SendAuthResult(con, false, "Invalid steam auth data");
+        if (msg.AuthData == null || msg.Id == 0)
+            return;
+
+        SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
         con.authenticationData = new PlayerConnectionInfo(msg.Id);
         SendAuthResult(con, true, "Connected");
+    }
+
+    private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)
+    {
+
     }
 
     public override void OnClientAuthenticate() {}

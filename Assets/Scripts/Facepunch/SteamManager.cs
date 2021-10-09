@@ -5,9 +5,12 @@ using Mirror;
 using Steamworks;
 using System;
 using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
 
 public class SteamManager : MonoBehaviour
 {
+    public ulong idTest;
     private static SteamManager i;
 
     private void Awake()
@@ -26,7 +29,23 @@ public class SteamManager : MonoBehaviour
             Debug.Log("Can't intialize steam client " + exception.ToString());
         }
 
+        print("123");
+        print(Thread.CurrentThread.ManagedThreadId);
+        GetFriendName();
+        print("456");
+
+
         DontDestroyOnLoad(gameObject);
+    }
+
+    private async void GetFriendName()
+    {
+        var friend = new Friend(idTest);
+        print("await before");
+        print(Thread.CurrentThread.ManagedThreadId);
+        await friend.RequestInfoAsync();
+        print("await after");
+        print(friend.Name);
     }
 
     public static AuthTicket GetAuthTicket() => SteamUser.GetAuthSessionTicket();

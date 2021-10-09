@@ -17,7 +17,7 @@ public struct CharacterInfo
     public CharacterInfo(JSONNode json)
     {
         id = json["id"].AsULong;
-        name = json["name"].Value;
+        name = "";
         inventory_id = json["inventory_id"].AsInt;
         equipment_id = json["equipment_id"].AsInt;
         JSONNode pos = json["position"];

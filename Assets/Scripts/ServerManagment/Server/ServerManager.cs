@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
 using UnityEngine.Networking;
+using Steamworks;
 using UnityEngine.SceneManagement;
 
 namespace Server
 {
     public class ServerManager : NetworkManager
     {
-        private const int MAX_CHARACTERS_PER_ACCOUNT = 7;
-
         public static ServerManager i;
 
         [SerializeField]
@@ -27,6 +26,8 @@ namespace Server
 
         private NetworkManager manager;
         private Dictionary<ulong, Player> connectedCharacters;
+        private Dictionary<ulong, NetworkConnection> connections;
+
 
         public override void Awake()
         {
@@ -98,6 +99,8 @@ namespace Server
 
             CharacterInfo characterInfo = new CharacterInfo(Api.GetResult(www));
 
+            characterInfo.name = new Friend(id).Name;
+
             data.selectedCharacter = characterInfo;
 
             SpawnPlayerOnMap(con, characterInfo);
@@ -153,7 +156,7 @@ namespace Server
             NetworkServer.Spawn(mob);
         }
 
-        private IEnumerator UpdateCharacterData(int id)
+        private IEnumerator UpdateCharacterData(ulong id)
         {
             Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
@@ -161,7 +164,7 @@ namespace Server
             yield return www.SendWebRequest();
         }
 
-        private IEnumerator CharacterLeaveFromWorld(int id)
+        private IEnumerator CharacterLeaveFromWorld(ulong id)
         {
             yield return UpdateCharacterData(id);
             print($"Unspawnd character id{id}");
@@ -169,7 +172,7 @@ namespace Server
         }
 
         //Update character data on DB on disconneect
-        public override void OnServerDisconnect(NetworkConnection conn)
+        public override async void OnServerDisconnect(NetworkConnection conn)
         {
             StartCoroutine(ServerDisconnect());
             IEnumerator ServerDisconnect()
@@ -186,7 +189,8 @@ namespace Server
                     yield return CharacterLeaveFromWorld(data.selectedCharacter.id);
                 
                 print($"Disconnect player id{data.steamId}");
-                connectedPlayersId.Remove(data.steamId);
+                connectedCharacters.Remove(data.steamId);
+                connections.Remove(data.steamId);
                 base.OnServerDisconnect(conn);
             }
         }
@@ -208,6 +212,6 @@ namespace Server
 
         public Player GetPlayer(ulong steamId) => connectedCharacters.ContainsKey(steamId) ? connectedCharacters[steamId] : null;
 
-        public bool IsPlayerConnected(ulong p_id) => connectedPlayersId.Contains(p_id);
+        public bool IsPlayerConnected(ulong p_id) => connectedCharacters.ContainsKey(p_id);
     }
 }
