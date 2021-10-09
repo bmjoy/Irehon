@@ -17,11 +17,6 @@ namespace Client
         public string message;
     }
 
-    public struct CharactersInfo : NetworkMessage
-    {
-        public Character[] characters;
-    }
-
     public class OnUpdateCharacterList : UnityEvent<List<Character>> { }
 
     public class OnGetServerMessage : UnityEvent<ServerMessage> { }
@@ -31,7 +26,6 @@ namespace Client
         public static ClientManager i;
         public OnUpdateCharacterList OnUpdateCharacterList;
         public static OnGetServerMessage OnGetServerMessage = new OnGetServerMessage();
-        private List<Character> charactersList = new List<Character>();
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
         [SerializeField]
         private ServerData serverData;
@@ -62,21 +56,12 @@ namespace Client
         {
             base.OnStartClient();
             NetworkClient.RegisterHandler<ServerMessage>(ServerMessageEvent, false);
-            NetworkClient.RegisterHandler<PlayerConnectionInfo>(SaveCharacter, true);
         }
 
         private void ServerMessageEvent(ServerMessage msg)
         {
             OnGetServerMessage.Invoke(msg);
         }
-
-        private void SaveCharacter(PlayerConnectionInfo charactersInfo)
-        {
-            charactersList = new List<Character>(charactersInfo.characters);
-            OnUpdateCharacterList.Invoke(charactersList);
-        }
-
-        public List<Character> GetCharacters() => charactersList;
 
         public override void OnServerAddPlayer(NetworkConnection conn)
         {

@@ -8,6 +8,10 @@ namespace Client
 {
     public class ClientAuth : NetworkAuthenticator
     {
+        private void Start()
+        {
+            
+        }
         public override void OnClientAuthenticate()
         {
             NetworkClient.Send(currentRequest);
@@ -24,27 +28,12 @@ namespace Client
             ClientManager.OnGetServerMessage.AddListener(OnAuthResponseMessage);
         }
 
-        public void RegisterButton()
+        public void PlayButton()
         {
             currentRequest = new AuthRequestMessage()
             {
-                Login = LoginSceneUI.LoginField.text,
-                Password = LoginSceneUI.PasswordField.text,
-                Type = AuthRequestMessage.AuthType.Register
-            };
-
-            GetComponent<NetworkManager>().StartClient();
-        }
-
-
-
-        public void LoginButton()
-        {
-            currentRequest = new AuthRequestMessage()
-            {
-                Login = LoginSceneUI.LoginField.text,
-                Password = LoginSceneUI.PasswordField.text,
-                Type = AuthRequestMessage.AuthType.Login
+                Id = SteamManager.GetSteamId(),
+                AuthData = SteamManager.GetAuthTicket().Data
             };
 
             GetComponent<NetworkManager>().StartClient();

@@ -8,48 +8,28 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 using Utils;
+using Steamworks;
 
 public struct AuthRequestMessage : NetworkMessage
 {
-    public enum AuthType { Guest, Login, Register };
-    public AuthType Type;
-    public string Login;
-    public string Password;
-
+    public ulong Id;
+    public byte[] AuthData;
 }
 
 public struct PlayerConnectionInfo : NetworkMessage
 {
-    public int playerId;
-    public Character[] characters;
+    public ulong steamId;
 
     public CharacterInfo selectedCharacter;
 
     public Transform playerPrefab;
 
-    public PlayerConnectionInfo(int playerId)
+    public PlayerConnectionInfo(ulong steamId)
     {
-        this.playerId = playerId;
-        characters = new Character[0];
+        this.steamId = steamId;
         playerPrefab = null;
         selectedCharacter = new CharacterInfo();
     }
-    public PlayerConnectionInfo(JSONNode node)
-    {
-        playerId = node["id"].AsInt;
-
-        List<Character> characters = new List<Character>();
-
-        foreach (JSONNode character in node["characters"])
-            characters.Add(new Character(character));
-        
-        this.characters = characters.ToArray();
-
-        playerPrefab = null;
-        
-        selectedCharacter = new CharacterInfo();
-    }
-
 }
 
 public class ServerAuth : NetworkAuthenticator
@@ -58,13 +38,6 @@ public class ServerAuth : NetworkAuthenticator
     {
         NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
     }
-
-    public static int GetPassword(string password) => password.GetHashCode();
-
-    public static bool IsPasswordValid(string password) => password.Length > 5;
-
-    public static bool IsLoginSymbolsValid(string login) => Regex.IsMatch(login, @"^[a-zA-Z0-9_]+$");
-    public static bool IsLengthLoginValid(string login) => (login.Length < 15 && login.Length > 2);
 
     private void SendAuthResult(NetworkConnection con, bool isAuthenticated, string message)
     {
@@ -84,71 +57,17 @@ public class ServerAuth : NetworkAuthenticator
             StartCoroutine(WaitBeforeDisconnect());
         }
     }
-    
-    private void Register(NetworkConnection con, AuthRequestMessage msg)
-    {
-        StartCoroutine(LoginCoroutine());
-        IEnumerator LoginCoroutine()
-        {
-            int password = msg.Password.GetStableHashCode();
-
-            var www = Api.Request($"/users/?login={msg.Login}&password={password}", ApiMethod.POST);
-            yield return www.SendWebRequest();
-            var result = Api.GetResult(www);
-            
-            if (result != null)
-            {
-                con.authenticationData = new PlayerConnectionInfo(result["id"].AsInt);
-                Debug.Log($"Registered user id{result["id"].AsInt}");
-                SendAuthResult(con, true, "Succesful");
-            }
-            else
-                SendAuthResult(con, false, "User with this login exist");
-        }
-    }
-
-    private void Login(NetworkConnection con, AuthRequestMessage msg)
-    {
-        StartCoroutine(LoginCoroutine());
-        IEnumerator LoginCoroutine()
-        {
-            int password = msg.Password.GetStableHashCode();
-            
-            var www = Api.Request($"/auth/?login={msg.Login}&password={password}");
-            yield return www.SendWebRequest();
-            var result = Api.GetResult(www);
-
-            if (result != null)
-            {
-                var data = new PlayerConnectionInfo(result);
-                
-                if (ServerManager.ConnectedPlayers.Contains(data.playerId))
-                {
-                    SendAuthResult(con, false, "Already connected");
-                    yield break;
-                }
-
-                con.authenticationData = data;
-
-                SendAuthResult(con, true, "Succesful");
-            }
-            else
-                SendAuthResult(con, false, "Login or Password incorrect");
-        }
-    }
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
-        if (!IsLoginSymbolsValid(msg.Login))
-            SendAuthResult(con, false, "Login can contain only letters or digits");
-        else if (!IsLengthLoginValid(msg.Login))
-            SendAuthResult(con, false, "Invalid login length");
-        else if (!IsPasswordValid(msg.Password))
-            SendAuthResult(con, false, "Password too short");
-        else if (msg.Type == AuthRequestMessage.AuthType.Login)
-            Login(con, msg);
-        else if (msg.Type == AuthRequestMessage.AuthType.Register)
-            Register(con, msg);
+        if (con.authenticationData != null)
+            return;
+
+        if (!SteamServer.BeginAuthSession(msg.AuthData, msg.Id))
+            SendAuthResult(con, false, "Invalid steam auth data");
+
+        con.authenticationData = new PlayerConnectionInfo(msg.Id);
+        SendAuthResult(con, true, "Connected");
     }
 
     public override void OnClientAuthenticate() {}

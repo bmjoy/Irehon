@@ -17,7 +17,7 @@ public class LoginSceneUI : MonoBehaviour
     [SerializeField]
     private InputField passwordField;
 
-    public void Login() => Client.ClientManager.i.GetComponent<Client.ClientAuth>().LoginButton();
+    public void Login() => Client.ClientManager.i.GetComponent<Client.ClientAuth>().PlayButton();
     public void Register() => Client.ClientManager.i.GetComponent<Client.ClientAuth>().RegisterButton();
 
     EventSystem system;
