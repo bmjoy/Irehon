@@ -25,7 +25,6 @@ namespace Server
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
         private NetworkManager manager;
-        private Dictionary<ulong, Player> connectedCharacters;
         private Dictionary<ulong, NetworkConnection> connections;
 
 
@@ -35,10 +34,8 @@ namespace Server
                 Destroy(gameObject);
             else
                 i = this;
-
-            connectedCharacters = new Dictionary<ulong, Player>();
             
-            StartCoroutine(LoadDatabase());
+            LoadDatabase();
         }
 
         public override void Start()
@@ -49,10 +46,10 @@ namespace Server
             InvokeRepeating("UpdateAllDataCycle", 90, 90);
         }
 
-        IEnumerator LoadDatabase()
+        async void LoadDatabase()
         {
             var www = Api.Request("/items");
-            yield return www.SendWebRequest();
+            await www.SendWebRequest();
             var json = Api.GetResult(www).ToString();
 
             Debug.Log("Loaded item database");
@@ -60,7 +57,7 @@ namespace Server
             ItemDatabase.DatabaseLoadJson(json);
 
             www = Api.Request("/recipes");
-            yield return www.SendWebRequest();
+            await www.SendWebRequest();
             json = Api.GetResult(www).ToString();
             CraftDatabase.DatabaseLoadJson(json);
             Debug.Log("Loaded crafts database");
@@ -69,37 +66,32 @@ namespace Server
 
         public void UpdateAllDataCycle()
         {
-            StartCoroutine(UpdateDatabase());
+            UpdateDatabase();
         }
 
-        public static IEnumerator UpdateDatabase()
+        public static void UpdateDatabase()
         {
-            yield return ContainerData.UpdateDatabaseLoadedContainers();
+            ContainerData.UpdateDatabaseLoadedContainers();
         }
         //Insert data in tables and send it to player
-        private IEnumerator PlayerCharacterCreateRequest(NetworkConnection con)
+        private async Task PlayerCharacterCreateRequest(NetworkConnection con)
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
             var www = Api.Request($"/characters/?id={data.steamId}", ApiMethod.POST);
 
-            yield return www.SendWebRequest();
+            await www.SendWebRequest();
         }
 
         //Spawn character on player selected slot 
-        private IEnumerator PlayerPlayRequest(NetworkConnection con, ulong id)
+        private async void PlayerPlayRequest(NetworkConnection con, CharacterInfo characterInfo)
         {
-            ChangeScene(con, "DevTestScene");
-
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-            var www = Api.Request($"/characters/{id}");
+            Friend friend = new Friend(data.steamId);
+            await friend.RequestInfoAsync();
 
-            yield return www.SendWebRequest();
-
-            CharacterInfo characterInfo = new CharacterInfo(Api.GetResult(www));
-
-            characterInfo.name = new Friend(id).Name;
+            characterInfo.name = friend.Name;
 
             data.selectedCharacter = characterInfo;
 
@@ -117,7 +109,6 @@ namespace Server
             Player playerComponent = playerObject.GetComponent<Player>();
 
             print($"Spawning character id{characterInfo.id}");
-            connectedCharacters.Add(characterInfo.id, playerComponent);
 
             playerComponent.SetName(characterInfo.name);
 
@@ -131,9 +122,23 @@ namespace Server
         }
 
         //Send characters and make him to choose one of them
-        public override void OnServerConnect(NetworkConnection con)
+        public override async void OnServerConnect(NetworkConnection con)
         {
             ChangeScene(con, SceneManager.GetActiveScene().name);
+            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+
+            var www = Api.Request($"/characters/{data.steamId}");
+
+            await www.SendWebRequest();
+
+            if (Api.GetResult(www) == null)
+                await PlayerCharacterCreateRequest(con);
+
+            www = Api.Request($"/characters/{data.steamId}");
+
+            await www.SendWebRequest();
+
+            PlayerPlayRequest(con, new CharacterInfo(Api.GetResult(www)));
         }
 
         public override void OnServerAddPlayer(NetworkConnection conn) { }
@@ -141,12 +146,7 @@ namespace Server
         public override void OnStopServer()
         {
             base.OnStopServer();
-            StartCoroutine(OnStopServerCoroutine());
-
-            IEnumerator OnStopServerCoroutine()
-            {
-                yield return UpdateDatabase();
-            }
+            StartCoroutine(UpdateDatabase());
         }
 
         public override void OnStartServer()
@@ -156,43 +156,38 @@ namespace Server
             NetworkServer.Spawn(mob);
         }
 
-        private IEnumerator UpdateCharacterData(ulong id)
+        private async void UpdateCharacterData(ulong id)
         {
             Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
+
             var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
-            yield return www.SendWebRequest();
+            await www.SendWebRequest();
         }
 
         private IEnumerator CharacterLeaveFromWorld(ulong id)
         {
-            yield return UpdateCharacterData(id);
+            UpdateCharacterData(id);
             print($"Unspawnd character id{id}");
-            connectedCharacters.Remove(id);
         }
 
         //Update character data on DB on disconneect
-        public override async void OnServerDisconnect(NetworkConnection conn)
+        public override void OnServerDisconnect(NetworkConnection conn)
         {
-            StartCoroutine(ServerDisconnect());
-            IEnumerator ServerDisconnect()
+            if (conn.authenticationData == null)
             {
-                if (conn.authenticationData == null)
-                {
-                    base.OnServerDisconnect(conn);
-                    yield break;
-                }
-
-                PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
-
-                if (data.selectedCharacter.id != 0)
-                    yield return CharacterLeaveFromWorld(data.selectedCharacter.id);
-                
-                print($"Disconnect player id{data.steamId}");
-                connectedCharacters.Remove(data.steamId);
-                connections.Remove(data.steamId);
                 base.OnServerDisconnect(conn);
+                return;
             }
+
+            PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
+
+            if (data.selectedCharacter.id != 0)
+                StartCoroutine(CharacterLeaveFromWorld(data.selectedCharacter.id));
+                
+            print($"Disconnect player id{data.steamId}");
+            connections.Remove(data.steamId);
+            base.OnServerDisconnect(conn);
         }
 
         private void ChangeScene(NetworkConnection con, string scene)
@@ -210,8 +205,10 @@ namespace Server
             con.Send(serverMessage);
         }
 
-        public Player GetPlayer(ulong steamId) => connectedCharacters.ContainsKey(steamId) ? connectedCharacters[steamId] : null;
+        public void RemoveUserFromConnections(ulong steamId) => connections.Remove(steamId);
 
-        public bool IsPlayerConnected(ulong p_id) => connectedCharacters.ContainsKey(p_id);
+        public void AddConection(ulong steamId, NetworkConnection con) => connections[steamId] = con;
+
+        public NetworkConnection GetConnection(ulong steamId) => connections.ContainsKey(steamId) ? connections[steamId] : null;
     }
 }

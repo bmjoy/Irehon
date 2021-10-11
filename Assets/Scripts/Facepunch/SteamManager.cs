@@ -29,23 +29,7 @@ public class SteamManager : MonoBehaviour
             Debug.Log("Can't intialize steam client " + exception.ToString());
         }
 
-        print("123");
-        print(Thread.CurrentThread.ManagedThreadId);
-        GetFriendName();
-        print("456");
-
-
         DontDestroyOnLoad(gameObject);
-    }
-
-    private async void GetFriendName()
-    {
-        var friend = new Friend(idTest);
-        print("await before");
-        print(Thread.CurrentThread.ManagedThreadId);
-        await friend.RequestInfoAsync();
-        print("await after");
-        print(friend.Name);
     }
 
     public static AuthTicket GetAuthTicket() => SteamUser.GetAuthSessionTicket();

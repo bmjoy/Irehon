@@ -61,11 +61,13 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
-        if (con.authenticationData != null)
+        if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
             return;
 
         if (msg.AuthData == null || msg.Id == 0)
             return;
+
+        ServerManager.i.AddConection(msg.Id, con);
 
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
@@ -75,7 +77,13 @@ public class ServerAuth : NetworkAuthenticator
 
     private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)
     {
+        if (ServerManager.i.GetConnection(user) == null)
+            return;
 
+        if (status == AuthResponse.OK)
+            ServerAccept(ServerManager.i.GetConnection(user));
+        else
+            ServerReject(ServerManager.i.GetConnection(user));
     }
 
     public override void OnClientAuthenticate() {}

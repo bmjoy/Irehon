@@ -69,7 +69,7 @@ public static class ContainerData
 
     public static Dictionary<int, Container> LoadedContainers = new Dictionary<int, Container>();
         
-    public static IEnumerator UpdateDatabaseLoadedContainers()
+    public static async void UpdateDatabaseLoadedContainers()
     {
         Dictionary<int, Container> LoadedContainersCopy = new Dictionary<int, Container>(LoadedContainers);
 
@@ -77,9 +77,8 @@ public static class ContainerData
         foreach (KeyValuePair<int, Container> IdContainer in LoadedContainersCopy)
             sqlCommand += $"UPDATE containers SET slots = '{IdContainer.Value.ToJson()}' WHERE id = '{IdContainer.Key}';";
 
-        yield return Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
+        await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
         Debug.Log($"Updated all items");
-        yield return null;
     }
 
     public static IEnumerator SwapSlot(int containerId, int oldSlot, int newSlot)
