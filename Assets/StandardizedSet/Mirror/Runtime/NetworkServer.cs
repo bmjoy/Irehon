@@ -1044,7 +1044,7 @@ namespace Mirror
         // prefab, or from a custom spawn function.
         public static void Spawn(GameObject obj, NetworkConnection ownerConnection = null)
         {
-            Debug.Log(obj.name);
+            Debug.Log($"Spawning {obj.name} on map");
             SpawnObject(obj, ownerConnection);
         }
 

@@ -1,12 +1,11 @@
-﻿using Mirror;
-using Client;
-using System.Collections;
+﻿using Client;
+using kcp2k;
+using Mirror;
+using Steamworks;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using System.Threading;
-using UnityEngine.Networking;
-using Steamworks;
 using UnityEngine.SceneManagement;
 
 namespace Server
@@ -27,26 +26,45 @@ namespace Server
         private NetworkManager manager;
         private Dictionary<ulong, NetworkConnection> connections;
 
-
+        private int serverId;
         public override void Awake()
         {
             if (i != null && i != this || ClientManager.i != null)
                 Destroy(gameObject);
             else
                 i = this;
-            
+
             LoadDatabase();
+        }
+
+        private async void CreateServerInDB()
+        {
+            var www = Api.Request($"/servers/?ip={networkAddress}" +
+                $"&port={(transport as KcpTransport).Port}" +
+                $"&location={SceneManager.GetActiveScene().name}", ApiMethod.POST);
+            await www.SendWebRequest();
+            serverId = Api.GetResult(www)["id"].AsInt;
         }
 
         public override void Start()
         {
-            manager = GetComponent<NetworkManager>();
-            manager.clientLoadedScene = false;
-            manager.StartServer();
+            clientLoadedScene = false;
+            (transport as KcpTransport).Port = ushort.Parse(Environment.GetEnvironmentVariable("PORT"));
+            networkAddress = Environment.GetEnvironmentVariable("SERVER");
+            StartServer();
+            InvokeRepeating("UpdatePlayerCount", 5, 5);
             InvokeRepeating("UpdateAllDataCycle", 90, 90);
         }
 
-        async void LoadDatabase()
+        private async void UpdatePlayerCount()
+        {
+            if (serverId == 0)
+                return;
+            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}");
+            await www.SendWebRequest();
+        }
+
+        private async void LoadDatabase()
         {
             var www = Api.Request("/items");
             await www.SendWebRequest();
@@ -95,8 +113,10 @@ namespace Server
 
             data.selectedCharacter = characterInfo;
 
-            SpawnPlayerOnMap(con, characterInfo);
-                
+            GameObject player = SpawnPlayerOnMap(con, characterInfo);
+
+            data.playerPrefab = player.transform;
+
             con.authenticationData = data;
         }
 
@@ -143,36 +163,42 @@ namespace Server
 
         public override void OnServerAddPlayer(NetworkConnection conn) { }
 
-        public override void OnStopServer()
+        public override async void OnStopServer()
         {
             base.OnStopServer();
-            StartCoroutine(UpdateDatabase());
+            await DeleteServerInDB();
+            UpdateDatabase();
+        }
+
+        private async Task DeleteServerInDB()
+        {
+            serverId = 0;
+            var www = Api.Request($"/servers/{serverId}", ApiMethod.DELETE);
+            await www.SendWebRequest();
         }
 
         public override void OnStartServer()
         {
             base.OnStartServer();
-            GameObject mob = Instantiate(this.mob);
-            NetworkServer.Spawn(mob);
+            CreateServerInDB();
         }
 
-        private async void UpdateCharacterData(ulong id)
+        private async Task UpdateCharacterData(CharacterInfo info, Transform player)
         {
-            Player player = GetPlayer(id);
             Vector3 pos = player.transform.position;
 
-            var www = Api.Request($"/characters/{id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
+            var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
-        private IEnumerator CharacterLeaveFromWorld(ulong id)
+        private async Task CharacterLeaveFromWorld(PlayerConnectionInfo info)
         {
-            UpdateCharacterData(id);
-            print($"Unspawnd character id{id}");
+            await UpdateCharacterData(info.selectedCharacter, info.playerPrefab);
+            print($"Unspawned character id{info.selectedCharacter.id}");
         }
 
         //Update character data on DB on disconneect
-        public override void OnServerDisconnect(NetworkConnection conn)
+        public override async void OnServerDisconnect(NetworkConnection conn)
         {
             if (conn.authenticationData == null)
             {
@@ -183,8 +209,8 @@ namespace Server
             PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
 
             if (data.selectedCharacter.id != 0)
-                StartCoroutine(CharacterLeaveFromWorld(data.selectedCharacter.id));
-                
+                await CharacterLeaveFromWorld(data);
+
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);

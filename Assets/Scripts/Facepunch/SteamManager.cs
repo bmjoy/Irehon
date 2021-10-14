@@ -28,10 +28,8 @@ public class SteamManager : MonoBehaviour
         {
             Debug.Log("Can't intialize steam client " + exception.ToString());
         }
-
         DontDestroyOnLoad(gameObject);
     }
-
     public static AuthTicket GetAuthTicket() => SteamUser.GetAuthSessionTicket();
     public static SteamId GetSteamId() => SteamClient.SteamId;
     private void OnDisable()
