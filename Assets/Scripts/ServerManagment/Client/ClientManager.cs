@@ -46,6 +46,7 @@ namespace Client
 
         public override void Start()
         {
+            SteamManager.StartClient();
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
         }

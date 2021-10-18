@@ -15,15 +15,10 @@ namespace Server
         public static ServerManager i;
 
         [SerializeField]
-        private Vector3 characterSpawnPoint;
-        [SerializeField]
-        private GameObject mob;
-        [SerializeField]
         private ServerData serverData;
 
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
-        private NetworkManager manager;
         private Dictionary<ulong, NetworkConnection> connections;
 
         private int serverId;
@@ -33,7 +28,7 @@ namespace Server
                 Destroy(gameObject);
             else
                 i = this;
-
+            connections = new Dictionary<ulong, NetworkConnection>();
             LoadDatabase();
         }
 
@@ -96,7 +91,7 @@ namespace Server
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-            var www = Api.Request($"/characters/?id={data.steamId}", ApiMethod.POST);
+            var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction=A", ApiMethod.POST);
 
             await www.SendWebRequest();
         }
@@ -111,7 +106,7 @@ namespace Server
 
             characterInfo.name = friend.Name;
 
-            data.selectedCharacter = characterInfo;
+            data.character = characterInfo;
 
             GameObject player = SpawnPlayerOnMap(con, characterInfo);
 
@@ -180,6 +175,7 @@ namespace Server
         public override void OnStartServer()
         {
             base.OnStartServer();
+            SteamManager.StartServer();
             CreateServerInDB();
         }
 
@@ -193,8 +189,8 @@ namespace Server
 
         private async Task CharacterLeaveFromWorld(PlayerConnectionInfo info)
         {
-            await UpdateCharacterData(info.selectedCharacter, info.playerPrefab);
-            print($"Unspawned character id{info.selectedCharacter.id}");
+            await UpdateCharacterData(info.character, info.playerPrefab);
+            print($"Unspawned character id{info.character.id}");
         }
 
         //Update character data on DB on disconneect
@@ -208,7 +204,7 @@ namespace Server
 
             PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
 
-            if (data.selectedCharacter.id != 0)
+            if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
 
             print($"Disconnect player id{data.steamId}");

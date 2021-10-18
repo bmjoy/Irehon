@@ -20,7 +20,7 @@ public struct PlayerConnectionInfo : NetworkMessage
 {
     public ulong steamId;
 
-    public CharacterInfo selectedCharacter;
+    public CharacterInfo character;
 
     public Transform playerPrefab;
 
@@ -28,7 +28,7 @@ public struct PlayerConnectionInfo : NetworkMessage
     {
         this.steamId = steamId;
         playerPrefab = null;
-        selectedCharacter = new CharacterInfo();
+        character = new CharacterInfo();
     }
 }
 
@@ -62,28 +62,37 @@ public class ServerAuth : NetworkAuthenticator
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
         if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
+        {
+            print("auth data not null");
             return;
-
+        }
         if (msg.AuthData == null || msg.Id == 0)
+        {
+            print("request empty");
             return;
+        }
 
         ServerManager.i.AddConection(msg.Id, con);
 
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
         con.authenticationData = new PlayerConnectionInfo(msg.Id);
-        SendAuthResult(con, true, "Connected");
+
+        print("beginned auth session");
     }
 
     private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)
     {
+        print("auth ticket response");
+        print(user);
+        print(status);
         if (ServerManager.i.GetConnection(user) == null)
             return;
 
         if (status == AuthResponse.OK)
-            ServerAccept(ServerManager.i.GetConnection(user));
+            SendAuthResult(ServerManager.i.GetConnection(user), true, "authorized");
         else
-            ServerReject(ServerManager.i.GetConnection(user));
+            SendAuthResult(ServerManager.i.GetConnection(user), false, "steam auth error");
     }
 
     public override void OnClientAuthenticate() {}

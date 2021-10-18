@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.2270414, g: 0.120928235, b: 0.16119918, a: 1}
+  m_IndirectSpecularColor: {r: 0.20589077, g: 0.11212722, b: 0.1581943, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2965,6 +2965,7 @@ GameObject:
   - component: {fileID: 269807320}
   - component: {fileID: 269807318}
   - component: {fileID: 269807317}
+  - component: {fileID: 269807319}
   m_Layer: 0
   m_Name: NetworkManager Auth
   m_TagString: Untagged
@@ -3015,6 +3016,19 @@ MonoBehaviour:
   OnClientAuthenticated:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &269807319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269807316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d41f2da84f0b346bab15e46fdc0c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idTest: 0
 --- !u!114 &269807320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3044,8 +3058,6 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  characterSpawnPoint: {x: -7, y: 4, z: -27}
-  mob: {fileID: 5620380849228149108, guid: 7876725493f9e4135ade1231357cb8b7, type: 3}
   serverData: {fileID: 11400000, guid: c6927a4891e325742be522846941fb84, type: 2}
 --- !u!4 &269807322
 Transform:

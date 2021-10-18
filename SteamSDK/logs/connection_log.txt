@@ -1,0 +1,24 @@
+
+
+[2021-10-17 14:11:22] Log session started
+[2021-10-17 14:11:22] [0,0] SetSteamID( [U:1:0] )
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Saw device up (192.168.1.11)
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Start connecting to Steam
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Saw device up (192.168.1.11)
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Start connecting to Steam
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Saw device up (192.168.1.11)
+[2021-10-17 14:11:22] CCMInterface::OnNetworkDeviceStateChange -- Start connecting to Steam
+[2021-10-17 14:11:22] IPv6 HTTP connectivity test (ipv6check-http.steamcontent.com / 0.0.0.0:80 (0.0.0.0:80)) - TIMEOUT
+[2021-10-17 14:11:24] IPv6 UDP connectivity test (ipv6check-udp.steamcontent.com / 2a01:bc80:8:103::9b85:fc12) - TIMEOUT
+[2021-10-17 14:11:53] [0,0] SetSteamID( [a:1:0] )
+[2021-10-17 14:11:53] [0,0] SetSteamID( [a:1:0] )
+[2021-10-17 14:11:53] [0,0] Server says 0% of connections should be websockets, we rolled 85 - using UDP as default.
+[2021-10-17 14:11:53] CCMInterface::YieldingConnect -- no CMs cached locally, calling ISteamDirectory/GetCMList web api for launcher type 'steamcmd'. . .
+[2021-10-17 14:11:53] CCMInterface::YieldingConnect -- got 100 CMs and 100 WebSocket CMS from ISteamDirectory/GetCMList.
+[2021-10-17 14:11:53] [1,2] Connect() starting connection (eNetQOSLevelHigh, 162.254.198.44:27023, UDP)
+[2021-10-17 14:11:55] [1,2] ConnectionCompleted() (155.133.248.39:27020, UDP) local address (0.0.0.0:59781)
+[2021-10-17 14:11:55] [1,2] RecvMsgClientLogOnResponse() : [a:1:1748912418] 'OK'
+[2021-10-17 14:12:12] [3,2] ResetVoiceRecording() (was recording: 0) (last get voice time: 1634469132 seconds ago)
+[2021-10-17 14:12:12] [3,2] LogOff()
+[2021-10-17 14:12:12] [2,2] AsyncDisconnect( bDontWaitOnTCPShutdown: false )
+[2021-10-17 14:12:12] [2,2] Log session ended

@@ -1,0 +1,43 @@
+
+
+[2021-10-17 14:11:55] Loaded 0 apps from install folder "D:\UnityProjects\Irehon\SteamSDK\steamapps\appmanifest_*.acf".
+[2021-10-17 14:12:05] Loaded 0 apps from install folder "d:\unityprojects\irehon\sdk_win\steamapps\appmanifest_*.acf".
+[2021-10-17 14:12:05] AppID 1007 state changed : Update Required,
+[2021-10-17 14:12:05] AppID 1007 scheduler update : Priority First, timeSinceLastPlayed=2, appDisableSecondsRemaining=0
+[2021-10-17 14:12:05] AppID 1007 state changed : Update Required,Update Queued,
+[2021-10-17 14:12:05] AppID 1007 scheduler update : Priority First, timeSinceLastPlayed=2, appDisableSecondsRemaining=0
+[2021-10-17 14:12:06] AppID 1007 state changed : Update Required,Update Queued,Update Running,
+[2021-10-17 14:12:06] AppID 1007 update changed : Running,
+[2021-10-17 14:12:06] AppID 1007 update changed : Running,Reconfiguring,
+[2021-10-17 14:12:06] Got 26 download sources and 0 caching proxies via ContentServerDirectoryService::BYieldingGetServersForSteamPipe (CellID 151 / Launcher 3)
+[2021-10-17 14:12:06] Created download interface of type 'SteamCache' (7) to host cache1-hel-retn.steamcontent.com (cache1-hel-retn.steamcontent.com)
+[2021-10-17 14:12:06] Created download interface of type 'SteamCache' (7) to host cache4-fra1.steamcontent.com (cache4-fra1.steamcontent.com)
+[2021-10-17 14:12:06] Created download interface of type 'SteamCache' (7) to host cache2-svo-retn.steamcontent.com (cache2-svo-retn.steamcontent.com)
+[2021-10-17 14:12:07] Created ipv4-only http client
+[2021-10-17 14:12:07] HTTP (SteamCache,141) - cache1-hel-retn.steamcontent.com (87.245.208.50:80 / 87.245.208.50:80, host: cache1-hel-retn.steamcontent.com): cache1-hel-retn.steamcontent.com/depot/1004/manifest/2734093816597092246/5/16140003618555908201 - received 200 (OK) HTTP response
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,Validating,
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,Preallocating,
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,
+[2021-10-17 14:12:07] AppID 1007 update started : download 0/12696048, store 0/0, reuse 0/0, delta 0/0, stage 0/40854104 
+[2021-10-17 14:12:07] AppID 1007 state changed : Update Required,Update Queued,Update Running,Update Started,
+[2021-10-17 14:12:07] AppID 1007 update changed : Running,Downloading,Staging,
+[2021-10-17 14:12:07] Downloading 43 chunks from depot 1004
+[2021-10-17 14:12:12] AppID 1007 update changed : Running,
+[2021-10-17 14:12:12] AppID 1007 update changed : Running,Verifying,
+[2021-10-17 14:12:12] Update auto validation: enabled for all clients
+[2021-10-17 14:12:12] Update auto validation (1004): clean bytes tally of 0 bytes is less than threshold of 2048 MB, forcing full validate
+[2021-10-17 14:12:12] AppID 1007 update changed : Running,
+[2021-10-17 14:12:12] AppID 1007 update changed : Running,Committing,
+[2021-10-17 14:12:12] AppID 1007 starting commit from "d:\unityprojects\irehon\sdk_win\steamapps\downloading\1007" to "d:\unityprojects\irehon\sdk_win" : 6 updated, 0 moved, 0 deleted files
+[2021-10-17 14:12:12] AppID 1007 state changed : Fully Installed,Update Queued,Update Running,
+[2021-10-17 14:12:12] AppID 1007 finished update, 1 mounted depots (BuildID 7359445) : 1004 (2734093816597092246),
+[2021-10-17 14:12:12] AppID 1007 update changed : Running,
+[2021-10-17 14:12:12] AppID 1007 update changed : None
+[2021-10-17 14:12:12] AppID 1007 state changed : Fully Installed,Update Queued,
+[2021-10-17 14:12:12] AppID 1007 state changed : Fully Installed,
+[2021-10-17 14:12:12] AppID 1007 scheduler finished : removed from schedule (result No Error, state 0xc) 
+[2021-10-17 14:12:12] HTTP (SteamCache,309) - cache2-svo-retn.steamcontent.com (139.45.228.1:443 / 139.45.228.1:443, host: cache2-svo-retn.steamcontent.com): Closing connection
+[2021-10-17 14:12:12] HTTP (SteamCache,244) - cache4-fra1.steamcontent.com (162.254.197.21:80 / 162.254.197.21:80, host: cache4-fra1.steamcontent.com): Closing connection
+[2021-10-17 14:12:12] HTTP (SteamCache,141) - cache1-hel-retn.steamcontent.com (87.245.208.50:80 / 87.245.208.50:80, host: cache1-hel-retn.steamcontent.com): Closing connection
