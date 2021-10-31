@@ -50,8 +50,12 @@ public class SteamManager : MonoBehaviour
             SteamServer.OnSteamServerConnectFailure += (x,y) => Debug.Log($"Connection failed {x} {y}"); ;
             SteamServer.OnSteamServersDisconnected += x => Debug.Log($"Steam server disconnected {x}");
             SteamServer.OnSteamServersConnected += () => Debug.Log("Steam server connected");
+
             SteamServer.Init(1007, init, true);
-            SteamServer.LogOnAnonymous();
+
+            if (!SteamServer.LoggedOn)
+                SteamServer.LogOnAnonymous();
+            
             Debug.Log("Steam server intaialized");
         }
         catch (Exception exception)
@@ -81,9 +85,14 @@ public class SteamManager : MonoBehaviour
     private void OnDisable()
     {
         if (isServer && isIntialized)
+        {
+            SteamServer.LogOff();
             SteamServer.Shutdown();
+        }
         else if (isIntialized && !isServer)
+        {
             SteamClient.Shutdown();
+        }
         Debug.Log("Steam client shutdowned");
     }
 

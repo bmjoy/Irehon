@@ -7,10 +7,11 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Net.Sockets;
 using DuloGames.UI;
+using kcp2k;
 
 namespace Client
 {
-    public enum MessageType { AuthAccept, AuthReject, Error, Notification }
+    public enum MessageType { AuthAccept, AuthReject, Error, Notification, RegistrationRequired, ServerRedirect }
     public struct ServerMessage : NetworkMessage
     {
         public MessageType messageType;
@@ -49,6 +50,7 @@ namespace Client
             SteamManager.StartClient();
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
+            OnGetServerMessage.AddListener(RedirectToAnotherServer);
         }
 
         public override void OnStartClient()
@@ -80,6 +82,18 @@ namespace Client
             base.OnClientDisconnect(conn);
             CameraController.EnableCursor();
             SceneManager.LoadScene("LoginScene");
+        }
+
+        private void RedirectToAnotherServer(ServerMessage msg)
+        {
+            if (msg.messageType != MessageType.RegistrationRequired)
+                return;
+            
+            GetComponent<NetworkManager>().StopClient();
+            string port = msg.message.Split(':')[1];
+            (transport as KcpTransport).Port = ushort.Parse(port);
+            networkAddress = msg.message.Split(':')[0];
+            GetComponent<NetworkManager>().StartClient();
         }
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)

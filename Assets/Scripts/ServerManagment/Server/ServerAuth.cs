@@ -10,25 +10,36 @@ using UnityEngine;
 using Utils;
 using Steamworks;
 
+
+public enum Fraction { None, A, B};
+public struct RegisterInfo
+{
+    public Fraction fraction;
+}
+
 public struct AuthRequestMessage : NetworkMessage
 {
     public ulong Id;
     public byte[] AuthData;
+    public RegisterInfo registerInfo;
 }
 
 public struct PlayerConnectionInfo : NetworkMessage
 {
     public ulong steamId;
 
+    public AuthRequestMessage authInfo;
+
     public CharacterInfo character;
 
     public Transform playerPrefab;
 
-    public PlayerConnectionInfo(ulong steamId)
+    public PlayerConnectionInfo(AuthRequestMessage authInfo)
     {
-        this.steamId = steamId;
+        this.steamId = authInfo.Id;
         playerPrefab = null;
         character = new CharacterInfo();
+        this.authInfo = authInfo;
     }
 }
 
@@ -76,7 +87,7 @@ public class ServerAuth : NetworkAuthenticator
 
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
-        con.authenticationData = new PlayerConnectionInfo(msg.Id);
+        con.authenticationData = new PlayerConnectionInfo(msg);
 
         print("beginned auth session");
     }

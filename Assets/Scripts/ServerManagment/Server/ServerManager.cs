@@ -3,6 +3,7 @@ using kcp2k;
 using Mirror;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -32,6 +33,16 @@ namespace Server
             LoadDatabase();
         }
 
+        public static void WaitBeforeDisconnect(NetworkConnection con)
+        {
+            IEnumerator WaitBeforeDisconnect()
+            {
+                yield return new WaitForSeconds(0.1f);
+                con.Disconnect();
+            }
+            i.StartCoroutine(WaitBeforeDisconnect());
+        }
+
         private async void CreateServerInDB()
         {
             var www = Api.Request($"/servers/?ip={networkAddress}" +
@@ -53,9 +64,11 @@ namespace Server
 
         private async void UpdatePlayerCount()
         {
+            print("update player count");
+            print("server id " + serverId.ToString());
             if (serverId == 0)
                 return;
-            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}");
+            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
@@ -87,19 +100,47 @@ namespace Server
             ContainerData.UpdateDatabaseLoadedContainers();
         }
         //Insert data in tables and send it to player
-        private async Task PlayerCharacterCreateRequest(NetworkConnection con)
+        private async Task<bool> PlayerCharacterCreateRequest(NetworkConnection con)
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-            var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction=A", ApiMethod.POST);
+            if (data.authInfo.registerInfo.fraction != Fraction.None)
+            {
+                var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
 
-            await www.SendWebRequest();
+                await www.SendWebRequest();
+
+                return true;
+            }
+            else
+                SendMessage(con, "Create character", MessageType.RegistrationRequired);
+            return false;
         }
 
         //Spawn character on player selected slot 
         private async void PlayerPlayRequest(NetworkConnection con, CharacterInfo characterInfo)
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+
+            if (characterInfo.serverId != serverId)
+            {
+                if (characterInfo.serverId == 0)
+                {
+                    SendMessage(con, "Server unavalible", MessageType.Notification);
+                    WaitBeforeDisconnect(con);
+                    return;
+                }
+
+                var www = Api.Request($"/servers/{characterInfo.serverId}");
+
+                await www.SendWebRequest();
+
+                var result = Api.GetResult(www);
+
+                SendMessage(con, $"{result["ip"]}:{result["port"]}", MessageType.ServerRedirect);
+                WaitBeforeDisconnect(con);
+                return;
+            }
 
             Friend friend = new Friend(data.steamId);
             await friend.RequestInfoAsync();
@@ -147,7 +188,14 @@ namespace Server
             await www.SendWebRequest();
 
             if (Api.GetResult(www) == null)
-                await PlayerCharacterCreateRequest(con);
+            {
+                bool isCreated = await PlayerCharacterCreateRequest(con);
+                if (!isCreated)
+                {
+                    WaitBeforeDisconnect(con);
+                    return;
+                }
+            }
 
             www = Api.Request($"/characters/{data.steamId}");
 
@@ -167,9 +215,9 @@ namespace Server
 
         private async Task DeleteServerInDB()
         {
-            serverId = 0;
             var www = Api.Request($"/servers/{serverId}", ApiMethod.DELETE);
             await www.SendWebRequest();
+            serverId = 0;
         }
 
         public override void OnStartServer()
