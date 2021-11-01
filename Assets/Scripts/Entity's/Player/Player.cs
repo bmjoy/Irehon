@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using Utils;
 using System.Threading.Tasks;
 using System.Collections;
+using Steamworks;
 
 public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> {}
 
@@ -14,6 +15,8 @@ public class Player : Entity
     [SerializeField]
     private GameObject deathContainerPrefab;
 
+    [SyncVar(hook = "GetName")]
+    public SteamId Id;
     public PlayerBonesLinks PlayerBonesLinks { get; private set; }
     public bool isDataAlreadyRecieved { get; private set; } = false;
     public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
@@ -53,6 +56,17 @@ public class Player : Entity
 
         if (!isServer)
             OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
+    }
+
+    private async void GetName(SteamId oldId, SteamId newId)
+    {
+        if (isServer)
+            return;
+
+        Friend friend = new Friend(newId);
+        await friend.RequestInfoAsync();
+
+        name = friend.Name;
     }
 
     [Server]

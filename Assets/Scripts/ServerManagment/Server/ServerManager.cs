@@ -3,6 +3,7 @@ using kcp2k;
 using Mirror;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -32,6 +33,16 @@ namespace Server
             LoadDatabase();
         }
 
+        public static void WaitBeforeDisconnect(NetworkConnection con)
+        {
+            IEnumerator WaitBeforeDisconnect()
+            {
+                yield return new WaitForSeconds(0.2f);
+                con.Disconnect();
+            }
+            i.StartCoroutine(WaitBeforeDisconnect());
+        }
+
         private async void CreateServerInDB()
         {
             var www = Api.Request($"/servers/?ip={networkAddress}" +
@@ -53,9 +64,11 @@ namespace Server
 
         private async void UpdatePlayerCount()
         {
+            print("update player count");
+            print("server id " + serverId.ToString());
             if (serverId == 0)
                 return;
-            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}");
+            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
@@ -87,13 +100,26 @@ namespace Server
             ContainerData.UpdateDatabaseLoadedContainers();
         }
         //Insert data in tables and send it to player
-        private async Task PlayerCharacterCreateRequest(NetworkConnection con)
+        private async Task<bool> PlayerCharacterCreateRequest(NetworkConnection con)
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-            var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction=A", ApiMethod.POST);
+            if (data.authInfo.registerInfo.fraction != Fraction.None)
+            {
+                var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
 
-            await www.SendWebRequest();
+                await www.SendWebRequest();
+
+                print("Character created");
+
+                return true;
+            }
+            else
+            {
+                SendMessage(con, "Create character", MessageType.RegistrationRequired);
+                print("Sended character create request");
+            }
+            return false;
         }
 
         //Spawn character on player selected slot 
@@ -101,10 +127,29 @@ namespace Server
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
-            Friend friend = new Friend(data.steamId);
-            await friend.RequestInfoAsync();
+            if (characterInfo.serverId != serverId)
+            {
+                if (characterInfo.serverId == 0)
+                {
+                    SendMessage(con, "Server unavalible", MessageType.Notification);
+                    WaitBeforeDisconnect(con);
+                    return;
+                }
 
-            characterInfo.name = friend.Name;
+                var www = Api.Request($"/servers/{characterInfo.serverId}");
+
+                await www.SendWebRequest();
+
+                var result = Api.GetResult(www);
+
+                print("Redirected");
+
+                SendMessage(con, $"{result["ip"]}:{result["port"]}", MessageType.ServerRedirect);
+                WaitBeforeDisconnect(con);
+                return;
+            }
+
+            ChangeScene(con, SceneManager.GetActiveScene().name);
 
             data.character = characterInfo;
 
@@ -127,6 +172,8 @@ namespace Server
 
             playerComponent.SetName(characterInfo.name);
 
+            playerComponent.Id = characterInfo.id;
+
             NetworkServer.AddPlayerForConnection(con, playerObject);
 
             playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
@@ -139,7 +186,6 @@ namespace Server
         //Send characters and make him to choose one of them
         public override async void OnServerConnect(NetworkConnection con)
         {
-            ChangeScene(con, SceneManager.GetActiveScene().name);
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
             var www = Api.Request($"/characters/{data.steamId}");
@@ -147,11 +193,21 @@ namespace Server
             await www.SendWebRequest();
 
             if (Api.GetResult(www) == null)
-                await PlayerCharacterCreateRequest(con);
+            {
+                print("Player not found");
+                bool isCreated = await PlayerCharacterCreateRequest(con);
+                if (!isCreated)
+                {
+                    WaitBeforeDisconnect(con);
+                    return;
+                }
 
-            www = Api.Request($"/characters/{data.steamId}");
+                www = Api.Request($"/characters/{data.steamId}");
 
-            await www.SendWebRequest();
+                await www.SendWebRequest();
+            }
+
+            print("Player play request start");
 
             PlayerPlayRequest(con, new CharacterInfo(Api.GetResult(www)));
         }
@@ -167,9 +223,9 @@ namespace Server
 
         private async Task DeleteServerInDB()
         {
-            serverId = 0;
             var www = Api.Request($"/servers/{serverId}", ApiMethod.DELETE);
             await www.SendWebRequest();
+            serverId = 0;
         }
 
         public override void OnStartServer()
@@ -183,7 +239,7 @@ namespace Server
         {
             Vector3 pos = player.transform.position;
 
-            var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
+            var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&location={info.location}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
@@ -206,7 +262,7 @@ namespace Server
 
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
-
+            SteamServer.EndSession(data.steamId);
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);

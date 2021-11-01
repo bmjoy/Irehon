@@ -9,26 +9,53 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Utils;
 using Steamworks;
+using System;
+
+public enum Fraction { None, A, B};
+public struct RegisterInfo
+{
+    public Fraction fraction;
+    public RegisterInfo(JSONNode node)
+    {
+        fraction = (Fraction)Enum.Parse(typeof(Fraction), node["fraction"]);
+    }
+
+    public RegisterInfo(Fraction fraction)
+    {
+        this.fraction = fraction;
+    }
+
+    public string ToJsonString()
+    {
+        JSONObject json = new JSONObject();
+        json["fraction"] = fraction.ToString();
+        return json.ToString();
+    }
+}
 
 public struct AuthRequestMessage : NetworkMessage
 {
     public ulong Id;
     public byte[] AuthData;
+    public RegisterInfo registerInfo;
 }
 
 public struct PlayerConnectionInfo : NetworkMessage
 {
     public ulong steamId;
 
+    public AuthRequestMessage authInfo;
+
     public CharacterInfo character;
 
     public Transform playerPrefab;
 
-    public PlayerConnectionInfo(ulong steamId)
+    public PlayerConnectionInfo(AuthRequestMessage authInfo)
     {
-        this.steamId = steamId;
+        this.steamId = authInfo.Id;
         playerPrefab = null;
         character = new CharacterInfo();
+        this.authInfo = authInfo;
     }
 }
 
@@ -76,7 +103,7 @@ public class ServerAuth : NetworkAuthenticator
 
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
-        con.authenticationData = new PlayerConnectionInfo(msg.Id);
+        con.authenticationData = new PlayerConnectionInfo(msg);
 
         print("beginned auth session");
     }

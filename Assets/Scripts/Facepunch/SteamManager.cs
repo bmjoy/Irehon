@@ -25,33 +25,42 @@ public class SteamManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public static void StartServer()
+    public static async void StartServer()
     {
         if (i.isIntialized)
             return;
 
         try
         {
+            int port = int.Parse(Environment.GetEnvironmentVariable("PORT"));
             SteamServerInit init = new SteamServerInit()
             {
                 IpAddress = System.Net.IPAddress.Any,
                 Secure = true,
                 DedicatedServer = true,
                 GameDescription = "a",
-                GamePort = (ushort)(ushort.Parse(Environment.GetEnvironmentVariable("PORT")) + 1),
-                QueryPort = (ushort)(ushort.Parse(Environment.GetEnvironmentVariable("PORT")) + 2),
-                SteamPort = (ushort)(ushort.Parse(Environment.GetEnvironmentVariable("PORT")) + 3),
+                GamePort = (ushort)(port + 1),
+                QueryPort = (ushort)(port + 2),
+                SteamPort = (ushort)(port + 3),
                 ModDir = "DedicatedTest",
                 VersionString = "1.0.0.0"
             };
+            Environment.SetEnvironmentVariable("PORT", (port + 10).ToString());
             init.WithRandomSteamPort();
 
             i.isServer = true;
             SteamServer.OnSteamServerConnectFailure += (x,y) => Debug.Log($"Connection failed {x} {y}"); ;
             SteamServer.OnSteamServersDisconnected += x => Debug.Log($"Steam server disconnected {x}");
             SteamServer.OnSteamServersConnected += () => Debug.Log("Steam server connected");
+
             SteamServer.Init(1007, init, true);
-            SteamServer.LogOnAnonymous();
+
+            if (!SteamServer.LoggedOn)
+            {
+                print("Steam server log on");
+                SteamServer.LogOnAnonymous();
+            }
+            
             Debug.Log("Steam server intaialized");
         }
         catch (Exception exception)
@@ -66,8 +75,10 @@ public class SteamManager : MonoBehaviour
             return;
         try
         {
+
             i.isServer = false;
             SteamClient.Init(1007, true);
+
             Debug.Log("Steam client intaialized");
         }
         catch (Exception exception)
@@ -81,9 +92,13 @@ public class SteamManager : MonoBehaviour
     private void OnDisable()
     {
         if (isServer && isIntialized)
+        {
             SteamServer.Shutdown();
+        }
         else if (isIntialized && !isServer)
+        {
             SteamClient.Shutdown();
+        }
         Debug.Log("Steam client shutdowned");
     }
 

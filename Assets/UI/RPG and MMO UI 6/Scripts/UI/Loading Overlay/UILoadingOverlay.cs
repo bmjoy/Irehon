@@ -87,6 +87,13 @@ namespace DuloGames.UI
 
         public void LoadSceneAsync(string sceneName)
         {
+            SceneManager.LoadSceneAsync(sceneName);
+            ShowSceneLoadOverlay(sceneName);
+        }
+
+        public void ShowSceneLoadOverlay(string sceneName)
+        {
+            print("Changing scene to " + sceneName);
             this.m_LoadSceneName = sceneName;
             this.m_Showing = true;
 
