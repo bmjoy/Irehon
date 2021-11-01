@@ -25,7 +25,7 @@ public class Entity : NetworkBehaviour
     [SerializeField]
     protected float respawnTime;
 
-    [SerializeField, SyncVar]
+    [SerializeField]
     protected new string name;
 
     protected Vector3 spawnPosition;

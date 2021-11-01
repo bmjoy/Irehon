@@ -31,6 +31,8 @@ namespace Client
         [SerializeField]
         private ServerData serverData;
 
+        private bool isRegistrationSceneRequired;
+
         public override void Awake()
         {
             if (i != null && i != this)
@@ -51,6 +53,7 @@ namespace Client
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
             OnGetServerMessage.AddListener(RedirectToAnotherServer);
+            OnGetServerMessage.AddListener(RegistrationRequired);
         }
 
         public override void OnStartClient()
@@ -74,19 +77,20 @@ namespace Client
 
         protected override void ChangeScene(string scene, AsyncOperation ao)
         {
-            UILoadingOverlayManager.Instance.Create().LoadSceneAsync(scene);
+            UILoadingOverlayManager.Instance.Create().ShowSceneLoadOverlay(scene);
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
             CameraController.EnableCursor();
-            SceneManager.LoadScene("LoginScene");
+            if (!isRegistrationSceneRequired)
+                SceneManager.LoadScene("LoginScene");
         }
 
         private void RedirectToAnotherServer(ServerMessage msg)
         {
-            if (msg.messageType != MessageType.RegistrationRequired)
+            if (msg.messageType != MessageType.ServerRedirect)
                 return;
             
             GetComponent<NetworkManager>().StopClient();
@@ -94,6 +98,16 @@ namespace Client
             (transport as KcpTransport).Port = ushort.Parse(port);
             networkAddress = msg.message.Split(':')[0];
             GetComponent<NetworkManager>().StartClient();
+        }
+
+        private void RegistrationRequired(ServerMessage msg)
+        {
+            if (msg.messageType == MessageType.RegistrationRequired)
+            {
+                print("Registration required");
+                isRegistrationSceneRequired = true;
+                UILoadingOverlayManager.Instance.Create().LoadSceneAsync("FractionSelect");
+            }
         }
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)

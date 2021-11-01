@@ -37,7 +37,7 @@ namespace Server
         {
             IEnumerator WaitBeforeDisconnect()
             {
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.2f);
                 con.Disconnect();
             }
             i.StartCoroutine(WaitBeforeDisconnect());
@@ -110,10 +110,15 @@ namespace Server
 
                 await www.SendWebRequest();
 
+                print("Character created");
+
                 return true;
             }
             else
+            {
                 SendMessage(con, "Create character", MessageType.RegistrationRequired);
+                print("Sended character create request");
+            }
             return false;
         }
 
@@ -137,15 +142,14 @@ namespace Server
 
                 var result = Api.GetResult(www);
 
+                print("Redirected");
+
                 SendMessage(con, $"{result["ip"]}:{result["port"]}", MessageType.ServerRedirect);
                 WaitBeforeDisconnect(con);
                 return;
             }
 
-            Friend friend = new Friend(data.steamId);
-            await friend.RequestInfoAsync();
-
-            characterInfo.name = friend.Name;
+            ChangeScene(con, SceneManager.GetActiveScene().name);
 
             data.character = characterInfo;
 
@@ -168,6 +172,8 @@ namespace Server
 
             playerComponent.SetName(characterInfo.name);
 
+            playerComponent.Id = characterInfo.id;
+
             NetworkServer.AddPlayerForConnection(con, playerObject);
 
             playerComponent.GetComponent<PlayerContainerController>().SendItemDatabase(ItemDatabase.jsonString);
@@ -180,7 +186,6 @@ namespace Server
         //Send characters and make him to choose one of them
         public override async void OnServerConnect(NetworkConnection con)
         {
-            ChangeScene(con, SceneManager.GetActiveScene().name);
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
             var www = Api.Request($"/characters/{data.steamId}");
@@ -189,17 +194,20 @@ namespace Server
 
             if (Api.GetResult(www) == null)
             {
+                print("Player not found");
                 bool isCreated = await PlayerCharacterCreateRequest(con);
                 if (!isCreated)
                 {
                     WaitBeforeDisconnect(con);
                     return;
                 }
+
+                www = Api.Request($"/characters/{data.steamId}");
+
+                await www.SendWebRequest();
             }
 
-            www = Api.Request($"/characters/{data.steamId}");
-
-            await www.SendWebRequest();
+            print("Player play request start");
 
             PlayerPlayRequest(con, new CharacterInfo(Api.GetResult(www)));
         }
@@ -231,7 +239,7 @@ namespace Server
         {
             Vector3 pos = player.transform.position;
 
-            var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}", ApiMethod.PUT);
+            var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&location={info.location}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
@@ -254,7 +262,7 @@ namespace Server
 
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
-
+            SteamServer.EndSession(data.steamId);
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);

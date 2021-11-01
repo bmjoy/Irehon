@@ -8,20 +8,24 @@ using UnityEngine.Networking;
 
 public struct CharacterInfo
 {
+    public bool isOnlineOnServer;
     public ulong id;
     public string name;
     public int inventory_id;
     public int equipment_id;
     public int serverId;
+    public string location;
     public Vector3 position;
 
     public CharacterInfo(JSONNode json)
     {
+        isOnlineOnServer = json["online"].AsInt != 0;
         id = json["id"].AsULong;
         name = "";
         inventory_id = json["inventory_id"].AsInt;
         equipment_id = json["equipment_id"].AsInt;
         JSONNode pos = json["position"];
+        location = json["location"];
         serverId = json["server"].AsInt;
         position = new Vector3(pos["x"].AsFloat, pos["y"].AsFloat, pos["z"].AsFloat);
     }

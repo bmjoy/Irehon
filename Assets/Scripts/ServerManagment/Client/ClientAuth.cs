@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using SimpleJSON;
+using DuloGames.UI;
 
 namespace Client
 {
@@ -35,7 +37,10 @@ namespace Client
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
-
+            if (PlayerPrefs.GetString("Registration") != "")
+            {
+                currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
+            }
             GetComponent<NetworkManager>().StartClient();
         }
 
