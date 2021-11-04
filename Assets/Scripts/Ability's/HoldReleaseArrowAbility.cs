@@ -31,7 +31,7 @@ public class HoldReleaseArrowAbility : AbilityBase
     private float additionalyChestOffsetTime;
     private bool aiming;
 
-
+    private int arrowDamage;
 
     public override void Setup(AbilitySystem abilitySystem)
     {
@@ -42,8 +42,10 @@ public class HoldReleaseArrowAbility : AbilityBase
         abilityAudioSource = abilitySystem.AudioSource;
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
-        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow);
+        quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow, arrowDamage);
     }
+
+    public void SetArrowDamage(int damage) => arrowDamage = damage;
 
     private void LateUpdate()
     {

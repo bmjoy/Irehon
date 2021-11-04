@@ -32,8 +32,8 @@ public class MeleeWeaponAbility : AbilityBase
         if (!isServer)
             return;
 
-        foreach (Entity entity in swordCollider.GetHittableEntities())
-            abilitySystem.PlayerComponent.DoDamage(entity, GetDamage());
+        foreach (var entity in swordCollider.GetHittableEntities())
+            abilitySystem.PlayerComponent.DoDamage(entity.Key,  Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
         AbilityEnd();

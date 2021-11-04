@@ -6,7 +6,6 @@ using UnityEngine;
 public class Arrow : MonoBehaviour
 {
     protected const float TIME_TO_DESPAWN = 4f;
-    [SerializeField]
     protected int hitDamage;
     [SerializeField]
     protected HitEffect hitEffect;
@@ -37,6 +36,11 @@ public class Arrow : MonoBehaviour
             releaseSound.Play();
         if (releaseEffect != null)
             releaseEffect.Play();
+    }
+
+    public void SetDamage(int damage)
+    {
+        hitDamage = damage;
     }
 
     protected int GetDamage()
@@ -75,7 +79,8 @@ public class Arrow : MonoBehaviour
     {
         if (collider.CompareTag("Entity"))
         {
-            arrowOwner.DoDamage(collider.GetComponent<EntityCollider>().GetParentEntityComponent(), GetDamage());
+            var entityCollider = collider.GetComponent<EntityCollider>();
+            arrowOwner.DoDamage(entityCollider.GetParentEntityComponent(), Mathf.RoundToInt(entityCollider.damageMultiplier * GetDamage()));
         }
     }
 

@@ -2,6 +2,8 @@
 
 public class EntityCollider : MonoBehaviour
 {
+    public float damageMultiplier;
+
     [SerializeField]
     private Entity parent;
 

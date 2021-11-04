@@ -24,6 +24,8 @@ public class Bow : Weapon
 
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
+        Item currentWeapon = ItemDatabase.GetItemBySlug(gameObject.name);
+
         playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
         var localPos = transform.localPosition;
         var localRotation = transform.localRotation;
@@ -33,10 +35,14 @@ public class Bow : Weapon
         AimingParticles.transform.parent = abilitySystem.AbilityPoolObject.transform;
         ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
 
-        abilitySystem.AnimatorComponent.runtimeAnimatorController = animator; 
+        abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
 
+        ability.SetArrowDamage(currentWeapon.metadata["Attack"].AsInt);
         ability.Setup(abilitySystem);
-        
+
+        SetAnimationSpeed(abilitySystem.AnimatorComponent, WeaponType.Bow, currentWeapon.metadata["AttackSpeed"].AsFloat);
+
+
         return ability;
     }
 
@@ -47,5 +53,7 @@ public class Bow : Weapon
         Destroy(ArrowInHand);
         Destroy(AimingParticles);
         Destroy(gameObject);
+
+        SetDefaultAnimationSpeed(abilitySystem.AnimatorComponent);
     }
 }

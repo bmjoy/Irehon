@@ -6,7 +6,7 @@ public class Quiver : MonoBehaviour
 {
     private Transform quiverTransform;
     private Queue<Arrow> arrowsInQuiever;
-    public Quiver(Transform parent, Player quiverOwner, int arrowQuantityInQuiver, GameObject arrowPrefab)
+    public Quiver(Transform parent, Player quiverOwner, int arrowQuantityInQuiver, GameObject arrowPrefab, int damage)
     {
         arrowsInQuiever = new Queue<Arrow>();
         quiverTransform = new GameObject("quiver").transform;
@@ -16,6 +16,7 @@ public class Quiver : MonoBehaviour
             GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
             Arrow arrow = arrowObj.GetComponent<Arrow>();
             arrow.SetParent(quiverOwner, quiverOwner.GetHitBoxColliderList(), this);
+            arrow.SetDamage(damage);
             arrow.gameObject.SetActive(false);
             arrowsInQuiever.Enqueue(arrow);
         }

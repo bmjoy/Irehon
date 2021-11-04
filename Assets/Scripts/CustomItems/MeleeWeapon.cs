@@ -5,33 +5,10 @@ using Mirror;
 
 public class MeleeWeapon : Weapon
 {
-    private static float GetAnimationLength(WeaponType type)
-    {
-        switch (type)
-        {
-            case WeaponType.Sword:
-                return 1.2f;
-            case WeaponType.Dagger:
-                return 1.3f;
-            case WeaponType.Bow:
-                return 1.5f;
-            case WeaponType.TwoHandSword:
-                return 1.3f;
-            case WeaponType.TwoHandAxe:
-                return 1.1f;
-            default:
-                return 1f;
-        }
-    }
-
-    private static float GetRequiredSPeedModifier(WeaponType weaponType, float targetSpeed) => targetSpeed / GetAnimationLength(weaponType);
-
     [SerializeField]
     private WeaponType type;
     [SerializeField]
     private AnimatorOverrideController animatorOverrideController;
-
-    private AbilityBase ability;
 
     public override WeaponType GetType() => type;
     public override AbilityBase Setup(AbilitySystem abilitySystem)
@@ -54,11 +31,16 @@ public class MeleeWeapon : Weapon
 
         GetComponent<MeleeWeaponAbility>().SetDamage(currentWeapon.metadata["Attack"].AsInt);
 
+
+        SetAnimationSpeed(abilitySystem.AnimatorComponent, type, currentWeapon.metadata["AttackSpeed"].AsFloat);
+
         return GetComponent<AbilityBase>();
     }
 
     public override void UnSetup(AbilitySystem abilitySystem)
     {
         Destroy(gameObject);
+
+        SetDefaultAnimationSpeed(abilitySystem.AnimatorComponent);
     }
 }

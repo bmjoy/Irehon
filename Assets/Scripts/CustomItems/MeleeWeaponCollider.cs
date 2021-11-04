@@ -13,14 +13,15 @@ public class MeleeWeaponCollider : MonoBehaviour
         this.selfColliders = selfColliders;
     }
 
-    public List<Entity> GetHittableEntities()
+    public Dictionary<Entity, EntityCollider> GetHittableEntities()
     {
-        List<Entity> entities = new List<Entity>();
+        Dictionary<Entity, EntityCollider> entities = new Dictionary<Entity, EntityCollider>();
         foreach (var collider in entityCollidersInZone)
-            if (!entities.Contains(collider.GetParentEntityComponent()))
-                entities.Add(collider.GetParentEntityComponent());
+            if (!entities.ContainsKey(collider.GetParentEntityComponent()))
+                entities.Add(collider.GetParentEntityComponent(), collider);
         return entities;
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
