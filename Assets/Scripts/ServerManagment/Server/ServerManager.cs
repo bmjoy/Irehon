@@ -69,8 +69,6 @@ namespace Server
 
         private async void UpdatePlayerCount()
         {
-            print("update player count");
-            print("server id " + serverId.ToString());
             if (serverId == 0)
                 return;
             var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}", ApiMethod.PUT);

@@ -37,7 +37,7 @@ public class Bow : Weapon
 
         abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
 
-        ability.SetArrowDamage(currentWeapon.metadata["Attack"].AsInt);
+        ability.SetArrowDamage(currentWeapon.metadata["Damage"].AsInt);
         ability.Setup(abilitySystem);
 
         SetAnimationSpeed(abilitySystem.AnimatorComponent, WeaponType.Bow, currentWeapon.metadata["AttackSpeed"].AsFloat);

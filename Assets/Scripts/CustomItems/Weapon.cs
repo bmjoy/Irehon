@@ -5,6 +5,7 @@ using UnityEngine;
 public enum WeaponType { Fist, Bow, TwoHandSword, TwoHandAxe, Sword, Dagger };
 public abstract class Weapon : MonoBehaviour
 {
+    public string slug;
     new public abstract WeaponType GetType();
 
     private static float GetAnimationLength(WeaponType type)

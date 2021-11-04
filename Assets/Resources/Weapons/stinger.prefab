@@ -108,6 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 566d5341823f9874cbf08eddae136f53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slug: stinger
+  hand: 0
   type: 5
   animatorOverrideController: {fileID: 22100000, guid: d811ede694aca874aa5ef5920f965d5a,
     type: 2}
@@ -123,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c4bc477bb01a144e8ce21af03650430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownTime: 1
+  cooldownTime: 0.2
   triggerOnKey: 323
   swordCollider: {fileID: 8857832992039042244}
 --- !u!114 &8857832992039042244

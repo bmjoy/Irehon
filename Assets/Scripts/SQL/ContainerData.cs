@@ -78,7 +78,6 @@ public static class ContainerData
             sqlCommand += $"UPDATE containers SET slots = '{IdContainer.Value.ToJson()}' WHERE id = '{IdContainer.Key}';";
 
         await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
-        Debug.Log($"Updated all items");
     }
 
     public static IEnumerator SwapSlot(int containerId, int oldSlot, int newSlot)

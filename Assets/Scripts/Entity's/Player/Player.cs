@@ -30,7 +30,7 @@ public class Player : Entity
 	private PlayerContainerController containerController;
 	private CharacterInfo characterData;
 
-	private List<PlayerCollider> playerColliders;
+	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
 
 
 	protected override void Awake()
@@ -45,6 +45,7 @@ public class Player : Entity
 	{
 		isAlive = true;
 		SetHealth(maxHealth);
+		stateMachine.ChangePlayerState(PlayerStateType.Idle);
 
 		if (isLocalPlayer)
 		{
