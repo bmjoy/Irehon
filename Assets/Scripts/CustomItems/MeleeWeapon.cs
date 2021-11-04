@@ -5,7 +5,7 @@ using Mirror;
 
 public class MeleeWeapon : Weapon
 {
-    private float GetAnimationLength()
+    private static float GetAnimationLength(WeaponType type)
     {
         switch (type)
         {
@@ -15,8 +15,17 @@ public class MeleeWeapon : Weapon
                 return 1.3f;
             case WeaponType.Bow:
                 return 1.5f;
+            case WeaponType.TwoHandSword:
+                return 1.3f;
+            case WeaponType.TwoHandAxe:
+                return 1.1f;
+            default:
+                return 1f;
         }
     }
+
+    private static float GetRequiredSPeedModifier(WeaponType weaponType, float targetSpeed) => targetSpeed / GetAnimationLength(weaponType);
+
     [SerializeField]
     private WeaponType type;
     [SerializeField]
