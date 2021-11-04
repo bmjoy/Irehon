@@ -2,16 +2,12 @@
 using Mirror;
 using Server;
 using SimpleJSON;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UnityEngine;
-using Utils;
 using Steamworks;
 using System;
+using System.Collections;
+using UnityEngine;
 
-public enum Fraction { None, A, B};
+public enum Fraction { None, A, B };
 public struct RegisterInfo
 {
     public Fraction fraction;
@@ -48,6 +44,9 @@ public struct PlayerConnectionInfo : NetworkMessage
 
     public CharacterInfo character;
 
+    public bool isSpawnPointChanged;
+    public string sceneToChange;
+
     public Transform playerPrefab;
 
     public PlayerConnectionInfo(AuthRequestMessage authInfo)
@@ -56,6 +55,9 @@ public struct PlayerConnectionInfo : NetworkMessage
         playerPrefab = null;
         character = new CharacterInfo();
         this.authInfo = authInfo;
+
+        isSpawnPointChanged = false;
+        sceneToChange = null;
     }
 }
 
@@ -122,7 +124,7 @@ public class ServerAuth : NetworkAuthenticator
             SendAuthResult(ServerManager.i.GetConnection(user), false, "steam auth error");
     }
 
-    public override void OnClientAuthenticate() {}
+    public override void OnClientAuthenticate() { }
 
     public override void OnServerAuthenticate(NetworkConnection conn) { }
 }

@@ -25,7 +25,7 @@ public class SteamManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public static async void StartServer()
+    public static void StartServer()
     {
         if (i.isIntialized)
             return;
@@ -77,7 +77,7 @@ public class SteamManager : MonoBehaviour
         {
 
             i.isServer = false;
-            SteamClient.Init(1007, true);
+            SteamClient.Init(1759510, true);
 
             Debug.Log("Steam client intaialized");
         }

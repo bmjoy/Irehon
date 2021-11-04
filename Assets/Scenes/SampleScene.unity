@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45334482, g: 0.5521268, b: 0.772731, a: 1}
+  m_IndirectSpecularColor: {r: 0.42144564, g: 0.5741195, b: 0.83476675, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4733,7 +4733,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.040062625, y: -0.009521476, z: 0.00038177913, w: 0.99915177}
+  m_LocalRotation: {x: 0.040063478, y: -0.0069473344, z: 0.00027856475, w: 0.999173}
   m_LocalPosition: {x: 235.85, y: 181.62, z: 248.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4846,7 +4846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: 8fecd1d1286615742ab5075fd2a2ab1e, type: 2}
+  sharedProfile: {fileID: 0}
   isGlobal: 1
   blendDistance: 0
   weight: 1
@@ -6294,7 +6294,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310629696}
-  m_LocalRotation: {x: 0.040062625, y: -0.009521476, z: 0.00038177913, w: 0.99915177}
+  m_LocalRotation: {x: 0.040063478, y: -0.0069473344, z: 0.00027856475, w: 0.999173}
   m_LocalPosition: {x: 235.85, y: 181.62, z: 248.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -10764,7 +10764,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2138857966}
   - component: {fileID: 2146067636}
-  - component: {fileID: 2138779622}
   - component: {fileID: 2138671986}
   - component: {fileID: 2138671985}
   - component: {fileID: 2138671987}
@@ -10814,10 +10813,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2138671984}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 230c756a5cf3e394b86c7b0e83ebce18, type: 3}
+  m_Script: {fileID: 11500000, guid: c0e1fc1ac288ae04e9e42bd2e032923c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraAimTransform: {fileID: 0}
+  item: {fileID: 0}
+  container: {fileID: 0}
+  isWebTest: 1
 --- !u!1 &2138673046
 GameObject:
   m_ObjectHideFlags: 0
@@ -11479,19 +11480,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &2138779622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2138671984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0b8586a4291bf94d8552c900ff6e237, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseMovementSpeed: 6.25
 --- !u!4 &2138834832
 Transform:
   m_ObjectHideFlags: 0
@@ -12547,7 +12535,7 @@ Animator:
   m_GameObject: {fileID: 2138671984}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: e2958561779b1a748a4246b9d0c0b309, type: 3}
-  m_Controller: {fileID: 9100000, guid: 573fd3cc109d92b41a5d0768e88ad523, type: 2}
+  m_Controller: {fileID: 22100000, guid: d918c450b16676e49920ff69c14cae98, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -46,8 +46,8 @@ public class PlayerCraftController : NetworkBehaviour
         {
             CraftRecipe recipe = openedRecipes[index];
 
-            yield return ContainerData.LoadContainer(characterData.inventory_id);
-            Container inventory = ContainerData.LoadedContainers[characterData.inventory_id];
+            yield return ContainerData.LoadContainer(characterData.inventoryId);
+            Container inventory = ContainerData.LoadedContainers[characterData.inventoryId];
 
             if (!inventory.IsEnoughSpaceForItem(recipe.itemId, recipe.itemQuantity))
                 yield break;
@@ -60,10 +60,10 @@ public class PlayerCraftController : NetworkBehaviour
 
             foreach (var requirment in recipe.requirment)
             {
-                yield return ContainerData.RemoveItemsFromInventory(characterData.inventory_id, requirment.itemId, requirment.itemQuantity);
+                yield return ContainerData.RemoveItemsFromInventory(characterData.inventoryId, requirment.itemId, requirment.itemQuantity);
             }
 
-            yield return ContainerData.GiveContainerItem(characterData.inventory_id, recipe.itemId, recipe.itemQuantity);
+            yield return ContainerData.GiveContainerItem(characterData.inventoryId, recipe.itemId, recipe.itemQuantity);
         }
     }
 }

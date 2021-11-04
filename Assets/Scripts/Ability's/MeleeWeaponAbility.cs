@@ -8,6 +8,8 @@ public class MeleeWeaponAbility : AbilityBase
     [SerializeField]
     private MeleeWeaponCollider swordCollider;
 
+    private int damage;
+
     public override void Setup(AbilitySystem abilitySystem)
     {
         base.Setup(abilitySystem);
@@ -39,8 +41,10 @@ public class MeleeWeaponAbility : AbilityBase
 
     private int GetDamage()
     {
-        return 20;
+        return damage;
     }
+
+    public int SetDamage(int damage) => this.damage = damage;
 
     protected override void InterruptAbility()
     {

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace Server
@@ -45,7 +46,12 @@ namespace Server
 
         private async void CreateServerInDB()
         {
-            var www = Api.Request($"/servers/?ip={networkAddress}" +
+            var www = UnityWebRequest.Get("ifconfig.me/all.json");
+            await www.SendWebRequest();
+            SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
+            string externalIpAddres = response["ip_addr"].Value;
+
+            www = Api.Request($"/servers/?ip={externalIpAddres}" +
                 $"&port={(transport as KcpTransport).Port}" +
                 $"&location={SceneManager.GetActiveScene().name}", ApiMethod.POST);
             await www.SendWebRequest();
@@ -56,7 +62,6 @@ namespace Server
         {
             clientLoadedScene = false;
             (transport as KcpTransport).Port = ushort.Parse(Environment.GetEnvironmentVariable("PORT"));
-            networkAddress = Environment.GetEnvironmentVariable("SERVER");
             StartServer();
             InvokeRepeating("UpdatePlayerCount", 5, 5);
             InvokeRepeating("UpdateAllDataCycle", 90, 90);
@@ -237,10 +242,26 @@ namespace Server
 
         private async Task UpdateCharacterData(CharacterInfo info, Transform player)
         {
-            Vector3 pos = player.transform.position;
+            if (!info.isOnlineOnAnotherServer)
+                return;
 
+            Vector3 pos;
+            if (info.sceneChangeInfo != null)
+            {
+                pos = info.sceneChangeInfo.spawnPosition;
+                info.location = info.sceneChangeInfo.sceneName;
+            }
+            else
+                pos = player.transform.position;
+            
             var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&location={info.location}", ApiMethod.PUT);
             await www.SendWebRequest();
+
+            if (info.isSpawnPointChanged)
+            {
+                www = Api.Request($"/characters/{info.id}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
+                await www.SendWebRequest();
+            }
         }
 
         private async Task CharacterLeaveFromWorld(PlayerConnectionInfo info)

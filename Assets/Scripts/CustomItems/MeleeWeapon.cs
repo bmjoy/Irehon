@@ -5,6 +5,18 @@ using Mirror;
 
 public class MeleeWeapon : Weapon
 {
+    private float GetAnimationLength()
+    {
+        switch (type)
+        {
+            case WeaponType.Sword:
+                return 1.2f;
+            case WeaponType.Dagger:
+                return 1.3f;
+            case WeaponType.Bow:
+                return 1.5f;
+        }
+    }
     [SerializeField]
     private WeaponType type;
     [SerializeField]
@@ -15,6 +27,8 @@ public class MeleeWeapon : Weapon
     public override WeaponType GetType() => type;
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
+        Item currentWeapon = ItemDatabase.GetItemBySlug(gameObject.name);
+
         var playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
 
         var localScale = transform.localScale;
@@ -28,6 +42,8 @@ public class MeleeWeapon : Weapon
         abilitySystem.AnimatorComponent.runtimeAnimatorController = animatorOverrideController;
 
         GetComponent<AbilityBase>().Setup(abilitySystem);
+
+        GetComponent<MeleeWeaponAbility>().SetDamage(currentWeapon.metadata["Attack"].AsInt);
 
         return GetComponent<AbilityBase>();
     }

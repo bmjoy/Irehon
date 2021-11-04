@@ -36,8 +36,8 @@ public class PlayerContainerController : NetworkBehaviour
     public void Intialize(CharacterInfo info)
     {
         player.OnCharacterDataUpdateEvent.RemoveListener(Intialize);
-        containers[ContainerType.Equipment] = info.equipment_id;
-        containers[ContainerType.Inventory] = info.inventory_id;
+        containers[ContainerType.Equipment] = info.equipmentId;
+        containers[ContainerType.Inventory] = info.inventoryId;
     }
 
     private ContainerType GetContainerType(int containerId)
@@ -99,9 +99,9 @@ public class PlayerContainerController : NetworkBehaviour
     {
         switch (type)
         {
-            case ContainerType.Inventory: return characterData.inventory_id;
+            case ContainerType.Inventory: return characterData.inventoryId;
             case ContainerType.Chest: return openedContainerId;
-            case ContainerType.Equipment: return characterData.equipment_id;
+            case ContainerType.Equipment: return characterData.equipmentId;
             default: return 0;
         };
     }
@@ -149,8 +149,8 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     private IEnumerator Equip(int equipmentSlot, int inventorySlot)
     {
-        yield return ContainerData.LoadContainer(characterData.inventory_id);
-        Container inventory = ContainerData.LoadedContainers[characterData.inventory_id];
+        yield return ContainerData.LoadContainer(characterData.inventoryId);
+        Container inventory = ContainerData.LoadedContainers[characterData.inventoryId];
 
         Item equipableItem = ItemDatabase.GetItemById(inventory[inventorySlot].itemId);
 
@@ -163,7 +163,7 @@ public class PlayerContainerController : NetworkBehaviour
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
             yield break;
 
-        yield return ContainerData.MoveSlotData(characterData.inventory_id, inventorySlot, characterData.equipment_id, equipmentSlot);
+        yield return ContainerData.MoveSlotData(characterData.inventoryId, inventorySlot, characterData.equipmentId, equipmentSlot);
     }
 
     private bool IsMoveLegal(ContainerType firstType, ContainerType secondType)
@@ -195,7 +195,7 @@ public class PlayerContainerController : NetworkBehaviour
         if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
             StartCoroutine(Equip(secondSlot, firstSlot));
         else if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
-            StartCoroutine(ContainerData.MoveSlotData(characterData.equipment_id, firstSlot, characterData.inventory_id, secondSlot));
+            StartCoroutine(ContainerData.MoveSlotData(characterData.equipmentId, firstSlot, characterData.inventoryId, secondSlot));
         else if (firstContainerId == secondContainerId)
             StartCoroutine(ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot));
         else
