@@ -30,6 +30,8 @@ public class Player : Entity
 	private PlayerContainerController containerController;
 	private CharacterInfo characterData;
 
+	private List<PlayerCollider> playerColliders;
+
 
 	protected override void Awake()
 	{
@@ -56,9 +58,9 @@ public class Player : Entity
 
 			OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
 		}
-
+		foreach (Collider collider in GetHitBoxColliderList())
+			playerColliders.Add(collider.GetComponent<PlayerCollider>());
 		OnPublicEquipmentUpdate.AddListener(x => print($"Got equip info {x.ToJson()}"));
-
 		if (!isServer)
 			OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
 	}
@@ -123,6 +125,10 @@ public class Player : Entity
 	private void SendEquipmentInfo(int id, Container equip)
 	{
 		GetComponent<PlayerWeaponEquipment>().UpdateWeapon(equip);
+		foreach (PlayerCollider playerCollider in playerColliders)
+		{
+			playerCollider.UpdateModifier(equip);
+		}
 		SendEquipmentInfoRpc(equip);
 	}
 
