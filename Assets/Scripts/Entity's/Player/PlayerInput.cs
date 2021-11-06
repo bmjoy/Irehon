@@ -114,8 +114,8 @@ public class PlayerInput : NetworkBehaviour
         {
             float delta = input.Position.y - sendedInputs.Peek().Position.y;
 
-            if (delta > .1f)
-                yPosition = Mathf.Lerp(yPosition, sendedInputs.Peek().Position.y, 0.01f);
+            if (Mathf.Abs(delta) > 15f)
+                yPosition = input.Position.y;
         }
 
         transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);

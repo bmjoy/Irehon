@@ -24,6 +24,7 @@ namespace Server
         private Dictionary<ulong, NetworkConnection> connections;
 
         private int serverId;
+        private ushort port;
         public override void Awake()
         {
             if (i != null && i != this || ClientManager.i != null)
@@ -50,6 +51,8 @@ namespace Server
             await www.SendWebRequest();
             SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
             string externalIpAddres = response["ip_addr"].Value;
+            networkAddress = externalIpAddres;
+            port = (transport as KcpTransport).Port;
 
             www = Api.Request($"/servers/?ip={externalIpAddres}" +
                 $"&port={(transport as KcpTransport).Port}" +
@@ -147,7 +150,7 @@ namespace Server
 
                 print("Redirected");
 
-                SendMessage(con, $"{result["ip"]}:{result["port"]}", MessageType.ServerRedirect);
+                SendMessage(con, $"{result["ip"].Value}:{result["port"].Value}", MessageType.ServerRedirect);
                 WaitBeforeDisconnect(con);
                 return;
             }
@@ -243,6 +246,13 @@ namespace Server
             if (!info.isOnlineOnAnotherServer)
                 return;
 
+            if (player == null)
+            {
+                var wwwUpdate = Api.Request($"/characters/{info.id}", ApiMethod.PUT);
+                await wwwUpdate.SendWebRequest();
+                return;
+            }
+
             Vector3 pos;
             if (info.sceneChangeInfo != null)
             {
@@ -250,13 +260,16 @@ namespace Server
                 info.location = info.sceneChangeInfo.sceneName;
             }
             else
+            {
                 pos = player.transform.position;
-            
+            }
+
             var www = Api.Request($"/characters/{info.id}?p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&location={info.location}", ApiMethod.PUT);
             await www.SendWebRequest();
 
             if (info.isSpawnPointChanged)
             {
+                print("spawn point changed");
                 www = Api.Request($"/characters/{info.id}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
                 await www.SendWebRequest();
             }
@@ -300,6 +313,11 @@ namespace Server
                 messageType = type
             };
             con.Send(serverMessage);
+        }
+
+        public static void SendReconnectToThisServer(NetworkConnection con) 
+        {
+            SendMessage(con, $"{i.networkAddress}:{i.port}", MessageType.ServerRedirect);
         }
 
         public void RemoveUserFromConnections(ulong steamId) => connections.Remove(steamId);

@@ -66,6 +66,11 @@ public class Player : Entity
 			OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
 	}
 
+	public void SelfKill()
+    {
+		Death();
+    }
+
 	private async void GetName(SteamId oldId, SteamId newId)
 	{
 		if (isServer)
@@ -161,6 +166,9 @@ public class Player : Entity
 
 	protected override void Death()
 	{
+		if (!isAlive)
+			return;
+
 		base.Death();
 
 

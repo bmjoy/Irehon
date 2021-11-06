@@ -51,6 +51,12 @@ public class Entity : NetworkBehaviour
             OnHealthChanged = new HealthChangedEvent();
     }
 
+    private void Update()
+    {
+        if (transform.position.y < 0f)
+            Death();
+    }
+
     protected virtual void Start()
     {
         spawnPosition = transform.position;

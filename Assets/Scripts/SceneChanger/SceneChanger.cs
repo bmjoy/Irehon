@@ -31,7 +31,8 @@ public class SceneChanger : MonoBehaviour
             spawnPosition = newPosition
         };
 
+        Server.ServerManager.SendReconnectToThisServer(player.connectionToClient);
         player.connectionToClient.authenticationData = data;
-        player.connectionToClient.Disconnect();
+        Server.ServerManager.WaitBeforeDisconnect(player.connectionToClient);
     }
 }

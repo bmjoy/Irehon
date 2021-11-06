@@ -16,6 +16,11 @@ namespace Client
         }
         public override void OnClientAuthenticate()
         {
+            currentRequest = new AuthRequestMessage()
+            {
+                Id = SteamManager.GetSteamId(),
+                AuthData = SteamManager.GetAuthTicket().Data
+            };
             NetworkClient.Send(currentRequest);
         }
 
@@ -32,11 +37,6 @@ namespace Client
 
         public void PlayButton()
         {
-            currentRequest = new AuthRequestMessage()
-            {
-                Id = SteamManager.GetSteamId(),
-                AuthData = SteamManager.GetAuthTicket().Data
-            };
             if (PlayerPrefs.GetString("Registration") != "")
             {
                 currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
