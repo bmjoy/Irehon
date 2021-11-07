@@ -278,6 +278,8 @@ namespace Server
         private async Task CharacterLeaveFromWorld(PlayerConnectionInfo info)
         {
             await UpdateCharacterData(info.character, info.playerPrefab);
+            ContainerData.UnLoadContainer(info.character.equipmentId);
+            ContainerData.UnLoadContainer(info.character.inventoryId);
             print($"Unspawned character id{info.character.id}");
         }
 

@@ -49,7 +49,6 @@ namespace Client
 
         public override void Start()
         {
-            PlayerPrefs.DeleteAll();
             SteamManager.StartClient();
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
