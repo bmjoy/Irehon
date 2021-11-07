@@ -22,13 +22,15 @@ public class PlayerDeathState : PlayerState
     public override void Enter()
     {
         abilitySystem.AbilityInterrupt();
+        UIController.i.HideStatusCanvas();
         playerInteracter.StopInterracting();
-        playerBonesLinks.Model.gameObject.SetActive(false);
+        player.HideModel();
     }
 
     public override void Exit()
     {
-        playerBonesLinks.Model.gameObject.SetActive(true);
+        player.ShowModel();
+        UIController.i.ShowStatusCanvas();
     }
 
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)

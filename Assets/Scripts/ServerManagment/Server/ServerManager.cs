@@ -200,7 +200,6 @@ namespace Server
 
             if (Api.GetResult(www) == null)
             {
-                print("Player not found");
                 bool isCreated = await PlayerCharacterCreateRequest(con);
                 if (!isCreated)
                 {
@@ -212,8 +211,6 @@ namespace Server
 
                 await www.SendWebRequest();
             }
-
-            print("Player play request start");
 
             PlayerPlayRequest(con, new CharacterInfo(Api.GetResult(www)));
         }
@@ -269,7 +266,7 @@ namespace Server
 
             if (info.isSpawnPointChanged)
             {
-                print("spawn point changed");
+                print($"{info.id} spawn point changed to {info.spawnSceneName}");
                 www = Api.Request($"/characters/{info.id}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
                 await www.SendWebRequest();
             }

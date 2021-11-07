@@ -41,4 +41,9 @@ public class DeathContainer : Chest
     {
         GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(container);
     }
+
+    private void OnDestroy()
+    {
+        OnContainerUpdate.RemoveListener(CheckIsContainerEmpty);
+    }
 }

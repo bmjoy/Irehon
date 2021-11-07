@@ -176,7 +176,6 @@ public class PlayerContainerController : NetworkBehaviour
     //from , to
     public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
     {
-        print($"from {firstType} {firstSlot} to {secondType} {secondSlot}");
         if (!IsMoveLegal(firstType, secondType))
             return;
 
