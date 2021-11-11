@@ -28,10 +28,13 @@ public class Player : Entity
 	public OnContainerUpdate OnPublicEquipmentUpdate { get; private set; } = new OnContainerUpdate();
 	private PlayerStateMachine stateMachine;
 	private PlayerContainerController containerController;
-	[SyncVar]
+	private CharacterController controller;
+	
 	private CharacterInfo characterData;
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
+	[SyncVar(hook ="EquipmentHook")]
+	private string equipmentJson;
 
 
 	protected override void Awake()
@@ -40,6 +43,55 @@ public class Player : Entity
 		stateMachine = GetComponent<PlayerStateMachine>();
 		containerController = GetComponent<PlayerContainerController>();
 		PlayerBonesLinks = GetComponent<PlayerBonesLinks>();
+		controller = GetComponent<CharacterController>();
+		if (isClient && !isLocalPlayer)
+		{
+			Destroy(controller);
+			var rigidBody = gameObject.AddComponent<Rigidbody>();
+			rigidBody.freezeRotation = true;
+			rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+		}
+	}
+
+	public void SetRotation(Vector3 rotation)
+    {
+		controller.enabled = false;
+		transform.rotation = Quaternion.Euler(rotation);
+		controller.enabled = true;
+		
+	}
+	
+	public void SetPosition(Vector3 position)
+    {
+		controller.enabled = false;
+		transform.position = position;
+		controller.enabled = true;
+	}
+
+	[Server]
+	public void SetPositionRpc(Vector3 pos)
+    {
+		SetPosition(pos);
+		SetPositionTargetRpc(pos);
+    }
+
+	[Server]
+	public void SetRotationRpc(Vector3 rotation)
+    {
+		SetRotation(rotation);
+		SetPositionTargetRpc(rotation);
+    }
+
+	[TargetRpc]
+	private void SetPositionTargetRpc(Vector3 position)
+	{
+		SetPosition(position)
+	}
+
+	[TargetRpc]
+	private void SetRotationTargetRpc(Vector3 rotation)
+	{
+		SetRotation(rotation);
 	}
 
 	protected override void Start()
@@ -132,6 +184,7 @@ public class Player : Entity
 		OnCharacterDataUpdateEvent.Invoke(characterData);
 	}
 
+
 	[Server]
 	private void SendEquipmentInfo(int id, Container equip)
 	{
@@ -140,12 +193,18 @@ public class Player : Entity
 		{
 			playerCollider.UpdateModifier(equip);
 		}
+		equipmentJson = equip.ToJson();
+		print(equipmentJson);
 		SendEquipmentInfoRpc(equip);
 	}
 
 	[ClientRpc]
 	private void SendEquipmentInfoRpc(Container equipment) => OnPublicEquipmentUpdate.Invoke(equipment);
-
+	private void EquipmentHook(string oldJson, string newJson)
+	{
+		print("Hook invoked");
+		OnPublicEquipmentUpdate.Invoke(new Container(SimpleJSON.JSON.Parse(newJson)));
+	}
 
 	public CharacterInfo GetCharacterData() => characterData;
 

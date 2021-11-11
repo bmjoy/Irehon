@@ -9,12 +9,14 @@ public class PlayerInput : NetworkBehaviour
 
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
 
+    private Player player;
     private PlayerStateMachine playerStateMachine;
     private AbilitySystem abilitySystem;
 
     private void Start()
     {
         abilitySystem = GetComponent<AbilitySystem>();
+        player = GetComponent<Player>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
 
@@ -120,6 +122,6 @@ public class PlayerInput : NetworkBehaviour
 
         transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);
 
-        transform.rotation = rot;
+        player = rot;
     }
 }
