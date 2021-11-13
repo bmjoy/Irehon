@@ -31,6 +31,9 @@ public class Player : Entity
 
 	private CharacterController controller;
 
+	[SerializeField]
+	private Collider offlineCharacterCollider;
+
 	private CharacterInfo characterData;
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
@@ -45,12 +48,6 @@ public class Player : Entity
 		containerController = GetComponent<PlayerContainerController>();
 		PlayerBonesLinks = GetComponent<PlayerBonesLinks>();
 		controller = GetComponent<CharacterController>();
-		if (isClient && !isLocalPlayer)
-        {
-			Destroy(controller);
-			var rig = gameObject.AddComponent<Rigidbody>();
-			rig.freezeRotation = true;
-		}
 	}
 
 	protected override void Start()
@@ -58,6 +55,12 @@ public class Player : Entity
 		isAlive = true;
 		SetHealth(maxHealth);
 		stateMachine.ChangePlayerState(PlayerStateType.Idle);
+
+		if (isClient && !isLocalPlayer)
+		{
+			controller.enabled = false;
+			offlineCharacterCollider.enabled = true;
+		}
 
 		if (isLocalPlayer)
 		{
@@ -185,7 +188,7 @@ public class Player : Entity
 		{
 			playerCollider.UpdateModifier(equip);
 		}
-		equipmentJson = equip.ToJson();
+		equipmentJson = equip.ToJson().ToString();
 		print(equipmentJson);
 		SendEquipmentInfoRpc(equip);
 	}

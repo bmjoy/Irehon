@@ -12,7 +12,7 @@ public class PlayerJumpingState : PlayerRotatableState
         characterController = player.GetComponent<CharacterController>();
     }
 
-    private const float jump_force = 6.7f;
+    private const float jump_force = 3.4f;
 
     private PlayerGroundDetector playerGroundDetector;
     private PlayerMovement playerMovement;

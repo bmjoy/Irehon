@@ -78,6 +78,7 @@ public class ServerAuth : NetworkAuthenticator
             ServerManager.SendMessage(con, message, MessageType.AuthAccept);
             var oldData = (PlayerConnectionInfo)con.authenticationData;
             oldData.isAuthorized = true;
+            con.authenticationData = oldData;
             ServerAccept(con);
         }
         else

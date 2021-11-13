@@ -25,6 +25,8 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Transform targetTransform;
     [SerializeField]
+    private float yShoulderOffset;
+    [SerializeField]
     private Cinemachine.CinemachineVirtualCamera aimCamera;
     [SerializeField]
     private Cinemachine.CinemachineVirtualCamera mainCamera;
@@ -154,7 +156,7 @@ public class CameraController : MonoBehaviour
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -85f, 85f);
 
-        shoulderTransform.localRotation = Quaternion.Euler(xRotation, -3.5f, 0f);
+        shoulderTransform.localRotation = Quaternion.Euler(xRotation, yShoulderOffset, 0f);
 
         player.Rotate(Vector3.up * xMouse);
     }

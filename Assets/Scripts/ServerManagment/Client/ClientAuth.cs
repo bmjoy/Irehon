@@ -10,6 +10,7 @@ namespace Client
 {
     public class ClientAuth : NetworkAuthenticator
     {
+        private AuthRequestMessage currentRequest = new AuthRequestMessage();
         private void Start()
         {
             
@@ -22,18 +23,18 @@ namespace Client
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
-            NetworkClient.Send(currentRequest);
 #else
-            NetworkClient.Send(new AuthRequestMessage());
+            if (PlayerPrefs.GetString("Registration") != "")
+            {
+                currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
+            }
+            NetworkClient.Send(currentRequest);
 #endif
         }
 
         public override void OnServerAuthenticate(NetworkConnection conn)
         {
         }
-
-        private AuthRequestMessage currentRequest;
-
         public override void OnStartClient()
         {
             ClientManager.OnGetServerMessage.AddListener(OnAuthResponseMessage);
@@ -41,12 +42,6 @@ namespace Client
 
         public void PlayButton()
         {
-            if (PlayerPrefs.GetString("Registration") != "")
-            {
-                print("Not zero");
-                currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
-                print(currentRequest.registerInfo.fraction);
-            }
             GetComponent<NetworkManager>().StartClient();
         }
 

@@ -290,6 +290,7 @@ namespace Server
         {
             if (conn.authenticationData == null)
             {
+                print("Auth data null disconnect");
                 base.OnServerDisconnect(conn);
                 return;
             }
@@ -297,7 +298,10 @@ namespace Server
             PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
 
             if (!data.isAuthorized)
+            {
+                print("Not authorized disconnect " + data.steamId);
                 return;
+            }
 
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);

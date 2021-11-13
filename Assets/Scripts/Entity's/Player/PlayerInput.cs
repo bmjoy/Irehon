@@ -12,13 +12,11 @@ public class PlayerInput : NetworkBehaviour
     private Player player;
     private PlayerStateMachine playerStateMachine;
     private AbilitySystem abilitySystem;
-    private Player player;
 
     private void Start()
     {
         player = GetComponent<Player>();
         abilitySystem = GetComponent<AbilitySystem>();
-        player = GetComponent<Player>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
 
