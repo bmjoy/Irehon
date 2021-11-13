@@ -28,8 +28,6 @@ public class AbilitySystem : NetworkBehaviour
     [SerializeField]
     private GameObject weaponPrefab;
 
-    private GameObject weapon;
-
     [SyncVar]
     private bool isAbilityCasting;
 

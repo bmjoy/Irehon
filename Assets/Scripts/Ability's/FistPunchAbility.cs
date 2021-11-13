@@ -47,7 +47,7 @@ public class FistPunchAbility : AbilityBase
 
     private int GetDamage()
     {
-        return 20;
+        return 100;
     }
 
     public void DestroyColliders()

@@ -34,6 +34,8 @@ public class Player : Entity
 	private CharacterInfo characterData;
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
+	[SyncVar(hook ="EquipmentHook")]
+	private string equipmentJson;
 
 
 	protected override void Awake()
@@ -71,7 +73,6 @@ public class Player : Entity
 		}
 		foreach (Collider collider in GetHitBoxColliderList())
 			playerColliders.Add(collider.GetComponent<PlayerCollider>());
-		OnPublicEquipmentUpdate.AddListener(x => print($"Got equip info {x.ToJson()}"));
 		if (!isServer)
 			OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
 	}
@@ -161,6 +162,12 @@ public class Player : Entity
 		}
 	}
 
+	[ClientRpc]
+	public void ShowModel() => PlayerBonesLinks.Model.gameObject.SetActive(true);
+
+	[ClientRpc]
+	public void HideModel() => PlayerBonesLinks.Model.gameObject.SetActive(false);
+
 	[TargetRpc]
 	private void UpdateCharacterData(CharacterInfo data)
 	{
@@ -178,12 +185,18 @@ public class Player : Entity
 		{
 			playerCollider.UpdateModifier(equip);
 		}
+		equipmentJson = equip.ToJson();
+		print(equipmentJson);
 		SendEquipmentInfoRpc(equip);
 	}
 
 	[ClientRpc]
 	private void SendEquipmentInfoRpc(Container equipment) => OnPublicEquipmentUpdate.Invoke(equipment);
-
+	private void EquipmentHook(string oldJson, string newJson)
+	{
+		print("Hook invoked");
+		OnPublicEquipmentUpdate.Invoke(new Container(SimpleJSON.JSON.Parse(newJson)));
+	}
 
 	public CharacterInfo GetCharacterData() => characterData;
 

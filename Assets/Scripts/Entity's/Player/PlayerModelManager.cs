@@ -14,7 +14,7 @@ public class PlayerModelManager : SerializedMonoBehaviour
 
     private void Awake()
     {
-        GetComponent<PlayerContainerController>().OnEquipmentUpdate.AddListener(UpdateEquipmentContainer);
+        GetComponent<PlayerContainerController>()?.OnEquipmentUpdate.AddListener(UpdateEquipmentContainer);
     }
 
     private string GetBaseSlugModel(EquipmentSlot slot)

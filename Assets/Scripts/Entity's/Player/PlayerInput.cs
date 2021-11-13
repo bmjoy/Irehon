@@ -9,6 +9,7 @@ public class PlayerInput : NetworkBehaviour
 
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
 
+    private Player player;
     private PlayerStateMachine playerStateMachine;
     private AbilitySystem abilitySystem;
     private Player player;
@@ -17,6 +18,7 @@ public class PlayerInput : NetworkBehaviour
     {
         player = GetComponent<Player>();
         abilitySystem = GetComponent<AbilitySystem>();
+        player = GetComponent<Player>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
 

@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+
     public static UIController i;
+
 
     [SerializeField]
     private Image cursorHint;
@@ -15,6 +17,8 @@ public class UIController : MonoBehaviour
     private float healthBarUpdateDelay = 0.5f;
     private float reducingAmount = 0.7f;
     private float minimumTriangleSize = 80f;
+    [SerializeField]
+    private Canvas statusBarCanvas;
     [SerializeField]
     private Canvas AbilityTree;
     [SerializeField]
@@ -47,6 +51,10 @@ public class UIController : MonoBehaviour
     {
         CameraController.OnChangeCursorStateEvent.AddListener(ChangeCursorHintStatus);
     }
+
+    public void ShowStatusCanvas() => statusBarCanvas.gameObject.SetActive(true);
+    public void HideStatusCanvas() => statusBarCanvas.gameObject.SetActive(false);
+
 
     public void EnableDefaultCrosshair()
     {

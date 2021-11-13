@@ -120,6 +120,15 @@ public static class ContainerData
         yield return null;
     }
 
+    public static void UnLoadContainer(int containerId)
+    {
+        if (!LoadedContainers.ContainsKey(containerId))
+        {
+            return;
+        }
+        LoadedContainers.Remove(containerId);
+    }
+
     public static IEnumerator MoveAllItemsInNewContainer(List<int> containersId, int newContainerId)
     {
         List<Container> containers = new List<Container>();

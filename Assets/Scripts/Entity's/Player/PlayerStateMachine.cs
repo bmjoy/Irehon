@@ -37,7 +37,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        currentState.Update();
+        currentState?.Update();
     }
 
     private void SetNewState(PlayerStateType type, bool isResimulating = false)
