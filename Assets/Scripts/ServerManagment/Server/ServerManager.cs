@@ -122,6 +122,8 @@ namespace Server
             }
             else
             {
+                print(data.authInfo.registerInfo.fraction);
+                print(data.authInfo.Id);
                 SendMessage(con, "Create character", MessageType.RegistrationRequired);
                 print("Sended character create request");
             }
@@ -170,9 +172,10 @@ namespace Server
         {
             GameObject playerObject = Instantiate(playerPrefab);
 
-            playerObject.transform.position = characterInfo.position;
-
             Player playerComponent = playerObject.GetComponent<Player>();
+
+            playerComponent.SetPosition(characterInfo.position);
+            playerComponent.SetPositionRpc(characterInfo.position);
 
             print($"Spawning character id{characterInfo.id}");
 
@@ -237,7 +240,9 @@ namespace Server
         public override void OnStartServer()
         {
             base.OnStartServer();
+#if !UNITY_EDITOR
             SteamManager.StartServer();
+#endif
             CreateServerInDB();
         }
 
@@ -292,9 +297,14 @@ namespace Server
 
             PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
 
+            if (!data.isAuthorized)
+                return;
+
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
+#if !UNITY_EDITOR
             SteamServer.EndSession(data.steamId);
+#endif
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);

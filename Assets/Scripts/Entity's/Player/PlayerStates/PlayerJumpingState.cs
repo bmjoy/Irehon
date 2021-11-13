@@ -6,19 +6,18 @@ public class PlayerJumpingState : PlayerRotatableState
 {
     public PlayerJumpingState(Player player) : base(player)
     {
-        rigidBody = player.GetComponent<Rigidbody>();
         animator = player.GetComponent<Animator>();
         playerMovement = player.GetComponent<PlayerMovement>();
         playerStateMachine = player.GetComponent<PlayerStateMachine>();
-        playerGroundDetector = player.GetComponent<PlayerGroundDetector>();
+        characterController = player.GetComponent<CharacterController>();
     }
 
     private const float jump_force = 6.7f;
 
-    private Rigidbody rigidBody;
     private PlayerGroundDetector playerGroundDetector;
     private PlayerMovement playerMovement;
     private PlayerStateMachine playerStateMachine;
+    private CharacterController characterController;
     private Animator animator;
 
     public override float MovementSpeed => 1;
@@ -32,18 +31,21 @@ public class PlayerJumpingState : PlayerRotatableState
         return PlayerStateType.Fall;
     }
 
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
+        if (isResimulating)
+            return;
+
         abilitySystem.AbilityInterrupt();
         playerInteracter.StopInterracting();
-        if (playerGroundDetector.isGrounded)
+        if (playerMovement.IsGrounded)
         {
-            rigidBody.velocity = new Vector3(rigidBody.velocity.x, jump_force, rigidBody.velocity.z);
+            playerMovement.yVelocity = jump_force;
             animator.SetTrigger("Jump");
         }
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
         
     }

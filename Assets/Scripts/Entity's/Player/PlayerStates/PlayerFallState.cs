@@ -8,35 +8,38 @@ public class PlayerFallState : PlayerRotatableState
     {
         animator = player.GetComponent<Animator>();
         playerGroundDetector = player.GetComponent<PlayerGroundDetector>();
-        rigidBody = player.GetComponent<Rigidbody>();
         playerMovement = player.GetComponent<PlayerMovement>();
+        characterController = player.GetComponent<CharacterController>();
     }
 
     private const float gravity = 5f;
 
     private PlayerMovement playerMovement;
     private Animator animator;
-    private Rigidbody rigidBody;
+    private CharacterController characterController;
     private PlayerGroundDetector playerGroundDetector;
 
     public override bool CanRotateCamera => true;
     public override float MovementSpeed => 0.8f;
     public override PlayerStateType Type => PlayerStateType.Fall;
     public override bool CanInteract => false;
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
+        if (isResimulating)
+            return;
         playerInteracter.StopInterracting();
         animator.SetBool("Falling", true);
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
+        if (isResimulating)
+            return; 
         animator.SetBool("Falling", false);
     }
 
     public override void Update()
     {
-        rigidBody.velocity = new Vector3(0, rigidBody.velocity.y - (gravity * Time.fixedDeltaTime), 0);
     }
 
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
@@ -45,7 +48,7 @@ public class PlayerFallState : PlayerRotatableState
 
         playerMovement.Move(input.GetMoveVector(), MovementSpeed);
         
-        if (playerGroundDetector.isGrounded)
+        if (playerMovement.IsGrounded)
             return PlayerStateType.Idle;
         else
             return this.Type;

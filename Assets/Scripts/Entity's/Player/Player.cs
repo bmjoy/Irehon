@@ -28,6 +28,9 @@ public class Player : Entity
 	public OnContainerUpdate OnPublicEquipmentUpdate { get; private set; } = new OnContainerUpdate();
 	private PlayerStateMachine stateMachine;
 	private PlayerContainerController containerController;
+
+	private CharacterController controller;
+
 	private CharacterInfo characterData;
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
@@ -39,6 +42,13 @@ public class Player : Entity
 		stateMachine = GetComponent<PlayerStateMachine>();
 		containerController = GetComponent<PlayerContainerController>();
 		PlayerBonesLinks = GetComponent<PlayerBonesLinks>();
+		controller = GetComponent<CharacterController>();
+		if (isClient && !isLocalPlayer)
+        {
+			Destroy(controller);
+			var rig = gameObject.AddComponent<Rigidbody>();
+			rig.freezeRotation = true;
+		}
 	}
 
 	protected override void Start()
@@ -69,6 +79,39 @@ public class Player : Entity
 	public void SelfKill()
     {
 		Death();
+    }
+
+	public void SetRotation(Vector3 rotation)
+    {
+		controller.enabled = false;
+		transform.rotation = Quaternion.Euler(rotation);
+		controller.enabled = true;
+	}
+
+	public void SetRotation(Quaternion rotation)
+	{
+		controller.enabled = false;
+		transform.rotation = rotation;
+		controller.enabled = true;
+	}
+
+	public void SetRotationRpc(Vector3 rotation) => SetRotation(rotation);
+
+	public void Rotate(Vector3 eulers)
+    {
+		controller.enabled = false;
+		transform.Rotate(eulers);
+		controller.enabled = true;
+	}
+
+	[TargetRpc]
+	public void SetPositionRpc(Vector3 position) => SetPosition(position);
+
+	public void SetPosition(Vector3 position)
+    {
+		controller.enabled = false;
+		transform.position = position;
+		controller.enabled = true;
     }
 
 	private async void GetName(SteamId oldId, SteamId newId)
@@ -159,7 +202,8 @@ public class Player : Entity
 			}
 			else
 			{
-				transform.position = currentCharacterInfo.spawnPoint;
+				SetPosition(currentCharacterInfo.spawnPoint);
+				SetPositionRpc(currentCharacterInfo.spawnPoint);
 			}
 		}
 	}

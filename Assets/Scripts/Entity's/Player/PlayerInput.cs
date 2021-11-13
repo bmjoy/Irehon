@@ -11,9 +11,11 @@ public class PlayerInput : NetworkBehaviour
 
     private PlayerStateMachine playerStateMachine;
     private AbilitySystem abilitySystem;
+    private Player player;
 
     private void Start()
     {
+        player = GetComponent<Player>();
         abilitySystem = GetComponent<AbilitySystem>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
@@ -33,6 +35,7 @@ public class PlayerInput : NetworkBehaviour
 
         playerStateMachine.InputInState(currentInput);
         SendInputOnServer(currentInput);
+        currentInput.Position = transform.position;
         sendedInputs.Enqueue(currentInput);
     }
 
@@ -103,23 +106,31 @@ public class PlayerInput : NetworkBehaviour
 
         playerStateMachine.ChangePlayerState(input.PlayerStateType);
 
-        transform.position = input.Position;
+        player.SetPosition(input.Position);
 
         Quaternion rot = transform.rotation;
 
         foreach (var sendedInput in sendedInputs)
+        {
             playerStateMachine.InputInState(sendedInput);
-
+            Physics.Simulate(0.00000001f);
+        }
         if (sendedInputs.Count > 0)
         {
             float delta = input.Position.y - sendedInputs.Peek().Position.y;
 
-            if (Mathf.Abs(delta) > 15f)
+            if (delta > 15f || delta < -15f)
+            {
+                print("Setted y position");
+                print(delta);
+                print(input.Position.y);
+                print(sendedInputs.Peek().Position.y);
                 yPosition = input.Position.y;
+            }
         }
 
-        transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);
+        player.SetPosition(new Vector3(transform.position.x, yPosition, transform.position.z));
 
-        transform.rotation = rot;
+        player.SetRotation(rot);
     }
 }

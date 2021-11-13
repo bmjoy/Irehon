@@ -39,6 +39,7 @@ public struct AuthRequestMessage : NetworkMessage
 public struct PlayerConnectionInfo : NetworkMessage
 {
     public ulong steamId;
+    public bool isAuthorized;
 
     public AuthRequestMessage authInfo;
 
@@ -52,6 +53,7 @@ public struct PlayerConnectionInfo : NetworkMessage
     public PlayerConnectionInfo(AuthRequestMessage authInfo)
     {
         this.steamId = authInfo.Id;
+        isAuthorized = false;
         playerPrefab = null;
         character = new CharacterInfo();
         this.authInfo = authInfo;
@@ -74,6 +76,8 @@ public class ServerAuth : NetworkAuthenticator
         if (isAuthenticated)
         {
             ServerManager.SendMessage(con, message, MessageType.AuthAccept);
+            var oldData = (PlayerConnectionInfo)con.authenticationData;
+            oldData.isAuthorized = true;
             ServerAccept(con);
         }
         else
@@ -88,33 +92,38 @@ public class ServerAuth : NetworkAuthenticator
         }
     }
 
+#if UNITY_EDITOR
+    private ulong playerId = 76561198071680434;
+#endif
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
+#if !UNITY_EDITOR
         if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
         {
-            print("auth data not null");
             return;
         }
+
         if (msg.AuthData == null || msg.Id == 0)
         {
-            print("request empty");
             return;
         }
 
         ServerManager.i.AddConection(msg.Id, con);
-
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
         con.authenticationData = new PlayerConnectionInfo(msg);
-
-        print("beginned auth session");
+#else
+        msg.Id = 76561198071680434;
+        if (ServerManager.i.GetConnection(msg.Id) != null)
+            msg.Id++;
+        ServerManager.i.AddConection(msg.Id, con);
+        con.authenticationData = new PlayerConnectionInfo(msg);
+        SendAuthResult(con, true, "authorized");
+#endif
     }
 
     private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)
     {
-        print("auth ticket response");
-        print(user);
-        print(status);
         if (ServerManager.i.GetConnection(user) == null)
             return;
 

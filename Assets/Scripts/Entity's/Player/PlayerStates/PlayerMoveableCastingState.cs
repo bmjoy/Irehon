@@ -18,12 +18,12 @@ public class PlayerMoveableCastingState : PlayerRotatableState
     public override bool CanInteract => true;
     public override PlayerStateType Type => PlayerStateType.Walk;
 
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
         animator.SetBool("Walking", true);
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
         animator.SetBool("Walking", false);
         animator.SetFloat("xMove", 0);

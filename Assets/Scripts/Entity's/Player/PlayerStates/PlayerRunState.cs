@@ -17,7 +17,7 @@ public class PlayerRunState : PlayerRotatableState
     public override PlayerStateType Type => PlayerStateType.Run;
     public override bool CanInteract => false;
 
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
         abilitySystem.AbilityInterrupt();
         playerInteracter.StopInterracting();
@@ -25,7 +25,7 @@ public class PlayerRunState : PlayerRotatableState
         animator.SetBool("Walking", true);
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
         animator.SetBool("Sprint", false);
         animator.SetBool("Walking", false);

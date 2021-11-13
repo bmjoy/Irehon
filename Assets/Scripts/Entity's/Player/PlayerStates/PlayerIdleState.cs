@@ -14,11 +14,11 @@ public class PlayerIdleState : PlayerRotatableState
 
     public override bool CanInteract => true;
     public override PlayerStateType Type => PlayerStateType.Idle;
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
     }
 

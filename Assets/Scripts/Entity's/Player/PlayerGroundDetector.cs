@@ -14,12 +14,18 @@ public class PlayerGroundDetector : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Walkable"))
+        {
+            print("Grounded");
             isGrounded = true;
+        } 
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Walkable"))
+        {
+            print("Not grounded");
             isGrounded = false;
+        }
     }
 }

@@ -49,8 +49,9 @@ namespace Client
 
         public override void Start()
         {
-            PlayerPrefs.DeleteAll();
+#if !UNITY_EDITOR
             SteamManager.StartClient();
+#endif
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
             OnGetServerMessage.AddListener(RedirectToAnotherServer);

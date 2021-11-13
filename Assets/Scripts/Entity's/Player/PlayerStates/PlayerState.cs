@@ -15,14 +15,15 @@ public abstract class PlayerState
     public abstract bool CanRotateCamera { get; }
     public abstract float MovementSpeed { get; }
     public abstract bool CanInteract { get; }
+    public bool IsReSimulate;
     public abstract PlayerStateType Type { get; }
 
     protected Player player;
     protected PlayerInteracter playerInteracter;
     protected AbilitySystem abilitySystem;
     public virtual void Update() { }
-    public abstract void Enter();
-    public abstract void Exit();
+    public abstract void Enter(bool isResimulating);
+    public abstract void Exit(bool isResimulating);
     public abstract PlayerStateType HandleInput(InputInfo input, bool isServer);
 
     public override bool Equals(object obj)

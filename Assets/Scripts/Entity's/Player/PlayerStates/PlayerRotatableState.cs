@@ -17,7 +17,7 @@ public abstract class PlayerRotatableState : PlayerState
     {
         if (isServer)
         {
-            player.transform.rotation = Quaternion.Euler(0, input.CameraRotation.y, 0);
+            player.SetRotation(new Vector3(0, input.CameraRotation.y, 0));
             playerBonesLinks.Shoulder.localRotation = Quaternion.Euler(input.CameraRotation.x, -3.5f, 0f);
         }
         return this.Type;

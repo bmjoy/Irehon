@@ -19,15 +19,21 @@ public class PlayerDeathState : PlayerState
 
     public override bool CanInteract => false;
 
-    public override void Enter()
+    public override void Enter(bool isResimulating)
     {
+        if (isResimulating)
+            return;
+
         abilitySystem.AbilityInterrupt();
         playerInteracter.StopInterracting();
         playerBonesLinks.Model.gameObject.SetActive(false);
     }
 
-    public override void Exit()
+    public override void Exit(bool isResimulating)
     {
+        if (isResimulating)
+            return;
+
         playerBonesLinks.Model.gameObject.SetActive(true);
     }
 

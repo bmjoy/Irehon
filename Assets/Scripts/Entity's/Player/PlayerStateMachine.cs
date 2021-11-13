@@ -40,14 +40,14 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.Update();
     }
 
-    private void SetNewState(PlayerStateType type)
+    private void SetNewState(PlayerStateType type, bool isResimulating = false)
     {
         previousState = currentState;
         currentState = PlayerStates[type];
 
         if (previousState == null)
         {
-            currentState.Enter();
+            currentState.Enter(isResimulating);
 
             OnPlayerChangeState.Invoke();
             return;
@@ -55,16 +55,16 @@ public class PlayerStateMachine : NetworkBehaviour
 
         if (previousState.Type != currentState.Type)
         {
-            previousState?.Exit();
-            currentState.Enter();
+            previousState?.Exit(isResimulating);
+            currentState.Enter(isResimulating);
 
             OnPlayerChangeState.Invoke();
         }
     }
 
-    public void InputInState(InputInfo input)
+    public void InputInState(InputInfo input, bool isResimulating = false)
     {
-        SetNewState(CurrentState.HandleInput(input, isServer));
+        SetNewState(CurrentState.HandleInput(input, isServer), isResimulating);
     }
 
     public void ChangePlayerState(PlayerStateType state)

@@ -156,7 +156,7 @@ public class CameraController : MonoBehaviour
 
         shoulderTransform.localRotation = Quaternion.Euler(xRotation, -3.5f, 0f);
 
-        playerTransform.Rotate(Vector3.up * xMouse);
+        player.Rotate(Vector3.up * xMouse);
     }
 
     public void Update()

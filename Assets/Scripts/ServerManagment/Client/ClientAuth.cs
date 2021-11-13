@@ -16,12 +16,16 @@ namespace Client
         }
         public override void OnClientAuthenticate()
         {
+#if !UNITY_EDITOR
             currentRequest = new AuthRequestMessage()
             {
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
             NetworkClient.Send(currentRequest);
+#else
+            NetworkClient.Send(new AuthRequestMessage());
+#endif
         }
 
         public override void OnServerAuthenticate(NetworkConnection conn)
@@ -39,7 +43,9 @@ namespace Client
         {
             if (PlayerPrefs.GetString("Registration") != "")
             {
+                print("Not zero");
                 currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
+                print(currentRequest.registerInfo.fraction);
             }
             GetComponent<NetworkManager>().StartClient();
         }
