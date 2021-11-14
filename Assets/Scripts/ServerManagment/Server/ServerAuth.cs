@@ -93,12 +93,8 @@ public class ServerAuth : NetworkAuthenticator
         }
     }
 
-#if UNITY_EDITOR
-    private ulong playerId = 76561198071680434;
-#endif
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
-#if !UNITY_EDITOR
         if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
         {
             return;
@@ -113,14 +109,6 @@ public class ServerAuth : NetworkAuthenticator
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
 
         con.authenticationData = new PlayerConnectionInfo(msg);
-#else
-        msg.Id = 76561198071680434;
-        if (ServerManager.i.GetConnection(msg.Id) != null)
-            msg.Id++;
-        ServerManager.i.AddConection(msg.Id, con);
-        con.authenticationData = new PlayerConnectionInfo(msg);
-        SendAuthResult(con, true, "authorized");
-#endif
     }
 
     private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)

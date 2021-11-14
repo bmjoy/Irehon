@@ -80,6 +80,15 @@ public static class ContainerData
         await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
     }
 
+    public static async Task UpdateLoadedContainer(int id)
+    {
+        if (!LoadedContainers.ContainsKey(id))
+            return;
+        string sqlCommand = $"UPDATE containers SET slots = '{LoadedContainers[id].ToJson()}' WHERE id = '{id}';";
+
+        await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
+    }
+
     public static IEnumerator SwapSlot(int containerId, int oldSlot, int newSlot)
     {
         yield return MoveSlotData(containerId, oldSlot, newSlot);

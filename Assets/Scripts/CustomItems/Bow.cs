@@ -24,7 +24,7 @@ public class Bow : Weapon
 
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
-        Item currentWeapon = ItemDatabase.GetItemBySlug(gameObject.name);
+        Item currentWeapon = ItemDatabase.GetItemBySlug(slug);
 
         playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
         var localPos = transform.localPosition;

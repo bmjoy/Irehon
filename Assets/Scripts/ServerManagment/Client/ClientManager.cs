@@ -50,8 +50,8 @@ namespace Client
         public override void Start()
         {
 #if !UNITY_EDITOR
-            SteamManager.StartClient();
 #endif
+            SteamManager.StartClient();
             base.Start();
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
             OnGetServerMessage.AddListener(RedirectToAnotherServer);

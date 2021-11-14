@@ -17,19 +17,16 @@ namespace Client
         }
         public override void OnClientAuthenticate()
         {
-#if !UNITY_EDITOR
             currentRequest = new AuthRequestMessage()
             {
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
-#else
             if (PlayerPrefs.GetString("Registration") != "")
             {
                 currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
             }
             NetworkClient.Send(currentRequest);
-#endif
         }
 
         public override void OnServerAuthenticate(NetworkConnection conn)

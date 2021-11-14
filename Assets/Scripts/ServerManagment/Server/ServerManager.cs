@@ -30,9 +30,11 @@ namespace Server
             if (i != null && i != this || ClientManager.i != null)
                 Destroy(gameObject);
             else
+            {
                 i = this;
-            connections = new Dictionary<ulong, NetworkConnection>();
-            LoadDatabase();
+                connections = new Dictionary<ulong, NetworkConnection>();
+                LoadDatabase();
+            }
         }
 
         public static void WaitBeforeDisconnect(NetworkConnection con)
@@ -237,9 +239,7 @@ namespace Server
         public override void OnStartServer()
         {
             base.OnStartServer();
-#if !UNITY_EDITOR
             SteamManager.StartServer();
-#endif
             CreateServerInDB();
         }
 
@@ -280,6 +280,8 @@ namespace Server
         private async Task CharacterLeaveFromWorld(PlayerConnectionInfo info)
         {
             await UpdateCharacterData(info.character, info.playerPrefab);
+            await ContainerData.UpdateLoadedContainer(info.character.inventoryId);
+            await ContainerData.UpdateLoadedContainer(info.character.equipmentId);
             ContainerData.UnLoadContainer(info.character.equipmentId);
             ContainerData.UnLoadContainer(info.character.inventoryId);
             print($"Unspawned character id{info.character.id}");
@@ -305,9 +307,8 @@ namespace Server
 
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
-#if !UNITY_EDITOR
+
             SteamServer.EndSession(data.steamId);
-#endif
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);
