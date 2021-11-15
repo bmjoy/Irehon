@@ -95,6 +95,10 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
+#if UNITY_EDITOR
+        if (ServerManager.i.GetConnection(msg.Id) != null)
+            msg.Id++;
+#endif
         if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
         {
             return;
@@ -106,9 +110,13 @@ public class ServerAuth : NetworkAuthenticator
         }
 
         ServerManager.i.AddConection(msg.Id, con);
-        SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
-
+#if UNITY_EDITOR
         con.authenticationData = new PlayerConnectionInfo(msg);
+        SendAuthResult(con, true, "authorized");
+#else
+        SteamServer.BeginAuthSession(msg.AuthData, msg.Id);
+        con.authenticationData = new PlayerConnectionInfo(msg);
+#endif
     }
 
     private void OnAuthTicketResponse(SteamId user, SteamId owner, AuthResponse status)

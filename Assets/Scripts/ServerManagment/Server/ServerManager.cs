@@ -137,7 +137,11 @@ namespace Server
         {
             PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
 
+#if !UNITY_EDITOR
             if (characterInfo.serverId != serverId)
+#else
+            if (characterInfo.location != SceneManager.GetActiveScene().name)
+#endif
             {
                 if (characterInfo.serverId == 0)
                 {
@@ -239,7 +243,9 @@ namespace Server
         public override void OnStartServer()
         {
             base.OnStartServer();
+#if !UNITY_EDITOR
             SteamManager.StartServer();
+#endif
             CreateServerInDB();
         }
 
@@ -307,8 +313,9 @@ namespace Server
 
             if (data.character.id != 0)
                 await CharacterLeaveFromWorld(data);
-
+#if !UNITY_EDITOR
             SteamServer.EndSession(data.steamId);
+#endif
             print($"Disconnect player id{data.steamId}");
             connections.Remove(data.steamId);
             base.OnServerDisconnect(conn);

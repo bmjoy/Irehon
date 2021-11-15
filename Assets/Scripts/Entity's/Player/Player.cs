@@ -123,6 +123,11 @@ public class Player : Entity
 		if (isServer)
 			return;
 
+#if UNITY_EDITOR
+		name = "Test";
+		return;
+#endif
+
 		Friend friend = new Friend(newId);
 		await friend.RequestInfoAsync();
 
