@@ -45,7 +45,6 @@ public class SteamManager : MonoBehaviour
                 ModDir = "DedicatedTest",
                 VersionString = "1.0.0.0"
             };
-            Environment.SetEnvironmentVariable("PORT", (port + 10).ToString());
             init.WithRandomSteamPort();
 
             i.isServer = true;
@@ -77,7 +76,11 @@ public class SteamManager : MonoBehaviour
         {
 
             i.isServer = false;
+#if !UNITY_EDITOR
             SteamClient.Init(1007, true);
+#else
+            SteamClient.Init(1759510, true);
+#endif
 
             Debug.Log("Steam client intaialized");
         }
