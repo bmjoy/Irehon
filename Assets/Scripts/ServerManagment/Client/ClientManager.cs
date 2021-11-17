@@ -11,7 +11,7 @@ using kcp2k;
 
 namespace Client
 {
-    public enum MessageType { AuthAccept, AuthReject, Error, Notification, RegistrationRequired, ServerRedirect }
+    public enum MessageType { AuthAccept, AuthReject, Error, Notification, RegistrationRequired, ServerRedirect, ItemDatabase }
     public struct ServerMessage : NetworkMessage
     {
         public MessageType messageType;
@@ -56,6 +56,15 @@ namespace Client
             OnGetServerMessage.AddListener(ServerMessageNotificator.ShowMessage);
             OnGetServerMessage.AddListener(RedirectToAnotherServer);
             OnGetServerMessage.AddListener(RegistrationRequired);
+            OnGetServerMessage.AddListener(DatabaseIntialize);
+        }
+
+        private void DatabaseIntialize(ServerMessage message)
+        {
+            if (message.messageType == MessageType.ItemDatabase)
+            {
+                ItemDatabase.DatabaseLoadJson(message.message);
+            }
         }
 
         public override void OnStartClient()

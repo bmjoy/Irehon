@@ -11063,8 +11063,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7198340412959936488}
-  - component: {fileID: 4750503602457415345}
-  - component: {fileID: 8122987478032302033}
   m_Layer: 12
   m_Name: Elbow_R
   m_TagString: Entity
@@ -11088,45 +11086,6 @@ Transform:
   m_Father: {fileID: 7204369593436518440}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &4750503602457415345
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200156713596276116}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 9.811632
-  m_Height: 49.05816
-  m_Direction: 0
-  m_Center: {x: 24.52908, y: 0, z: 0}
---- !u!114 &8122987478032302033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200156713596276116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200157353389047850
 GameObject:
   m_ObjectHideFlags: 0
@@ -16276,8 +16235,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7204447112341980876}
-  - component: {fileID: 7526971259795599431}
-  - component: {fileID: 5175906975515531878}
   m_Layer: 12
   m_Name: LowerLeg_L
   m_TagString: Entity
@@ -16301,45 +16258,6 @@ Transform:
   m_Father: {fileID: 7197925366455487866}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7526971259795599431
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200471774998387130}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 10.788682
-  m_Height: 43.154728
-  m_Direction: 0
-  m_Center: {x: 21.577364, y: 0, z: 0}
---- !u!114 &5175906975515531878
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200471774998387130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200473500943588824
 GameObject:
   m_ObjectHideFlags: 0
@@ -19334,8 +19252,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7198056503639247230}
-  - component: {fileID: 6552999807391978146}
-  - component: {fileID: 4440765711451189186}
   m_Layer: 12
   m_Name: Head
   m_TagString: Entity
@@ -19360,44 +19276,6 @@ Transform:
   m_Father: {fileID: 7198346345129412516}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6552999807391978146
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200512355418269478}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 16.82
-  m_Center: {x: 0, y: 0.09549427, z: 0}
---- !u!114 &4440765711451189186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200512355418269478}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200512439442734404
 GameObject:
   m_ObjectHideFlags: 0
@@ -22587,8 +22465,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7204122427022921086}
-  - component: {fileID: 6902375501201816637}
-  - component: {fileID: 5754541486866397839}
   m_Layer: 12
   m_Name: Hips
   m_TagString: Entity
@@ -22614,44 +22490,6 @@ Transform:
   m_Father: {fileID: 7204165610907647128}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &6902375501201816637
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200561278438596786}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 32.927677, y: 27.836916, z: 38.19771}
-  m_Center: {x: -12.348086, y: 0.10068564, z: 0}
---- !u!114 &5754541486866397839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200561278438596786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200567601281549436
 GameObject:
   m_ObjectHideFlags: 0
@@ -27071,8 +26909,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7197925366455487866}
   - component: {fileID: 7471410117607964895}
-  - component: {fileID: 7084239642530765426}
-  - component: {fileID: 8402711833655397566}
   m_Layer: 12
   m_Name: UpperLeg_L
   m_TagString: Entity
@@ -27109,45 +26945,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageMultiplier: 0
   parent: {fileID: 0}
---- !u!136 &7084239642530765426
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200643149375204732}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 11.979284
-  m_Height: 39.930946
-  m_Direction: 0
-  m_Center: {x: 19.965473, y: 0, z: 0}
---- !u!114 &8402711833655397566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200643149375204732}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200644889294774132
 GameObject:
   m_ObjectHideFlags: 0
@@ -38638,8 +38435,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7198401173949563406}
-  - component: {fileID: 6308126979372112188}
-  - component: {fileID: 3209731224301258015}
   m_Layer: 12
   m_Name: Shoulder_L
   m_TagString: Entity
@@ -38662,45 +38457,6 @@ Transform:
   m_Father: {fileID: 7198299631233681496}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &6308126979372112188
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200814807261328896}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 8.486855
-  m_Height: 33.94742
-  m_Direction: 0
-  m_Center: {x: -16.97371, y: 0, z: 0}
---- !u!114 &3209731224301258015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200814807261328896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7200818806928259326
 GameObject:
   m_ObjectHideFlags: 0
@@ -41690,8 +41446,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 22.368874, y: 27.846169, z: 38.19771}
-  m_Center: {x: -12.187387, y: -3.0919192, z: 0.00000003726659}
+  m_Size: {x: 182.27155, y: 33.282726, z: 60.003036}
+  m_Center: {x: 16.242886, y: -9.250147, z: 0.5952408}
 --- !u!114 &8785244814458060876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57793,8 +57549,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7198150353735886374}
   - component: {fileID: 7722877440098453453}
-  - component: {fileID: 7320924740788348686}
-  - component: {fileID: 624702335593370278}
   m_Layer: 12
   m_Name: UpperLeg_R
   m_TagString: Entity
@@ -57831,45 +57585,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageMultiplier: 0
   parent: {fileID: 0}
---- !u!136 &7320924740788348686
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201096531253913142}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 11.979274
-  m_Height: 39.930912
-  m_Direction: 0
-  m_Center: {x: -19.965456, y: 0, z: 0}
---- !u!114 &624702335593370278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201096531253913142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7201099001375072904
 GameObject:
   m_ObjectHideFlags: 0
@@ -59674,8 +59389,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7204369593436518440}
-  - component: {fileID: 7897032300630187079}
-  - component: {fileID: 6017606481640084903}
   m_Layer: 12
   m_Name: Shoulder_R
   m_TagString: Entity
@@ -59698,45 +59411,6 @@ Transform:
   m_Father: {fileID: 7204139355671457262}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7897032300630187079
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201132857722880208}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 8.486857
-  m_Height: 33.94743
-  m_Direction: 0
-  m_Center: {x: 16.973715, y: 0, z: 0}
---- !u!114 &6017606481640084903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201132857722880208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7201134192763592028
 GameObject:
   m_ObjectHideFlags: 0
@@ -66555,8 +66229,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7204520701273975146}
-  - component: {fileID: 6456490680206044428}
-  - component: {fileID: 613224997312561182}
   m_Layer: 12
   m_Name: LowerLeg_R
   m_TagString: Entity
@@ -66580,45 +66252,6 @@ Transform:
   m_Father: {fileID: 7198150353735886374}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &6456490680206044428
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201231328459840756}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 10.788691
-  m_Height: 43.154762
-  m_Direction: 0
-  m_Center: {x: -21.577381, y: 0, z: 0}
---- !u!114 &613224997312561182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201231328459840756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7201232634056106820
 GameObject:
   m_ObjectHideFlags: 0
@@ -66847,8 +66480,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7198266566143155428}
-  - component: {fileID: 4460969023489479266}
-  - component: {fileID: 7047214440119627712}
   m_Layer: 12
   m_Name: Elbow_L
   m_TagString: Entity
@@ -66872,45 +66503,6 @@ Transform:
   m_Father: {fileID: 7198401173949563406}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &4460969023489479266
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201233697127916788}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 9.987205
-  m_Height: 49.93602
-  m_Direction: 0
-  m_Center: {x: -24.96801, y: 0, z: 0}
---- !u!114 &7047214440119627712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201233697127916788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
 --- !u!1 &7201235040740918946
 GameObject:
   m_ObjectHideFlags: 0

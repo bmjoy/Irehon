@@ -12,10 +12,12 @@ public class PlayerInput : NetworkBehaviour
     private Player player;
     private PlayerStateMachine playerStateMachine;
     private AbilitySystem abilitySystem;
+    private CharacterController characterController;
 
     private void Start()
     {
         player = GetComponent<Player>();
+        characterController = GetComponent<CharacterController>();
         abilitySystem = GetComponent<AbilitySystem>();
         playerStateMachine = GetComponent<PlayerStateMachine>();
     }
@@ -106,7 +108,7 @@ public class PlayerInput : NetworkBehaviour
 
         playerStateMachine.ChangePlayerState(input.PlayerStateType);
 
-        player.SetPosition(input.Position);
+        characterController.SetPosition(input.Position);
 
         Quaternion rot = transform.rotation;
 
@@ -121,16 +123,12 @@ public class PlayerInput : NetworkBehaviour
 
             if (delta > 15f || delta < -15f)
             {
-                print("Setted y position");
-                print(delta);
-                print(input.Position.y);
-                print(sendedInputs.Peek().Position.y);
                 yPosition = input.Position.y;
             }
         }
 
-        player.SetPosition(new Vector3(transform.position.x, yPosition, transform.position.z));
+        characterController.SetPosition(new Vector3(transform.position.x, yPosition, transform.position.z));
 
-        player.SetRotation(rot);
+        characterController.SetRotation(rot);
     }
 }

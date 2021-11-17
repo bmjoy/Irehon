@@ -59,8 +59,6 @@ public class CraftWindowManager : MonoBehaviour
 
     private void UpdateInventory(Container inventory)
     {
-        print("updated inventory");
-        print(inventory == null);
         this.inventory = inventory;
         if (selectedRecipe != null)
             UpdateRequirmentTab(selectedRecipe.requirment);

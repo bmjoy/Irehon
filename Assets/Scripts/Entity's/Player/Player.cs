@@ -16,30 +16,28 @@ public struct SpawnPointInfo
 
 public class Player : Entity
 {
+	public OnContainerUpdate OnPublicEquipmentUpdate { get; private set; } = new OnContainerUpdate();
+	public OnCharacterDataUpdate OnCharacterDataUpdateEvent { get; private set; } = new OnCharacterDataUpdate();
+	public PlayerBonesLinks PlayerBonesLinks { get; private set; }
+	public bool isDataAlreadyRecieved { get; private set; } = false;
+	public PlayerContainerController ContainerController => containerController;
+
+	[SyncVar(hook = "GetName"), HideInInspector]
+	public SteamId Id;
+
 	[SerializeField]
 	private GameObject deathContainerPrefab;
 
-	[SyncVar(hook = "GetName")]
-	public SteamId Id;
-	public PlayerBonesLinks PlayerBonesLinks { get; private set; }
-	public bool isDataAlreadyRecieved { get; private set; } = false;
-	public OnCharacterDataUpdate OnCharacterDataUpdateEvent = new OnCharacterDataUpdate();
-	public PlayerContainerController ContainerController => containerController;
-	public OnContainerUpdate OnPublicEquipmentUpdate { get; private set; } = new OnContainerUpdate();
 	private PlayerStateMachine stateMachine;
 	private PlayerContainerController containerController;
-
 	private CharacterController controller;
-
-	[SerializeField]
-	private Collider offlineCharacterCollider;
 
 	private CharacterInfo characterData;
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
+
 	[SyncVar(hook ="EquipmentHook")]
 	private string equipmentJson;
-
 
 	protected override void Awake()
 	{
@@ -52,32 +50,33 @@ public class Player : Entity
 
 	protected override void Start()
 	{
-		isAlive = true;
-		SetHealth(maxHealth);
-		stateMachine.ChangePlayerState(PlayerStateType.Idle);
-
-		if (isClient && !isLocalPlayer)
-		{
-			controller.enabled = false;
-			offlineCharacterCollider.enabled = true;
-		}
+		SetDefaultState();
 
 		if (isLocalPlayer)
 		{
-			HitConfirmEvent.AddListener(x => UIController.i.ShowHitMarker());
+			OnDoDamageEvent.AddListener(x => UIController.i.ShowHitMarker());
 
 			ContainerWindowManager.i.PlayerIntialize(this);
 			CameraController.i.Intialize(this);
 			CraftWindowManager.Intialize(this);
 
-			OnHealthChanged.AddListener((oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth));
+			OnHealthChangeEvent.AddListener((oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth));
 
 			OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
 		}
-		foreach (Collider collider in GetHitBoxColliderList())
+
+		foreach (Collider collider in HitboxColliders)
 			playerColliders.Add(collider.GetComponent<PlayerCollider>());
+
 		if (!isServer)
 			OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
+
+		if (isServer)
+		{
+			OnDeathEvent.AddListener(InitiateRespawn);
+			OnRespawnEvent.AddListener(TeleportToSpawnPoint);
+			OnRespawnEvent.AddListener(SetDefaultState);
+		}
 	}
 
 	public void SelfKill()
@@ -85,38 +84,8 @@ public class Player : Entity
 		Death();
     }
 
-	public void SetRotation(Vector3 rotation)
-    {
-		controller.enabled = false;
-		transform.rotation = Quaternion.Euler(rotation);
-		controller.enabled = true;
-	}
-
-	public void SetRotation(Quaternion rotation)
-	{
-		controller.enabled = false;
-		transform.rotation = rotation;
-		controller.enabled = true;
-	}
-
-	public void SetRotationRpc(Vector3 rotation) => SetRotation(rotation);
-
-	public void Rotate(Vector3 eulers)
-    {
-		controller.enabled = false;
-		transform.Rotate(eulers);
-		controller.enabled = true;
-	}
-
 	[TargetRpc]
-	public void SetPositionRpc(Vector3 position) => SetPosition(position);
-
-	public void SetPosition(Vector3 position)
-    {
-		controller.enabled = false;
-		transform.position = position;
-		controller.enabled = true;
-    }
+	public void SetPositionRpc(Vector3 position) => controller.SetPosition(position);
 
 	private async void GetName(SteamId oldId, SteamId newId)
 	{
@@ -143,31 +112,23 @@ public class Player : Entity
 	}
 
 	[Server]
-	public void SendCharacterInfo(CharacterInfo data)
+	public void SetCharacterInfo(CharacterInfo data)
 	{
-		StartCoroutine(SendInfo());
-
 		if (!isDataAlreadyRecieved)
 			ServerIntialize(data);
 
 		isDataAlreadyRecieved = true;
 
-		IEnumerator SendInfo()
-		{
-			yield return ContainerData.LoadContainer(data.equipmentId);
-			Container equipment = ContainerData.LoadedContainers[data.equipmentId];
+		Container equipment = ContainerData.LoadedContainers[data.equipmentId];
+		Container inventory = ContainerData.LoadedContainers[data.inventoryId];
 
-			yield return ContainerData.LoadContainer(data.inventoryId);
-			Container inventory = ContainerData.LoadedContainers[data.inventoryId];
+		characterData = data;
+		UpdateCharacterData(characterData);
 
-			characterData = data;
-			UpdateCharacterData(characterData);
+		containerController.SendContainerData(data.inventoryId, inventory);
+		containerController.SendContainerData(data.equipmentId, equipment);
 
-			containerController.SendContainerData(data.inventoryId, inventory);
-			containerController.SendContainerData(data.equipmentId, equipment);
-
-			SendEquipmentInfo(data.equipmentId, equipment);
-		}
+		SendEquipmentInfo(data.equipmentId, equipment);
 	}
 
 	[ClientRpc]
@@ -189,12 +150,11 @@ public class Player : Entity
 	private void SendEquipmentInfo(int id, Container equip)
 	{
 		GetComponent<PlayerWeaponEquipment>().UpdateWeapon(equip);
+
 		foreach (PlayerCollider playerCollider in playerColliders)
-		{
 			playerCollider.UpdateModifier(equip);
-		}
+
 		equipmentJson = equip.ToJson().ToString();
-		print(equipmentJson);
 		SendEquipmentInfoRpc(equip);
 	}
 
@@ -202,66 +162,58 @@ public class Player : Entity
 	private void SendEquipmentInfoRpc(Container equipment) => OnPublicEquipmentUpdate.Invoke(equipment);
 	private void EquipmentHook(string oldJson, string newJson)
 	{
-		print("Hook invoked");
 		OnPublicEquipmentUpdate.Invoke(new Container(SimpleJSON.JSON.Parse(newJson)));
 	}
 
-	public CharacterInfo GetCharacterData() => characterData;
+	public CharacterInfo GetCharacterInfo() => characterData;
 
 	protected override void SetDefaultState()
 	{
 		isAlive = true;
 		SetHealth(maxHealth);
 		stateMachine.ChangePlayerState(PlayerStateType.Idle);
+	}
 
-		if (isServer)
+	private void TeleportToSpawnPoint()
+    {
+		CharacterInfo currentCharacterInfo = ((PlayerConnectionInfo)connectionToClient.authenticationData).character;
+		if (SceneManager.GetActiveScene().name != currentCharacterInfo.spawnSceneName)
 		{
-			CharacterInfo currentCharacterInfo = ((PlayerConnectionInfo)connectionToClient.authenticationData).character;
-			if (SceneManager.GetActiveScene().name != currentCharacterInfo.spawnSceneName)
-			{
-				SceneChanger.ChangeCharacterScene(this, currentCharacterInfo.spawnSceneName, currentCharacterInfo.spawnPoint);
-			}
-			else
-			{
-				SetPosition(currentCharacterInfo.spawnPoint);
-				SetPositionRpc(currentCharacterInfo.spawnPoint);
-			}
+			SceneChanger.ChangeCharacterScene(this, currentCharacterInfo.spawnSceneName, currentCharacterInfo.spawnPoint);
+		}
+		else
+		{
+			controller.SetPosition(currentCharacterInfo.spawnPoint);
+			SetPositionRpc(currentCharacterInfo.spawnPoint);
 		}
 	}
 
 	protected override void Death()
 	{
-		if (!isAlive)
-			return;
-
 		base.Death();
-
 
 		if (isServer)
 		{
 			stateMachine.ChangePlayerState(PlayerStateType.Death);
-			StartCoroutine(SpawnDeathContainer());
+			SpawnDeathContainer();
+			DeathClientRpc();
 		}
-
-		if (isServerOnly)
-			DeathOnClient();
 	}
 
-	IEnumerator SpawnDeathContainer()
+	private async void SpawnDeathContainer()
 	{
 		GameObject deadBody = Instantiate(deathContainerPrefab);
 		NetworkServer.Spawn(deadBody);
 
-		deadBody.transform.position = transform.position;
+		deadBody.transform.position = transform.position + Vector3.up;
 		deadBody.transform.rotation = transform.rotation;
 
-		yield return ContainerData.LoadContainer(characterData.equipmentId);
 		Container equipment = ContainerData.LoadedContainers[characterData.equipmentId];
 
 		deadBody.GetComponent<DeathContainer>().SetEquipment(equipment);
 
 		var www = Api.Request("/containers/?quantity=1", ApiMethod.POST);
-		yield return www.SendWebRequest();
+		await www.SendWebRequest();
 		int newContainerId = Api.GetResult(www)["id"].AsInt;
 
 		List<int> characterContainersId = new List<int>();
@@ -269,45 +221,20 @@ public class Player : Entity
 		characterContainersId.Add(characterData.equipmentId);
 		characterContainersId.Add(characterData.inventoryId);
 
-		yield return ContainerData.MoveAllItemsInNewContainer(characterContainersId, newContainerId);
+		ContainerData.MoveAllItemsInNewContainer(characterContainersId, newContainerId);
 
 		deadBody.GetComponent<Chest>().SetChestId(newContainerId);
-	}
-
-	protected override void Respawn()
-	{
-		base.Respawn();
-
-		if (isServer)
-			RespawnOnClient();
-	}
-
-	[ClientRpc]
-	protected virtual void DeathOnClient() => Death();
-
-	[ClientRpc]
-	protected virtual void RespawnOnClient() => Respawn();
-
-	[Server]
-	public void DoDamage(Entity target, int damage)
-	{
-		DamageMessage damageMessage = new DamageMessage
-		{
-			damage = damage,
-			source = this,
-			target = target
-		};
-		target.TakeDamage(damageMessage);
+		deadBody.GetComponent<DeathContainer>().CheckIsContainerEmpty(ContainerData.LoadedContainers[newContainerId]);
 	}
 
 	public override void TakeDamage(DamageMessage damageMessage)
 	{
 		if (damageMessage.source as Player != null &&
-				(damageMessage.source as Player).GetCharacterData().fraction == characterData.fraction)
+				(damageMessage.source as Player).GetCharacterInfo().fraction == characterData.fraction)
 			return;
-
+		Debug.Log(damageMessage.damage);
 		base.TakeDamage(damageMessage);
-		TakeDamageEvent(damageMessage.damage);
+		TakeDamageEventTargetRpc(damageMessage.damage);
 	}
 
 	private void OnDestroy()

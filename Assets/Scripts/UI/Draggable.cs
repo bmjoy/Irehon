@@ -10,8 +10,8 @@ public class Draggable : MonoBehaviour, IDragHandler
     
     private void Awake()
     {
-        Canvas[] c = GetComponentsInParent<Canvas>();
-        canvas = c[c.Length - 1];
+        Canvas[] canvas = GetComponentsInParent<Canvas>();
+        this.canvas = canvas[canvas.Length - 1];
 
         rectTransform = GetComponent<RectTransform>();
     }

@@ -1,10 +1,9 @@
 ﻿using Mirror;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HealthChangedEvent : UnityEvent<int, int> {}
+public class OnHealthChangeEvent : UnityEvent<int, int> { }
 
 public class HitConfirmEvent : UnityEvent<int> { }
 
@@ -19,13 +18,14 @@ public struct DamageMessage
 
 public class Entity : NetworkBehaviour
 {
-    public string NickName { get => name; }
-    public int Health { get => health; }
+    public List<Collider> HitboxColliders => hitboxColliders;
+    public string NickName => name;
+    public int Health => health;
 
-    [SerializeField]
+    [SerializeField, Tooltip("In seconds, 0 = will be destroyed after death")]
     protected float respawnTime;
 
-    [SerializeField]
+    [SerializeField, Tooltip("Will be visible on healthbar")]
     protected new string name;
 
     protected Vector3 spawnPosition;
@@ -33,22 +33,24 @@ public class Entity : NetworkBehaviour
     [SyncVar(hook = "OnChangeHealth")]
     protected int health;
 
-    [SerializeField]
+    [SerializeField, Tooltip("By default entity will spawn with this amount of health")]
     protected int maxHealth;
 
-    protected HitConfirmEvent HitConfirmEvent = new HitConfirmEvent();
+    protected HitConfirmEvent OnDoDamageEvent = new HitConfirmEvent();
 
-    [SerializeField]
+
+    [SerializeField, Tooltip("Colliders ")]
     protected List<Collider> hitboxColliders = new List<Collider>();
 
     protected bool isAlive;
-    public OnTakeDamage OnTakeDamageEvent = new OnTakeDamage();
-    public HealthChangedEvent OnHealthChanged;
+    public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
+    public OnHealthChangeEvent OnHealthChangeEvent { get; private set; } = new OnHealthChangeEvent();
+    public UnityEvent OnDeathEvent { get; private set; } = new UnityEvent();
+    public UnityEvent OnRespawnEvent { get; private set; } = new UnityEvent();
 
     protected virtual void Awake()
     {
-        if (OnHealthChanged == null)
-            OnHealthChanged = new HealthChangedEvent();
+        tag = "EntityBase";
     }
 
     private void Update()
@@ -60,17 +62,31 @@ public class Entity : NetworkBehaviour
     protected virtual void Start()
     {
         spawnPosition = transform.position;
+        OnRespawnEvent.AddListener(SetDefaultState);
+
+        if (respawnTime == 0)
+            OnDeathEvent.AddListener(SelfDestroy);
+        else
+            OnDeathEvent.AddListener(InitiateRespawn);
+
+        OnDeathEvent.AddListener(() => Debug.Log($"<{name}> death event"));
+        OnRespawnEvent.AddListener(() => Debug.Log($"<{name}> respawn event"));
+
         SetDefaultState();
+    }
+
+    protected void InitiateRespawn()
+    {
+        if (isServer)
+        {
+            Debug.Log("Started respawn");
+            Invoke("Respawn", respawnTime);
+        }
     }
 
     protected void OnChangeHealth(int oldValue, int newValue)
     {
-        OnHealthChanged.Invoke(maxHealth, health);
-    }
-
-    public List<Collider> GetHitBoxColliderList()
-    {
-        return hitboxColliders;
+        OnHealthChangeEvent.Invoke(maxHealth, health);
     }
 
     public void SetName(string name)
@@ -85,41 +101,53 @@ public class Entity : NetworkBehaviour
         transform.position = spawnPosition;
     }
 
-    protected virtual void Death()
-    {
-        isAlive = false;
-        if (isServer)
-        {
-            if (respawnTime > 0)
-                Invoke("Respawn", respawnTime);
-            else
-                StartCoroutine(SelfDestroy());
-        }
-    }
 
-    private IEnumerator SelfDestroy()
+    private void SelfDestroy()
     {
-        for (int i = 0; i < 20; i++)
-        {
-            i++;
-            transform.Translate(Vector3.down * 0.15f);
-            yield return new WaitForSeconds(0.1f);
-        }
-        NetworkServer.Destroy(gameObject);
+        if (isServer)
+            NetworkServer.Destroy(gameObject);
     }
 
     public bool IsAlive() => isAlive;
 
+    protected virtual void Death()
+    {
+        Debug.Log($"Death {name}, isAlive = {isAlive}");
+
+        if (!isAlive)
+            return;
+
+        isAlive = false;
+        
+        OnDeathEvent.Invoke();
+        Debug.Log("Death event invoked");
+
+        if (isServer)
+            DeathClientRpc();
+    }
+
     protected virtual void Respawn()
     {
-        SetDefaultState();
+        Debug.Log($"Respawn {name}, isAlive = {isAlive}");
+        if (isAlive)
+            return;
+        isAlive = true;
+        OnRespawnEvent.Invoke();
+        if (isServer)
+            RespawnClientRpc();
     }
+
+    [ClientRpc]
+    protected virtual void DeathClientRpc() => Death();
+
+    [ClientRpc]
+    protected virtual void RespawnClientRpc() => Respawn();
 
     [Server]
     protected virtual void SetHealth(int health)
     {
         this.health = health;
-        
+
         if (this.health > maxHealth)
             this.health = maxHealth;
 
@@ -129,17 +157,17 @@ public class Entity : NetworkBehaviour
             Death();
         }
 
-        OnHealthChanged?.Invoke(maxHealth, this.health);
+        OnHealthChangeEvent?.Invoke(maxHealth, this.health);
     }
 
     [TargetRpc]
-    public void EntityHitConfirm(NetworkConnection con, int damage)
+    public void DoDamageEventTargetRpc(NetworkConnection con, int damage)
     {
-        HitConfirmEvent.Invoke(damage);
+        OnDoDamageEvent.Invoke(damage);
     }
 
     [TargetRpc]
-    public void TakeDamageEvent(int damage)
+    public void TakeDamageEventTargetRpc(int damage)
     {
         OnTakeDamageEvent.Invoke(damage);
     }
@@ -149,14 +177,29 @@ public class Entity : NetworkBehaviour
     {
         if (!isAlive)
             return;
+
         health -= damageMessage.damage;
         if (health <= 0)
         {
             Death();
             health = 0;
         }
-        OnHealthChanged?.Invoke(maxHealth, this.health);
+
+        OnHealthChangeEvent?.Invoke(maxHealth, this.health);
+
         if (damageMessage.source != this)
-            damageMessage.source?.EntityHitConfirm(damageMessage.source.connectionToClient, damageMessage.damage);
+            damageMessage.source?.DoDamageEventTargetRpc(damageMessage.source.connectionToClient, damageMessage.damage);
+    }
+
+    [Server]
+    public void DoDamage(Entity target, int damage)
+    {
+        DamageMessage damageMessage = new DamageMessage
+        {
+            damage = damage,
+            source = this,
+            target = target
+        };
+        target.TakeDamage(damageMessage);
     }
 }

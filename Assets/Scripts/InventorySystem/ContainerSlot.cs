@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections;
 using SimpleJSON;
 
 [Serializable]
-public class ContainerSlot
+public class ContainerSlot : IEquatable<ContainerSlot>
 {
     public int itemId;
     public int slotIndex;
@@ -45,5 +46,10 @@ public class ContainerSlot
     {
         itemId = slot.itemId;
         itemQuantity = slot.itemQuantity;
+    }
+
+    public bool Equals(ContainerSlot other)
+    {
+        return itemId == other.itemId && slotIndex == other.slotIndex && itemQuantity == other.itemQuantity;
     }
 }

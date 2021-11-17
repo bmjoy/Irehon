@@ -3,20 +3,22 @@ using Mirror;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
     private float baseMovementSpeed = 0.05f;
 
-    [SerializeField]
     private float gravity = 5f;
 
     public bool IsGrounded { private set; get; }
 
+    [HideInInspector]
     public float yVelocity;
 
     private CharacterController characterController;
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
+        Player player = GetComponent<Player>();
+        if (player.isClient && !player.isLocalPlayer)
+            characterController.enabled = false;
     }
 
     private void FixedUpdate()
@@ -24,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
         yVelocity -= Time.fixedDeltaTime * gravity;
         if (yVelocity > 0)
             yVelocity -= Time.fixedDeltaTime * gravity * 0.25f;
-        if (yVelocity < -gravity)
+        if (yVelocity < -gravity * 10)
             yVelocity = -gravity;
         characterController.Move(Vector3.up * yVelocity * Time.deltaTime);
         IsGrounded = characterController.isGrounded;

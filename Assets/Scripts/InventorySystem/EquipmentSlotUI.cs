@@ -31,6 +31,17 @@ public class EquipmentSlotUI : InventorySlotUI
         {
             itemSprite.gameObject.SetActive(false);
             baseSprite.gameObject.SetActive(true);
+
+            if (isPointerOverSlot)
+            {
+                TooltipWindowController.HideTooltip();
+
+                isPointerOverSlot = false;
+            }
+
+            if (isDragging)
+                ContainerWindowManager.i.GetDragger().gameObject.SetActive(false);
+
             return;
         }
         else
@@ -45,6 +56,9 @@ public class EquipmentSlotUI : InventorySlotUI
             string slug = item?.slug;
             if (slug != null)
                 itemSprite.sprite = Resources.Load<Sprite>("Items/" + slug);
+
+            if (isDragging)
+                ContainerWindowManager.i.GetDraggerImage().sprite = itemSprite.sprite;
         }
     }
 }

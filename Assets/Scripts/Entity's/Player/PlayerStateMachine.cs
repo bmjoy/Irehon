@@ -13,6 +13,7 @@ public class PlayerStateMachine : NetworkBehaviour
 {
     public PlayerState CurrentState => currentState;
     public PlayerState PreviousState => previousState;
+    [HideInInspector]
     public UnityEvent OnPlayerChangeState = new UnityEvent();
 
     public Dictionary<PlayerStateType, PlayerState> PlayerStates { get; private set; }

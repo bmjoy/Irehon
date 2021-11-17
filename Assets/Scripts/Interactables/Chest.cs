@@ -12,7 +12,7 @@ public class Chest : NetworkBehaviour, IInteractable
     private int containerId;
     public int ContainerId { get => containerId; }
     public OnContainerUpdate OnContainerUpdate { get; } = new OnContainerUpdate();
-
+    public UnityEvent OnDestroyEvent { get; } = new UnityEvent();
     private void Start()
     {
         if (containerId != 0)
@@ -32,19 +32,21 @@ public class Chest : NetworkBehaviour, IInteractable
         this.containerId = containerId;
     }
 
-    public void Interact(Player player)
+    public virtual void Interact(Player player)
     {
-        player.GetComponent<PlayerContainerController>().OpenChest(this);
+        player.GetComponent<PlayerContainerController>().OpenChest(this, containerId);
     }
 
-    public void StopInterract(Player player)
+    public virtual void StopInterract(Player player)
     {
         player.GetComponent<PlayerContainerController>().CloseChest();
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         if (containerId != 0)
             ContainerData.ContainerUpdateNotifier.UnSubscribe(containerId, ContainerUpdateEvent);
+
+        OnDestroyEvent.Invoke();
     }
 }

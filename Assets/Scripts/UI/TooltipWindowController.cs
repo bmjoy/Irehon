@@ -23,10 +23,29 @@ public struct TooltipMessage
         Font = 14;
     }
 
-    public TooltipMessage(string message, int font)
+    public TooltipMessage(string message, int font, int maxWordsInLine = 0)
     {
         Color = Color.white;
         Font = font;
+
+        if (maxWordsInLine != 0)
+        {
+            string[] words = message.Split(' ');
+            
+            int wordCount = words.Length;
+            
+            int requiredLinesAmount = wordCount / maxWordsInLine;
+            
+            message = "";
+            
+            for (int i = 0; i < wordCount; i++)
+            {
+                message += words[i] + " ";
+                if (i % 4 == 0 && i != 0 && i != wordCount - 1)
+                    message += System.Environment.NewLine;
+            }
+        }
+
         Message = message;
     }
 

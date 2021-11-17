@@ -13,7 +13,7 @@ public class AbilitySystem : NetworkBehaviour
     public PlayerMovement PlayerMovementComponent => playerMovement;
     public PlayerBonesLinks PlayerBonesLinks => boneLinks;
 
-
+    [HideInInspector]
     public KeyCode ListeningKey;
 
     private PlayerBonesLinks boneLinks;
@@ -21,12 +21,10 @@ public class AbilitySystem : NetworkBehaviour
     private Player player;
     private Animator animator;
     private AudioSource audioSource;
+    [SerializeField]
     private GameObject abilityPoolObject;
 
     private AbilityBase currentAbility;
-
-    [SerializeField]
-    private GameObject weaponPrefab;
 
     [SyncVar]
     private bool isAbilityCasting;
@@ -43,14 +41,11 @@ public class AbilitySystem : NetworkBehaviour
 
     private void Awake()
     {
-        abilityPoolObject = new GameObject("AbilityPool", typeof(AudioSource));
-
         player = GetComponent<Player>();
         boneLinks = GetComponent<PlayerBonesLinks>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
         audioSource = abilityPoolObject.GetComponent<AudioSource>();
-        abilityPoolObject.transform.parent = transform;
         isAbilityCasting = false;
     }
 

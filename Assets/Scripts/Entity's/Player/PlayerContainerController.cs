@@ -13,12 +13,12 @@ public class PlayerContainerController : NetworkBehaviour
     private Player player;
     private Chest chest;
 
-    private Dictionary<ContainerType, int> containers = new Dictionary<ContainerType, int>();
+    private Dictionary<ContainerType, int> containersId = new Dictionary<ContainerType, int>();
 
     public OnContainerUpdate OnInventoryUpdate { get; private set; } = new OnContainerUpdate();
     public OnContainerUpdate OnEquipmentUpdate { get; private set; } = new OnContainerUpdate();
 
-    private CharacterInfo characterData => player.GetCharacterData();
+    private CharacterInfo characterData => player.GetCharacterInfo();
     private int openedContainerId;
 
     private void Awake()
@@ -28,7 +28,7 @@ public class PlayerContainerController : NetworkBehaviour
         if (!player.isDataAlreadyRecieved)
             player.OnCharacterDataUpdateEvent.AddListener(Intialize);
         else
-            Intialize(player.GetCharacterData());
+            Intialize(player.GetCharacterInfo());
         OnInventoryUpdate.AddListener(ContainerWindowManager.i.UpdateInventory);
         OnEquipmentUpdate.AddListener(ContainerWindowManager.i.UpdateEquipment);
     }
@@ -36,13 +36,13 @@ public class PlayerContainerController : NetworkBehaviour
     public void Intialize(CharacterInfo info)
     {
         player.OnCharacterDataUpdateEvent.RemoveListener(Intialize);
-        containers[ContainerType.Equipment] = info.equipmentId;
-        containers[ContainerType.Inventory] = info.inventoryId;
+        containersId[ContainerType.Equipment] = info.equipmentId;
+        containersId[ContainerType.Inventory] = info.inventoryId;
     }
 
     private ContainerType GetContainerType(int containerId)
     {
-        foreach (var keyValuePair in containers)
+        foreach (var keyValuePair in containersId)
         {
             if (keyValuePair.Value == containerId)
                 return keyValuePair.Key;
@@ -70,29 +70,11 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void SendChestData(int containerId, Container container)
+    private void SendChestDataTargetRPC(int containerId, Container container)
     {
-        containers[ContainerType.Chest] = containerId;
+        containersId[ContainerType.Chest] = containerId;
         Containers[ContainerType.Chest] = container;
         ContainerWindowManager.i.OpenChest(container);
-    }
-
-    [TargetRpc]
-    public void SendItemDatabase(string json)
-    {
-        ItemDatabase.DatabaseLoadJson(json);
-    }
-
-    [Server]
-    private void SendChestData(Container data)
-    {
-        StartCoroutine(Send());
-        IEnumerator Send(){
-            yield return ContainerData.LoadContainer(chest.ContainerId);
-            Container container = ContainerData.LoadedContainers[chest.ContainerId];
-
-            SendChestData(openedContainerId, container);
-        }
     }
 
     private int GetContainerId(ContainerType type)
@@ -107,9 +89,9 @@ public class PlayerContainerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void CloseChestRpc()
+    private void CloseChestTargetRpc()
     {
-        containers[ContainerType.Chest] = 0;
+        containersId[ContainerType.Chest] = 0;
         Containers[ContainerType.Chest] = null;
         ContainerWindowManager.i.CloseChest();
     }
@@ -117,68 +99,52 @@ public class PlayerContainerController : NetworkBehaviour
     [Server]
     public void CloseChest()
     {
-        chest?.OnContainerUpdate.RemoveListener(SendChestData);
+        ContainerData.ContainerUpdateNotifier.UnSubscribe(openedContainerId, SendChestDataTargetRPC);
+        chest?.OnDestroyEvent.RemoveListener(CloseChest);
         chest = null;
         openedContainerId = 0;
 
-        CloseChestRpc();
+        CloseChestTargetRpc();
     }
 
     [Server]
-    public void OpenChest(Chest chest)
+    public void OpenChest(Chest chest, int containerId)
     {
         if (openedContainerId != 0 || chest == null || Vector3.Distance(chest.gameObject.transform.position, transform.position) > 8f)
             return;
 
         this.chest = chest;
+        chest.OnDestroyEvent.AddListener(CloseChest);
 
-        openedContainerId = chest.ContainerId;
+        openedContainerId = containerId;
 
-        StartCoroutine(LoadAndSendChestData());
-        IEnumerator LoadAndSendChestData()
-        {
-            yield return ContainerData.LoadContainer(chest.ContainerId);
-            Container chestContainer = ContainerData.LoadedContainers[chest.ContainerId];
-            SendChestData(chestContainer);
-        }
+        Container chestContainer = ContainerData.LoadedContainers[openedContainerId];
+        SendChestDataTargetRPC(openedContainerId, chestContainer);
 
-        chest.OnContainerUpdate.AddListener(SendChestData);
+        ContainerData.ContainerUpdateNotifier.Subscribe(openedContainerId, SendChestDataTargetRPC);
     }
 
     //from , to
     [Server]
-    private IEnumerator Equip(int equipmentSlot, int inventorySlot)
+    private void Equip(int equipmentSlot, int inventorySlot)
     {
-        yield return ContainerData.LoadContainer(characterData.inventoryId);
         Container inventory = ContainerData.LoadedContainers[characterData.inventoryId];
 
         Item equipableItem = ItemDatabase.GetItemById(inventory[inventorySlot].itemId);
 
         if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
-            yield break;
+            return;
+
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
-            yield break;
+            return;
 
-        yield return ContainerData.MoveSlotData(characterData.inventoryId, inventorySlot, characterData.equipmentId, equipmentSlot);
-    }
-
-    private bool IsMoveLegal(ContainerType firstType, ContainerType secondType)
-    {
-        if (firstType == ContainerType.Equipment && secondType != ContainerType.Inventory)
-            return false;
-        if (secondType == ContainerType.Equipment && firstType != ContainerType.Inventory)
-            return false;
-        else
-            return true;
+        ContainerData.MoveSlotData(characterData.inventoryId, inventorySlot, characterData.equipmentId, equipmentSlot);
     }
 
     [Command]
     //from , to
     public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
     {
-        if (!IsMoveLegal(firstType, secondType))
-            return;
-
         int firstContainerId = GetContainerId(firstType);
         if (firstContainerId == 0)
             return;
@@ -188,12 +154,12 @@ public class PlayerContainerController : NetworkBehaviour
             return;
 
         if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
-            StartCoroutine(Equip(secondSlot, firstSlot));
+            Equip(secondSlot, firstSlot);
         else if (firstType == ContainerType.Equipment && secondType == ContainerType.Inventory)
-            StartCoroutine(ContainerData.MoveSlotData(characterData.equipmentId, firstSlot, characterData.inventoryId, secondSlot));
+            ContainerData.MoveSlotData(characterData.equipmentId, firstSlot, characterData.inventoryId, secondSlot);
         else if (firstContainerId == secondContainerId)
-            StartCoroutine(ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot));
+            ContainerData.SwapSlot(firstContainerId, firstSlot, secondSlot);
         else
-            StartCoroutine(ContainerData.MoveSlotData(firstContainerId, firstSlot, secondContainerId, secondSlot));
+            ContainerData.MoveSlotData(firstContainerId, firstSlot, secondContainerId, secondSlot);
     }
 }

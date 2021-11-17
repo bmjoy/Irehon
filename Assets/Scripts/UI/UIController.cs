@@ -6,21 +6,17 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-
     public static UIController i;
-
-
-    [SerializeField]
-    private Image cursorHint;
 
     private float defaultTriangleSize = 150;
     private float healthBarUpdateDelay = 0.5f;
     private float reducingAmount = 0.7f;
     private float minimumTriangleSize = 80f;
+
+    [SerializeField]
+    private Image cursorHint;
     [SerializeField]
     private Canvas statusBarCanvas;
-    [SerializeField]
-    private Canvas AbilityTree;
     [SerializeField]
     private Slider healthBar;
     [SerializeField]
@@ -152,6 +148,7 @@ public class UIController : MonoBehaviour
     public static void SetDefaultUI()
     {
         i.EnableDefaultCrosshair();
+        ContainerWindowManager.i.GetDragger().gameObject.SetActive(false);
         CameraController.DisableAimCamera();
         CameraController.EnableCursor();
     }

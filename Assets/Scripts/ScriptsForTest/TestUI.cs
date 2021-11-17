@@ -24,6 +24,6 @@ public class TestUI : MonoBehaviour
 
     public void GiveItem()
     {
-        StartCoroutine(ContainerData.GiveContainerItem(Convert.ToInt32(container.text), Convert.ToInt32(item.text)));
+        ContainerData.GiveContainerItem(Convert.ToInt32(container.text), Convert.ToInt32(item.text));
     }
 }

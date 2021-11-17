@@ -95,18 +95,21 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
+        Debug.Log($"[[{msg.Id} {con.address}]] connection request");
 #if UNITY_EDITOR
         if (ServerManager.i.GetConnection(msg.Id) != null)
             msg.Id++;
 #endif
         if (con.authenticationData != null || ServerManager.i.GetConnection(msg.Id) != null)
         {
-            return;
+            Debug.Log($"[[{msg.Id} {con.address}]] second connect attemp");
+            SendAuthResult(con, false, "already connected");
         }
 
         if (msg.AuthData == null || msg.Id == 0)
         {
-            return;
+            Debug.Log($"[[{msg.Id} {con.address}]] empty auth data");
+            SendAuthResult(con, false, "null auth data");
         }
 
         ServerManager.i.AddConection(msg.Id, con);

@@ -23,8 +23,8 @@ public class PlayerCollider : EntityCollider
         }
         else
         {
-            Item weaponItem = ItemDatabase.GetItemById(equipmentSlot.itemId);
-            damageMultiplier = GetDefaultModifier() - weaponItem.metadata["ArmorResistance"].AsFloat;
+            Item equipmentItem = ItemDatabase.GetItemById(equipmentSlot.itemId);
+            damageMultiplier = GetDefaultModifier() - equipmentItem.metadata["ArmorResistance"].AsFloat;
         }
     }
 }

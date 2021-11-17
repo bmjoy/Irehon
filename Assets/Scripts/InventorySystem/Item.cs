@@ -53,7 +53,7 @@ public class Item
         List<TooltipMessage> messages = new List<TooltipMessage>();
         messages.Add(new TooltipMessage(name, 30));
         messages.Add(new TooltipMessage(GetRarityColor(rarity), rarity.ToString(), 20));
-        messages.Add(new TooltipMessage(description, 20));
+        messages.Add(new TooltipMessage(description, 20, 5));
         return messages;
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-public class Container
+public class Container : IEquatable<Container>
 {
     public ContainerSlot[] slots;
 
@@ -78,6 +78,11 @@ public class Container
     public ContainerSlot FindItem(int itemId) => Array.Find(slots, x => x.itemId == itemId);
 
     public ContainerSlot[] FindItemSlots(int itemId) => Array.FindAll(slots, x => x.itemId == itemId);
+
+    public bool Equals(Container other)
+    {
+        return slots.SequenceEqual(other.slots);
+    }
 
     public ContainerSlot this[int i]
     {

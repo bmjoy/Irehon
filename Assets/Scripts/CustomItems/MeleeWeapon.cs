@@ -19,9 +19,6 @@ public class MeleeWeapon : Weapon
     {
         Item currentWeapon = ItemDatabase.GetItemBySlug(slug);
 
-        print(currentWeapon == null);
-        print(slug);
-
         var playerBonesLinks = abilitySystem.GetComponent<PlayerBonesLinks>();
 
         var localScale = transform.localScale;

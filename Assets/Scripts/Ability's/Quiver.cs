@@ -15,7 +15,7 @@ public class Quiver : MonoBehaviour
         {
             GameObject arrowObj = Instantiate(arrowPrefab, quiverTransform);
             Arrow arrow = arrowObj.GetComponent<Arrow>();
-            arrow.SetParent(quiverOwner, quiverOwner.GetHitBoxColliderList(), this);
+            arrow.SetParent(quiverOwner, quiverOwner.HitboxColliders, this);
             arrow.SetDamage(damage);
             arrow.gameObject.SetActive(false);
             arrowsInQuiever.Enqueue(arrow);
@@ -27,6 +27,8 @@ public class Quiver : MonoBehaviour
         if (!arrowsInQuiever.Contains(arrow))
             arrowsInQuiever.Enqueue(arrow);
         arrow.transform.parent = quiverTransform;
+        arrow.transform.localPosition = Vector3.zero;
+        arrow.transform.localRotation = new Quaternion();
         arrow.gameObject.SetActive(false);
     }
 

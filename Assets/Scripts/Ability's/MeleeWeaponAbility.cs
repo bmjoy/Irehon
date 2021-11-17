@@ -14,7 +14,7 @@ public class MeleeWeaponAbility : AbilityBase
     {
         base.Setup(abilitySystem);
 
-        swordCollider.Intialize(abilitySystem.PlayerComponent.GetHitBoxColliderList());
+        swordCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
     }
