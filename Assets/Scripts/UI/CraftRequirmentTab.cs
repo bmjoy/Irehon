@@ -19,7 +19,7 @@ public class CraftRequirmentTab : MonoBehaviour
         print(requirment == null);
         print(requirmentItem == null);
         itemName.text = requirmentItem.name;
-        itemQuantity.text = $"{requirment.itemQuantity}/{inventory.GetItemCount(requirmentItem.id)}";
+        itemQuantity.text = $"{inventory.GetItemCount(requirmentItem.id)}/{requirment.itemQuantity}";
         itemIcon.sprite = requirmentItem.sprite;
     }
 
