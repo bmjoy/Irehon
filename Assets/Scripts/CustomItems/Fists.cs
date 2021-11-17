@@ -21,5 +21,6 @@ public class Fists : Weapon
     public override void UnSetup(AbilitySystem abilitySystem)
     {
         ability.DestroyColliders();
+        Destroy(gameObject);
     }
 }

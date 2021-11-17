@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerInteracter : NetworkBehaviour
 {
-    [SyncVar]
+    [SyncVar, HideInInspector]
     public bool isInteracting;
 
     private IInteractable currentInteractable;
@@ -57,6 +57,7 @@ public class PlayerInteracter : NetworkBehaviour
     {
        if (currentInteractable != null)
             currentInteractable.StopInterract(player);
+
         currentInteractable = null;
         isInteracting = false;
     }

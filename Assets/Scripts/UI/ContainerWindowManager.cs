@@ -42,6 +42,13 @@ public class ContainerWindowManager : MonoBehaviour
             i = this;
     }
 
+    private ContainerSlot GetContainerAttachedSlot(InventorySlotUI slot)
+    {
+        if (playerContainerController.Containers.ContainsKey(slot.type) && playerContainerController.Containers[slot.type] != null)
+            return playerContainerController.Containers[slot.type]?[slot.slotId];
+        else
+            return null;
+    }
     public void PlayerIntialize(Player player)
     {
         playerContainerController = player.GetComponent<PlayerContainerController>();
@@ -50,6 +57,25 @@ public class ContainerWindowManager : MonoBehaviour
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
     {
         playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
+    }
+
+    public void UseItemSlot(InventorySlotUI slot)
+    {
+        var containerSlot = GetContainerAttachedSlot(slot);
+
+        Item item = ItemDatabase.GetItemById(containerSlot.itemId);
+
+        if (item.type == ItemType.Weapon || item.type == ItemType.Armor)
+        {
+            if (slot.type != ContainerType.Equipment)
+                playerContainerController.MoveItem(slot.type, slot.slotId, ContainerType.Equipment, (int)item.equipmentSlot);
+            else
+            {
+                var emptySlot = playerContainerController.Containers[ContainerType.Inventory].GetEmptySlot();
+                if (emptySlot != null)
+                    playerContainerController.MoveItem(slot.type, slot.slotId, ContainerType.Inventory, emptySlot.slotIndex);
+            }
+        }
     }
 
     public void FastMoveSlot(InventorySlotUI from)

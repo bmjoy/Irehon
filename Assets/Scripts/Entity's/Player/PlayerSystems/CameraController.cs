@@ -24,12 +24,12 @@ public class CameraController : MonoBehaviour
     private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
     [SerializeField]
     private Transform targetTransform;
-    [SerializeField]
-    private float yShoulderOffset;
+
     [SerializeField]
     private Cinemachine.CinemachineVirtualCamera aimCamera;
     [SerializeField]
     private Cinemachine.CinemachineVirtualCamera mainCamera;
+
     private Cinemachine.CinemachineBasicMultiChannelPerlin currentShakeHandler;
     private float shakeTimer;
     private float shakeTimerTotal;
@@ -39,6 +39,7 @@ public class CameraController : MonoBehaviour
     private PlayerInteracter interacter;
     private Transform playerTransform;
     private Transform shoulderTransform;
+    private CharacterController characterController;
     private bool cursorAiming;
     private float xRotation = 0f;
     private bool isLookingAtFloor;
@@ -57,7 +58,7 @@ public class CameraController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        cursorAiming = false;
+        cursorAiming = true;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
     }
 
@@ -119,6 +120,7 @@ public class CameraController : MonoBehaviour
     {
         PlayerBonesLinks links = player.GetComponent<PlayerBonesLinks>();
         shoulderTransform = links.Shoulder;
+        characterController = player.GetComponent<CharacterController>();
         playerTransform = player.transform;
         mainCamera.Follow = links.Shoulder;
         aimCamera.Follow = links.Shoulder;
@@ -150,15 +152,15 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.fixedDeltaTime;
-        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.fixedDeltaTime;
+        float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
+        float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
 
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -85f, 85f);
 
-        shoulderTransform.localRotation = Quaternion.Euler(xRotation, yShoulderOffset, 0f);
+        shoulderTransform.localRotation = Quaternion.Euler(xRotation, 0, 0f);
 
-        player.Rotate(Vector3.up * xMouse);
+        characterController.Rotate(Vector3.up * xMouse);
     }
 
     public void Update()
@@ -170,6 +172,11 @@ public class CameraController : MonoBehaviour
             else
                 DisableCursor();
         }
+
+        if (!cursorAiming || playerStateMachine == null || !playerStateMachine.CurrentState.CanRotateCamera)
+            return;
+
+        RotateCamera();
     }
 
     //TODO: перевести в UI controller
@@ -217,8 +224,6 @@ public class CameraController : MonoBehaviour
             UIController.i.ShowHint("Interact", "Press E to interract with this object");
         else
             UIController.i.HideHint();
-
-        RotateCamera();
 
         UpdateLookingPoint();
     }

@@ -14,7 +14,7 @@ public class DeathContainer : Chest
         }
     }
 
-    private void CheckIsContainerEmpty(Container container)
+    public void CheckIsContainerEmpty(Container container)
     {
         print(container.GetFilledSlotsCount());
         if (container.GetFilledSlotsCount() == 0)
@@ -25,10 +25,6 @@ public class DeathContainer : Chest
     {
         yield return new WaitForSeconds(time);
         NetworkServer.Destroy(this.gameObject);
-    }
-
-    public override void SetChestId(int containerId) {
-        base.SetChestId(containerId);
     }
     public void SetEquipment(Container equipment)
     {
@@ -42,8 +38,9 @@ public class DeathContainer : Chest
         GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(container);
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         OnContainerUpdate.RemoveListener(CheckIsContainerEmpty);
     }
 }

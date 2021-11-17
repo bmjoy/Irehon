@@ -52,8 +52,6 @@ public class LoginSceneUI : MonoBehaviour
 
                 system.SetSelectedGameObject(next.gameObject, new BaseEventData(system));
             }
-            else
-                Debug.Log("next nagivation element not found");
         }
     }
 }

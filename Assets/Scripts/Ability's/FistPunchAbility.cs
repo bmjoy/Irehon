@@ -19,8 +19,8 @@ public class FistPunchAbility : AbilityBase
         leftHandCollider.transform.localPosition = Vector3.zero;
         rightHandCollider.transform.localPosition = Vector3.zero;
 
-        leftHandCollider.Intialize(abilitySystem.PlayerComponent.GetHitBoxColliderList());
-        rightHandCollider.Intialize(abilitySystem.PlayerComponent.GetHitBoxColliderList());
+        leftHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
+        rightHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
     }

@@ -89,9 +89,9 @@ public static class ContainerData
         await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
     }
 
-    public static IEnumerator SwapSlot(int containerId, int oldSlot, int newSlot)
+    public static void SwapSlot(int containerId, int oldSlot, int newSlot)
     {
-        yield return MoveSlotData(containerId, oldSlot, newSlot);
+        MoveSlotData(containerId, oldSlot, newSlot);
     }
 
     public static void SaveContainer(int containerId, Container container)
@@ -100,9 +100,8 @@ public static class ContainerData
         ContainerUpdateNotifier.Notify(containerId);
     }
 
-    public static IEnumerator TruncateContainer(int containerId)
+    public static void TruncateContainer(int containerId)
     {
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         container.Truncate();
@@ -110,23 +109,34 @@ public static class ContainerData
         SaveContainer(containerId, container);
     }
 
-    public static IEnumerator LoadContainer(int containerId)
+    public static async Task LoadContainer(int containerId)
     {
         if (LoadedContainers.ContainsKey(containerId))
-        {
-            yield break;
-        }
+            return;
 
         var www = Api.Request($"/containers/{containerId}");
-        yield return www.SendWebRequest();
+        await www.SendWebRequest();
         var result = Api.GetResult(www);
         
         if (result != null)
         {
             LoadedContainers[containerId] = new Container(result);
         }
+    }
 
-        yield return null;
+    public async static Task LoadContainerAsync(int containerId)
+    {
+        if (LoadedContainers.ContainsKey(containerId))
+        {
+            return;
+        }
+
+        var www = Api.Request($"/containers/{containerId}");
+        await www.SendWebRequest();
+        var result = Api.GetResult(www);
+
+        if (result != null)
+            LoadedContainers[containerId] = new Container(result);
     }
 
     public static void UnLoadContainer(int containerId)
@@ -138,28 +148,21 @@ public static class ContainerData
         LoadedContainers.Remove(containerId);
     }
 
-    public static IEnumerator MoveAllItemsInNewContainer(List<int> containersId, int newContainerId)
+    public static void MoveAllItemsInNewContainer(List<int> containersId, int newContainerId)
     {
         List<Container> containers = new List<Container>();
 
         foreach (int containerId in containersId)
         {
-            yield return LoadContainer(containerId);
             containers.Add(LoadedContainers[containerId]);
         }
-
-        Debug.Log($"{containersId.Count}, {containers.Count}, {containers[0].slots.Length}");
 
         List<ContainerSlot> filledSlots = new List<ContainerSlot>();
 
         foreach (Container container in containers)
         {
-            Debug.Log(container.slots.Length);
-            Debug.Log(container.GetEmptySlotsCount());
-            Debug.Log(container.GetFilledSlots().Length);
             filledSlots.AddRange(container.GetFilledSlots());
         }
-        Debug.Log(filledSlots.Count);
 
         int requiredSlotCount = filledSlots.Count;
 
@@ -177,18 +180,17 @@ public static class ContainerData
         SaveContainer(newContainerId, newContainer);
     }
 
-    public static IEnumerator GiveContainerItem(int containerId, int itemId)
+    public static void GiveContainerItem(int containerId, int itemId)
     {
-        yield return GiveContainerItem(containerId, itemId, 1);
+        GiveContainerItem(containerId, itemId, 1);
     }
 
     //Создает и помещает такой то предмет в контейнер
-    public static IEnumerator GiveContainerItem(int containerId, int itemId, int count)
+    public static void GiveContainerItem(int containerId, int itemId, int count)
     {
         if (itemId <= 0 || count <= 0 || containerId <= 0)
-            yield break;
+            return;
 
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         Item item = ItemDatabase.GetItemById(itemId);
@@ -208,7 +210,7 @@ public static class ContainerData
                     {
                         containerSlot.itemQuantity += countItems;
                         SaveContainer(containerId, container);
-                        yield break;
+                        return;
                     }
                     else
                     {
@@ -223,7 +225,7 @@ public static class ContainerData
                             containerSlot.itemQuantity += countItems;
                             countItems = 0;
                             SaveContainer(containerId, container);
-                            yield break;
+                            return;
                         }
                     }
                 }
@@ -231,19 +233,18 @@ public static class ContainerData
             SaveContainer(containerId, container);
 
             //Все слоты забиты под фулл
-            yield return CreateItemInEmptySlot(containerId, itemId, countItems);
+            CreateItemInEmptySlot(containerId, itemId, countItems);
         }
         else
             //Такого предмета вообще нет в инвентаре
-            yield return CreateItemInEmptySlot(containerId, itemId, count);
+            CreateItemInEmptySlot(containerId, itemId, count);
     }
 
-    private static IEnumerator CreateItemInEmptySlot(int containerId, int itemId, int count)
+    private static void CreateItemInEmptySlot(int containerId, int itemId, int count)
     {
         if (itemId <= 0 || count <= 0 || containerId <= 0)
-            yield break;
+            return;
 
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         Item item = ItemDatabase.GetItemById(itemId);
@@ -252,7 +253,7 @@ public static class ContainerData
         requiredSlotCount += count % item.maxInStack == 0 ? 0 : 1;
 
         if (container.GetEmptySlotsCount() < requiredSlotCount)
-            yield break;
+            return;
 
         int itemCounts = count;
         for (int i = 0; i < requiredSlotCount; i++)
@@ -260,13 +261,12 @@ public static class ContainerData
             int creatingItemCount = itemCounts > item.maxInStack ? item.maxInStack : itemCounts;
             itemCounts -= creatingItemCount;
 
-            yield return MoveObjectToEmptySlot(containerId, itemId, creatingItemCount);
+            MoveObjectToEmptySlot(containerId, itemId, creatingItemCount);
         }
     }
 
-    public static IEnumerator RemoveItemsFromInventory(int containerId, int itemId, int count)
+    public static void RemoveItemsFromInventory(int containerId, int itemId, int count)
     {
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         foreach (ContainerSlot slot in container.slots)
@@ -284,7 +284,7 @@ public static class ContainerData
 
                     SaveContainer(containerId, container);
                     
-                    yield break;
+                    return;
                 }
                 else
                 {
@@ -301,21 +301,20 @@ public static class ContainerData
         SaveContainer(containerId, container);
     }
 
-    private static IEnumerator MoveObjectToEmptySlot(int containerId, int itemId, int itemQuantity)
+    private static void MoveObjectToEmptySlot(int containerId, int itemId, int itemQuantity)
     {
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         if (container == null)
         {
-            yield break;
+            return;
         }
 
         ContainerSlot slot = container.GetEmptySlot();
 
         if (slot == null)
         {
-            yield break;
+            return;
         }
         
         slot.itemId = itemId;
@@ -324,42 +323,39 @@ public static class ContainerData
         SaveContainer(containerId, container);
     }
 
-    public static IEnumerator MoveSlotData(int containerId, int from, int to)
+    public static void MoveSlotData(int containerId, int from, int to)
     {
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         if (container == null)
-            yield break;
+            return;
 
         int containerSlotsCount = container.slots.Length;
 
         if (from < 0 || to < 0 || from > containerSlotsCount || to > containerSlotsCount)
-            yield break;
+            return;
 
         MoveSlotData(container[from], container[to]);
 
         SaveContainer(containerId, container);
 
-        yield break;
+        return;
     }
 
-    public static IEnumerator MoveSlotData(int oldContainerId, int oldSlot, int containerId, int slot)
+    public static void MoveSlotData(int oldContainerId, int oldSlot, int containerId, int slot)
     {
-        yield return LoadContainer(oldContainerId);
         Container oldContainer = LoadedContainers[oldContainerId];
 
-        yield return LoadContainer(containerId);
         Container container = LoadedContainers[containerId];
 
         if (container == null || oldContainer == null)
-            yield break;
+            return;
 
         int oldContainerSlotsCount = oldContainer.slots.Length;
         int containerSlotsCount = container.slots.Length;
 
         if (oldSlot < 0 || slot < 0 || oldSlot > oldContainerSlotsCount || slot > containerSlotsCount)
-            yield break;
+            return;
 
         MoveSlotData(oldContainer[oldSlot], container[slot]);
 

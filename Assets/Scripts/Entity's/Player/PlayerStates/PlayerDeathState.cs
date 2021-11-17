@@ -27,15 +27,17 @@ public class PlayerDeathState : PlayerState
         abilitySystem.AbilityInterrupt();
         UIController.i.HideStatusCanvas();
         playerInteracter.StopInterracting();
-        player.HideModel();
+        if (player.isServer)
+            player.HideModel();
     }
 
     public override void Exit(bool isResimulating)
     {
         if (isResimulating)
             return;
-            
-        player.ShowModel();
+           
+        if (player.isServer)
+            player.ShowModel();
         UIController.i.ShowStatusCanvas();
     }
 

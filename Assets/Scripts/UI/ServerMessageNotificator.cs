@@ -40,7 +40,8 @@ namespace Client
 
         public static void ShowMessage(ServerMessage msg)
         {
-            i.MessageShowAndHide(msg);
+            if (msg.messageType == MessageType.Notification || msg.messageType == MessageType.Error)
+                i.MessageShowAndHide(msg);
         }
 
         private void MessageShowAndHide(ServerMessage msg)

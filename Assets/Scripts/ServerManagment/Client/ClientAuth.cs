@@ -17,6 +17,7 @@ namespace Client
         }
         public override void OnClientAuthenticate()
         {
+            print("Client authenticate request");
             currentRequest = new AuthRequestMessage()
             {
                 Id = SteamManager.GetSteamId(),

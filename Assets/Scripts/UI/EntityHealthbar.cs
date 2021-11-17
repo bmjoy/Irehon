@@ -24,14 +24,18 @@ public class EntityHealthbar : MonoBehaviour
     private void Start()
     {
         entity = transform.parent.GetComponent<Entity>();
-        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer)
+        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer || entity.GetComponent<NetworkIdentity>().isServer)
         {
             Destroy(gameObject);
             return;
         }
+
+        entity.OnDeathEvent.AddListener(() => gameObject.SetActive(false));
+        entity.OnRespawnEvent.AddListener(() => gameObject.SetActive(true));
+
         StartCoroutine(GetInstanceKostil());
         nickname.text = entity.NickName;
-        entity.OnHealthChanged.AddListener(ChangeHealthOnBar);
+        entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
     }
 
     private IEnumerator GetInstanceKostil()
@@ -44,6 +48,9 @@ public class EntityHealthbar : MonoBehaviour
 
     private void ChangeHealthOnBar(int maxHealth, int health)
     {
+        if (health == 0)
+            return;
+
         float fill = 1.0f * health / maxHealth;
 
         healthBarFiller.fillAmount = fill;
