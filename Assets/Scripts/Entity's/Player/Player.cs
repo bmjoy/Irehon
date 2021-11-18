@@ -69,8 +69,11 @@ public class Player : Entity
 			playerColliders.Add(collider.GetComponent<PlayerCollider>());
 
 		if (!isServer)
+		{
 			OnPublicEquipmentUpdate.AddListener(GetComponent<PlayerModelManager>().UpdateEquipmentContainer);
-
+			if (equipmentJson != null)
+				OnPublicEquipmentUpdate.Invoke(new Container(SimpleJSON.JSON.Parse(equipmentJson)));
+		}
 		if (isServer)
 		{
 			OnDeathEvent.AddListener(InitiateRespawn);
