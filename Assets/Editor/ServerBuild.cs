@@ -20,6 +20,12 @@ public class ServerBuild
         ClientBuild();
         BuildServerZones();
     }
+    [MenuItem("Build/Build client")]
+    static void BuildClient()
+    {
+        Debug.Log("Start build client");
+        ClientBuild();
+    }
     static void NorthBuild()
     {
         string[] scenes = { "Assets/Scenes/North.unity" };

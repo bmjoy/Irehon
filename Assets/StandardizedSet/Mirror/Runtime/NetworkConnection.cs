@@ -7,6 +7,7 @@ namespace Mirror
     /// <summary>Base NetworkConnection class for server-to-client and client-to-server connection.</summary>
     public abstract class NetworkConnection
     {
+        public ulong steamId;
         public const int LocalConnectionId = 0;
 
         // NetworkIdentities that this connection can see

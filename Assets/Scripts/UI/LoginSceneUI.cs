@@ -7,51 +7,35 @@ using UnityEngine.UI;
 
 public class LoginSceneUI : MonoBehaviour
 {
-    public static InputField LoginField { get; private set; }
-    public static InputField PasswordField { get; private set; }
-
+    private static bool isPlayButtonShowable = true;
     [SerializeField]
-    private Button but;
+    private GameObject playButton;
     [SerializeField]
-    private InputField loginField;
-    [SerializeField]
-    private InputField passwordField;
-
-    public void Login() => Client.ClientManager.i.GetComponent<Client.ClientAuth>().PlayButton();
-    //public void Register() => Client.ClientManager.i.GetComponent<Client.ClientAuth>().RegisterButton();
-
-    EventSystem system;
-
-    void Start()
+    private GameObject loadingBar;
+    private void Awake()
     {
-        system = EventSystem.current;
-        LoginField = loginField;
-        PasswordField = passwordField;
-    }
-
-    public void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.Tab))
+        print(isPlayButtonShowable + " is play showable");
+        if (isPlayButtonShowable)
         {
-            Selectable next = system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
-
-            if (next != null)
-            {
-                InputField inputfield = next.GetComponent<InputField>();
-                if (inputfield != null) 
-                    inputfield.OnPointerClick(new PointerEventData(system));  //if it's an input field, also set the text caret
-
-                system.SetSelectedGameObject(next.gameObject, new BaseEventData(system));
-            }
-            else if ((next = system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp()) != null)
-            {
-                InputField inputfield = next.GetComponent<InputField>();
-                if (inputfield != null) 
-                    inputfield.OnPointerClick(new PointerEventData(system));  //if it's an input field, also set the text caret
-
-                system.SetSelectedGameObject(next.gameObject, new BaseEventData(system));
-            }
+            playButton.gameObject.SetActive(true);
         }
+        else
+            loadingBar.gameObject.SetActive(true);
     }
+
+    public static void ShowPlayButton()
+    {
+        isPlayButtonShowable = true;
+    }
+
+    public static void HidePlayButton()
+    {
+        isPlayButtonShowable = false;
+    }
+
+    public void Play()
+    {
+        Client.ClientManager.i.GetComponent<Client.ClientAuth>().PlayButton();
+    }
+    
 }

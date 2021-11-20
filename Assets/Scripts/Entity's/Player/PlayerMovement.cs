@@ -24,11 +24,9 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         yVelocity -= Time.fixedDeltaTime * gravity;
-        if (yVelocity > 0)
-            yVelocity -= Time.fixedDeltaTime * gravity * 0.25f;
-        if (yVelocity < -gravity * 10)
+        if (yVelocity < -gravity)
             yVelocity = -gravity;
-        characterController.Move(Vector3.up * yVelocity * Time.deltaTime);
+        characterController.Move(Vector3.up * yVelocity * Time.fixedDeltaTime);
         IsGrounded = characterController.isGrounded;
     }
 
@@ -41,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
         moveVector.y = 0;
 
         moveVector = Vector3.ClampMagnitude(moveVector, 1);
+
+        moveVector.y = 0;
 
         //Walking side slowness
         moveVector = move.x != 0 || move.y < 0 ? moveVector / 1.5f : moveVector;
