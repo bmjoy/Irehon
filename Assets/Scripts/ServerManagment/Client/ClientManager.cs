@@ -8,6 +8,7 @@ using System;
 using System.Net.Sockets;
 using DuloGames.UI;
 using kcp2k;
+using System.Threading.Tasks;
 
 namespace Client
 {
@@ -32,6 +33,7 @@ namespace Client
         private ServerData serverData;
 
         private bool isRegistrationSceneRequired;
+        private bool isRedirected;
 
         public override void Awake()
         {
@@ -88,23 +90,31 @@ namespace Client
 
         protected override void ChangeScene(string scene, AsyncOperation ao)
         {
-            UILoadingOverlayManager.Instance.Create().ShowSceneLoadOverlay(scene);
+            if (SceneManager.GetActiveScene().name == "LoginScene")
+                LoginSceneUI.HidePlayButton();
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
             CameraController.EnableCursor();
+            print("Disconnect, isRedirected = " + isRedirected);
+            if (!isRedirected)
+                LoginSceneUI.ShowPlayButton();
             if (!isRegistrationSceneRequired)
                 SceneManager.LoadScene("LoginScene");
+            isRedirected = false;
         }
 
-        private void RedirectToAnotherServer(ServerMessage msg)
+        private async void RedirectToAnotherServer(ServerMessage msg)
         {
             if (msg.messageType != MessageType.ServerRedirect)
                 return;
-            
+            print("Redirect");
+            isRedirected = true;
+            LoginSceneUI.HidePlayButton();
             GetComponent<NetworkManager>().StopClient();
+            await Task.Delay(1000);
             string port = msg.message.Split(':')[1];
             (transport as KcpTransport).Port = ushort.Parse(port);
             networkAddress = msg.message.Split(':')[0];
@@ -115,7 +125,6 @@ namespace Client
         {
             if (msg.messageType == MessageType.RegistrationRequired)
             {
-                print("Registration required");
                 isRegistrationSceneRequired = true;
                 UILoadingOverlayManager.Instance.Create().LoadSceneAsync("FractionSelect");
             }

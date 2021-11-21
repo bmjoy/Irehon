@@ -26,6 +26,9 @@ public class SceneChanger : MonoBehaviour
     {
         PlayerConnectionInfo data = (PlayerConnectionInfo)player.connectionToClient.authenticationData;
 
+        if (data.character.sceneChangeInfo != null)
+            return;
+
         data.character.sceneChangeInfo = new SceneChangeInfo()
         {
             sceneName = newScene,

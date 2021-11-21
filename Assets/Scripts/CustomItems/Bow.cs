@@ -12,7 +12,6 @@ public class Bow : Weapon
     public GameObject Arrow;
     public AudioClip TenseSound;
     public Transform BowStringBone;
-    public ParticleSystem AimingParticles;
     [HideInInspector]
     public GameObject ArrowInHand;
 
@@ -32,7 +31,6 @@ public class Bow : Weapon
         transform.parent = playerBonesLinks.LeftHand;
         transform.localPosition = localPos;
         transform.localRotation = localRotation;
-        AimingParticles.transform.parent = abilitySystem.AbilityPoolObject.transform;
         ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
 
         abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
@@ -51,7 +49,6 @@ public class Bow : Weapon
     public override void UnSetup(AbilitySystem abilitySystem)
     {
         Destroy(ArrowInHand);
-        Destroy(AimingParticles);
         Destroy(gameObject);
 
         SetDefaultAnimationSpeed(abilitySystem.AnimatorComponent);

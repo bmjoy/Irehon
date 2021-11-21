@@ -15,7 +15,6 @@ public class HoldReleaseArrowAbility : AbilityBase
     private AudioClip TenseSound => bow.TenseSound;
     private GameObject ArrowInHand => bow.ArrowInHand;
     private Transform BowStringBone => bow.BowStringBone;
-    private ParticleSystem AimingParticles => bow.AimingParticles;
 
     private Vector3 aimingChestOffset = new Vector3(331.6f, 260.2f, -150.2f);
 
@@ -91,7 +90,6 @@ public class HoldReleaseArrowAbility : AbilityBase
         abilityAudioSource.Play();
         aiming = true;
         ArrowInHand.SetActive(true);
-        AimingParticles.Play();
         holdingTime = 0;
         while (aiming)
         {
@@ -126,7 +124,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         }
         else
             additionalyChestOffsetTime = 0.05f;
-        AimingParticles.Stop();
+
         BowStringBone.localPosition = bowBoneStartPosition;
         abilitySystem.AllowTrigger();
         ArrowInHand.SetActive(false);
@@ -151,7 +149,6 @@ public class HoldReleaseArrowAbility : AbilityBase
         }
         ArrowInHand.SetActive(false);
 
-        AimingParticles.Stop();
         if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
             abilityAudioSource.Stop();
         additionalyChestOffsetTime = 0;

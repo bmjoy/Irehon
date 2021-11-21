@@ -95,7 +95,7 @@ public class ServerAuth : NetworkAuthenticator
 
     public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
     {
-        Debug.Log($"[[{msg.Id} {con.address}]] connection request");
+        Debug.Log($"{DateTime.Now} [[{msg.Id} {con.address}]] connection request");
 #if UNITY_EDITOR
         if (ServerManager.i.GetConnection(msg.Id) != null)
             msg.Id++;

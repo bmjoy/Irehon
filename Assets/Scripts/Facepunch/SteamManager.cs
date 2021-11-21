@@ -76,11 +76,7 @@ public class SteamManager : MonoBehaviour
         {
 
             i.isServer = false;
-#if !UNITY_EDITOR
             SteamClient.Init(1007, true);
-#else
-            SteamClient.Init(1759510, true);
-#endif
 
             Debug.Log("Steam client intaialized");
         }

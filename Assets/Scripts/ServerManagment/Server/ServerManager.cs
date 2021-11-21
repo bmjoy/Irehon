@@ -21,7 +21,7 @@ namespace Server
 
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
-        private Dictionary<ulong, NetworkConnection> connections;
+        private List<NetworkConnection> connections;
 
         private int serverId;
         private ushort port;
@@ -33,12 +33,14 @@ namespace Server
             else
             {
                 i = this;
-                connections = new Dictionary<ulong, NetworkConnection>();
+                connections = new List<NetworkConnection>();
                 LoadDatabase();
             }
         }
 
-        public static void Log(SteamId id, string message) => Debug.Log($"[{id}] {message}");
+        public static void Log(SteamId id, string message) => Debug.Log($"{DateTime.Now} [{id}] {message}");
+        public static void Log(string message) => Debug.Log($"{DateTime.Now} [server] {message}");
+
 
         public static void WaitBeforeDisconnect(NetworkConnection con)
         {
@@ -140,7 +142,7 @@ namespace Server
             if (characterInfo.isOnlineOnAnotherServer)
             {
                 Log(data.steamId, $"Disconnect error: already connected");
-                SendMessage(con, "Alraedy connected to another server", MessageType.Notification);
+                SendMessage(con, "Already connected to another server", MessageType.Notification);
                 WaitBeforeDisconnect(con);
                 return;
             }
@@ -193,8 +195,6 @@ namespace Server
 
             Player playerComponent = playerObject.GetComponent<Player>();
 
-            playerComponent.GetComponent<CharacterController>().SetPosition(characterInfo.position);
-            playerComponent.SetPositionRpc(characterInfo.position);
 
             Log(characterInfo.steamId, $"Spawning on map {characterInfo.position}");
 
@@ -203,6 +203,9 @@ namespace Server
             playerComponent.Id = characterInfo.steamId;
 
             NetworkServer.AddPlayerForConnection(con, playerObject);
+
+            playerComponent.GetComponent<CharacterController>().SetPosition(characterInfo.position);
+            playerComponent.SetPositionRpc(characterInfo.position);
 
             playerComponent.SetCharacterInfo(characterInfo);
 
@@ -234,7 +237,11 @@ namespace Server
                 await www.SendWebRequest();
             }
 
-            PlayerPlayRequest(con, new CharacterInfo(Api.GetResult(www)));
+            data.character = new CharacterInfo(Api.GetResult(www));
+
+            con.authenticationData = data;
+
+            PlayerPlayRequest(con, data.character);
         }
 
         public override void OnServerAddPlayer(NetworkConnection conn) { }
@@ -267,7 +274,7 @@ namespace Server
             if (player == null)
             {
                 var wwwUpdate = Api.Request($"/characters/{info.steamId}", ApiMethod.PUT);
-                Log(info.steamId, $"Setted to offline");
+                Log(info.steamId, $"Disconnected without character, setted to offline on DB");
                 await wwwUpdate.SendWebRequest();
                 return;
             }
@@ -289,13 +296,13 @@ namespace Server
                 $"personal_chests={PersonalChestInfo.ToJson(info.personalChests)}", ApiMethod.PUT);
             await www.SendWebRequest();
 
-            Log(info.steamId, $"Setted disconnect position to {info.location} {pos}");
+            Log(info.steamId, $"<color=cyan>Setted disconnect position to {info.location} {pos}</color>");
 
             if (info.isSpawnPointChanged)
             {
-                Log(info.steamId, $"Change spawn point to {info.spawnSceneName} {info.spawnPoint}");
                 www = Api.Request($"/characters/{info.steamId}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
                 await www.SendWebRequest();
+                Log(info.steamId, $"Changed spawn point to {info.spawnSceneName} {info.spawnPoint}");
             }
         }
 
@@ -324,15 +331,13 @@ namespace Server
             foreach (var chest in info.character.personalChests)
                 await ContainerData.UpdateLoadedContainer(chest.ContainerId);
 
-            Log(info.steamId, $"Containers updated");
-
             ContainerData.UnLoadContainer(info.character.equipmentId);
             ContainerData.UnLoadContainer(info.character.inventoryId);
 
             foreach (var chest in info.character.personalChests)
                 ContainerData.UnLoadContainer(chest.ContainerId);
 
-            Log(info.steamId, $"Containers unloaded");
+            Log(info.steamId, $"Containers unloaded and updated");
         }
 
         //Update character data on DB on disconneect
@@ -340,7 +345,9 @@ namespace Server
         {
             if (conn.authenticationData == null)
             {
+                Log(0, $"Disconnect: auth data null");
                 base.OnServerDisconnect(conn);
+                connections.Remove(conn);
                 return;
             }
 
@@ -348,7 +355,9 @@ namespace Server
 
             if (!data.isAuthorized)
             {
-                Log(data.steamId, $"Disconnected not authorized");
+                Log(data.steamId, $"Disconnect: not authorized");
+                connections.Remove(conn);
+                base.OnServerDisconnect(conn);
                 return;
             }
 
@@ -357,8 +366,8 @@ namespace Server
 #if !UNITY_EDITOR
             SteamServer.EndSession(data.steamId);
 #endif
-            Log(data.steamId, $"Disconnected");
-            connections.Remove(data.steamId);
+            connections.Remove(conn);
+            Log(data.steamId, $"Disconnect: default");
             base.OnServerDisconnect(conn);
         }
 
@@ -382,10 +391,14 @@ namespace Server
             SendMessage(con, $"{i.networkAddress}:{i.port}", MessageType.ServerRedirect);
         }
 
-        public void RemoveUserFromConnections(ulong steamId) => connections.Remove(steamId);
+        public void RemoveUserFromConnections(ulong steamId) => connections.Remove(GetConnection(steamId));
+        public void RemoveUserFromConnections(NetworkConnection con) => connections.Remove(con);
 
-        public void AddConection(ulong steamId, NetworkConnection con) => connections[steamId] = con;
-
-        public NetworkConnection GetConnection(ulong steamId) => connections.ContainsKey(steamId) ? connections[steamId] : null;
+        public void AddConection(ulong steamId, NetworkConnection con) 
+        {
+            con.steamId = steamId;
+            connections.Add(con);
+        }
+        public NetworkConnection GetConnection(ulong steamId) => connections.Find(con => con.steamId == steamId);
     }
 }
