@@ -86,7 +86,7 @@ public class Entity : NetworkBehaviour
 
     protected void OnChangeHealth(int oldValue, int newValue)
     {
-        OnHealthChangeEvent.Invoke(maxHealth, health);
+        OnHealthChangeEvent.Invoke(maxHealth, newValue);
     }
 
     public void SetName(string name)

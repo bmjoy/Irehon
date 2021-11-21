@@ -82,6 +82,12 @@ public class Player : Entity
 		}
 	}
 
+	private void PassiveRegenerateHealth()
+    {
+		if (isAlive)
+			SetHealth(health + 30);
+    }
+
 	public void SelfKill()
     {
 		Death();

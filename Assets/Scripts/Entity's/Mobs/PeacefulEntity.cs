@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class PeacefulEntity : Entity
 {
-    private NavMeshAgent
+    //private NavMeshAgent
     private void FixedUpdate()
     {
         
