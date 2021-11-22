@@ -356,6 +356,8 @@ namespace Mirror
                 else if (par.type == AnimatorControllerParameterType.Bool)
                 {
                     bool newBoolValue = reader.ReadBool();
+                    if (newBoolValue)
+                        print($"{newBoolValue} {par.name} {gameObject.name} {animatorEnabled}");
                     if (animatorEnabled)
                         animator.SetBool(par.nameHash, newBoolValue);
                 }
@@ -524,7 +526,7 @@ namespace Mirror
             if (!clientAuthority)
                 return;
 
-            // Debug.Log("OnAnimationMessage for netId=" + netId);
+            //Debug.Log($"OnAnimationMessage for netId {netId}");
 
             // handle and broadcast
             using (PooledNetworkReader networkReader = NetworkReaderPool.GetReader(parameters))

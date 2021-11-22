@@ -88,12 +88,6 @@ namespace Client
         {
         }
 
-        protected override void ChangeScene(string scene, AsyncOperation ao)
-        {
-            if (SceneManager.GetActiveScene().name == "LoginScene")
-                LoginSceneUI.HidePlayButton();
-        }
-
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
@@ -132,7 +126,8 @@ namespace Client
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
-            base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+            if (SceneManager.GetActiveScene().name == "LoginScene")
+                LoginSceneUI.HidePlayButton();
             NetworkClient.PrepareToSpawnSceneObjects();
         }
 

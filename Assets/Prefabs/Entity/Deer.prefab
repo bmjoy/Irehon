@@ -2043,7 +2043,7 @@ GameObject:
   - component: {fileID: -3119996611509927135}
   - component: {fileID: 8731660509926312242}
   - component: {fileID: 2096673231273834762}
-  - component: {fileID: 4060869242067721590}
+  - component: {fileID: -543767009961455366}
   m_Layer: 10
   m_Name: Deer
   m_TagString: EntityBase
@@ -2301,7 +2301,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
---- !u!114 &4060869242067721590
+--- !u!114 &-543767009961455366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2322,10 +2322,10 @@ MonoBehaviour:
   syncScale: 0
   interpolatePosition: 1
   interpolateRotation: 1
-  interpolateScale: 1
-  bufferTimeMultiplier: 3
+  interpolateScale: 0
+  bufferTimeMultiplier: 1
   bufferSizeLimit: 64
-  catchupThreshold: 6
+  catchupThreshold: 4
   catchupMultiplier: 0.1
   showGizmos: 0
   showOverlay: 0

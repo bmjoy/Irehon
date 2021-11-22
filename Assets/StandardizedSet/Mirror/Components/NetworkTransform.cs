@@ -11,6 +11,14 @@ namespace Mirror
     [DisallowMultipleComponent]
     public class NetworkTransform : NetworkTransformBase
     {
+        public bool ExcludeOwnerUpdate;
         protected override Transform targetComponent => transform;
+
+        protected override void ApplySnapshot(NTSnapshot start, NTSnapshot goal, NTSnapshot interpolated)
+        {
+            if (ExcludeOwnerUpdate && isLocalPlayer && isClient)
+                return;
+            base.ApplySnapshot(start, goal, interpolated);
+        }
     }
 }
