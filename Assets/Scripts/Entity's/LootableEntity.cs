@@ -9,14 +9,10 @@ public class LootableEntity : Entity
     [SerializeField, Tooltip("Will be spawn after entity death, should contain Death container component")]
     private GameObject lootContainerPrefab;
 
-    [SerializeField, Tooltip("Will be hiden after death")]
-    private GameObject model;
-
     protected override void Start()
     {
         base.Start();
         OnDeathEvent.AddListener(SpawnDeathContainer);
-        OnDeathEvent.AddListener(() => model.SetActive(false));
     }
 
     protected virtual void SpawnDeathContainer()
@@ -28,15 +24,8 @@ public class LootableEntity : Entity
         NetworkServer.Spawn(deadBody);
 
         deadBody.transform.position = transform.position;
-        deadBody.transform.rotation = transform.rotation;
 
         SpawnDeathContainer(deadBody);
-    }
-
-    protected override void SetDefaultState()
-    {
-        base.SetDefaultState();
-        model.SetActive(true);
     }
 
     private async void SpawnDeathContainer(GameObject deadBody)

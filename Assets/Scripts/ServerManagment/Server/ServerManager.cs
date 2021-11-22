@@ -296,7 +296,7 @@ namespace Server
                 $"personal_chests={PersonalChestInfo.ToJson(info.personalChests)}", ApiMethod.PUT);
             await www.SendWebRequest();
 
-            Log(info.steamId, $"<color=cyan>Setted disconnect position to {info.location} {pos}</color>");
+            Log(info.steamId, $"Setted disconnect position to {info.location} {pos}");
 
             if (info.isSpawnPointChanged)
             {

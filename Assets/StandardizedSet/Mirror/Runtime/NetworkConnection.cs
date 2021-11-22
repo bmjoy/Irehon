@@ -7,17 +7,17 @@ namespace Mirror
     /// <summary>Base NetworkConnection class for server-to-client and client-to-server connection.</summary>
     public abstract class NetworkConnection
     {
-        public ulong steamId;
         public const int LocalConnectionId = 0;
 
         // NetworkIdentities that this connection can see
         // TODO move to server's NetworkConnectionToClient?
-        internal readonly HashSet<NetworkIdentity> observing = new HashSet<NetworkIdentity>();
+        public readonly HashSet<NetworkIdentity> observing = new HashSet<NetworkIdentity>();
 
         /// <summary>Unique identifier for this connection that is assigned by the transport layer.</summary>
         // assigned by transport, this id is unique for every connection on server.
         // clients don't know their own id and they don't know other client's ids.
         public readonly int connectionId;
+        public ulong steamId;
 
         /// <summary>Flag that indicates the client has been authenticated.</summary>
         public bool isAuthenticated;
@@ -142,7 +142,7 @@ namespace Mirror
         // the client. they would be detected as a message. send messages instead.
         internal virtual void Send(ArraySegment<byte> segment, int channelId = Channels.Reliable)
         {
-            //Debug.Log("ConnectionSend " + this + " bytes:" + BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
+            //Debug.Log($"ConnectionSend {this} bytes:{BitConverter.ToString(segment.Array, segment.Offset, segment.Count)}");
 
             // add to batch no matter what.
             // batching will try to fit as many as possible into MTU.
@@ -248,7 +248,7 @@ namespace Mirror
         {
             foreach (NetworkIdentity netIdentity in observing)
             {
-                netIdentity.RemoveObserverInternal(this);
+                netIdentity.RemoveObserver(this);
             }
             observing.Clear();
         }
