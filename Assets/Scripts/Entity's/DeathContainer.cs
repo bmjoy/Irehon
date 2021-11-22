@@ -16,7 +16,6 @@ public class DeathContainer : Chest
 
     public void CheckIsContainerEmpty(Container container)
     {
-        print(container.GetFilledSlotsCount());
         if (container.GetFilledSlotsCount() == 0)
             StartCoroutine(SelfDestroyOnTime(4f));
     }

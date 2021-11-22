@@ -74,8 +74,6 @@ namespace Mirror
         // => not everyone wants to hide renderers!
         public virtual void SetHostVisibility(NetworkIdentity identity, bool visible)
         {
-            foreach (Renderer rend in identity.GetComponentsInChildren<Renderer>())
-                rend.enabled = visible;
         }
 
         /// <summary>Called on the server when a new networked object is spawned.</summary>

@@ -36,7 +36,7 @@ public class PlayerInteracter : NetworkBehaviour
 
         Vector3 currentPos = model.position;
 
-        if (Vector3.Distance(interractPos, currentPos) > 7f)
+        if (Vector3.Distance(interractPos, currentPos) > 10f)
             return;
 
         RaycastHit hit;

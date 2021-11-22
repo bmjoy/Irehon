@@ -26,7 +26,7 @@ public class Entity : NetworkBehaviour
     protected float respawnTime;
 
     [SerializeField, Tooltip("Will be visible on healthbar")]
-    protected new string name;
+    protected new string name = "Entity";
 
     protected Vector3 spawnPosition;
 
@@ -34,7 +34,7 @@ public class Entity : NetworkBehaviour
     protected int health;
 
     [SerializeField, Tooltip("By default entity will spawn with this amount of health")]
-    protected int maxHealth;
+    protected int maxHealth = 100;
 
     protected HitConfirmEvent OnDoDamageEvent = new HitConfirmEvent();
 
@@ -186,6 +186,7 @@ public class Entity : NetworkBehaviour
         }
 
         OnHealthChangeEvent?.Invoke(maxHealth, this.health);
+        OnTakeDamageEvent.Invoke(damageMessage.damage);
 
         if (damageMessage.source != this)
             damageMessage.source?.DoDamageEventTargetRpc(damageMessage.source.connectionToClient, damageMessage.damage);

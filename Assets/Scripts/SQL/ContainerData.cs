@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Networking;
 
 public class PairValue<T, A>
 {
@@ -20,13 +17,13 @@ public static class ContainerData
 {
     public static class ContainerUpdateNotifier
     {
-        private static Dictionary<int, List< Action<int, Container> > > subscribedListeners = new Dictionary<int, List<Action<int, Container>>>();
+        private static Dictionary<int, List<Action<int, Container>>> subscribedListeners = new Dictionary<int, List<Action<int, Container>>>();
 
         public static void Notify(int containerId)
         {
             if (!subscribedListeners.ContainsKey(containerId))
                 return;
-            List < Action<int, Container> > subscribers = subscribedListeners[containerId];
+            List<Action<int, Container>> subscribers = subscribedListeners[containerId];
 
             foreach (var subscriber in subscribers)
                 subscriber(containerId, LoadedContainers[containerId]);
@@ -48,7 +45,7 @@ public static class ContainerData
                 subscribedListeners[containerId].Add(subscriber);
             }
         }
-            
+
         public static void UnSubscribe(int containerId, Action<int, Container> unsubscriber)
         {
             if (unsubscriber == null)
@@ -63,12 +60,13 @@ public static class ContainerData
 
         public static void RemoveAllSubscribers(int containerId)
         {
-            subscribedListeners[containerId].Clear();
+            if (subscribedListeners.ContainsKey(containerId))
+                subscribedListeners[containerId].Clear();
         }
     }
 
     public static Dictionary<int, Container> LoadedContainers = new Dictionary<int, Container>();
-        
+
     public static async void UpdateDatabaseLoadedContainers()
     {
         Dictionary<int, Container> LoadedContainersCopy = new Dictionary<int, Container>(LoadedContainers);
@@ -117,14 +115,14 @@ public static class ContainerData
         var www = Api.Request($"/containers/{containerId}");
         await www.SendWebRequest();
         var result = Api.GetResult(www);
-        
+
         if (result != null)
         {
             LoadedContainers[containerId] = new Container(result);
         }
     }
 
-    public async static Task LoadContainerAsync(int containerId)
+    public static async Task LoadContainerAsync(int containerId)
     {
         if (LoadedContainers.ContainsKey(containerId))
         {
@@ -276,14 +274,14 @@ public static class ContainerData
                 if (slot.itemQuantity >= count)
                 {
                     slot.itemQuantity -= count;
-                    
+
                     if (slot.itemQuantity == 0)
                     {
                         slot.itemId = 0;
                     }
 
                     SaveContainer(containerId, container);
-                    
+
                     return;
                 }
                 else
@@ -292,7 +290,7 @@ public static class ContainerData
 
                     slot.itemQuantity = 0;
                     slot.itemId = 0;
-                    
+
                     continue;
                 }
             }
@@ -316,10 +314,10 @@ public static class ContainerData
         {
             return;
         }
-        
+
         slot.itemId = itemId;
         slot.itemQuantity = itemQuantity;
-        
+
         SaveContainer(containerId, container);
     }
 
