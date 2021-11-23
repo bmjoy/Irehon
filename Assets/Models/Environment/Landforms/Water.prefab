@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4531992052556588}
   - component: {fileID: 33894896026693368}
   - component: {fileID: 23337485998130630}
-  m_Layer: 4
+  m_Layer: 11
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Walkable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25,9 +25,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1727325316379042}
-  m_LocalRotation: {x: 0.00000008146034, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 14.540622, y: 0.22811465, z: 2.4931633}
   m_Children:
   - {fileID: 7085113629743342283}
   m_Father: {fileID: 0}
@@ -92,9 +92,9 @@ GameObject:
   - component: {fileID: 7395481124075303444}
   - component: {fileID: 2634334834336025108}
   - component: {fileID: 8983818825338369240}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Walkable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
