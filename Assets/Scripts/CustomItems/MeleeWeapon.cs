@@ -38,7 +38,6 @@ public class MeleeWeapon : Weapon
 
         GetComponent<MeleeWeaponAbility>().SetDamage(currentWeapon.metadata["Damage"].AsInt);
 
-
         SetAnimationSpeed(abilitySystem.AnimatorComponent, type, currentWeapon.metadata["AttackSpeed"].AsFloat);
 
         return GetComponent<AbilityBase>();

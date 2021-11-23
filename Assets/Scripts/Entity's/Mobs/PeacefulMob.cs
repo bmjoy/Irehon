@@ -8,6 +8,7 @@ public class PeacefulMob : Mob
     protected override void Start()
     {
         base.Start();
-        OnTakeDamageEvent.AddListener(dmg => stateMachine.SetNewState(new MobFearState(this)));
+        if (isServer)
+            OnTakeDamageEvent.AddListener(dmg => stateMachine.SetNewState(new MobFearState(this)));
     }
 }

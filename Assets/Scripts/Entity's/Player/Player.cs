@@ -22,7 +22,7 @@ public class Player : Entity
 	public bool isDataAlreadyRecieved { get; private set; } = false;
 	public PlayerContainerController ContainerController => containerController;
 
-	[SyncVar(hook = "GetName"), HideInInspector]
+	[SyncVar(hook = nameof(GetName)), HideInInspector]
 	public SteamId Id;
 
 	[SerializeField]
@@ -36,7 +36,7 @@ public class Player : Entity
 
 	private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
 
-	[SyncVar(hook ="EquipmentHook")]
+	[SyncVar(hook = nameof(EquipmentHook))]
 	private string equipmentJson;
 
 	protected override void Awake()
@@ -79,6 +79,11 @@ public class Player : Entity
 			OnDeathEvent.AddListener(InitiateRespawn);
 			OnRespawnEvent.AddListener(TeleportToSpawnPoint);
 			OnRespawnEvent.AddListener(SetDefaultState);
+
+			OnTakeDamageEvent.AddListener(TakeDamageEventTargetRpc);
+			OnDoDamageEvent.AddListener(DoDamageEventTargetRpc);
+
+			InvokeRepeating(nameof(PassiveRegenerateHealth), 1, 1);
 		}
 	}
 
@@ -92,6 +97,18 @@ public class Player : Entity
     {
 		Death();
     }
+
+	[TargetRpc]
+	public void DoDamageEventTargetRpc(int damage)
+	{
+		OnDoDamageEvent.Invoke(damage);
+	}
+
+	[TargetRpc]
+	public void TakeDamageEventTargetRpc(int damage)
+	{
+		OnTakeDamageEvent.Invoke(damage);
+	}
 
 	[TargetRpc]
 	public void SetPositionRpc(Vector3 position) => controller.SetPosition(position);
@@ -241,9 +258,8 @@ public class Player : Entity
 		if (damageMessage.source as Player != null &&
 				(damageMessage.source as Player).GetCharacterInfo().fraction == characterData.fraction)
 			return;
-		Debug.Log(damageMessage.damage);
+
 		base.TakeDamage(damageMessage);
-		TakeDamageEventTargetRpc(damageMessage.damage);
 	}
 
 	private void OnDestroy()

@@ -30,19 +30,20 @@ public class Entity : NetworkBehaviour
 
     protected Vector3 spawnPosition;
 
-    [SyncVar(hook = "OnChangeHealth")]
+    [SyncVar(hook = nameof(OnChangeHealth))]
     protected int health;
 
     [SerializeField, Tooltip("By default entity will spawn with this amount of health")]
     protected int maxHealth = 100;
 
-    protected HitConfirmEvent OnDoDamageEvent = new HitConfirmEvent();
 
 
     [SerializeField, Tooltip("Colliders ")]
     protected List<Collider> hitboxColliders = new List<Collider>();
 
     protected bool isAlive;
+
+    public HitConfirmEvent OnDoDamageEvent { get; private set; } = new HitConfirmEvent();
     public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
     public OnHealthChangeEvent OnHealthChangeEvent { get; private set; } = new OnHealthChangeEvent();
     public UnityEvent OnDeathEvent { get; private set; } = new UnityEvent();
@@ -69,9 +70,6 @@ public class Entity : NetworkBehaviour
         else
             OnDeathEvent.AddListener(InitiateRespawn);
 
-        OnDeathEvent.AddListener(() => Debug.Log($"<{name}> death event"));
-        OnRespawnEvent.AddListener(() => Debug.Log($"<{name}> respawn event"));
-
         SetDefaultState();
     }
 
@@ -79,7 +77,6 @@ public class Entity : NetworkBehaviour
     {
         if (isServer)
         {
-            Debug.Log("Started respawn");
             Invoke("Respawn", respawnTime);
         }
     }
@@ -112,15 +109,12 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Death()
     {
-        Debug.Log($"Death {name}, isAlive = {isAlive}");
-
         if (!isAlive)
             return;
 
         isAlive = false;
         
         OnDeathEvent.Invoke();
-        Debug.Log("Death event invoked");
 
         if (isServer)
             DeathClientRpc();
@@ -128,7 +122,6 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Respawn()
     {
-        Debug.Log($"Respawn {name}, isAlive = {isAlive}");
         if (isAlive)
             return;
         isAlive = true;
@@ -160,18 +153,6 @@ public class Entity : NetworkBehaviour
         OnHealthChangeEvent?.Invoke(maxHealth, this.health);
     }
 
-    [TargetRpc]
-    public void DoDamageEventTargetRpc(NetworkConnection con, int damage)
-    {
-        OnDoDamageEvent.Invoke(damage);
-    }
-
-    [TargetRpc]
-    public void TakeDamageEventTargetRpc(int damage)
-    {
-        OnTakeDamageEvent.Invoke(damage);
-    }
-
     [Server]
     public virtual void TakeDamage(DamageMessage damageMessage)
     {
@@ -189,7 +170,7 @@ public class Entity : NetworkBehaviour
         OnTakeDamageEvent.Invoke(damageMessage.damage);
 
         if (damageMessage.source != this)
-            damageMessage.source?.DoDamageEventTargetRpc(damageMessage.source.connectionToClient, damageMessage.damage);
+            damageMessage.source?.OnDoDamageEvent.Invoke(damageMessage.damage);
     }
 
     [Server]

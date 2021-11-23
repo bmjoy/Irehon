@@ -16,7 +16,6 @@ public class MobFearState : MobState
     {
         mobMovement.SetSpeed(mobMovement.RunSpeed);
         mobMovement.Wander();
-        Debug.Log("Fear");
         mob.GetComponent<Animator>().SetBool("isRunning", true);
     }
 

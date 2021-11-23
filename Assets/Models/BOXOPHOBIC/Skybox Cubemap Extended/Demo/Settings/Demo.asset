@@ -52,37 +52,37 @@ MonoBehaviour:
     overrideState: 0
     value: 1
   temperature:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 18
   tint:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 54
   colorFilter:
     overrideState: 0
     value: {r: 1, g: 1, b: 1, a: 1}
   hueShift:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: -5
   saturation:
     overrideState: 1
-    value: 17
+    value: 18
   brightness:
     overrideState: 0
     value: 0
   postExposure:
-    overrideState: 0
-    value: 0
-  contrast:
-    overrideState: 0
-    value: 0
-  mixerRedOutRedIn:
     overrideState: 1
+    value: 0.43
+  contrast:
+    overrideState: 1
+    value: 60
+  mixerRedOutRedIn:
+    overrideState: 0
     value: 100
   mixerRedOutGreenIn:
-    overrideState: 1
+    overrideState: 0
     value: 0
   mixerRedOutBlueIn:
-    overrideState: 1
+    overrideState: 0
     value: 0
   mixerGreenOutRedIn:
     overrideState: 0
@@ -94,23 +94,23 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   mixerBlueOutRedIn:
-    overrideState: 1
+    overrideState: 0
     value: 0
   mixerBlueOutGreenIn:
-    overrideState: 1
+    overrideState: 0
     value: 0
   mixerBlueOutBlueIn:
-    overrideState: 1
+    overrideState: 0
     value: 113
   lift:
     overrideState: 1
-    value: {x: 0.86141664, y: 1, z: 0.94630593, w: 0}
+    value: {x: 0.83999074, y: 0.9063364, z: 1, w: 0}
   gamma:
     overrideState: 1
-    value: {x: 1, y: 0.8238717, z: 0.83401096, w: 0}
+    value: {x: 0.9738547, y: 1, z: 0.9866604, w: 0}
   gain:
     overrideState: 1
-    value: {x: 0.92428195, y: 0.92714804, z: 1, w: 0}
+    value: {x: 0.8422551, y: 1, z: 0.8655243, w: -3.3545663e-10}
   masterCurve:
     overrideState: 0
     value:
@@ -1393,13 +1393,13 @@ MonoBehaviour:
     value: 1
   mode:
     overrideState: 1
-    value: 1
+    value: 0
   intensity:
     overrideState: 1
-    value: 2.95
+    value: 2.75
   color:
     overrideState: 1
-    value: {r: 0.56350124, g: 0.5991023, b: 0.6320754, a: 1}
+    value: {r: 0.086774655, g: 0.0874521, b: 0.24528301, a: 1}
   ambientOnly:
     overrideState: 1
     value: 1
@@ -1420,7 +1420,7 @@ MonoBehaviour:
     value: 0
   radius:
     overrideState: 1
-    value: 0.25
+    value: 9
   quality:
     overrideState: 1
     value: 2
@@ -1457,7 +1457,7 @@ MonoBehaviour:
     value: 0.422
   roundness:
     overrideState: 1
-    value: 1
+    value: 0.934
   rounded:
     overrideState: 1
     value: 0

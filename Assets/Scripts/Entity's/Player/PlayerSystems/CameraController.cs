@@ -134,7 +134,7 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 12))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 12 | 1 << 13))
         {
             oldPosition.z = hit.distance;
             if (hit.collider.CompareTag("Floor") || hit.collider.CompareTag("Walkable"))

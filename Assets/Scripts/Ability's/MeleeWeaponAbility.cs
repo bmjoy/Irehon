@@ -20,6 +20,7 @@ public class MeleeWeaponAbility : AbilityBase
     }
     protected override void Ability(Vector3 target)
     {
+        swordCollider.StartCollectColliders();
         abilitySystem.AnimatorComponent.SetTrigger("Skill1");
         AbilityStart();
     }
@@ -32,8 +33,10 @@ public class MeleeWeaponAbility : AbilityBase
         if (!isServer)
             return;
 
-        foreach (var entity in swordCollider.GetHittableEntities())
+        foreach (var entity in swordCollider.GetCollectedInZoneEntities())
             abilitySystem.PlayerComponent.DoDamage(entity.Key,  Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
+
+        swordCollider.StopCollectColliders();
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
         AbilityEnd();

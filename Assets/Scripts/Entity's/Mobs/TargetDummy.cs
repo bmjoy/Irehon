@@ -13,6 +13,7 @@ public class TargetDummy : Entity
     }
     public override void TakeDamage(DamageMessage damageMessage)
     {
-        damageMessage.source?.DoDamageEventTargetRpc(damageMessage.source.connectionToClient, damageMessage.damage);
+        animator.SetTrigger("GotDamage");
+        damageMessage.source?.OnDoDamageEvent.Invoke(damageMessage.damage);
     }
 }

@@ -10,12 +10,17 @@ public class MobDeathState : MobState
     }
     public override void Enter()
     {
-        mob.Model.gameObject.SetActive(false);
+        mob.IsModelShown = false;
+        foreach(var collider in mob.GetComponents<Collider>())
+            collider.enabled = false;
+        mob.GetComponent<MobMovement>().ResetDestination();
     }
 
     public override void Exit()
     {
-        mob.Model.gameObject.SetActive(true);
+        foreach (var collider in mob.GetComponents<Collider>())
+            collider.enabled = true;
+        mob.IsModelShown = true;
     }
 
     public override MobState Update(float timeInState)
