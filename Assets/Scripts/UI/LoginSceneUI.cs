@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class LoginSceneUI : MonoBehaviour
 {
+    private static LoginSceneUI i;
+
     private static bool isPlayButtonShowable = true;
     [SerializeField]
     private GameObject playButton;
@@ -14,7 +16,7 @@ public class LoginSceneUI : MonoBehaviour
     private GameObject loadingBar;
     private void Awake()
     {
-        print(isPlayButtonShowable + " is play showable");
+        i = this;
         if (isPlayButtonShowable)
         {
             playButton.gameObject.SetActive(true);
@@ -31,6 +33,7 @@ public class LoginSceneUI : MonoBehaviour
     public static void HidePlayButton()
     {
         isPlayButtonShowable = false;
+        i.playButton?.SetActive(false);
     }
 
     public void Play()

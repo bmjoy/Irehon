@@ -10,7 +10,7 @@ public class MobDeathState : MobState
     }
     public override void Enter()
     {
-        mob.IsModelShown = false;
+        mob.ChangeModelState(false);
         foreach(var collider in mob.GetComponents<Collider>())
             collider.enabled = false;
         mob.GetComponent<MobMovement>().ResetDestination();
@@ -20,7 +20,7 @@ public class MobDeathState : MobState
     {
         foreach (var collider in mob.GetComponents<Collider>())
             collider.enabled = true;
-        mob.IsModelShown = true;
+        mob.ChangeModelState(true);
     }
 
     public override MobState Update(float timeInState)

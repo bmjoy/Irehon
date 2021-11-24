@@ -149,6 +149,7 @@ public class Player : Entity
 		Container inventory = ContainerData.LoadedContainers[data.inventoryId];
 
 		characterData = data;
+		fraction = characterData.fraction;
 		UpdateCharacterData(characterData);
 
 		containerController.SendContainerData(data.inventoryId, inventory);
@@ -252,16 +253,6 @@ public class Player : Entity
 		deadBody.GetComponent<Chest>().SetChestId(newContainerId);
 		deadBody.GetComponent<DeathContainer>().CheckIsContainerEmpty(ContainerData.LoadedContainers[newContainerId]);
 	}
-
-	public override void TakeDamage(DamageMessage damageMessage)
-	{
-		if (damageMessage.source as Player != null &&
-				(damageMessage.source as Player).GetCharacterInfo().fraction == characterData.fraction)
-			return;
-
-		base.TakeDamage(damageMessage);
-	}
-
 	private void OnDestroy()
 	{
 		if (isServer)

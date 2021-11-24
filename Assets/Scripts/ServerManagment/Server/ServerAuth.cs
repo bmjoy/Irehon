@@ -6,8 +6,6 @@ using Steamworks;
 using System;
 using System.Collections;
 using UnityEngine;
-
-public enum Fraction { None, North, South };
 public struct RegisterInfo
 {
     public Fraction fraction;

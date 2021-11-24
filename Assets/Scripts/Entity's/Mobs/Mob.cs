@@ -13,7 +13,7 @@ public class Mob : LootableEntity
     public GameObject Model => model;
 
     [SyncVar(hook = nameof(IsModelShownHook))]
-    public bool IsModelShown;
+    private bool isModelShown = true;
 
     [SerializeField, Tooltip("Object that contains mesh renderer for this mob")]
     private GameObject model;
@@ -33,6 +33,11 @@ public class Mob : LootableEntity
     protected void IsModelShownHook(bool oldValue, bool newValue)
     {
         model.SetActive(newValue);
+    }
+
+    public void ChangeModelState(bool newState)
+    {
+        isModelShown = newState;
     }
 
     protected override void SetDefaultState()

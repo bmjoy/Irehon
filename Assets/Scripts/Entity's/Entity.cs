@@ -21,6 +21,8 @@ public class Entity : NetworkBehaviour
     public List<Collider> HitboxColliders => hitboxColliders;
     public string NickName => name;
     public int Health => health;
+    public Fraction fraction;
+    public FractionBehaviourData FractionBehaviourData;
 
     [SerializeField, Tooltip("In seconds, 0 = will be destroyed after death")]
     protected float respawnTime;
@@ -99,10 +101,13 @@ public class Entity : NetworkBehaviour
     }
 
 
-    private void SelfDestroy()
+    private async void SelfDestroy()
     {
         if (isServer)
+        {
+            await System.Threading.Tasks.Task.Delay(500);
             NetworkServer.Destroy(gameObject);
+        }
     }
 
     public bool IsAlive() => isAlive;
@@ -158,6 +163,13 @@ public class Entity : NetworkBehaviour
     {
         if (!isAlive)
             return;
+
+        if (FractionBehaviourData != null)
+        {
+            if (FractionBehaviourData.Behaviours.ContainsKey(damageMessage.source.fraction) &&
+               FractionBehaviourData.Behaviours[damageMessage.source.fraction] == FractionBehaviour.Friendly)
+                return;
+        }
 
         health -= damageMessage.damage;
         if (health <= 0)
