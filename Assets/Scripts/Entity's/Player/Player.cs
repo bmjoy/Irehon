@@ -26,6 +26,11 @@ public class Player : Entity
 	public SteamId Id;
 
 	[SerializeField]
+	private FractionBehaviourData northData;
+	[SerializeField]
+	private FractionBehaviourData southData;
+
+	[SerializeField]
 	private GameObject deathContainerPrefab;
 
 	private PlayerStateMachine stateMachine;
@@ -149,6 +154,11 @@ public class Player : Entity
 		Container inventory = ContainerData.LoadedContainers[data.inventoryId];
 
 		characterData = data;
+		fraction = characterData.fraction;
+		if (fraction == Fraction.North)
+			FractionBehaviourData = northData;
+		else
+			FractionBehaviourData = southData;
 		UpdateCharacterData(characterData);
 
 		containerController.SendContainerData(data.inventoryId, inventory);
@@ -193,7 +203,7 @@ public class Player : Entity
 
 	public CharacterInfo GetCharacterInfo() => characterData;
 
-	protected override void SetDefaultState()
+	public override void SetDefaultState()
 	{
 		isAlive = true;
 		SetHealth(maxHealth);
@@ -252,16 +262,6 @@ public class Player : Entity
 		deadBody.GetComponent<Chest>().SetChestId(newContainerId);
 		deadBody.GetComponent<DeathContainer>().CheckIsContainerEmpty(ContainerData.LoadedContainers[newContainerId]);
 	}
-
-	public override void TakeDamage(DamageMessage damageMessage)
-	{
-		if (damageMessage.source as Player != null &&
-				(damageMessage.source as Player).GetCharacterInfo().fraction == characterData.fraction)
-			return;
-
-		base.TakeDamage(damageMessage);
-	}
-
 	private void OnDestroy()
 	{
 		if (isServer)

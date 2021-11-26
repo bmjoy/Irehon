@@ -10,18 +10,26 @@ public class OnDestinationChangeEvent : UnityEvent<Vector3> { }
 [RequireComponent(typeof(NavMeshAgent), typeof(MobStateMachine))]
 public class Mob : LootableEntity
 {
-    public GameObject Model => model;
+    public List<Renderer> ModelParts => modelParts;
 
     [SyncVar(hook = nameof(IsModelShownHook))]
-    public bool IsModelShown;
+    private bool isModelShown = true;
 
     [SerializeField, Tooltip("Object that contains mesh renderer for this mob")]
-    private GameObject model;
+    private List<Renderer> modelParts;
     protected MobStateMachine stateMachine;
 
     protected override void Start()
     {
         stateMachine = GetComponent<MobStateMachine>();
+        OnDeathEvent.AddListener(() => {
+            foreach (var model in ModelParts)
+                model.enabled = false;
+                });
+        OnRespawnEvent.AddListener(() => {
+            foreach (var model in ModelParts)
+                model.enabled = true;
+        });
         if (isServer)
         {
             OnDeathEvent.AddListener(() => stateMachine.SetNewState(new MobDeathState(this)));
@@ -30,16 +38,28 @@ public class Mob : LootableEntity
         base.Start();
     }
 
-    protected void IsModelShownHook(bool oldValue, bool newValue)
+    private void OnEnable()
     {
-        model.SetActive(newValue);
+        foreach (var model in ModelParts)
+            model.enabled = isModelShown;
     }
 
-    protected override void SetDefaultState()
+    protected void IsModelShownHook(bool oldValue, bool newValue)
+    {
+        foreach (var model in ModelParts)
+            model.enabled = newValue;
+    }
+
+    public void ChangeModelState(bool newState)
+    {
+        isModelShown = newState;
+    }
+
+    public override void SetDefaultState()
     {
         isAlive = true;
         SetHealth(maxHealth);
-        GetComponent<NavMeshAgent>().Warp(spawnPosition);
+        GetComponent<NavMeshAgent>().Warp(SpawnPosition);
         stateMachine.SetNewState(new MobIdleState(this));
     }
 }

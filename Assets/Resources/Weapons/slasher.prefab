@@ -29,13 +29,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3689515951906905501}
-  m_LocalRotation: {x: 0.03353443, y: -0.6824106, z: -0.7295254, w: 0.031368963}
-  m_LocalPosition: {x: -8.985764, y: -2.5567575, z: 0.40245035}
+  m_LocalRotation: {x: 0.69280005, y: -0.109295115, z: -0.0070649707, w: -0.7127642}
+  m_LocalPosition: {x: -8.1, y: -2.5, z: 3.1}
   m_LocalScale: {x: 25, y: 25, z: 25}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -83.498, y: 305.889, z: 233.935}
+  m_LocalEulerAnglesHint: {x: -98.448, y: 263.682, z: 105.782}
 --- !u!33 &1141592188437858434
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -94,8 +94,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.7498393, y: 2.3359745, z: 0.20176026}
-  m_Center: {x: 0.01830289, y: 0.78230757, z: 0.00023673843}
+  m_Size: {x: 1.1676354, y: 2.7666137, z: 0.523516}
+  m_Center: {x: 0.038981665, y: 0.79182726, z: -0.003880559}
 --- !u!114 &2158184036939885723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slug: slasher
-  hand: 1
+  hand: 0
   type: 5
   animatorOverrideController: {fileID: 22100000, guid: d811ede694aca874aa5ef5920f965d5a,
     type: 2}
@@ -140,3 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037aaaee56b365b42ad44299cafe5168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityCollidersInZone: []
+  collectedCollidersInZone: []
+  selfColliders: []

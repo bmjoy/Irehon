@@ -5,6 +5,7 @@ using Mirror;
 using UnityEngine.UI;
 using SimpleJSON;
 using DuloGames.UI;
+using System;
 
 namespace Client
 {
@@ -40,13 +41,33 @@ namespace Client
 
         public void PlayButton()
         {
-            GetComponent<NetworkManager>().StartClient();
+            try
+            {
+                SteamManager.StartClient();
+            }
+            catch (Exception exception)
+            {
+                ServerMessageNotificator.ShowMessage($"Client intialize steam error: {exception.Message}");
+                return;
+            }
+            try 
+            {
+                GetComponent<NetworkManager>().StartClient();
+            }
+            catch (Exception exception)
+            {
+                ServerMessageNotificator.ShowMessage($"Client play error: {exception.Message}");
+                return;
+            }
         }
 
         private void OnAuthResponseMessage(ServerMessage msg)
         {
             if (msg.messageType == MessageType.AuthAccept)
+            {
+                LoginSceneUI.HidePlayButton();
                 ClientAccept();
+            }
             else if (msg.messageType == MessageType.AuthReject)
                 ClientReject();
         }

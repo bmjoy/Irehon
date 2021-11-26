@@ -13,9 +13,17 @@ public class MobStateMachine : MonoBehaviour
     private MobState previousState;
 
     private float currentTimeInState;
+    private bool isClient = false;
+
+    private void Start()
+    {
+        isClient = GetComponent<Entity>().isClient;
+    }
 
     private void FixedUpdate()
     {
+        if (isClient)
+            return;
         var newState = currentState?.Update(currentTimeInState);
         if (newState != currentState)
             SetNewState(newState);
@@ -25,6 +33,8 @@ public class MobStateMachine : MonoBehaviour
 
     public void SetNewState(MobState state)
     {
+        if (isClient)
+            return;
         previousState = currentState;
         currentState = state;
 

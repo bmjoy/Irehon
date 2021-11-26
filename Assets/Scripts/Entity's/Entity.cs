@@ -21,6 +21,8 @@ public class Entity : NetworkBehaviour
     public List<Collider> HitboxColliders => hitboxColliders;
     public string NickName => name;
     public int Health => health;
+    public Fraction fraction;
+    public FractionBehaviourData FractionBehaviourData;
 
     [SerializeField, Tooltip("In seconds, 0 = will be destroyed after death")]
     protected float respawnTime;
@@ -28,7 +30,7 @@ public class Entity : NetworkBehaviour
     [SerializeField, Tooltip("Will be visible on healthbar")]
     protected new string name = "Entity";
 
-    protected Vector3 spawnPosition;
+    public Vector3 SpawnPosition { get; protected set; }
 
     [SyncVar(hook = nameof(OnChangeHealth))]
     protected int health;
@@ -41,7 +43,7 @@ public class Entity : NetworkBehaviour
     [SerializeField, Tooltip("Colliders ")]
     protected List<Collider> hitboxColliders = new List<Collider>();
 
-    protected bool isAlive;
+    public bool isAlive { get; protected set; }
 
     public HitConfirmEvent OnDoDamageEvent { get; private set; } = new HitConfirmEvent();
     public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
@@ -62,7 +64,7 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Start()
     {
-        spawnPosition = transform.position;
+        SpawnPosition = transform.position;
         OnRespawnEvent.AddListener(SetDefaultState);
 
         if (respawnTime == 0)
@@ -91,21 +93,22 @@ public class Entity : NetworkBehaviour
         this.name = name;
     }
 
-    protected virtual void SetDefaultState()
+    public virtual void SetDefaultState()
     {
         isAlive = true;
         SetHealth(maxHealth);
-        transform.position = spawnPosition;
+        transform.position = SpawnPosition;
     }
 
 
-    private void SelfDestroy()
+    private async void SelfDestroy()
     {
         if (isServer)
+        {
+            await System.Threading.Tasks.Task.Delay(500);
             NetworkServer.Destroy(gameObject);
+        }
     }
-
-    public bool IsAlive() => isAlive;
 
     protected virtual void Death()
     {
@@ -176,6 +179,10 @@ public class Entity : NetworkBehaviour
     [Server]
     public void DoDamage(Entity target, int damage)
     {
+        if (FractionBehaviourData != null && FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
+               FractionBehaviourData.Behaviours[target.fraction] == FractionBehaviour.Friendly)
+            return;
+
         DamageMessage damageMessage = new DamageMessage
         {
             damage = damage,

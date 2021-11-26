@@ -48,6 +48,7 @@ public class SteamManager : MonoBehaviour
             init.WithRandomSteamPort();
 
             i.isServer = true;
+            i.isIntialized = true;
             SteamServer.OnSteamServerConnectFailure += (x,y) => Debug.Log($"Connection failed {x} {y}"); ;
             SteamServer.OnSteamServersDisconnected += x => Debug.Log($"Steam server disconnected {x}");
             SteamServer.OnSteamServersConnected += () => Debug.Log("Steam server connected");
@@ -68,22 +69,18 @@ public class SteamManager : MonoBehaviour
         }
     }
 
-    public static void StartClient()
+    public static bool StartClient()
     {
         if (i.isIntialized)
-            return;
-        try
-        {
+            return true;
 
-            i.isServer = false;
-            SteamClient.Init(1007, true);
+        i.isServer = false;
+        i.isIntialized = true;
+        SteamClient.Init(1007, true);
 
-            Debug.Log("Steam client intaialized");
-        }
-        catch (Exception exception)
-        {
-            Debug.Log("Can't intialize steam client " + exception.ToString());
-        }
+        Debug.Log("Steam client intaialized");
+
+        return true;
     }
 
     public static AuthTicket GetAuthTicket() => SteamUser.GetAuthSessionTicket();

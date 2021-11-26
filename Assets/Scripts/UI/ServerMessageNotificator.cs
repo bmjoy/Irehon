@@ -44,6 +44,11 @@ namespace Client
                 i.MessageShowAndHide(msg);
         }
 
+        public static void ShowMessage(string msg)
+        {
+            i.MessageShowAndHide(new ServerMessage() { message = msg, messageType = MessageType.Notification});
+        }
+
         private void MessageShowAndHide(ServerMessage msg)
         {
             if (msg.message == "")

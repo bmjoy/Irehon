@@ -27,7 +27,7 @@ public abstract class Weapon : MonoBehaviour
         }
     }
 
-    private static float GetRequiredSpeedModifier(WeaponType weaponType, float targetSpeed) => targetSpeed / GetAnimationLength(weaponType);
+    private static float GetRequiredSpeedModifier(WeaponType weaponType, float targetSpeed) => GetAnimationLength(weaponType) / targetSpeed;
     protected static void SetAnimationSpeed(Animator animator, WeaponType type, float targetSpeed)
     {
         animator.SetFloat("AnimationSpeed", GetRequiredSpeedModifier(type, targetSpeed));

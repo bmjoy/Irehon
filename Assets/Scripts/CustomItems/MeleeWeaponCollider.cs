@@ -8,8 +8,11 @@ public class OnMeleeWeaponTrigger : UnityEvent<Entity, EntityCollider> { }
 
 public class MeleeWeaponCollider : MonoBehaviour
 {
+    [SerializeField]
     private List<EntityCollider> entityCollidersInZone = new List<EntityCollider>();
+    [SerializeField]
     private List<EntityCollider> collectedCollidersInZone = new List<EntityCollider>();
+    [SerializeField]
     private List<Collider> selfColliders;
     private bool isCollectingColliders;
 
@@ -31,8 +34,18 @@ public class MeleeWeaponCollider : MonoBehaviour
     {
         Dictionary<Entity, EntityCollider> entities = new Dictionary<Entity, EntityCollider>();
         foreach (var collider in collectedCollidersInZone)
+        {
+            if (collider == null) 
+            {
+                continue;
+            }
+            if (collider.GetParentEntityComponent() == null)
+            {
+                continue;
+            }
             if (!entities.ContainsKey(collider.GetParentEntityComponent()))
                 entities.Add(collider.GetParentEntityComponent(), collider);
+        }
         return entities;
     }
 
@@ -45,7 +58,7 @@ public class MeleeWeaponCollider : MonoBehaviour
     public void StopCollectColliders()
     {
         isCollectingColliders = false;
-        collectedCollidersInZone.Clear();
+        collectedCollidersInZone = new List<EntityCollider>();
     }
 
     private void OnTriggerEnter(Collider other)
