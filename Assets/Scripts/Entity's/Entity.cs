@@ -30,7 +30,7 @@ public class Entity : NetworkBehaviour
     [SerializeField, Tooltip("Will be visible on healthbar")]
     protected new string name = "Entity";
 
-    protected Vector3 spawnPosition;
+    public Vector3 SpawnPosition { get; protected set; }
 
     [SyncVar(hook = nameof(OnChangeHealth))]
     protected int health;
@@ -64,7 +64,7 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Start()
     {
-        spawnPosition = transform.position;
+        SpawnPosition = transform.position;
         OnRespawnEvent.AddListener(SetDefaultState);
 
         if (respawnTime == 0)
@@ -93,11 +93,11 @@ public class Entity : NetworkBehaviour
         this.name = name;
     }
 
-    protected virtual void SetDefaultState()
+    public virtual void SetDefaultState()
     {
         isAlive = true;
         SetHealth(maxHealth);
-        transform.position = spawnPosition;
+        transform.position = SpawnPosition;
     }
 
 

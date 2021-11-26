@@ -38,7 +38,7 @@ public class FistPunchAbility : AbilityBase
         if (!isServer)
             return;
 
-        foreach (var entity in leftHandCollider.GetHittableEntities())
+        foreach (var entity in leftHandCollider.GetCollectedInZoneEntities())
             abilitySystem.PlayerComponent.DoDamage(entity.Key, Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");

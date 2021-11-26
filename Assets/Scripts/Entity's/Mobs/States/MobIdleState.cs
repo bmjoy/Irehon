@@ -12,7 +12,6 @@ public class MobIdleState : MobState
     private float wanderTimer;
     public override void Enter()
     {
-
     }
 
     public override void Exit()

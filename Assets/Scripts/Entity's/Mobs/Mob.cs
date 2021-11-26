@@ -40,11 +40,11 @@ public class Mob : LootableEntity
         isModelShown = newState;
     }
 
-    protected override void SetDefaultState()
+    public override void SetDefaultState()
     {
         isAlive = true;
         SetHealth(maxHealth);
-        GetComponent<NavMeshAgent>().Warp(spawnPosition);
+        GetComponent<NavMeshAgent>().Warp(SpawnPosition);
         stateMachine.SetNewState(new MobIdleState(this));
     }
 }

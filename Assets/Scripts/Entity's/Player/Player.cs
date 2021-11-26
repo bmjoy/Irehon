@@ -194,7 +194,7 @@ public class Player : Entity
 
 	public CharacterInfo GetCharacterInfo() => characterData;
 
-	protected override void SetDefaultState()
+	public override void SetDefaultState()
 	{
 		isAlive = true;
 		SetHealth(maxHealth);

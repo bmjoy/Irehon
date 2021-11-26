@@ -2170,6 +2170,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  fraction: 3
+  FractionBehaviourData: {fileID: 0}
   respawnTime: 5
   name: Deer
   maxHealth: 3000
@@ -2330,6 +2332,7 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  ExcludeOwnerUpdate: 0
 --- !u!1001 &3289832663058436219
 PrefabInstance:
   m_ObjectHideFlags: 0
