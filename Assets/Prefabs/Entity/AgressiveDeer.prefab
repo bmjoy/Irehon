@@ -296,9 +296,10 @@ MonoBehaviour:
   - {fileID: 6983917908475305744}
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
-  model: {fileID: 4853755964241498598}
+  modelParts:
+  - {fileID: 4853755964255165664}
   target: {fileID: 0}
-  UnagroRadius: 10
+  UnagroRadius: 15
   AvoidRadius: 40
   RequiredAttackDistance: 2
 --- !u!135 &6953927287571778500
@@ -1304,6 +1305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037aaaee56b365b42ad44299cafe5168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityCollidersInZone: []
+  collectedCollidersInZone: []
+  selfColliders: []
 --- !u!65 &6983917908475305744
 BoxCollider:
   m_ObjectHideFlags: 0

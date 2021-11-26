@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Events;
 
+public class OnAgro : UnityEvent<Entity> { }
+
+[RequireComponent(typeof(MobMovement), typeof(SphereCollider))]
 public class AggressiveMob : Mob
 {
+    [HideInInspector]
     public Entity target;
+
+    public OnAgro OnAgroEvent = new OnAgro();
 
     [Tooltip("При каком расстоянии моб может преследовать другого, пока не потеряет его из виду")]
     public float UnagroRadius = 8;
@@ -16,7 +23,26 @@ public class AggressiveMob : Mob
     protected override void Start()
     {
         base.Start();
+        OnAgroEvent.AddListener(x => stateMachine.SetNewState(new MobAgressiveWanderState(this)));
+        OnAgroEvent.AddListener(entity =>
+        {
+            entity.OnDeathEvent.AddListener(UnAgro);
+        });
     }
+
+    public void UnAgro()
+    {
+        target?.OnDeathEvent.RemoveListener(UnAgro);
+        target = null;
+        stateMachine.SetNewState(new MobIdleState(this));
+    }
+
+    public void Agro(Entity entity)
+    {
+        target = entity;
+        OnAgroEvent.Invoke(entity);
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (isClient)
@@ -24,11 +50,18 @@ public class AggressiveMob : Mob
         if (target == null && isAlive && other.CompareTag("EntityBase"))
         {
             var entity = other.GetComponent<Entity>();
-            if (FractionBehaviourData.Behaviours[entity.fraction] == FractionBehaviour.Agressive)
+
+            if (!entity.isAlive)
+                return;
+
+            if (FractionBehaviourData != null)
             {
-                target = entity;
-                stateMachine.SetNewState(new MobAgressiveWanderState(this));
+                if (FractionBehaviourData.Behaviours[entity.fraction] == FractionBehaviour.Agressive)
+                    Agro(entity);
             }
+            else
+                Agro(entity);
+
         }
     }
 
@@ -36,15 +69,14 @@ public class AggressiveMob : Mob
     {
         if (!isAlive)
             return;
-        target = damageMessage.source;
-        stateMachine.SetNewState(new MobAgressiveWanderState(this));
+        Agro(damageMessage.source);
         base.TakeDamage(damageMessage);
     }
 
     public override void SetDefaultState()
     {
         base.SetDefaultState();
-        target = null;
+        UnAgro();
     }
 }
 

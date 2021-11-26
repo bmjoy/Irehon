@@ -7,7 +7,7 @@ public class MobIdleState : MobState
 {
     public MobIdleState(Mob mob) : base(mob) 
     {
-        wanderTimer = Random.Range(1, 15);
+        wanderTimer = Random.Range(1, 7);
     }
     private float wanderTimer;
     public override void Enter()

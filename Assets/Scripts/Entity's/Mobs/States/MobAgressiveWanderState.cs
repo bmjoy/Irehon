@@ -34,7 +34,7 @@ public class MobAgressiveWanderState : MobState
         //Is runned away
         if (timeInState > 15 && Vector3.Distance(mob.transform.position, mob.target.transform.position) > mob.UnagroRadius)
         {
-            mob.target = null;
+            mob.UnAgro();
             return new MobIdleState(mob);
         }
 

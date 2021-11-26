@@ -42,7 +42,6 @@ public class CameraController : MonoBehaviour
     private CharacterController characterController;
     private bool cursorAiming;
     private float xRotation = 0f;
-    private bool isLookingAtFloor;
 
     private void Awake()
     {
@@ -74,10 +73,6 @@ public class CameraController : MonoBehaviour
         return new Vector2(i.xRotation, i.playerTransform.rotation.eulerAngles.y);
     }
 
-    public bool IsTargetOnFloor()
-    {
-        return isLookingAtFloor;
-    }
     public static Vector2 GetCurrentRotation()
     {
         Vector2 rotation = Vector2.zero;
@@ -134,17 +129,19 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 12 | 1 << 13))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 12))
         {
             oldPosition.z = hit.distance;
-            if (hit.collider.CompareTag("Floor") || hit.collider.CompareTag("Walkable"))
-                isLookingAtFloor = true;
-            else
-                isLookingAtFloor = false;
+            targetTransform.localPosition = oldPosition;
+            return;
+        }
+
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 13))
+        {
+            oldPosition.z = hit.distance;
         }
         else
         {
-            isLookingAtFloor = false;
             oldPosition.z = 20;
         }
         targetTransform.localPosition = oldPosition;

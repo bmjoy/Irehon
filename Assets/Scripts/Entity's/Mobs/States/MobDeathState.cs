@@ -10,20 +10,12 @@ public class MobDeathState : MobState
     }
     public override void Enter()
     {
-        mob.ChangeModelState(false);
-        foreach(var collider in mob.GetComponents<Collider>())
-            collider.enabled = false;
-        foreach (var collider in mob.HitboxColliders)
-            collider.enabled = false;
         mob.GetComponent<MobMovement>().ResetDestination();
+        mob.ChangeModelState(false);
     }
 
     public override void Exit()
     {
-        foreach (var collider in mob.GetComponents<Collider>())
-            collider.enabled = true;
-        foreach (var collider in mob.HitboxColliders)
-            collider.enabled = true;
         mob.ChangeModelState(true);
     }
 

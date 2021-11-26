@@ -24,7 +24,7 @@ public class EntityHealthbar : MonoBehaviour
     private void Start()
     {
         entity = transform.parent.GetComponent<Entity>();
-        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer || entity.GetComponent<NetworkIdentity>().isServer)
+        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer && !entity.GetComponent<NetworkIdentity>().isServer)
         {
             Destroy(gameObject);
             return;

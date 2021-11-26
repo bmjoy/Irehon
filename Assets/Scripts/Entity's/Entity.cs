@@ -43,7 +43,7 @@ public class Entity : NetworkBehaviour
     [SerializeField, Tooltip("Colliders ")]
     protected List<Collider> hitboxColliders = new List<Collider>();
 
-    protected bool isAlive;
+    public bool isAlive { get; protected set; }
 
     public HitConfirmEvent OnDoDamageEvent { get; private set; } = new HitConfirmEvent();
     public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
@@ -110,8 +110,6 @@ public class Entity : NetworkBehaviour
         }
     }
 
-    public bool IsAlive() => isAlive;
-
     protected virtual void Death()
     {
         if (!isAlive)
@@ -164,13 +162,6 @@ public class Entity : NetworkBehaviour
         if (!isAlive)
             return;
 
-        if (FractionBehaviourData != null)
-        {
-            if (FractionBehaviourData.Behaviours.ContainsKey(damageMessage.source.fraction) &&
-               FractionBehaviourData.Behaviours[damageMessage.source.fraction] == FractionBehaviour.Friendly)
-                return;
-        }
-
         health -= damageMessage.damage;
         if (health <= 0)
         {
@@ -188,6 +179,10 @@ public class Entity : NetworkBehaviour
     [Server]
     public void DoDamage(Entity target, int damage)
     {
+        if (FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
+               FractionBehaviourData.Behaviours[target.fraction] == FractionBehaviour.Friendly)
+            return;
+
         DamageMessage damageMessage = new DamageMessage
         {
             damage = damage,
