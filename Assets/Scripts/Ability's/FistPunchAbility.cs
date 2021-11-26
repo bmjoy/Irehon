@@ -7,19 +7,15 @@ public class FistPunchAbility : AbilityBase
     [SerializeField]
     private GameObject handFistColliderPrefab;
 
-    private MeleeWeaponCollider leftHandCollider;
     private MeleeWeaponCollider rightHandCollider;
 
     public override void Setup(AbilitySystem abilitySystem)
     {
         base.Setup(abilitySystem);
-        leftHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.LeftHand).GetComponent<MeleeWeaponCollider>();
         rightHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.RightHand).GetComponent<MeleeWeaponCollider>();
-
-        leftHandCollider.transform.localPosition = Vector3.zero;
+        
         rightHandCollider.transform.localPosition = Vector3.zero;
 
-        leftHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
         rightHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
@@ -27,6 +23,7 @@ public class FistPunchAbility : AbilityBase
     protected override void Ability(Vector3 target)
     {
         abilitySystem.AnimatorComponent.SetTrigger("Skill1");
+        rightHandCollider.StartCollectColliders();
         AbilityStart();
     }
 
@@ -38,8 +35,10 @@ public class FistPunchAbility : AbilityBase
         if (!isServer)
             return;
 
-        foreach (var entity in leftHandCollider.GetCollectedInZoneEntities())
+        foreach (var entity in rightHandCollider.GetCollectedInZoneEntities())
             abilitySystem.PlayerComponent.DoDamage(entity.Key, Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
+
+        rightHandCollider.StopCollectColliders();
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
         AbilityEnd();
@@ -52,7 +51,6 @@ public class FistPunchAbility : AbilityBase
 
     public void DestroyColliders()
     {
-        Destroy(leftHandCollider.gameObject);
         Destroy(rightHandCollider.gameObject);
     }
 

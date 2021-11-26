@@ -73,7 +73,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         additionalyChestOffsetTime = 5f;
         abilitySystem.BlockTrigger();
         animator.SetBool("Aiming", true);
-        animator.SetBool("AimingMovement", true);
+        animator.SetBool("CastingMovement", true);
         currentAnimationEvent = () => StartCoroutine(ArrowInHandAnimation());
 
         if (isLocalPlayer)
@@ -130,7 +130,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         ArrowInHand.SetActive(false);
         aiming = false;
         animator.SetBool("Aiming", false);
-        animator.SetBool("AimingMovement", false);
+        animator.SetBool("CastingMovement", false);
 
         AbilityEnd();
         if (isLocalPlayer)
@@ -157,7 +157,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         aiming = false;
         animator.ResetTrigger("Shoot");
         animator.SetBool("Aiming", false);
-        animator.SetBool("AimingMovement", false);
+        animator.SetBool("CastingMovement", false);
     }
 
     private void OnDestroy()

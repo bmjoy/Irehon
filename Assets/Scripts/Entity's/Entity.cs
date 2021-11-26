@@ -179,7 +179,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public void DoDamage(Entity target, int damage)
     {
-        if (FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
+        if (FractionBehaviourData != null && FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
                FractionBehaviourData.Behaviours[target.fraction] == FractionBehaviour.Friendly)
             return;
 

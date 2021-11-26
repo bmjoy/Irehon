@@ -26,6 +26,11 @@ public class Player : Entity
 	public SteamId Id;
 
 	[SerializeField]
+	private FractionBehaviourData northData;
+	[SerializeField]
+	private FractionBehaviourData southData;
+
+	[SerializeField]
 	private GameObject deathContainerPrefab;
 
 	private PlayerStateMachine stateMachine;
@@ -150,6 +155,10 @@ public class Player : Entity
 
 		characterData = data;
 		fraction = characterData.fraction;
+		if (fraction == Fraction.North)
+			FractionBehaviourData = northData;
+		else
+			FractionBehaviourData = southData;
 		UpdateCharacterData(characterData);
 
 		containerController.SendContainerData(data.inventoryId, inventory);
