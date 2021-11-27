@@ -587,10 +587,6 @@ namespace Tayx.Graphy
 
         private void Init()
         {
-            if (m_keepAlive)
-            {
-                DontDestroyOnLoad(transform.root.gameObject);
-            }
             
             m_fpsMonitor    = GetComponentInChildren(typeof(G_FpsMonitor),    true) as G_FpsMonitor;
             m_ramMonitor    = GetComponentInChildren(typeof(G_RamMonitor),    true) as G_RamMonitor;
