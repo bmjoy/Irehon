@@ -7215,7 +7215,7 @@ MonoBehaviour:
     m_Bits: 7968
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
-  antialiasingMode: 0
+  antialiasingMode: 1
   temporalAntialiasing:
     jitterSpread: 0.75
     sharpness: 0.25
@@ -7224,7 +7224,7 @@ MonoBehaviour:
   subpixelMorphologicalAntialiasing:
     quality: 2
   fastApproximateAntialiasing:
-    fastMode: 0
+    fastMode: 1
     keepAlpha: 0
   fog:
     enabled: 1
@@ -17830,7 +17830,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5863101012538378547}
   m_Layer: 0
-  m_Name: MapParts
+  m_Name: RequiredZoneParts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
