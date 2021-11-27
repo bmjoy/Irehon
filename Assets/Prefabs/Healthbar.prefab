@@ -501,7 +501,7 @@ GameObject:
   - component: {fileID: 3162828818234786798}
   - component: {fileID: 8329132604696990951}
   m_Layer: 11
-  m_Name: EntityHealthBar
+  m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -588,4 +588,4 @@ MonoBehaviour:
   healthBarPostFiller: {fileID: 2107368289830679965}
   nickname: {fileID: 4773259361168702355}
   reducingPostBarAmmount: 0.75
-  updateDelay: 1
+  updateDelay: 0.25
