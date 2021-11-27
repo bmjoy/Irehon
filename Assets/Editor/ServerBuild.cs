@@ -12,6 +12,8 @@ public class ServerBuild
         NorthBuild();
         Debug.Log("Start build center zone");
         CenterBuild();
+        Debug.Log("South build done");
+        SouthBuild();
     }
     [MenuItem("Build/Build Zones with client")]
     static void BuildServerZonesAndClient()
@@ -38,6 +40,13 @@ public class ServerBuild
         string[] scenes = { "Assets/Scenes/Center.unity" };
         BuildPipeline.BuildPlayer(scenes, "Builds/Center/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
         Debug.Log("Center build done");
+    }
+    
+    static void SouthBuild()
+    {
+        string[] scenes = { "Assets/Scenes/South.unity" };
+        BuildPipeline.BuildPlayer(scenes, "Builds/South/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
+        Debug.Log("South build done");
     }
 
     static void ClientBuild()
