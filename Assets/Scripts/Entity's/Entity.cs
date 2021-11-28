@@ -58,7 +58,7 @@ public class Entity : NetworkBehaviour
 
     private void Update()
     {
-        if (transform.position.y < 0f)
+        if (transform.position.y < 0f && isAlive)
             Death();
     }
 

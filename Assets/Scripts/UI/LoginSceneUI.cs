@@ -33,7 +33,8 @@ public class LoginSceneUI : MonoBehaviour
     public static void HidePlayButton()
     {
         isPlayButtonShowable = false;
-        i.playButton?.SetActive(false);
+        if (i != null && i.playButton != null)
+            i.playButton?.SetActive(false);
     }
 
     public void Play()

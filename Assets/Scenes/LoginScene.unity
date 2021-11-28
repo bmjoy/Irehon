@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -208,7 +208,6 @@ GameObject:
   - component: {fileID: 104105198}
   - component: {fileID: 104105199}
   - component: {fileID: 104105200}
-  - component: {fileID: 104105201}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -300,22 +299,6 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
---- !u!114 &104105201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 104105196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39adc6e09d5544ed955a50ce8600355a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  visRange: 75
-  rebuildInterval: 1
-  checkMethod: 0
-  showSlider: 0
 --- !u!4 &104105202
 Transform:
   m_ObjectHideFlags: 0
@@ -1338,7 +1321,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: ac20de3b70c0ab349b980512853beda1, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.3
+  m_Volume: 0.13
   m_Pitch: 1
   Loop: 0
   Mute: 0
