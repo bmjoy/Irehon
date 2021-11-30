@@ -3,21 +3,22 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class OnChangingTarget : UnityEvent<Vector3>
-{
-}
+public class OnChangingTarget : UnityEvent<Vector3> {}
 
-public class OnChangeCursorHidingState : UnityEvent<bool>
-{
-}
+public class OnTargetOnEntity : UnityEvent<Entity, Player> { }
+public class OnChangeCursorHidingState : UnityEvent<bool> {}
+
+
 
 public class CameraController : MonoBehaviour
 {
     public static CameraController i;
     public static bool IsCursosLocked => i.cursorAiming;
+    public OnTargetOnEntity OnLookingOnEntityEvent { get; private set; } = new OnTargetOnEntity();
     public static OnChangeCursorHidingState OnChangeCursorStateEvent => i.OnChangeCursorState;
 
     public OnChangeCursorHidingState OnChangeCursorState = new OnChangeCursorHidingState();
+
     public Camera cameraComponent { get; private set; } 
 
     private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
@@ -59,6 +60,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
+        OnLookingOnEntityEvent.AddListener((entity, player) => entity.OnPlayerLookingEvent.Invoke());
     }
 
     public static void CreateShake(float power, float time)
@@ -162,7 +164,7 @@ public class CameraController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             if (cursorAiming)
                 EnableCursor();
@@ -183,6 +185,7 @@ public class CameraController : MonoBehaviour
         {
             i.cursorAiming = false;
             UIController.i.HideHint();
+            UIController.i.DisableDefaultCrosshair();
             i.OnChangeCursorState.Invoke(true);
         }
         Cursor.visible = true;
@@ -194,8 +197,19 @@ public class CameraController : MonoBehaviour
         i.OnChangeCursorState.Invoke(false);
         i.cursorAiming = true;
         Cursor.visible = false;
+        UIController.i.EnableDefaultCrosshair();
         Cursor.lockState = CursorLockMode.Locked;
         TooltipWindowController.HideTooltip();
+    }
+
+    private void InvokeEntityTargetLookEvent()
+    {
+        RaycastHit hit;
+        Entity entity = null;
+
+        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 50f, 1 << 14))
+            entity = hit.collider.GetComponent<Entity>();
+        OnLookingOnEntityEvent.Invoke(entity, player);
     }
 
     private void FixedUpdate()
@@ -215,7 +229,10 @@ public class CameraController : MonoBehaviour
             UIController.i.HideHint();
 
         if (!cursorAiming || !playerStateMachine.CurrentState.CanRotateCamera)
+        {
+            OnLookingOnEntityEvent.Invoke(null, player);
             return;
+        }
 
         if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
             UIController.i.ShowHint("Interact", "Press E to interract with this object");
@@ -223,5 +240,6 @@ public class CameraController : MonoBehaviour
             UIController.i.HideHint();
 
         UpdateLookingPoint();
+        InvokeEntityTargetLookEvent();
     }
 }

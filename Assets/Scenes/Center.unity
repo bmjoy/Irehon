@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.035514355, g: 0.010247143, b: 0.029541682, a: 1}
+  m_IndirectSpecularColor: {r: 0.035427816, g: 0.010191951, b: 0.02950774, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -449,19 +449,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4663797357641540, guid: f4e6fa0e6ba13d346bf44d362caec7b7, type: 3}
       propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663797357641540, guid: f4e6fa0e6ba13d346bf44d362caec7b7, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663797357641540, guid: f4e6fa0e6ba13d346bf44d362caec7b7, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663797357641540, guid: f4e6fa0e6ba13d346bf44d362caec7b7, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4663797357641540, guid: f4e6fa0e6ba13d346bf44d362caec7b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5954,7 +5942,7 @@ Transform:
   - {fileID: 1926332709}
   - {fileID: 1226327408}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &860979257
 PrefabInstance:
@@ -9932,7 +9920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4627033464294306, guid: e66861b7524873744b7014546dfc624a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 25.4
+      value: 16.559998
       objectReference: {fileID: 0}
     - target: {fileID: 4627033464294306, guid: e66861b7524873744b7014546dfc624a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10686,7 +10674,7 @@ Transform:
   - {fileID: 1530094463}
   - {fileID: 630114179}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1705331737
 PrefabInstance:
@@ -11761,7 +11749,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4966385241109430, guid: 384cba71a178c4c41bc6da9e6d69f94d, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4966385241109430, guid: 384cba71a178c4c41bc6da9e6d69f94d, type: 3}
       propertyPath: m_LocalScale.x
@@ -12968,7 +12956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478a4be23978f8f4bb409178c4970295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newPosition: {x: 390, y: 114, z: 487}
+  newPosition: {x: 390, y: 115, z: 485}
   newScene: South
 --- !u!1 &1952202071
 GameObject:

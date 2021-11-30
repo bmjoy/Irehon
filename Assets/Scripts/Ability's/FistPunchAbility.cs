@@ -7,38 +7,50 @@ public class FistPunchAbility : AbilityBase
     [SerializeField]
     private GameObject handFistColliderPrefab;
 
-    private MeleeWeaponCollider rightHandCollider;
+    [SerializeField]
+    private AudioClip onAttackStartSound;
+    [SerializeField]
+    private AudioClip onImpactSound;
+
+    private MeleeWeaponCollider leftHandCollider;
 
     public override void Setup(AbilitySystem abilitySystem)
     {
         base.Setup(abilitySystem);
-        rightHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.RightHand).GetComponent<MeleeWeaponCollider>();
+        leftHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.LeftHand).GetComponent<MeleeWeaponCollider>();
         
-        rightHandCollider.transform.localPosition = Vector3.zero;
+        leftHandCollider.transform.localPosition = Vector3.zero;
 
-        rightHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
+        leftHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
     }
     protected override void Ability(Vector3 target)
     {
         abilitySystem.AnimatorComponent.SetTrigger("Skill1");
-        rightHandCollider.StartCollectColliders();
+        leftHandCollider.StartCollectColliders();
         AbilityStart();
     }
 
+    public override void AbilitySoundEvent()
+    {
+        abilitySystem.PlaySoundClip(onAttackStartSound);
+    }
     private void DamageEntitiesInArea()
     {
         if (isLocalPlayer)
             CameraController.CreateShake(1, .3f);
 
+        if (leftHandCollider.GetCollectedInZoneEntities().Count != 0)
+            abilitySystem.PlaySoundClip(onImpactSound);
+
         if (!isServer)
             return;
 
-        foreach (var entity in rightHandCollider.GetCollectedInZoneEntities())
+        foreach (var entity in leftHandCollider.GetCollectedInZoneEntities())
             abilitySystem.PlayerComponent.DoDamage(entity.Key, Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
 
-        rightHandCollider.StopCollectColliders();
+        leftHandCollider.StopCollectColliders();
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
         AbilityEnd();
@@ -51,7 +63,7 @@ public class FistPunchAbility : AbilityBase
 
     public void DestroyColliders()
     {
-        Destroy(rightHandCollider.gameObject);
+        Destroy(leftHandCollider.gameObject);
     }
 
     protected override void InterruptAbility()

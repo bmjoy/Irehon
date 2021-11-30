@@ -19,7 +19,6 @@ public class HoldReleaseArrowAbility : AbilityBase
     private Vector3 aimingChestOffset = new Vector3(331.6f, 260.2f, -150.2f);
 
     private Vector3 bowBoneStartPosition;
-    private AudioSource abilityAudioSource;
     [SerializeField]
     private Transform chestBone;
     private Animator animator;
@@ -38,7 +37,6 @@ public class HoldReleaseArrowAbility : AbilityBase
         bow = weapon as Bow;
         bowBoneStartPosition = BowStringBone.localPosition;
         player = abilitySystem.PlayerComponent;
-        abilityAudioSource = abilitySystem.AudioSource;
         animator = abilitySystem.AnimatorComponent;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
         quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow, arrowDamage);
@@ -86,8 +84,7 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
-        abilityAudioSource.clip = TenseSound;
-        abilityAudioSource.Play();
+        abilitySystem.PlaySoundClip(TenseSound);
         aiming = true;
         ArrowInHand.SetActive(true);
         holdingTime = 0;
@@ -114,8 +111,7 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     protected override void StopHoldingAbility(Vector3 target)
     {
-        if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
-            abilityAudioSource.Stop();
+        abilitySystem.StopPlayingClip(TenseSound);
         if (aiming && holdingTime > MIN_HOLDING_TIME)
         {
             animator.SetTrigger("Shoot");
@@ -149,8 +145,7 @@ public class HoldReleaseArrowAbility : AbilityBase
         }
         ArrowInHand.SetActive(false);
 
-        if (abilityAudioSource.clip == TenseSound && abilityAudioSource.isPlaying)
-            abilityAudioSource.Stop();
+        abilitySystem.StopPlayingClip(TenseSound);
         additionalyChestOffsetTime = 0;
         abilitySystem.AllowTrigger();
         BowStringBone.localPosition = bowBoneStartPosition;

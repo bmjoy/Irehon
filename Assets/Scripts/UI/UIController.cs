@@ -28,10 +28,11 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private RectTransform triangleAimingRectangle;
     [SerializeField]
-    private RectTransform defaultAimingRectangle;
+    private RectTransform defaultAimPoint;
     [SerializeField]
     private GameObject interactableHint;
 
+    private Image defaultAimPointImage;
     private Coroutine hitMarkerCoroutine;
     private Coroutine healthBarCoroutine;
 
@@ -46,21 +47,56 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         CameraController.OnChangeCursorStateEvent.AddListener(ChangeCursorHintStatus);
+        CameraController.i.OnLookingOnEntityEvent.AddListener(UpdateCursorColor);
+
+        defaultAimPointImage = defaultAimPoint.GetComponent<Image>();
+    }
+
+    private void UpdateCursorColor(Entity target, Player player)
+    {
+        if (target == null)
+            defaultAimPointImage.color = Color.white;
+        else
+        {
+            var entityFraction = target.fraction;
+            if (player.FractionBehaviourData.Behaviours.ContainsKey(entityFraction))
+            {
+                var behaviour = player.FractionBehaviourData.Behaviours[entityFraction];
+                switch (behaviour)
+                {
+                    case FractionBehaviour.Friendly:
+                        defaultAimPointImage.color = Color.green;
+                        break;
+                    case FractionBehaviour.Neutral:
+                        defaultAimPointImage.color = Color.white;
+                        break;
+                    case FractionBehaviour.Agressive:
+                        defaultAimPointImage.color = Color.red;
+                        break;
+                }
+            }
+            else
+                defaultAimPointImage.color = Color.white;
+        }
     }
 
     public void ShowStatusCanvas() => statusBarCanvas.gameObject.SetActive(true);
     public void HideStatusCanvas() => statusBarCanvas.gameObject.SetActive(false);
 
+    public void DisableDefaultCrosshair()
+    {
+        defaultAimPoint.gameObject.SetActive(false);
+    }
 
     public void EnableDefaultCrosshair()
     {
-        defaultAimingRectangle.gameObject.SetActive(true);
+        defaultAimPoint.gameObject.SetActive(true);
         triangleAimingRectangle.gameObject.SetActive(false);
     }
 
     public void EnableTriangleCrosshair()
     {
-        defaultAimingRectangle.gameObject.SetActive(false);
+        DisableDefaultCrosshair();
         triangleAimingRectangle.gameObject.SetActive(true);
         ChangeTriangleAimSize(0);
     }

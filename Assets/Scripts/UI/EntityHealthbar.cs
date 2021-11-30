@@ -19,6 +19,8 @@ public class EntityHealthbar : MonoBehaviour
     private float reducingPostBarAmmount = 3f;
     [SerializeField]
     private float updateDelay;
+
+    private float disablingDelay;
     private Transform cameraTransform;
     private Entity entity;
     private void Start()
@@ -33,15 +35,29 @@ public class EntityHealthbar : MonoBehaviour
         entity.OnDeathEvent.AddListener(() => gameObject.SetActive(false));
         entity.OnRespawnEvent.AddListener(() => gameObject.SetActive(true));
 
-        StartCoroutine(GetInstanceKostil());
+        StartCoroutine(WaitCameraControllerIntialize());
         nickname.text = entity.NickName;
         entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
+        entity.OnPlayerLookingEvent.AddListener(() =>
+        {
+            disablingDelay = 1f;
+            gameObject.SetActive(true);
+        });
     }
 
-    private IEnumerator GetInstanceKostil()
+    private void Update()
+    {
+        RepositionBar();
+        disablingDelay -= Time.deltaTime;
+        if (disablingDelay < 0)
+            gameObject.SetActive(false);
+    }
+
+    private IEnumerator WaitCameraControllerIntialize()
     {
         while (CameraController.i == null)
             yield return null;
+
         cameraTransform = CameraController.i.transform;
         canvas.worldCamera = CameraController.i.cameraComponent;
     }
@@ -59,7 +75,7 @@ public class EntityHealthbar : MonoBehaviour
 
         StopAllCoroutines();
 
-        if (healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
+        if (isActiveAndEnabled && healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
             StartCoroutine(ChangeFillAmount());
         else
             healthBarPostFiller.fillAmount = healthBarFiller.fillAmount;
@@ -74,11 +90,6 @@ public class EntityHealthbar : MonoBehaviour
                 yield return null;
             }
         }
-    }
-
-    private void Update()
-    {
-        RepositionBar();
     }
 
     private void RepositionBar()
