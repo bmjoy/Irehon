@@ -38,8 +38,6 @@ public class Entity : NetworkBehaviour
     [SerializeField, Tooltip("By default entity will spawn with this amount of health")]
     protected int maxHealth = 100;
 
-
-
     [SerializeField, Tooltip("Colliders ")]
     protected List<Collider> hitboxColliders = new List<Collider>();
 
@@ -55,7 +53,7 @@ public class Entity : NetworkBehaviour
     protected virtual void Awake()
     {
         tag = "EntityBase";
-        gameObject.layer = 1 << 14;
+        gameObject.layer = 14;
     }
 
     protected virtual void Start()

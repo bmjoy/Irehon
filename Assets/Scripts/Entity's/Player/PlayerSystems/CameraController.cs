@@ -60,7 +60,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-        OnLookingOnEntityEvent.AddListener((entity, player) => entity.OnPlayerLookingEvent.Invoke());
+        OnLookingOnEntityEvent.AddListener((entity, player) => entity?.OnPlayerLookingEvent.Invoke());
     }
 
     public static void CreateShake(float power, float time)
@@ -207,7 +207,7 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Entity entity = null;
 
-        if (!Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 50f, 1 << 14))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 50f, 1 << 14))
             entity = hit.collider.GetComponent<Entity>();
         OnLookingOnEntityEvent.Invoke(entity, player);
     }
