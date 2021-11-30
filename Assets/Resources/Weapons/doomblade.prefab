@@ -29,7 +29,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645786095522272344}
-  m_LocalRotation: {x: -0.70692873, y: -0.09807317, z: 0.027489448, w: 0.6999127}
+  m_LocalRotation: {x: -0.7069288, y: -0.09806753, z: 0.02748892, w: 0.69991344}
   m_LocalPosition: {x: 9, y: 3, z: 2.4}
   m_LocalScale: {x: 70, y: 70, z: 70}
   m_Children: []
@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slug: doomblade
+  hand: 1
   type: 4
   animatorOverrideController: {fileID: 22100000, guid: 8e8c48baf53e4964e99dc9be669da064,
     type: 2}
@@ -126,7 +127,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownTime: 1.3
   triggerOnKey: 323
+  OnClientAttackStart:
+    m_PersistentCalls:
+      m_Calls: []
   swordCollider: {fileID: 4830879785965839450}
+  onAttackStartSound: {fileID: 8300000, guid: 910e8706626b66442a017c3a918b1db9, type: 3}
+  onImpactSound: {fileID: 0}
 --- !u!114 &4830879785965839450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,3 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037aaaee56b365b42ad44299cafe5168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityCollidersInZone: []
+  collectedCollidersInZone: []
+  selfColliders: []

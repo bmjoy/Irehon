@@ -29,7 +29,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1761077942741566}
-  m_LocalRotation: {x: -0.25302368, y: 0.6014276, z: -0.68807846, w: 0.31750882}
+  m_LocalRotation: {x: -0.25302038, y: 0.60142803, z: -0.6880792, w: 0.31750914}
   m_LocalPosition: {x: 10.847408, y: 4.194319, z: -14.808605}
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_Children: []
@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slug: hatchet
+  hand: 1
   type: 3
   animatorOverrideController: {fileID: 22100000, guid: 9b1ce220b41a93245811789711da864b,
     type: 2}
@@ -126,7 +127,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownTime: 2.5
   triggerOnKey: 323
+  OnClientAttackStart:
+    m_PersistentCalls:
+      m_Calls: []
   swordCollider: {fileID: 4718932515956126766}
+  onAttackStartSound: {fileID: 8300000, guid: 4b41eea0ccd33e447b867bab80618039, type: 3}
+  onImpactSound: {fileID: 0}
 --- !u!114 &4718932515956126766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,3 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037aaaee56b365b42ad44299cafe5168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityCollidersInZone: []
+  collectedCollidersInZone: []
+  selfColliders: []

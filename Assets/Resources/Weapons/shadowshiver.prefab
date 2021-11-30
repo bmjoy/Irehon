@@ -29,7 +29,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1903346071023266}
-  m_LocalRotation: {x: 0.69280005, y: -0.109295115, z: -0.0070649707, w: -0.7127642}
+  m_LocalRotation: {x: 0.69280005, y: -0.109291226, z: -0.0070572793, w: -0.71276486}
   m_LocalPosition: {x: -8.1, y: -2.5, z: 3.1}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
@@ -127,7 +127,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownTime: 0.3
   triggerOnKey: 323
+  OnClientAttackStart:
+    m_PersistentCalls:
+      m_Calls: []
   swordCollider: {fileID: -4873893539328527555}
+  onAttackStartSound: {fileID: 8300000, guid: 8605c311619c699449e53fe8c80a87cf, type: 3}
+  onImpactSound: {fileID: 0}
 --- !u!114 &-4873893539328527555
 MonoBehaviour:
   m_ObjectHideFlags: 0
