@@ -50,16 +50,12 @@ public class Entity : NetworkBehaviour
     public OnHealthChangeEvent OnHealthChangeEvent { get; private set; } = new OnHealthChangeEvent();
     public UnityEvent OnDeathEvent { get; private set; } = new UnityEvent();
     public UnityEvent OnRespawnEvent { get; private set; } = new UnityEvent();
+    public UnityEvent OnPlayerLookingEvent { get; private set; } = new UnityEvent();
 
     protected virtual void Awake()
     {
         tag = "EntityBase";
-    }
-
-    private void Update()
-    {
-        if (transform.position.y < 0f && isAlive)
-            Death();
+        gameObject.layer = 1 << 14;
     }
 
     protected virtual void Start()
@@ -74,7 +70,11 @@ public class Entity : NetworkBehaviour
 
         SetDefaultState();
     }
-
+    private void Update()
+    {
+        if (transform.position.y < 0f && isAlive)
+            Death();
+    }
     protected void InitiateRespawn()
     {
         if (isServer)

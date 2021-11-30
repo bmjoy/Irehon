@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Events;
 
 public class MeleeWeaponAbility : AbilityBase
 {
+    public UnityEvent OnClientAttackStart;
     [SerializeField]
     private MeleeWeaponCollider swordCollider;
+    [SerializeField]
+    private AudioClip onAttackStartSound;
+    [SerializeField]
+    private AudioClip onImpactSound;
 
     private int damage;
 
@@ -23,12 +29,22 @@ public class MeleeWeaponAbility : AbilityBase
         swordCollider.StartCollectColliders();
         abilitySystem.AnimatorComponent.SetTrigger("Skill1");
         AbilityStart();
+        if (abilitySystem.isClient)
+            OnClientAttackStart.Invoke();
+    }
+
+    public override void AbilitySoundEvent()
+    {
+        abilitySystem.PlaySoundClip(onAttackStartSound);
     }
 
     private void DamageEntitiesInArea()
     {
         if (isLocalPlayer)
             CameraController.CreateShake(1, .3f);
+
+        if (swordCollider.GetCollectedInZoneEntities().Count != 0)
+            abilitySystem.PlaySoundClip(onImpactSound);
 
         if (!isServer)
             return;

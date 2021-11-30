@@ -63,6 +63,11 @@ public abstract class AbilityBase : MonoBehaviour
         return true;
     }
 
+    public virtual void AbilitySoundEvent()
+    {
+
+    }
+
     protected void AbilityStart()
     {
         abilitySystem.BlockTrigger();

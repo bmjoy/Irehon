@@ -7,7 +7,6 @@ using System;
 public class AbilitySystem : NetworkBehaviour
 {
     public GameObject AbilityPoolObject => abilityPoolObject;
-    public AudioSource AudioSource => audioSource;
     public Animator AnimatorComponent => animator;
     public Player PlayerComponent => player;
     public PlayerMovement PlayerMovementComponent => playerMovement;
@@ -20,7 +19,7 @@ public class AbilitySystem : NetworkBehaviour
     private PlayerMovement playerMovement;
     private Player player;
     private Animator animator;
-    private AudioSource audioSource;
+    private AudioSource[] audioSources;
     [SerializeField]
     private GameObject abilityPoolObject;
 
@@ -45,12 +44,8 @@ public class AbilitySystem : NetworkBehaviour
         boneLinks = GetComponent<PlayerBonesLinks>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
-        audioSource = abilityPoolObject.GetComponent<AudioSource>();
+        audioSources = abilityPoolObject.GetComponents<AudioSource>();
         isAbilityCasting = false;
-    }
-
-    private void Start()
-    {
     }
 
     public void SendAbilityKeyStatus(bool isKeyPressed, Vector3 target)
@@ -119,6 +114,25 @@ public class AbilitySystem : NetworkBehaviour
     [ClientRpc]
     private void AnimationEventRPC()
     {
-        currentAbility.AnimationEvent();
+        currentAbility?.AnimationEvent();
+    }
+
+    public void PlaySoundClip(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+        var readyAudioSource = Array.Find(audioSources, source => source.isPlaying == false);
+        readyAudioSource.clip = clip;
+        readyAudioSource.Play();
+    }
+
+    public void StopPlayingClip(AudioClip clip)
+    {
+        Array.Find(audioSources, source => source.clip == clip && source.isPlaying == true).Stop();
+    }
+
+    public void SoundEvent()
+    {
+        currentAbility?.AbilitySoundEvent();
     }
 }

@@ -64,6 +64,7 @@ public class Player : Entity
 			ContainerWindowManager.i.PlayerIntialize(this);
 			CameraController.i.Intialize(this);
 			CraftWindowManager.Intialize(this);
+			gameObject.layer = 1 << 1;
 
 			OnHealthChangeEvent.AddListener((oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth));
 
@@ -79,6 +80,7 @@ public class Player : Entity
 			if (equipmentJson != null)
 				OnPublicEquipmentUpdate.Invoke(new Container(SimpleJSON.JSON.Parse(equipmentJson)));
 		}
+
 		if (isServer)
 		{
 			OnDeathEvent.AddListener(InitiateRespawn);
@@ -122,11 +124,6 @@ public class Player : Entity
 	{
 		if (isServer)
 			return;
-
-#if UNITY_EDITOR
-		name = "Test";
-		return;
-#endif
 
 		Friend friend = new Friend(newId);
 		await friend.RequestInfoAsync();
@@ -179,6 +176,11 @@ public class Player : Entity
 		isDataAlreadyRecieved = true;
 		characterData = data;
 		OnCharacterDataUpdateEvent.Invoke(characterData);
+
+		if (fraction == Fraction.North)
+			FractionBehaviourData = northData;
+		else
+			FractionBehaviourData = southData;
 	}
 
 
