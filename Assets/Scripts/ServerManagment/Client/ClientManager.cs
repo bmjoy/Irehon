@@ -19,8 +19,6 @@ namespace Client
         public string message;
     }
 
-    //public class OnUpdateCharacterList : UnityEvent<List<Character>> { }
-
     public class OnGetServerMessage : UnityEvent<ServerMessage> { }
 
     public class ClientManager : NetworkManager
@@ -41,12 +39,6 @@ namespace Client
                 Destroy(gameObject);
             else
                 i = this;
-        }
-
-        override public void OnDestroy()
-        {
-            //Shutdown();
-
         }
 
         public override void Start()
@@ -93,7 +85,7 @@ namespace Client
             if (!isRedirected)
                 LoginSceneUI.ShowPlayButton();
             if (!isRegistrationSceneRequired)
-                SceneManager.LoadScene("LoginScene");
+                SceneManager.LoadSceneAsync("LoginScene");
             isRedirected = false;
         }
 

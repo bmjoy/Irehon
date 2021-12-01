@@ -57929,6 +57929,7 @@ GameObject:
   - component: {fileID: 7349229035227959283}
   - component: {fileID: 3622678489562045660}
   - component: {fileID: 866097844994470796}
+  - component: {fileID: 5870177393942306459}
   m_Layer: 14
   m_Name: Player
   m_TagString: EntityBase
@@ -60052,7 +60053,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90fb938cfa6bfa4c94f4284cefee118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yVelocity: 0
+  gravity: 5
+  slideSpeed: 1
 --- !u!114 &-4658562000828924262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60194,6 +60196,18 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   ExcludeOwnerUpdate: 1
+--- !u!114 &5870177393942306459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b594079e17b35c4291aea6e7d68338c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0

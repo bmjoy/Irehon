@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerInput : NetworkBehaviour
 {
+    public static bool IsPlayerListeningInput = true;
     private long avaliablePackets;
 
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
@@ -32,7 +33,10 @@ public class PlayerInput : NetworkBehaviour
         InputInfo currentInput = new InputInfo();
         currentInput.PressedKeys = new List<KeyCode>();
 
-        FillMovementKeysInput(ref currentInput);
+        if (IsPlayerListeningInput)
+        {
+            FillMovementKeysInput(ref currentInput);
+        }
         FillCameraInput(ref currentInput);
 
         playerStateMachine.InputInState(currentInput);
@@ -49,9 +53,9 @@ public class PlayerInput : NetworkBehaviour
         CheckInputKey(KeyCode.A, ref input);
         CheckInputKey(KeyCode.S, ref input);
         CheckInputKey(KeyCode.D, ref input);
+        CheckInputKey(KeyCode.V, ref input);
         CheckInputKey(KeyCode.LeftShift, ref input);
         CheckInputKey(KeyCode.Space, ref input);
-
     }
 
     private void FillCameraInput(ref InputInfo input)
@@ -115,7 +119,6 @@ public class PlayerInput : NetworkBehaviour
         foreach (var sendedInput in sendedInputs)
         {
             playerStateMachine.InputInState(sendedInput);
-            Physics.Simulate(0.00000001f);
         }
         if (sendedInputs.Count > 0)
         {

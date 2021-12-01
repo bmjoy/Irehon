@@ -32,6 +32,9 @@ public class PlayerIdleState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.Space))
             return PlayerStateType.Jump;
 
+        if (input.IsKeyPressed(KeyCode.V))
+            return PlayerStateType.Dance;
+
         if (isServer && input.IsKeyPressed(KeyCode.E))
             playerInteracter.InterractAttemp(input.TargetPoint);
 

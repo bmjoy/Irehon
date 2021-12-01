@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using UnityEditor;
 
-public class Builder : MonoBehaviour
+public class DisconnectButton : MonoBehaviour
 {
-    public static void BuildLinuxServer()
+    public void Disconnect()
     {
+        NetworkClient.Disconnect();
     }
 }

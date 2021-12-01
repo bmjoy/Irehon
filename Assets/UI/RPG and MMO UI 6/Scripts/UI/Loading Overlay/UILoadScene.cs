@@ -60,6 +60,7 @@ namespace DuloGames.UI
                 }
                 else
                 {
+                    print("load scene");
                     if (isNumeric)
                         SceneManager.LoadScene(id);
                     else

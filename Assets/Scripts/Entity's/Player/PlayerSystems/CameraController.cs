@@ -207,9 +207,11 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Entity entity = null;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 50f, 1 << 14))
-            entity = hit.collider.GetComponent<Entity>();
-        OnLookingOnEntityEvent.Invoke(entity, player);
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 50f, 1 << 10))
+        {
+            entity = hit.collider.GetComponent<EntityCollider>()?.GetParentEntityComponent();
+        }
+        OnLookingOnEntityEvent.Invoke(entity, player); 
     }
 
     private void FixedUpdate()

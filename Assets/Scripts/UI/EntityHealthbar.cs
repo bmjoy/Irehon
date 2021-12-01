@@ -26,6 +26,13 @@ public class EntityHealthbar : MonoBehaviour
     private void Start()
     {
         entity = transform.parent.GetComponent<Entity>();
+
+        if (entity == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (entity.GetComponent<NetworkIdentity>().isLocalPlayer && !entity.GetComponent<NetworkIdentity>().isServer)
         {
             Destroy(gameObject);
@@ -40,8 +47,11 @@ public class EntityHealthbar : MonoBehaviour
         entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
         entity.OnPlayerLookingEvent.AddListener(() =>
         {
-            disablingDelay = 1f;
-            gameObject.SetActive(true);
+            if (entity.isAlive)
+            {
+                disablingDelay = 5f;
+                gameObject.SetActive(true);
+            }
         });
     }
 

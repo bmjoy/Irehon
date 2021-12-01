@@ -7,6 +7,12 @@ public class EntityCollider : MonoBehaviour
     [SerializeField]
     private Entity parent;
 
+    private void Awake()
+    {
+        gameObject.layer = 10;
+        gameObject.tag = "Entity";
+    }
+
     public Entity GetParentEntityComponent()
     {
         return parent;

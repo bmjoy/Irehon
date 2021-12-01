@@ -58,10 +58,10 @@ public class UIWindow : SerializedMonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape) && TriggerKey != KeyCode.Escape)
+            Close();
         if (Input.GetKeyDown(TriggerKey))
             SwitchWindowState();
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Close();
     }
 
     public void SwitchWindowState()
