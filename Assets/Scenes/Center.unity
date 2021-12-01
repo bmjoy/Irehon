@@ -7139,14 +7139,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1602107291}
     m_Modifications:
-    - target: {fileID: 1512397109813864, guid: e2601cfae5922224da511097d24528bf, type: 3}
-      propertyPath: m_NavMeshLayer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4866011163987012, guid: e2601cfae5922224da511097d24528bf, type: 3}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 1113146913486576, guid: 384cba71a178c4c41bc6da9e6d69f94d, type: 3}
       propertyPath: m_Name
       value: FX_Lava_Bubbles_01 (3)
@@ -7251,6 +7243,14 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1512397109813864, guid: e2601cfae5922224da511097d24528bf, type: 3}
+      propertyPath: m_NavMeshLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866011163987012, guid: e2601cfae5922224da511097d24528bf, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 384cba71a178c4c41bc6da9e6d69f94d, type: 3}

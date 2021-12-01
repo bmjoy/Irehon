@@ -703,16 +703,16 @@ MonoBehaviour:
       Data: Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 25
+      Data: 100
     - Name: itemId
       Entry: 3
-      Data: 87
+      Data: 89
     - Name: minQuantity
       Entry: 3
-      Data: 1
+      Data: 5
     - Name: maxQuantity
       Entry: 3
-      Data: 2
+      Data: 7
     - Name: 
       Entry: 8
       Data: 
@@ -801,7 +801,7 @@ MonoBehaviour:
     type: 2}
   respawnTime: 60
   name: Boar
-  maxHealth: 2500
+  maxHealth: 2000
   hitboxColliders:
   - {fileID: 7694140673250294867}
   - {fileID: 1507379340580755736}

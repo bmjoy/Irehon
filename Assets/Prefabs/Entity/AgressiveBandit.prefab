@@ -466,7 +466,25 @@ MonoBehaviour:
       Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 0
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: Loot, Assembly-CSharp
+    - Name: chancePercent
+      Entry: 4
+      Data: 100
+    - Name: itemId
+      Entry: 3
+      Data: 92
+    - Name: minQuantity
+      Entry: 3
+      Data: 1
+    - Name: maxQuantity
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -509,7 +527,7 @@ MonoBehaviour:
     type: 2}
   respawnTime: 60
   name: Bandit
-  maxHealth: 1000
+  maxHealth: 2500
   hitboxColliders:
   - {fileID: 1409488741358838455}
   - {fileID: 8177015038748685071}
@@ -545,7 +563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 250
+  meleeDamage: 150
   MeleeWeaponCollider: {fileID: 365102699018480038}
 --- !u!114 &-3012350016365297874
 MonoBehaviour:
