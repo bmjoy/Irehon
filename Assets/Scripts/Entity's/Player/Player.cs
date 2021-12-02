@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using Server;
+using Client;
 
 public class OnCharacterDataUpdate : UnityEvent<CharacterInfo> { }
 
@@ -89,6 +91,19 @@ public class Player : Entity
 
 			OnTakeDamageEvent.AddListener(TakeDamageEventTargetRpc);
 			OnDoDamageEvent.AddListener(DoDamageEventTargetRpc);
+
+			OnGetKilledEvent.AddListener(murder =>
+			{
+				if (murder != null && murder is Player)
+                {
+					ServerMessage killMessage = new ServerMessage() {
+						message = (murder as Player).Id.ToString(),
+						subMessage = Id.ToString(),
+						messageType = MessageType.KillLog
+					};
+					NetworkServer.SendToAll(killMessage);
+                }
+			});
 
 			InvokeRepeating(nameof(PassiveRegenerateHealth), 1, 1);
 		}

@@ -8,6 +8,7 @@ public class OnHealthChangeEvent : UnityEvent<int, int> { }
 public class HitConfirmEvent : UnityEvent<int> { }
 
 public class OnTakeDamage : UnityEvent<int> { }
+public class OnGetKilledEvent : UnityEvent<Entity> { }
 
 public struct DamageMessage
 {
@@ -42,7 +43,7 @@ public class Entity : NetworkBehaviour
     protected List<Collider> hitboxColliders = new List<Collider>();
 
     public bool isAlive { get; protected set; }
-
+    public OnGetKilledEvent OnGetKilledEvent { get; private set; } = new OnGetKilledEvent();
     public HitConfirmEvent OnDoDamageEvent { get; private set; } = new HitConfirmEvent();
     public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
     public OnHealthChangeEvent OnHealthChangeEvent { get; private set; } = new OnHealthChangeEvent();
@@ -163,6 +164,7 @@ public class Entity : NetworkBehaviour
         health -= damageMessage.damage;
         if (health <= 0)
         {
+            OnGetKilledEvent.Invoke(damageMessage.source);
             Death();
             health = 0;
         }

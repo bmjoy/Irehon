@@ -29,6 +29,10 @@ public class PlayerContainerController : NetworkBehaviour
             player.OnCharacterDataUpdateEvent.AddListener(Intialize);
         else
             Intialize(player.GetCharacterInfo());
+    }
+
+    private void Start()
+    {
         OnInventoryUpdate.AddListener(ContainerWindowManager.i.UpdateInventory);
         OnEquipmentUpdate.AddListener(ContainerWindowManager.i.UpdateEquipment);
     }

@@ -7,6 +7,7 @@ public class DisconnectButton : MonoBehaviour
 {
     public void Disconnect()
     {
+        print("Disconnect button event");
         NetworkClient.Disconnect();
     }
 }

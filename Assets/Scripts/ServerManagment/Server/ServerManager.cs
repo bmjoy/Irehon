@@ -44,6 +44,7 @@ namespace Server
 
         public static void WaitBeforeDisconnect(NetworkConnection con)
         {
+            Debug.Log("Disconnecting");
             IEnumerator WaitBeforeDisconnect()
             {
                 yield return new WaitForSeconds(0.2f);
@@ -59,10 +60,10 @@ namespace Server
             SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
             string externalIpAddres = response["ip_addr"].Value;
             networkAddress = externalIpAddres;
-            port = (transport as KcpTransport).Port;
+            port = (transport as TelepathyTransport).port;
 
             www = Api.Request($"/servers/?ip={externalIpAddres}" +
-                $"&port={(transport as KcpTransport).Port}" +
+                $"&port={(transport as TelepathyTransport).port}" +
                 $"&location={SceneManager.GetActiveScene().name}", ApiMethod.POST);
             await www.SendWebRequest();
             serverId = Api.GetResult(www)["id"].AsInt;
@@ -71,7 +72,7 @@ namespace Server
         public override void Start()
         {
             clientLoadedScene = false;
-            (transport as KcpTransport).Port = ushort.Parse(Environment.GetEnvironmentVariable("PORT"));
+            (transport as TelepathyTransport).port = ushort.Parse(Environment.GetEnvironmentVariable("SERVERPORT"));
             StartServer();
             InvokeRepeating("UpdatePlayerCount", 5, 5);
             InvokeRepeating("UpdateAllDataCycle", 90, 90);
@@ -174,7 +175,7 @@ namespace Server
                 return;
             }
 
-            ChangeScene(con, SceneManager.GetActiveScene().name);
+            ChangeScene(con, SceneManager.GetActiveScene().name); 
 
             data.character = characterInfo;
 
@@ -373,7 +374,8 @@ namespace Server
 
         private void ChangeScene(NetworkConnection con, string scene)
         {
-            con.Send(new SceneMessage { sceneName = scene, });
+            Debug.Log("Sended change scene");
+            con.Send(new SceneMessage { sceneName = scene});
         }
 
         public static void SendMessage(NetworkConnection con, string msg, MessageType type)

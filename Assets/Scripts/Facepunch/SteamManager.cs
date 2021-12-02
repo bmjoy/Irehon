@@ -32,7 +32,7 @@ public class SteamManager : MonoBehaviour
 
         try
         {
-            int port = int.Parse(Environment.GetEnvironmentVariable("PORT"));
+            int port = int.Parse(Environment.GetEnvironmentVariable("SERVERPORT"));
             SteamServerInit init = new SteamServerInit()
             {
                 IpAddress = System.Net.IPAddress.Any,
