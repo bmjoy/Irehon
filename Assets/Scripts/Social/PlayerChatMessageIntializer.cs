@@ -53,7 +53,8 @@ public class PlayerChatMessageIntializer : MonoBehaviour
     private Text text;
     public async void Intiallize(ulong steamId, string message)
     {
-		text.text = $"{SteamUserInformation.GetNicknameAsync(steamId)}: {message}";
+		string nickname = await SteamUserInformation.GetNicknameAsync(steamId);
+		text.text = $"{nickname}: {message}";
 		avatar.sprite = await SteamUserInformation.GetSpriteAsync(steamId);
     }
 }

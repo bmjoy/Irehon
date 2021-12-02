@@ -52,7 +52,7 @@ public class ServerBuild
     static void ClientBuild()
     {
         string[] scenes = { "Assets/Scenes/LoginScene.unity", "Assets/Scenes/FractionSelect.unity", "Assets/Scenes/Center.unity",
-        "Assets/Scenes/North.unity"};
+        "Assets/Scenes/North.unity", "Assets/Scenes/South.unity"};
         BuildPipeline.BuildPlayer(scenes, "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         Debug.Log("Client build done");
     }
