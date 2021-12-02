@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    public enum MessageType { AuthAccept, AuthReject, Error, Notification, RegistrationRequired, ServerRedirect, ItemDatabase }
+    public enum MessageType { AuthAccept, AuthReject, Error, Notification, RegistrationRequired, ServerRedirect, ItemDatabase, KillLog }
     public struct ServerMessage : NetworkMessage
     {
         public MessageType messageType;
         public string message;
+        public string subMessage;
     }
 
     public class OnGetServerMessage : UnityEvent<ServerMessage> { }
@@ -80,13 +81,13 @@ namespace Client
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
-            CameraController.EnableCursor();
-            print("Disconnect, isRedirected = " + isRedirected);
+            print("Disconnect");
             if (!isRedirected)
                 LoginSceneUI.ShowPlayButton();
             if (!isRegistrationSceneRequired)
                 SceneManager.LoadSceneAsync("LoginScene");
             isRedirected = false;
+            CameraController.EnableCursor();
         }
 
         private async void RedirectToAnotherServer(ServerMessage msg)
@@ -99,7 +100,7 @@ namespace Client
             GetComponent<NetworkManager>().StopClient();
             await Task.Delay(1000);
             string port = msg.message.Split(':')[1];
-            (transport as KcpTransport).Port = ushort.Parse(port);
+            (transport as TelepathyTransport).port = ushort.Parse(port);
             networkAddress = msg.message.Split(':')[0];
             GetComponent<NetworkManager>().StartClient();
         }
@@ -116,12 +117,12 @@ namespace Client
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
             if (SceneManager.GetActiveScene().name == "LoginScene")
-                LoginSceneUI.HidePlayButton();
-            NetworkClient.PrepareToSpawnSceneObjects();
+                LoginSceneUI.HidePlayButton(); 
         }
 
         public override void OnClientError(Exception exception)
         {
+            print(exception.Message);
         }
     }
 

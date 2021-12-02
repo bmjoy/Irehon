@@ -97,7 +97,7 @@ namespace Mirror
         public PlayerSpawnMethod playerSpawnMethod;
 
         /// <summary>Prefabs that can be spawned over the network need to be registered here.</summary>
-        public virtual List<GameObject> spawnPrefabs { get; }
+        public virtual List<GameObject> spawnPrefabs { get; } = new List<GameObject>();
 
         /// <summary>List of transforms populated by NetworkStartPositions</summary>
         public static List<Transform> startPositions = new List<Transform>();
@@ -836,6 +836,7 @@ namespace Mirror
             {
                 case SceneOperation.Normal:
                     loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+                    print("Change scene async");
                     break;
                 case SceneOperation.LoadAdditive:
                     // Ensure additive scene is not already loaded on client by name or path
@@ -1106,6 +1107,7 @@ namespace Mirror
             // proceed with the login handshake by calling OnServerConnect
             if (networkSceneName != "" && networkSceneName != offlineScene)
             {
+                print("Sended message"); 
                 SceneMessage msg = new SceneMessage() { sceneName = networkSceneName };
                 conn.Send(msg);
             }

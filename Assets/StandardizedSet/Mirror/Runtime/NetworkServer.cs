@@ -221,6 +221,7 @@ namespace Mirror
         {
             if (localConnection != null)
             {
+                Debug.Log("Remove local connection");
                 localConnection.Disconnect();
                 localConnection = null;
             }
