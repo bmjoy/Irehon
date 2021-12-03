@@ -26,7 +26,6 @@ public class Player : Entity
 
 	[SyncVar(hook = nameof(GetName)), HideInInspector]
 	public SteamId Id;
-
 	[SerializeField]
 	private FractionBehaviourData northData;
 	[SerializeField]

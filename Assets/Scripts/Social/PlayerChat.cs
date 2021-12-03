@@ -34,7 +34,7 @@ public class PlayerChat : NetworkBehaviour
             Server.ServerManager.SendMessage(connectionToClient, "Don't spam messages", Client.MessageType.Notification);
             return;
         }
-        lastMessageTimer = 1.5f;
+        lastMessageTimer = 0.75f;
         Server.ServerManager.Log(GetComponent<Player>().Id, $"Chat message: {message}");
         RecieveChatMessageRpc(message);
     }

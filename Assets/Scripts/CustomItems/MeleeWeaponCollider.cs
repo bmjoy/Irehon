@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
 
-public class OnMeleeWeaponTrigger : UnityEvent<Entity, EntityCollider> { }
+public class OnNewCollectedEntityEvent : UnityEvent<Entity, EntityCollider> { }
 
 public class MeleeWeaponCollider : MonoBehaviour
 {
@@ -15,6 +15,9 @@ public class MeleeWeaponCollider : MonoBehaviour
     [SerializeField]
     private List<Collider> selfColliders;
     private bool isCollectingColliders;
+
+    public OnNewCollectedEntityEvent OnNewCollectedEntityEvent { get; private set; } = new OnNewCollectedEntityEvent();
+    private List<Entity> triggeredEntitys;
 
     public void Intialize(List<Collider> selfColliders)
     {
@@ -49,15 +52,30 @@ public class MeleeWeaponCollider : MonoBehaviour
         return entities;
     }
 
+    private void MeleeTrigger(EntityCollider entityCollider)
+    {
+        var entity = entityCollider.GetParentEntityComponent();
+
+        if (triggeredEntitys.Contains(entity))
+            return;
+
+        triggeredEntitys.Add(entity);
+        OnNewCollectedEntityEvent.Invoke(entity, entityCollider);
+    }
+
     public void StartCollectColliders()
     {
         isCollectingColliders = true;
+        triggeredEntitys = new List<Entity>();
         collectedCollidersInZone = new List<EntityCollider>(entityCollidersInZone);
+        foreach (EntityCollider collider in collectedCollidersInZone)
+            MeleeTrigger(collider);
     }
 
     public void StopCollectColliders()
     {
         isCollectingColliders = false;
+        triggeredEntitys = new List<Entity>();
         collectedCollidersInZone = new List<EntityCollider>();
     }
 
@@ -70,7 +88,10 @@ public class MeleeWeaponCollider : MonoBehaviour
             var collider = other.GetComponent<EntityCollider>();
             entityCollidersInZone.Add(collider);
             if (isCollectingColliders && !collectedCollidersInZone.Contains(collider))
+            {
                 collectedCollidersInZone.Add(collider);
+                MeleeTrigger(collider);
+            }
         } 
     }
 

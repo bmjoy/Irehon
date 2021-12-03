@@ -19,7 +19,8 @@ public class CraftTab : MonoBehaviour, IPointerClickHandler
     private CraftRecipe currentRecipe;
     private Item craftingItem;
     private int index;
-    
+
+
     public void OnPointerClick(PointerEventData eventData)
     {
         CraftWindowManager.SelectRecipe(currentRecipe, index);

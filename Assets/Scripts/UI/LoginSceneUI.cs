@@ -37,6 +37,12 @@ public class LoginSceneUI : MonoBehaviour
             i.playButton?.SetActive(false);
     }
 
+    public static void ShowLoadingBar()
+    {
+        if (i != null && i.loadingBar != null)
+            i.loadingBar?.SetActive(true);
+    }
+
     public void Play()
     {
         Client.ClientManager.i.GetComponent<Client.ClientAuth>().PlayButton();

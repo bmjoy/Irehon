@@ -13,6 +13,12 @@ public class Chest : NetworkBehaviour, IInteractable
     public int ContainerId { get => containerId; }
     public OnContainerUpdate OnContainerUpdate { get; } = new OnContainerUpdate();
     public UnityEvent OnDestroyEvent { get; } = new UnityEvent();
+
+    private void Awake()
+    {
+        gameObject.layer = 12;
+    }
+
     private void Start()
     {
         if (containerId != 0)

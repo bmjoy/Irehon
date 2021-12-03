@@ -7,7 +7,8 @@ public class DisconnectButton : MonoBehaviour
 {
     public void Disconnect()
     {
-        print("Disconnect button event");
-        NetworkClient.Disconnect();
+        NetworkClient.Shutdown();
+        LoginSceneUI.ShowPlayButton();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
     }
 }

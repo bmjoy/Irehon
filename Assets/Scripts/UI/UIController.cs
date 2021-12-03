@@ -54,7 +54,7 @@ public class UIController : MonoBehaviour
 
     private void UpdateCursorColor(Entity target, Player player)
     {
-        if (target == null)
+        if (target == null || !target.isAlive)
             defaultAimPointImage.color = Color.white;
         else
         {

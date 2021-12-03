@@ -19,6 +19,8 @@ public class EntityHealthbar : MonoBehaviour
     private float reducingPostBarAmmount = 3f;
     [SerializeField]
     private float updateDelay;
+    [SerializeField]
+    private float showingDistance = 6f;
 
     private float disablingDelay;
     private Transform cameraTransform;
@@ -39,28 +41,44 @@ public class EntityHealthbar : MonoBehaviour
             return;
         }
 
-        entity.OnDeathEvent.AddListener(() => gameObject.SetActive(false));
-        entity.OnRespawnEvent.AddListener(() => gameObject.SetActive(true));
+        entity.OnDeathEvent.AddListener(() => SetActive(false));
+        entity.OnRespawnEvent.AddListener(() => SetActive(true));
 
         StartCoroutine(WaitCameraControllerIntialize());
         nickname.text = entity.NickName;
         entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
-        entity.OnPlayerLookingEvent.AddListener(() =>
-        {
-            if (entity.isAlive)
-            {
-                disablingDelay = 5f;
-                gameObject.SetActive(true);
-            }
-        });
+        entity.OnPlayerLookingEvent.AddListener(() => EnableForTime(5f));
     }
 
     private void Update()
     {
+        if (cameraTransform == null)
+            return;
+
         RepositionBar();
+        if (Vector3.Distance(transform.position, cameraTransform.position) < showingDistance && entity.isAlive)
+        {
+            disablingDelay = 2f;
+            SetActive(true);
+        }
         disablingDelay -= Time.deltaTime;
         if (disablingDelay < 0)
-            gameObject.SetActive(false);
+            SetActive(false);
+    }
+
+    public void EnableForTime(float time)
+    {
+        if (entity.isAlive)
+        {
+            disablingDelay = time;
+            SetActive(true);
+        }
+    }
+
+    public void SetActive(bool isActive)
+    {
+        canvas.enabled = isActive;
+        nickname.enabled = isActive;
     }
 
     private IEnumerator WaitCameraControllerIntialize()
@@ -104,8 +122,6 @@ public class EntityHealthbar : MonoBehaviour
 
     private void RepositionBar()
     {
-        if (cameraTransform == null)
-            return;
         transform.LookAt(cameraTransform);
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
     }

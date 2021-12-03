@@ -130,7 +130,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             return;
 
         item = ItemDatabase.GetItemById(itemId);
-        TooltipWindowController.ShowTooltip(item.GetStringMessage(), GetComponent<RectTransform>());
+        TooltipWindowController.ShowTooltip(item.GetStringMessage());
 
         isPointerOverSlot = true;
     }

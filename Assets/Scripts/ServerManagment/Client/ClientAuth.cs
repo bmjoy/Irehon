@@ -66,6 +66,7 @@ namespace Client
             if (msg.messageType == MessageType.AuthAccept)
             {
                 LoginSceneUI.HidePlayButton();
+                LoginSceneUI.ShowLoadingBar();
                 ClientAccept();
             }
             else if (msg.messageType == MessageType.AuthReject)

@@ -122,17 +122,25 @@ public class AbilitySystem : NetworkBehaviour
         if (clip == null)
             return;
         var readyAudioSource = Array.Find(audioSources, source => source.isPlaying == false);
-        readyAudioSource.clip = clip;
-        readyAudioSource.Play();
+        if (readyAudioSource != null)
+        {
+            readyAudioSource.clip = clip;
+            readyAudioSource.Play();
+        }
     }
 
     public void StopPlayingClip(AudioClip clip)
     {
-        Array.Find(audioSources, source => source.clip == clip && source.isPlaying == true).Stop();
+        Array.Find(audioSources, source => source.clip == clip && source.isPlaying == true)?.Stop();
     }
 
     public void SoundEvent()
     {
         currentAbility?.AbilitySoundEvent();
+    }
+
+    public void SubEvent()
+    {
+        currentAbility?.SubEvent();
     }
 }

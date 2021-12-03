@@ -68,6 +68,11 @@ public abstract class AbilityBase : MonoBehaviour
 
     }
 
+    public virtual void SubEvent()
+    {
+
+    }
+
     protected void AbilityStart()
     {
         abilitySystem.BlockTrigger();

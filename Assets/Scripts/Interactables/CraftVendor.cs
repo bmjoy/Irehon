@@ -11,6 +11,11 @@ public class CraftVendor : NetworkBehaviour, IInteractable
 
     private CraftRecipe[] recipes;
 
+    private void Awake()
+    {
+        gameObject.layer = 12;
+    }
+
     private void Start()
     {
         StartCoroutine(GetRecipes());
