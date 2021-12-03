@@ -26,7 +26,6 @@ public class PlayerChatHolder : MonoBehaviour
 
     public void ShowMessage(ulong steamId, string message)
     {
-        print("got new message " + message);
         var newMessage = Instantiate(chatTabPrefab, messagesContentHolder.transform);
         newMessage.GetComponent<PlayerChatMessageIntializer>().Intiallize(steamId, message);
     }

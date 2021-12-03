@@ -58,6 +58,8 @@ public class UIWindow : SerializedMonoBehaviour
 
     private void Update()
     {
+        if (!GameSession.IsListeningGameKeys)
+            return;
         if (Input.GetKeyDown(KeyCode.Escape) && TriggerKey != KeyCode.Escape)
             Close();
         if (Input.GetKeyDown(TriggerKey))

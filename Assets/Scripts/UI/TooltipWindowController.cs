@@ -87,7 +87,6 @@ public class TooltipWindowController : MonoBehaviour
         if (isCursorFollowing)
         {
             i.customTextWindow.position = Input.mousePosition;
-            i.customTextWindow.anchoredPosition += new Vector2(-i.customTextWindow.rect.width, i.customTextWindow.rect.height) / 2;
         }
     }
 
@@ -97,7 +96,7 @@ public class TooltipWindowController : MonoBehaviour
         i.customTextWindow.gameObject.SetActive(false);
     }
 
-    public static void ShowTooltip(List<TooltipMessage> messages, RectTransform originalWindow)
+    public static void ShowTooltip(List<TooltipMessage> messages)
     {
         foreach (RectTransform previousText in i.spawningTextWindow)
             Destroy(previousText.gameObject);

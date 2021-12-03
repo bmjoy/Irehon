@@ -16,6 +16,7 @@ public class PlayerWeaponEquipment : NetworkBehaviour
 
     public void UpdateWeapon(Container equipment)
     {
+        print(equipment.slots.Length);
         var weaponSlot = equipment.slots[(int)EquipmentSlot.Weapon];
         string weaponSlug;
         if (weaponSlot.itemId == 0)

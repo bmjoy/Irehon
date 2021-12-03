@@ -34,9 +34,6 @@ public class VoiceChat : NetworkBehaviour
         source.clip = AudioClip.Create("VoiceData", (int)256, 1, (int)optimalRate, true, OnAudioRead, null);
         source.loop = true;
         source.Play();
-
-        if (isLocalPlayer)
-        SteamUser.VoiceRecord = true;
     }
 
     [ClientCallback]
@@ -45,10 +42,7 @@ public class VoiceChat : NetworkBehaviour
         if (!isLocalPlayer)
             return;
 
-        if (Input.GetKeyDown(KeyCode.F))
-            SteamUser.VoiceRecord = true;
-        else if (Input.GetKeyUp(KeyCode.F))
-            SteamUser.VoiceRecord = false;
+        SteamUser.VoiceRecord = Input.GetKey(KeyCode.F);
 
         if (SteamUser.HasVoiceData)
         {
@@ -62,7 +56,8 @@ public class VoiceChat : NetworkBehaviour
     [Command]
     public void CmdVoice(byte[] compressed, int bytesWritten)
     {
-        RpcVoiceData(compressed, bytesWritten);
+        if (compressed != null)
+            RpcVoiceData(compressed, bytesWritten);
     }
 
 
@@ -94,7 +89,7 @@ public class VoiceChat : NetworkBehaviour
                 // current data position playing
                 dataPosition = (dataPosition + 1) % clipBufferSize;
 
-                data[i] = clipBuffer[dataPosition];
+                data[i] = clipBuffer[dataPosition] * 14;
 
                 playbackBuffer--;
             }
@@ -116,10 +111,5 @@ public class VoiceChat : NetworkBehaviour
 
             playbackBuffer++;
         }
-    }
-
-    private void OnDisable()
-    {
-        SteamUser.VoiceRecord = false;
     }
 }

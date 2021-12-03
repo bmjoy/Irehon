@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerInput : NetworkBehaviour
 {
-    public static bool IsPlayerListeningInput = true;
     private long avaliablePackets;
 
     private Queue<InputInfo> sendedInputs = new Queue<InputInfo>();
@@ -33,7 +32,7 @@ public class PlayerInput : NetworkBehaviour
         InputInfo currentInput = new InputInfo();
         currentInput.PressedKeys = new List<KeyCode>();
 
-        if (IsPlayerListeningInput)
+        if (GameSession.IsListeningGameKeys)
         {
             FillMovementKeysInput(ref currentInput);
         }

@@ -4,11 +4,12 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(MeleeWeaponCollider))]
 public class MeleeWeaponAbility : AbilityBase
 {
     public UnityEvent OnClientAttackStart;
-    [SerializeField]
-    private MeleeWeaponCollider swordCollider;
+
+    private MeleeWeaponCollider meleeCollider;
     [SerializeField]
     private AudioClip onAttackStartSound;
     [SerializeField]
@@ -20,17 +21,26 @@ public class MeleeWeaponAbility : AbilityBase
     {
         base.Setup(abilitySystem);
 
-        swordCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
+        meleeCollider = GetComponent<MeleeWeaponCollider>();
+        meleeCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
+
+        abilitySystem.PlayerComponent.OnDoDamageEvent.AddListener(ImpactSound);
+
+        meleeCollider.OnNewCollectedEntityEvent.AddListener(DamageEntity);
     }
     protected override void Ability(Vector3 target)
     {
-        swordCollider.StartCollectColliders();
         abilitySystem.AnimatorComponent.SetTrigger("Skill1");
         AbilityStart();
         if (abilitySystem.isClient)
             OnClientAttackStart.Invoke();
+    }
+
+    public override void SubEvent()
+    {
+        meleeCollider.StartCollectColliders();
     }
 
     public override void AbilitySoundEvent()
@@ -43,19 +53,24 @@ public class MeleeWeaponAbility : AbilityBase
         if (isLocalPlayer)
             CameraController.CreateShake(1, .3f);
 
-        if (swordCollider.GetCollectedInZoneEntities().Count != 0)
-            abilitySystem.PlaySoundClip(onImpactSound);
-
         if (!isServer)
             return;
 
-        foreach (var entity in swordCollider.GetCollectedInZoneEntities())
-            abilitySystem.PlayerComponent.DoDamage(entity.Key,  Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
-
-        swordCollider.StopCollectColliders();
+        meleeCollider.StopCollectColliders();
 
         abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
         AbilityEnd();
+    }
+
+    private void DamageEntity(Entity entity, EntityCollider entityCollider)
+    {
+        abilitySystem.PlayerComponent.DoDamage(entity, Mathf.RoundToInt(GetDamage() * entityCollider.damageMultiplier));
+    }
+
+    private void ImpactSound(int damage)
+    {
+        if (damage != 0)
+            abilitySystem.PlaySoundClip(onImpactSound);
     }
 
     private int GetDamage()

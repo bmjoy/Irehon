@@ -22,8 +22,9 @@ public class Entity : NetworkBehaviour
     public List<Collider> HitboxColliders => hitboxColliders;
     public string NickName => name;
     public int Health => health;
-    public Fraction fraction;
     public FractionBehaviourData FractionBehaviourData;
+    [SyncVar]
+    public Fraction fraction;
 
     [SerializeField, Tooltip("In seconds, 0 = will be destroyed after death")]
     protected float respawnTime;
@@ -177,11 +178,11 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    public void DoDamage(Entity target, int damage)
+    public bool DoDamage(Entity target, int damage)
     {
         if (FractionBehaviourData != null && FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
                FractionBehaviourData.Behaviours[target.fraction] == FractionBehaviour.Friendly)
-            return;
+            return false;
 
         DamageMessage damageMessage = new DamageMessage
         {
@@ -190,5 +191,6 @@ public class Entity : NetworkBehaviour
             target = target
         };
         target.TakeDamage(damageMessage);
+        return true;
     }
 }

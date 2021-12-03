@@ -2999,7 +2999,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3620919171708021808
 GameObject:
   m_ObjectHideFlags: 0
@@ -10504,7 +10504,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621029910635933724
 GameObject:
   m_ObjectHideFlags: 0
@@ -12149,7 +12149,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621068322247641758
 GameObject:
   m_ObjectHideFlags: 0
@@ -15229,7 +15229,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621119327889575608
 GameObject:
   m_ObjectHideFlags: 0
@@ -20552,7 +20552,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621273921529155068
 GameObject:
   m_ObjectHideFlags: 0
@@ -24170,7 +24170,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621494055281772582
 GameObject:
   m_ObjectHideFlags: 0
@@ -26348,7 +26348,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621526142690461736
 GameObject:
   m_ObjectHideFlags: 0
@@ -32725,7 +32725,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621619457110608636
 GameObject:
   m_ObjectHideFlags: 0
@@ -33886,7 +33886,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621637888663393008
 GameObject:
   m_ObjectHideFlags: 0
@@ -34185,7 +34185,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621640576413423506
 GameObject:
   m_ObjectHideFlags: 0
@@ -38326,7 +38326,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621706029892494928
 GameObject:
   m_ObjectHideFlags: 0
@@ -43621,7 +43621,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621778172881839250
 GameObject:
   m_ObjectHideFlags: 0
@@ -55468,7 +55468,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!1 &3621968356084913920
 GameObject:
   m_ObjectHideFlags: 0
@@ -57970,7 +57970,7 @@ Animator:
   m_GameObject: {fileID: 3622006752709158442}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 038320a534bd8b444b43734860d1a211, type: 3}
-  m_Controller: {fileID: 22100000, guid: d811ede694aca874aa5ef5920f965d5a, type: 2}
+  m_Controller: {fileID: 22100000, guid: 9b1ce220b41a93245811789711da864b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -57993,8 +57993,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 0
   FractionBehaviourData: {fileID: 0}
+  fraction: 0
   respawnTime: 5
   name: 
   maxHealth: 1000
@@ -60056,7 +60056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: 5
-  slideSpeed: 1
+  slideSpeed: 175
 --- !u!114 &-4658562000828924262
 MonoBehaviour:
   m_ObjectHideFlags: 0

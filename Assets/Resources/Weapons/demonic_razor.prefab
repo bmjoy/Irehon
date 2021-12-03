@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6912944770068196086}
   - component: {fileID: 4462401050767305201}
   - component: {fileID: 7840674387592011196}
+  - component: {fileID: 4114997341946083254}
   m_Layer: 0
   m_Name: demonic_razor
   m_TagString: Untagged
@@ -148,3 +149,19 @@ MonoBehaviour:
   entityCollidersInZone: []
   collectedCollidersInZone: []
   selfColliders: []
+--- !u!54 &4114997341946083254
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8947079371753237599}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
