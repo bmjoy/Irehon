@@ -95,8 +95,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.24096294, y: 1.8952264, z: 0.116060495}
-  m_Center: {x: 0.002023451, y: 0.52632755, z: -0.000000029802322}
+  m_Size: {x: 0.5639299, y: 1.4725934, z: 0.23292594}
+  m_Center: {x: -0.0013795213, y: 0.91778827, z: -0.012378785}
 --- !u!114 &1155526175865129565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +131,6 @@ MonoBehaviour:
   OnClientAttackStart:
     m_PersistentCalls:
       m_Calls: []
-  swordCollider: {fileID: 842653937070998751}
   onAttackStartSound: {fileID: 8300000, guid: e09320a4b161650488224199e546afab, type: 3}
   onImpactSound: {fileID: 0}
 --- !u!114 &842653937070998751

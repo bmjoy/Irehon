@@ -1131,9 +1131,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 2
   FractionBehaviourData: {fileID: 11400000, guid: c77735aa99fbaca42b32f69776117489,
     type: 2}
+  fraction: 2
   respawnTime: 15
   name: South warrior
   maxHealth: 4000
@@ -1172,7 +1172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 250
+  meleeDamage: 100
   MeleeWeaponCollider: {fileID: 8586775436127408214}
 --- !u!114 &557965831292413393
 MonoBehaviour:

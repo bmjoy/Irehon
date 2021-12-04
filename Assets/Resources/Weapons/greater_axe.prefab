@@ -111,7 +111,7 @@ Transform:
   m_GameObject: {fileID: 8707821280415089021}
   m_LocalRotation: {x: -0.044776235, y: 0.7038715, z: -0.69587296, w: 0.13535489}
   m_LocalPosition: {x: 17, y: 0.3, z: -12.5}
-  m_LocalScale: {x: 15, y: 15, z: 15}
+  m_LocalScale: {x: 13, y: 13, z: 13}
   m_Children:
   - {fileID: 3852387440053704483}
   m_Father: {fileID: 0}
@@ -175,8 +175,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.581176, y: 5.4410334, z: 1.4}
-  m_Center: {x: -1.2227459, y: 3.9347644, z: 0}
+  m_Size: {x: 7.742086, y: 7.7104063, z: 2.1024246}
+  m_Center: {x: -0.42576432, y: 4.0158134, z: -0.02701646}
 --- !u!114 &6133702513275688964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +211,6 @@ MonoBehaviour:
   OnClientAttackStart:
     m_PersistentCalls:
       m_Calls: []
-  swordCollider: {fileID: 1282537819252110564}
   onAttackStartSound: {fileID: 8300000, guid: 436690713d67ed7449ef2e561156665a, type: 3}
   onImpactSound: {fileID: 0}
 --- !u!114 &1282537819252110564

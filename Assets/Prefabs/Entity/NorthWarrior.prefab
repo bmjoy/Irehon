@@ -351,9 +351,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 1
   FractionBehaviourData: {fileID: 11400000, guid: 26c931b9b1128ee4b93a9285c9fd8192,
     type: 2}
+  fraction: 1
   respawnTime: 15
   name: North warrior
   maxHealth: 4000
@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 250
+  meleeDamage: 100
   MeleeWeaponCollider: {fileID: 8376423338772606667}
 --- !u!54 &4467686443816626027
 Rigidbody:

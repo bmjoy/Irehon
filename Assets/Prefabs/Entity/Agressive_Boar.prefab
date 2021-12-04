@@ -796,9 +796,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 3
   FractionBehaviourData: {fileID: 11400000, guid: 3c095e742e7acf349ba5926d1f044aa4,
     type: 2}
+  fraction: 3
   respawnTime: 60
   name: Boar
   maxHealth: 2000
@@ -877,7 +877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 150
+  meleeDamage: 90
   MeleeWeaponCollider: {fileID: 5526729608921667506}
 --- !u!1 &3781245626406351551
 GameObject:

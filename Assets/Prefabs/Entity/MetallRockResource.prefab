@@ -155,10 +155,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.41759348
-  m_Height: 0.5411898
+  m_Radius: 0.5
+  m_Height: 5.521281
   m_Direction: 1
-  m_Center: {x: -0.0046334267, y: 0.11051677, z: -0.022874355}
+  m_Center: {x: -0.0046334267, y: 2.453564, z: -0.022874355}
 --- !u!114 &3083057381289714617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,8 +259,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 7
   FractionBehaviourData: {fileID: 0}
+  fraction: 7
   respawnTime: 60
   name: Metall Rock
   maxHealth: 300
