@@ -4502,6 +4502,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1269054042285187250, guid: 2b32578f0af229c40bccf8d18e18f803,
         type: 3}
+      propertyPath: m_Volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1269054042285187250, guid: 2b32578f0af229c40bccf8d18e18f803,
+        type: 3}
       propertyPath: MaxDistance
       value: 40
       objectReference: {fileID: 0}
@@ -24584,7 +24589,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: be016d07a97cad14984b884088dafabf, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -42087,7 +42092,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.2
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
