@@ -1,65 +1,10 @@
 ﻿using Client;
 using Mirror;
 using Server;
-using SimpleJSON;
 using Steamworks;
 using System;
 using System.Collections;
 using UnityEngine;
-public struct RegisterInfo
-{
-    public Fraction fraction;
-    public RegisterInfo(JSONNode node)
-    {
-        fraction = (Fraction)Enum.Parse(typeof(Fraction), node["fraction"]);
-    }
-
-    public RegisterInfo(Fraction fraction)
-    {
-        this.fraction = fraction;
-    }
-
-    public string ToJsonString()
-    {
-        JSONObject json = new JSONObject();
-        json["fraction"] = fraction.ToString();
-        return json.ToString();
-    }
-}
-
-public struct AuthRequestMessage : NetworkMessage
-{
-    public ulong Id;
-    public byte[] AuthData;
-    public RegisterInfo registerInfo;
-}
-
-public struct PlayerConnectionInfo : NetworkMessage
-{
-    public ulong steamId;
-    public bool isAuthorized;
-
-    public AuthRequestMessage authInfo;
-
-    public CharacterInfo character;
-
-    public bool isSpawnPointChanged;
-    public string sceneToChange;
-
-    public Transform playerPrefab;
-
-    public PlayerConnectionInfo(AuthRequestMessage authInfo)
-    {
-        this.steamId = authInfo.Id;
-        isAuthorized = false;
-        playerPrefab = null;
-        character = new CharacterInfo();
-        this.authInfo = authInfo;
-
-        isSpawnPointChanged = false;
-        sceneToChange = null;
-    }
-}
 
 public class ServerAuth : NetworkAuthenticator
 {

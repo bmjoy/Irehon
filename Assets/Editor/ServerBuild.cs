@@ -5,55 +5,43 @@ using UnityEngine;
 
 public class ServerBuild
 {
+    private static readonly string[] gameZones = { "North", "South", "Center" };
+
     [MenuItem("Build/Build Zones")]
     static void BuildServerZones()
     {
-        Debug.Log("Start build north zone");
-        NorthBuild();
-        Debug.Log("Start build center zone");
-        CenterBuild();
-        Debug.Log("South build done");
-        SouthBuild();
+        foreach (string zone in gameZones)
+            BuildServerZone(zone);
     }
+
     [MenuItem("Build/Build Zones with client")]
     static void BuildServerZonesAndClient()
     {
         Debug.Log("Start build client");
-        ClientBuild();
+        ClientBuild(gameZones);
         BuildServerZones();
     }
+
     [MenuItem("Build/Build client")]
     static void BuildClient()
     {
         Debug.Log("Start build client");
-        ClientBuild();
-    }
-    static void NorthBuild()
-    {
-        string[] scenes = { "Assets/Scenes/North.unity" };
-        BuildPipeline.BuildPlayer(scenes, "Builds/North/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
-        Debug.Log("North build done");
+        ClientBuild(gameZones);
     }
 
-    static void CenterBuild()
+    static void BuildServerZone(string zone)
     {
-        string[] scenes = { "Assets/Scenes/Center.unity" };
-        BuildPipeline.BuildPlayer(scenes, "Builds/Center/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
-        Debug.Log("Center build done");
-    }
-    
-    static void SouthBuild()
-    {
-        string[] scenes = { "Assets/Scenes/South.unity" };
-        BuildPipeline.BuildPlayer(scenes, "Builds/South/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
-        Debug.Log("South build done");
+        string[] scenes = { $"Assets/Scenes/{zone}.unity" };
+        BuildPipeline.BuildPlayer(scenes, $"Builds/{zone}/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
+        Debug.Log($"{zone} build done");
     }
 
-    static void ClientBuild()
+    static void ClientBuild(string[] zones)
     {
-        string[] scenes = { "Assets/Scenes/LoginScene.unity", "Assets/Scenes/FractionSelect.unity", "Assets/Scenes/Center.unity",
-        "Assets/Scenes/North.unity", "Assets/Scenes/South.unity"};
-        BuildPipeline.BuildPlayer(scenes, "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        List<string> scenes = new List<string>{ "Assets/Scenes/LoginScene.unity", "Assets/Scenes/FractionSelect.unity" };
+        foreach (string zone in gameZones)
+            scenes.Add($"Assets/Scenes/{zone}.unity");
+        BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         Debug.Log("Client build done");
     }
 }
