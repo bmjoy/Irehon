@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections;
 using SimpleJSON;
+using UnityEngine;
 
-[Serializable]
 public class ContainerSlot : IEquatable<ContainerSlot>
 {
     public int itemId;
     public int slotIndex;
     public int itemQuantity;
-
-    public ContainerSlot()
-    {
-
-    }
 
     public ContainerSlot(int slotIndex)
     {
@@ -21,10 +16,21 @@ public class ContainerSlot : IEquatable<ContainerSlot>
         this.slotIndex = slotIndex;
     }
 
+    public ContainerSlot()
+    {
+
+    }
+
     public ContainerSlot(JSONNode node)
     {
         itemId = node["item_id"].AsInt;
+        slotIndex = 0;
         itemQuantity = node["quantity"].AsInt;
+    }
+
+    public Item GetItem()
+    {
+        return ItemDatabase.GetItemById(itemId);
     }
 
     public JSONObject ToJson()
@@ -42,6 +48,7 @@ public class ContainerSlot : IEquatable<ContainerSlot>
         slotIndex = index;
         itemQuantity = node["quantity"].AsInt;
     }
+
     public void CopyContent(ContainerSlot slot)
     {
         itemId = slot.itemId;
@@ -50,6 +57,7 @@ public class ContainerSlot : IEquatable<ContainerSlot>
 
     public bool Equals(ContainerSlot other)
     {
+        Debug.Log(itemId == other.itemId && slotIndex == other.slotIndex && itemQuantity == other.itemQuantity);
         return itemId == other.itemId && slotIndex == other.slotIndex && itemQuantity == other.itemQuantity;
     }
 }

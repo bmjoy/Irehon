@@ -34,7 +34,7 @@ public static class ItemDatabase
         }
     }
 
-    public static Item GetItemById(int id) => items[id];
+    public static Item GetItemById(int id) => items.ContainsKey(id) ? items[id] : null;
 
     public static Item GetItemBySlug(string slug) => items?.Values.ToList().Find(x => x.slug == slug);
 }

@@ -19,8 +19,8 @@ public class PlayerDanceState : PlayerRotatableState
     {
         if (!isResimulating)
         {
-            abilitySystem.AnimatorComponent.SetBool("isDancing", true);
-            abilitySystem.AnimatorComponent.applyRootMotion = true;
+            abilitySystem.animator.SetBool("isDancing", true);
+            abilitySystem.animator.applyRootMotion = true;
         }
     }
 
@@ -28,8 +28,8 @@ public class PlayerDanceState : PlayerRotatableState
     {
         if (!isResimulating)
         {
-            abilitySystem.AnimatorComponent.SetBool("isDancing", false);
-            abilitySystem.AnimatorComponent.applyRootMotion = false;
+            abilitySystem.animator.SetBool("isDancing", false);
+            abilitySystem.animator.applyRootMotion = false;
         }
     }
 

@@ -87,6 +87,17 @@ public static class ContainerData
         await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
     }
 
+    public static async Task<int> MergeContainers(List<int> containers)
+    {
+        var www = Api.Request("/containers/?quantity=1", ApiMethod.POST);
+        await www.SendWebRequest();
+        int newContainerId = Api.GetResult(www)["id"].AsInt;
+
+        MoveAllItemsInNewContainer(containers, newContainerId);
+
+        return newContainerId;
+    }
+
     public static void SwapSlot(int containerId, int oldSlot, int newSlot)
     {
         MoveSlotData(containerId, oldSlot, newSlot);

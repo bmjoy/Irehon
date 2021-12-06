@@ -7,45 +7,39 @@ using System;
 public class AbilitySystem : NetworkBehaviour
 {
     public GameObject AbilityPoolObject => abilityPoolObject;
-    public Animator AnimatorComponent => animator;
-    public Player PlayerComponent => player;
-    public PlayerMovement PlayerMovementComponent => playerMovement;
-    public PlayerBonesLinks PlayerBonesLinks => boneLinks;
+    public PlayerBonesLinks playerBonesLinks { get; private set; }
+    public PlayerMovement playerMovement { get; private set; }
+    public Player player { get; private set; }
+    public Animator animator { get; private set; }
 
     [HideInInspector]
     public KeyCode ListeningKey;
 
-    private PlayerBonesLinks boneLinks;
-    private PlayerMovement playerMovement;
-    private Player player;
-    private Animator animator;
-    private AudioSource[] audioSources;
-    [SerializeField]
-    private GameObject abilityPoolObject;
-
-    private AbilityBase currentAbility;
-
     [SyncVar]
     private bool isAbilityCasting;
 
-    public bool IsAbilityCasting() => isAbilityCasting;
+    [SerializeField]
+    private GameObject abilityPoolObject;
 
+    private AudioSource[] audioSources;
+    private AbilityBase currentAbility;
+
+
+    private void Awake()
+    {
+        player = GetComponent<Player>();
+        playerBonesLinks = GetComponent<PlayerBonesLinks>();
+        playerMovement = GetComponent<PlayerMovement>();
+        animator = GetComponent<Animator>();
+        audioSources = abilityPoolObject.GetComponents<AudioSource>();
+        isAbilityCasting = false;
+    }
     public void SetWeapon(Weapon weapon)
     {
         if (currentAbility != null)
             currentAbility.Interrupt();
         currentAbility = weapon.Setup(this);
         ListeningKey = currentAbility.TriggerKey;
-    }
-
-    private void Awake()
-    {
-        player = GetComponent<Player>();
-        boneLinks = GetComponent<PlayerBonesLinks>();
-        playerMovement = GetComponent<PlayerMovement>();
-        animator = GetComponent<Animator>();
-        audioSources = abilityPoolObject.GetComponents<AudioSource>();
-        isAbilityCasting = false;
     }
 
     public void SendAbilityKeyStatus(bool isKeyPressed, Vector3 target)
@@ -59,25 +53,24 @@ public class AbilitySystem : NetworkBehaviour
     public void AbilityKeyDown(Vector3 target)
     {
         currentAbility.TriggerKeyDown(target);
-        AbilityKeyDownRPC(target);
+        AbilityKeyDownClientRpc(target);
+    }
+    public void AbilityKeyUp(Vector3 target)
+    {
+        currentAbility.TriggerKeyUp(target);
+        AbilityKeyUpClientRpc(target);
     }
 
     [ClientRpc]
-    private void AbilityKeyDownRPC(Vector3 target)
+    private void AbilityKeyDownClientRpc(Vector3 target)
     {
         currentAbility.TriggerKeyDown(target);
     }
 
     [ClientRpc]
-    private void AbilityKeyUpRPC(Vector3 target)
+    private void AbilityKeyUpClientRpc(Vector3 target)
     {
         currentAbility.TriggerKeyUp(target);
-    }
-
-    public void AbilityKeyUp(Vector3 target)
-    {
-        currentAbility.TriggerKeyUp(target);
-        AbilityKeyUpRPC(target);
     }
 
     public void AllowTrigger()
@@ -90,10 +83,9 @@ public class AbilitySystem : NetworkBehaviour
         isAbilityCasting = true;
     }
 
+    [ServerCallback]
     public void AbilityInterrupt()
     {
-        if (!isServer)
-            return;
         currentAbility?.Interrupt();
         AbilityInterruptRpc();
     }
@@ -104,7 +96,7 @@ public class AbilitySystem : NetworkBehaviour
         currentAbility?.Interrupt();
     }
 
-    [Server]
+    [ServerCallback]
     public void AnimationEventTrigger()
     {
         currentAbility.AnimationEvent();
@@ -115,6 +107,24 @@ public class AbilitySystem : NetworkBehaviour
     private void AnimationEventRPC()
     {
         currentAbility?.AnimationEvent();
+    }
+
+    [ServerCallback]
+    public void SubEvent()
+    {
+        currentAbility?.SubEvent();
+        SubEventRpc();
+    }
+
+    [ClientRpc]
+    private void SubEventRpc()
+    {
+        currentAbility?.SubEvent();
+    }
+
+    public void SoundEvent()
+    {
+        currentAbility?.AbilitySoundEvent();
     }
 
     public void PlaySoundClip(AudioClip clip)
@@ -134,13 +144,5 @@ public class AbilitySystem : NetworkBehaviour
         Array.Find(audioSources, source => source.clip == clip && source.isPlaying == true)?.Stop();
     }
 
-    public void SoundEvent()
-    {
-        currentAbility?.AbilitySoundEvent();
-    }
-
-    public void SubEvent()
-    {
-        currentAbility?.SubEvent();
-    }
+    public bool IsAbilityCasting() => isAbilityCasting;
 }

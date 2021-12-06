@@ -52,6 +52,7 @@ public class CameraController : MonoBehaviour
             i = this;
 
         cameraComponent = GetComponent<Camera>();
+        Player.OnPlayerIntializeEvent.AddListener(Intialize);
     }
 
     private void Start()

@@ -1,10 +1,10 @@
-﻿using SimpleJSON;
+﻿using Mirror;
+using SimpleJSON;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
-using Utils;
 
+[Serializable]
 public class Container : IEquatable<Container>
 {
     public ContainerSlot[] slots;
@@ -16,7 +16,10 @@ public class Container : IEquatable<Container>
             slots[i] = new ContainerSlot(node[i], i);
     }
 
-    public Container() {}
+    public Container()
+    {
+
+    }
 
     public JSONNode ToJson()
     {
@@ -30,7 +33,7 @@ public class Container : IEquatable<Container>
 
     public Container(ContainerSlot[] slots)
     {
-        this.slots = slots;
+        this.slots = (ContainerSlot[])slots.Clone();
     }
 
     public Container(int capacity)
@@ -81,7 +84,7 @@ public class Container : IEquatable<Container>
 
     public bool Equals(Container other)
     {
-        return slots.SequenceEqual(other.slots);
+        return this == other;
     }
 
     public ContainerSlot this[int i]

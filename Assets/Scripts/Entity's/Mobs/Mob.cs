@@ -59,7 +59,7 @@ public class Mob : LootableEntity
     {
         isAlive = true;
         SetHealth(maxHealth);
-        GetComponent<NavMeshAgent>().Warp(SpawnPosition);
+        GetComponent<NavMeshAgent>().Warp(startPosition);
         stateMachine.SetNewState(new MobIdleState(this));
     }
 }

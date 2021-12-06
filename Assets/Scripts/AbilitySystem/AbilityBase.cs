@@ -31,7 +31,7 @@ public abstract class AbilityBase : MonoBehaviour
     public virtual void Setup(AbilitySystem abilitySystem)
     {
         this.abilitySystem = abilitySystem;
-        boneLinks = abilitySystem.PlayerBonesLinks;
+        boneLinks = abilitySystem.playerBonesLinks;
         weapon = GetComponent<Weapon>();
     }
 

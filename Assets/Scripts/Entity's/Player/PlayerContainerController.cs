@@ -9,79 +9,85 @@ using UnityEngine.Events;
 public class PlayerContainerController : NetworkBehaviour
 {
     public Dictionary<ContainerType, Container> Containers { get; private set; } = new Dictionary<ContainerType, Container>();
+    public ContainerEvent OnInventoryUpdate { get; private set; } = new ContainerEvent();
+    public ContainerEvent OnEquipmentUpdate { get; private set; } = new ContainerEvent();
 
     private Player player;
     private Chest chest;
-
-    private Dictionary<ContainerType, int> containersId = new Dictionary<ContainerType, int>();
-
-    public OnContainerUpdate OnInventoryUpdate { get; private set; } = new OnContainerUpdate();
-    public OnContainerUpdate OnEquipmentUpdate { get; private set; } = new OnContainerUpdate();
-
     private CharacterInfo characterData => player.GetCharacterInfo();
     private int openedContainerId;
+
+    [SyncVar(hook = nameof(EquipmentHook))]
+    public Container equipment;
 
     private void Awake()
     {
         player = GetComponent<Player>();
-
-        if (!player.isDataAlreadyRecieved)
-            player.OnCharacterDataUpdateEvent.AddListener(Intialize);
-        else
-            Intialize(player.GetCharacterInfo());
-    
-        OnInventoryUpdate.AddListener(ContainerWindowManager.i.UpdateInventory);
-        OnEquipmentUpdate.AddListener(ContainerWindowManager.i.UpdateEquipment);
     }
 
     private void Start()
-    { 
-    }
-
-    public void Intialize(CharacterInfo info)
     {
-        player.OnCharacterDataUpdateEvent.RemoveListener(Intialize);
-        containersId[ContainerType.Equipment] = info.equipmentId;
-        containersId[ContainerType.Inventory] = info.inventoryId;
-    }
-
-    private ContainerType GetContainerType(int containerId)
-    {
-        foreach (var keyValuePair in containersId)
+        if (isServer)
         {
-            if (keyValuePair.Value == containerId)
-                return keyValuePair.Key;
+            OnInventoryUpdate.AddListener(InventoryUpdateTargetRpc);
+            OnEquipmentUpdate.AddListener(EquipmentUpdateClientRpc);
+
+            OnEquipmentUpdate.AddListener(equipment => this.equipment = equipment);
         }
-        return ContainerType.None;
+
+        if (equipment != null && equipment.slots != null)
+        {
+            OnEquipmentUpdate.Invoke(equipment);
+        }
+        if (Containers.ContainsKey(ContainerType.Inventory))
+            OnInventoryUpdate.Invoke(Containers[ContainerType.Inventory]);
+        
+        if (Containers.ContainsKey(ContainerType.Equipment))
+            OnEquipmentUpdate.Invoke(Containers[ContainerType.Equipment]);
+        if (isServer)
+            ServerContainersReIntialize();
+    }
+
+    [Server]
+    private void ServerContainersReIntialize()
+    {
+        Container equipment = ContainerData.LoadedContainers[characterData.equipmentId];
+        Container inventory = ContainerData.LoadedContainers[characterData.inventoryId];
+        OnInventoryUpdate.Invoke(inventory);
+        OnEquipmentUpdate.Invoke(equipment);
+    }
+
+    private void Update()
+    {
+        if (Containers.ContainsKey(ContainerType.Inventory))
+            print(Containers[ContainerType.Inventory]);
+
+        if (Containers.ContainsKey(ContainerType.Equipment))
+            print(Containers[ContainerType.Equipment]);
+    }
+
+    [ClientRpc]
+    public void EquipmentUpdateClientRpc(Container equipment)
+    {
+        Containers[ContainerType.Equipment] = equipment;
+        OnEquipmentUpdate.Invoke(equipment);
     }
 
     [TargetRpc]
-    public void SendContainerData(int containerId, Container container)
+    public void InventoryUpdateTargetRpc(Container inventory)
     {
-        ContainerType type = GetContainerType(containerId);
-        Containers[type] = container;
-        switch (type)
-        {
-            case ContainerType.Inventory:
-                OnInventoryUpdate.Invoke(container);
-                break;
-            case ContainerType.Equipment:
-                OnEquipmentUpdate.Invoke(container);
-                break;
-            case ContainerType.Chest:
-                ContainerWindowManager.i.OpenChest(container);
-                break;
-        }
+        Containers[ContainerType.Inventory] = inventory;
+        OnInventoryUpdate.Invoke(inventory);
     }
 
     [TargetRpc]
-    private void SendChestDataTargetRPC(int containerId, Container container)
+    public void ChestUpdateTargetRpc(Container chest)
     {
-        containersId[ContainerType.Chest] = containerId;
-        Containers[ContainerType.Chest] = container;
-        ContainerWindowManager.i.OpenChest(container);
+        Containers[ContainerType.Chest] = chest;
+        ContainerWindowManager.i.OpenChest(chest);
     }
 
+    [Server]
     private int GetContainerId(ContainerType type)
     {
         switch (type)
@@ -96,15 +102,13 @@ public class PlayerContainerController : NetworkBehaviour
     [TargetRpc]
     private void CloseChestTargetRpc()
     {
-        containersId[ContainerType.Chest] = 0;
-        Containers[ContainerType.Chest] = null;
         ContainerWindowManager.i.CloseChest();
     }
 
     [Server]
     public void CloseChest()
     {
-        ContainerData.ContainerUpdateNotifier.UnSubscribe(openedContainerId, SendChestDataTargetRPC);
+        ContainerData.ContainerUpdateNotifier.UnSubscribe(openedContainerId, SendChestToPlayer);
         chest?.OnDestroyEvent.RemoveListener(CloseChest);
         chest = null;
         openedContainerId = 0;
@@ -124,9 +128,15 @@ public class PlayerContainerController : NetworkBehaviour
         openedContainerId = containerId;
 
         Container chestContainer = ContainerData.LoadedContainers[openedContainerId];
-        SendChestDataTargetRPC(openedContainerId, chestContainer);
+        SendChestToPlayer(openedContainerId, chestContainer);
 
-        ContainerData.ContainerUpdateNotifier.Subscribe(openedContainerId, SendChestDataTargetRPC);
+        ContainerData.ContainerUpdateNotifier.Subscribe(openedContainerId, SendChestToPlayer);
+    }
+
+    [Server]
+    private void SendChestToPlayer(int containerId, Container container)
+    {
+        ChestUpdateTargetRpc(container);
     }
 
     //from , to
@@ -144,6 +154,15 @@ public class PlayerContainerController : NetworkBehaviour
             return;
 
         ContainerData.MoveSlotData(characterData.inventoryId, inventorySlot, characterData.equipmentId, equipmentSlot);
+    }
+
+    private void EquipmentHook(Container old, Container newContainer)
+    {
+        if (newContainer != null && newContainer.slots != null)
+        {
+            print(newContainer.ToJson().ToString());
+            OnEquipmentUpdate.Invoke(newContainer);
+        }
     }
 
     [Command]

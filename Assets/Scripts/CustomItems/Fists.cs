@@ -13,7 +13,7 @@ public class Fists : Weapon
 
     public override AbilityBase Setup(AbilitySystem abilitySystem)
     {
-        abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
+        abilitySystem.animator.runtimeAnimatorController = animator;
         ability.Setup(abilitySystem);
         return ability;
     }

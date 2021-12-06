@@ -22,17 +22,17 @@ public class MeleeWeaponAbility : AbilityBase
         base.Setup(abilitySystem);
 
         meleeCollider = GetComponent<MeleeWeaponCollider>();
-        meleeCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
+        meleeCollider.Intialize(abilitySystem.player.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
 
-        abilitySystem.PlayerComponent.OnDoDamageEvent.AddListener(ImpactSound);
+        abilitySystem.player.OnDoDamageEvent.AddListener(ImpactSound);
 
         meleeCollider.OnNewCollectedEntityEvent.AddListener(DamageEntity);
     }
     protected override void Ability(Vector3 target)
     {
-        abilitySystem.AnimatorComponent.SetTrigger("Skill1");
+        abilitySystem.animator.SetTrigger("Skill1");
         AbilityStart();
         if (abilitySystem.isClient)
             OnClientAttackStart.Invoke();
@@ -58,13 +58,13 @@ public class MeleeWeaponAbility : AbilityBase
 
         meleeCollider.StopCollectColliders();
 
-        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        abilitySystem.animator.ResetTrigger("Skill1");
         AbilityEnd();
     }
 
     private void DamageEntity(Entity entity, EntityCollider entityCollider)
     {
-        abilitySystem.PlayerComponent.DoDamage(entity, Mathf.RoundToInt(GetDamage() * entityCollider.damageMultiplier));
+        abilitySystem.player.DoDamage(entity, Mathf.RoundToInt(GetDamage() * entityCollider.damageMultiplier));
     }
 
     private void ImpactSound(int damage)
@@ -82,7 +82,7 @@ public class MeleeWeaponAbility : AbilityBase
 
     protected override void InterruptAbility()
     {
-        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        abilitySystem.animator.ResetTrigger("Skill1");
         AbilityEnd();
     }
 

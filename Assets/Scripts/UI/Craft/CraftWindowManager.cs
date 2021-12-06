@@ -46,12 +46,14 @@ public class CraftWindowManager : MonoBehaviour
             Destroy(this);
         else
             i = this;
+
+        Player.OnPlayerIntializeEvent.AddListener(Intialize);
     }
 
     public static void Intialize(Player player)
     {
         i.player = player;
-        if (player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory] != null)
+        if (player.GetComponent<PlayerContainerController>().Containers.ContainsKey(ContainerType.Inventory))
             i.UpdateInventory(player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory]);
 
         player.GetComponent<PlayerContainerController>().OnInventoryUpdate.AddListener(x => i.UpdateInventory(x));

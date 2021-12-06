@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class OnHealthChangeEvent : UnityEvent<int, int> { }
+public class IntUpdateEvent : UnityEvent<int, int> { }
 
-public class HitConfirmEvent : UnityEvent<int> { }
-
-public class OnTakeDamage : UnityEvent<int> { }
-public class OnGetKilledEvent : UnityEvent<Entity> { }
+public class IntEvent : UnityEvent<int> { }
+public class EntityEvent : UnityEvent<Entity> { }
 
 public struct DamageMessage
 {
@@ -19,35 +17,37 @@ public struct DamageMessage
 
 public class Entity : NetworkBehaviour
 {
-    public List<Collider> HitboxColliders => hitboxColliders;
     public string NickName => name;
     public int Health => health;
     public FractionBehaviourData FractionBehaviourData;
     [SyncVar]
     public Fraction fraction;
 
-    [SerializeField, Tooltip("In seconds, 0 = will be destroyed after death")]
-    protected float respawnTime;
+    public float respawnTime;
 
-    [SerializeField, Tooltip("Will be visible on healthbar")]
-    protected new string name = "Entity";
+    public new string name = "Entity";
 
-    public Vector3 SpawnPosition { get; protected set; }
+    public Vector3 startPosition { get; protected set; }
 
     [SyncVar(hook = nameof(OnChangeHealth))]
     protected int health;
 
-    [SerializeField, Tooltip("By default entity will spawn with this amount of health")]
-    protected int maxHealth = 100;
+    public int maxHealth = 100;
 
-    [SerializeField, Tooltip("Colliders ")]
-    protected List<Collider> hitboxColliders = new List<Collider>();
-
-    public bool isAlive { get; protected set; }
-    public OnGetKilledEvent OnGetKilledEvent { get; private set; } = new OnGetKilledEvent();
-    public HitConfirmEvent OnDoDamageEvent { get; private set; } = new HitConfirmEvent();
-    public OnTakeDamage OnTakeDamageEvent { get; private set; } = new OnTakeDamage();
-    public OnHealthChangeEvent OnHealthChangeEvent { get; private set; } = new OnHealthChangeEvent();
+    public List<Collider> HitboxColliders = new List<Collider>();
+    [SyncVar]
+    public bool isAlive;
+    /// <summary>
+    /// Invoked only on server, pass entity that been killed by this entity
+    /// </summary>
+    public EntityEvent OnKillEvent { get; private set; } = new EntityEvent();
+    /// <summary>
+    /// Invoked only on server, pass entity that killed this entity
+    /// </summary>
+    public EntityEvent OnGetKilledEvent { get; private set; } = new EntityEvent();
+    public IntEvent OnDoDamageEvent { get; private set; } = new IntEvent();
+    public IntEvent OnTakeDamageEvent { get; private set; } = new IntEvent();
+    public IntUpdateEvent OnHealthChangeEvent { get; private set; } = new IntUpdateEvent();
     public UnityEvent OnDeathEvent { get; private set; } = new UnityEvent();
     public UnityEvent OnRespawnEvent { get; private set; } = new UnityEvent();
     public UnityEvent OnPlayerLookingEvent { get; private set; } = new UnityEvent();
@@ -60,7 +60,7 @@ public class Entity : NetworkBehaviour
 
     protected virtual void Start()
     {
-        SpawnPosition = transform.position;
+        startPosition = transform.position;
         OnRespawnEvent.AddListener(SetDefaultState);
 
         if (respawnTime == 0)
@@ -68,6 +68,11 @@ public class Entity : NetworkBehaviour
         else
             OnDeathEvent.AddListener(InitiateRespawn);
 
+        if (isServer)
+        {
+            OnDoDamageEvent.AddListener(OnDoDamageRpc);
+            OnTakeDamageEvent.AddListener(OnTakeDamageRpc);
+        }
         SetDefaultState();
     }
     private void Update()
@@ -78,9 +83,7 @@ public class Entity : NetworkBehaviour
     protected void InitiateRespawn()
     {
         if (isServer)
-        {
             Invoke("Respawn", respawnTime);
-        }
     }
 
     protected void OnChangeHealth(int oldValue, int newValue)
@@ -97,7 +100,7 @@ public class Entity : NetworkBehaviour
     {
         isAlive = true;
         SetHealth(maxHealth);
-        transform.position = SpawnPosition;
+        transform.position = startPosition;
     }
 
 
@@ -127,17 +130,24 @@ public class Entity : NetworkBehaviour
     {
         if (isAlive)
             return;
+
         isAlive = true;
+
         OnRespawnEvent.Invoke();
+
         if (isServer)
             RespawnClientRpc();
     }
 
     [ClientRpc]
-    protected virtual void DeathClientRpc() => Death();
+    private void DeathClientRpc() => Death();
 
     [ClientRpc]
-    protected virtual void RespawnClientRpc() => Respawn();
+    private void RespawnClientRpc() => Respawn();
+    [ClientRpc]
+    protected void OnDoDamageRpc(int damage) => OnDoDamageEvent.Invoke(damage);
+    [ClientRpc]
+    protected void OnTakeDamageRpc(int damage) => OnTakeDamageEvent.Invoke(damage);
 
     [Server]
     protected virtual void SetHealth(int health)
@@ -163,9 +173,11 @@ public class Entity : NetworkBehaviour
             return;
 
         health -= damageMessage.damage;
+
         if (health <= 0)
         {
             OnGetKilledEvent.Invoke(damageMessage.source);
+            damageMessage.source.OnKillEvent.Invoke(this);
             Death();
             health = 0;
         }
@@ -174,7 +186,9 @@ public class Entity : NetworkBehaviour
         OnTakeDamageEvent.Invoke(damageMessage.damage);
 
         if (damageMessage.source != this)
+        {
             damageMessage.source?.OnDoDamageEvent.Invoke(damageMessage.damage);
+        }
     }
 
     [Server]

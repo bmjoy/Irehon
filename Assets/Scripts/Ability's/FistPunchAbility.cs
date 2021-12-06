@@ -17,17 +17,17 @@ public class FistPunchAbility : AbilityBase
     public override void Setup(AbilitySystem abilitySystem)
     {
         base.Setup(abilitySystem);
-        leftHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.PlayerBonesLinks.LeftHand).GetComponent<MeleeWeaponCollider>();
+        leftHandCollider = Instantiate(handFistColliderPrefab, abilitySystem.playerBonesLinks.LeftHand).GetComponent<MeleeWeaponCollider>();
         
         leftHandCollider.transform.localPosition = Vector3.zero;
 
-        leftHandCollider.Intialize(abilitySystem.PlayerComponent.HitboxColliders);
+        leftHandCollider.Intialize(abilitySystem.player.HitboxColliders);
 
         currentAnimationEvent = DamageEntitiesInArea;
     }
     protected override void Ability(Vector3 target)
     {
-        abilitySystem.AnimatorComponent.SetTrigger("Skill1");
+        abilitySystem.animator.SetTrigger("Skill1");
         leftHandCollider.StartCollectColliders();
         AbilityStart();
     }
@@ -48,11 +48,11 @@ public class FistPunchAbility : AbilityBase
             return;
 
         foreach (var entity in leftHandCollider.GetCollectedInZoneEntities())
-            abilitySystem.PlayerComponent.DoDamage(entity.Key, Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
+            abilitySystem.player.DoDamage(entity.Key, Mathf.RoundToInt(GetDamage() * entity.Value.damageMultiplier));
 
         leftHandCollider.StopCollectColliders();
 
-        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        abilitySystem.animator.ResetTrigger("Skill1");
         AbilityEnd();
     }
 
@@ -68,7 +68,7 @@ public class FistPunchAbility : AbilityBase
 
     protected override void InterruptAbility()
     {
-        abilitySystem.AnimatorComponent.ResetTrigger("Skill1");
+        abilitySystem.animator.ResetTrigger("Skill1");
         AbilityEnd();
     }
 

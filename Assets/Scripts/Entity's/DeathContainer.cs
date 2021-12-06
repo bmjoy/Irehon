@@ -20,21 +20,18 @@ public class DeathContainer : Chest
             StartCoroutine(SelfDestroyOnTime(4f));
     }
 
+    public async void AttachMultipleContainers(List<int> otherContainers)
+    {
+        int newContainer = await ContainerData.MergeContainers(otherContainers);
+
+        SetChestId(newContainer);
+        CheckIsContainerEmpty(ContainerData.LoadedContainers[newContainer]);
+    }
+
     private IEnumerator SelfDestroyOnTime(float time)
     {
         yield return new WaitForSeconds(time);
         NetworkServer.Destroy(this.gameObject);
-    }
-    public void SetEquipment(Container equipment)
-    {
-        GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(equipment);
-        SetEquipmentRpc(equipment);
-    }
-
-    [ClientRpc]
-    private void SetEquipmentRpc(Container container)
-    {
-        GetComponent<PlayerModelManager>()?.UpdateEquipmentContainer(container);
     }
 
     protected override void OnDestroy()

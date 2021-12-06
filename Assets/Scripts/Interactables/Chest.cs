@@ -4,14 +4,14 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class OnContainerUpdate : UnityEvent<Container> { }
+public class ContainerEvent : UnityEvent<Container> { }
 
 public class Chest : NetworkBehaviour, IInteractable
 {
     [SerializeField]
     private int containerId;
     public int ContainerId { get => containerId; }
-    public OnContainerUpdate OnContainerUpdate { get; } = new OnContainerUpdate();
+    public ContainerEvent OnContainerUpdate { get; } = new ContainerEvent();
     public UnityEvent OnDestroyEvent { get; } = new UnityEvent();
 
     private void Awake()

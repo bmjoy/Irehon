@@ -33,12 +33,12 @@ public class Bow : Weapon
         transform.localRotation = localRotation;
         ArrowInHand = Instantiate(arrowInHandPrefab, playerBonesLinks.RightHand);
 
-        abilitySystem.AnimatorComponent.runtimeAnimatorController = animator;
+        abilitySystem.animator.runtimeAnimatorController = animator;
 
         ability.SetArrowDamage(currentWeapon.metadata["Damage"].AsInt);
         ability.Setup(abilitySystem);
 
-        SetAnimationSpeed(abilitySystem.AnimatorComponent, WeaponType.Bow, currentWeapon.metadata["AttackSpeed"].AsFloat);
+        SetAnimationSpeed(abilitySystem.animator, WeaponType.Bow, currentWeapon.metadata["AttackSpeed"].AsFloat);
 
 
         return ability;
@@ -51,6 +51,6 @@ public class Bow : Weapon
         Destroy(ArrowInHand);
         Destroy(gameObject);
 
-        SetDefaultAnimationSpeed(abilitySystem.AnimatorComponent);
+        SetDefaultAnimationSpeed(abilitySystem.animator);
     }
 }

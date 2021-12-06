@@ -11,12 +11,11 @@ public class PlayerWeaponEquipment : NetworkBehaviour
     private void Awake()
     {
         abilitySystem = GetComponent<AbilitySystem>();
-        GetComponent<Player>().OnPublicEquipmentUpdate.AddListener(UpdateWeapon);
+        GetComponent<PlayerContainerController>().OnEquipmentUpdate.AddListener(UpdateWeapon);
     }
 
     public void UpdateWeapon(Container equipment)
     {
-        print(equipment.slots.Length);
         var weaponSlot = equipment.slots[(int)EquipmentSlot.Weapon];
         string weaponSlug;
         if (weaponSlot.itemId == 0)

@@ -40,6 +40,8 @@ public class ContainerWindowManager : MonoBehaviour
             Destroy(this);
         else
             i = this;
+
+        Player.OnPlayerIntializeEvent.AddListener(PlayerIntialize);
     }
 
     private ContainerSlot GetContainerAttachedSlot(InventorySlotUI slot)
@@ -52,6 +54,8 @@ public class ContainerWindowManager : MonoBehaviour
     public void PlayerIntialize(Player player)
     {
         playerContainerController = player.GetComponent<PlayerContainerController>();
+        playerContainerController.OnInventoryUpdate.AddListener(UpdateInventory);
+        playerContainerController.OnEquipmentUpdate.AddListener(UpdateEquipment);
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)

@@ -36,8 +36,8 @@ public class HoldReleaseArrowAbility : AbilityBase
         base.Setup(abilitySystem);
         bow = weapon as Bow;
         bowBoneStartPosition = BowStringBone.localPosition;
-        player = abilitySystem.PlayerComponent;
-        animator = abilitySystem.AnimatorComponent;
+        player = abilitySystem.player;
+        animator = abilitySystem.animator;
         chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
         quiver = new Quiver(abilitySystem.AbilityPoolObject.transform, player, 5, Arrow, arrowDamage);
     }

@@ -28,7 +28,7 @@ public class PlayerInteracter : NetworkBehaviour
         }
     }
 
-    [Server]
+    [ServerCallback]
     public void InterractAttemp(Vector3 interractPos)
     {
         if (currentInteractable != null)
@@ -52,7 +52,7 @@ public class PlayerInteracter : NetworkBehaviour
         currentInteractable.Interact(player);
     }
 
-    [Server]
+    [ServerCallback]
     public void StopInterracting()
     {
        if (currentInteractable != null)

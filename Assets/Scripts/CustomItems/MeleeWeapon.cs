@@ -32,13 +32,13 @@ public class MeleeWeapon : Weapon
         transform.localRotation = localRotation;
         transform.localScale = localScale;
 
-        abilitySystem.AnimatorComponent.runtimeAnimatorController = animatorOverrideController;
+        abilitySystem.animator.runtimeAnimatorController = animatorOverrideController;
 
         GetComponent<AbilityBase>().Setup(abilitySystem);
 
         GetComponent<MeleeWeaponAbility>().SetDamage(currentWeapon.metadata["Damage"].AsInt);
 
-        SetAnimationSpeed(abilitySystem.AnimatorComponent, type, currentWeapon.metadata["AttackSpeed"].AsFloat);
+        SetAnimationSpeed(abilitySystem.animator, type, currentWeapon.metadata["AttackSpeed"].AsFloat);
 
         return GetComponent<AbilityBase>();
     }
@@ -47,6 +47,6 @@ public class MeleeWeapon : Weapon
     {
         Destroy(gameObject);
 
-        SetDefaultAnimationSpeed(abilitySystem.AnimatorComponent);
+        SetDefaultAnimationSpeed(abilitySystem.animator);
     }
 }
