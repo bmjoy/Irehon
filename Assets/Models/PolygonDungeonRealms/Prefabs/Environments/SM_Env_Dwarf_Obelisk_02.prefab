@@ -138,8 +138,8 @@ GameObject:
   - component: {fileID: 4901627948040076}
   - component: {fileID: 33574663394843992}
   - component: {fileID: 23269474866716252}
-  - component: {fileID: 64213070333404730}
-  - component: {fileID: 64855782088801926}
+  - component: {fileID: 9025130227603496772}
+  - component: {fileID: 6616079107153275415}
   m_Layer: 11
   m_Name: SM_Env_Dwarf_Obelisk_02
   m_TagString: Walkable
@@ -211,8 +211,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64213070333404730
-MeshCollider:
+--- !u!65 &9025130227603496772
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -221,12 +221,11 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43051867893232650, guid: 7b1bfc6657829f749aa050c17587c273, type: 2}
---- !u!64 &64855782088801926
-MeshCollider:
+  serializedVersion: 2
+  m_Size: {x: 2.7962716, y: 0.4381255, z: 2.7962716}
+  m_Center: {x: 0, y: 0.12043306, z: 0}
+--- !u!65 &6616079107153275415
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -235,10 +234,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43512679306492310, guid: 7b1bfc6657829f749aa050c17587c273, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 0.95607173, y: 3.6436548, z: 0.948607}
+  m_Center: {x: -0.018555054, y: 2.3286104, z: 0.0038696614}
 --- !u!1 &6873031382208450741
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4214558158628724}
   - component: {fileID: 33053584462898018}
   - component: {fileID: 23012784447420404}
-  - component: {fileID: 64296523084026788}
+  - component: {fileID: 7576669207831680379}
+  - component: {fileID: 1059679560678824613}
   m_Layer: 13
   m_Name: SM_Env_Rock_Obelisk_01
   m_TagString: Walkable
@@ -83,8 +84,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64296523084026788
-MeshCollider:
+--- !u!136 &7576669207831680379
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -93,10 +94,23 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43434230403248806, guid: 9a479554ccd7fbb409ed51466058565d, type: 2}
+  m_Radius: 0.4
+  m_Height: 3.284363
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.2271966, z: 0}
+--- !u!135 &1059679560678824613
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406472394096124}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.04
+  m_Center: {x: 0, y: -0.29, z: 0}
 --- !u!1 &1679751774382092523
 GameObject:
   m_ObjectHideFlags: 0

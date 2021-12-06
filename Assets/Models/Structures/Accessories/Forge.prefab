@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 33744511465233194}
   - component: {fileID: 23896965662051820}
   - component: {fileID: 3887169589606017199}
-  - component: {fileID: 7437743301155004403}
   - component: {fileID: 2660533726061838608}
   m_Layer: 0
   m_Name: Forge
@@ -98,19 +97,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.7454606, y: 0.6549854, z: 0.64305454}
   m_Center: {x: -0.0043260455, y: -0.27468014, z: -0.0093719065}
---- !u!65 &7437743301155004403
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455149898172146}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.32020378, y: 0.13603234, z: 0.1521048}
-  m_Center: {x: -0.004326053, y: -0.5341567, z: 0.32574996}
 --- !u!136 &2660533726061838608
 CapsuleCollider:
   m_ObjectHideFlags: 0

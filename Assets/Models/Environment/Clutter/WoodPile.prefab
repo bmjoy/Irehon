@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4948287093372224}
   - component: {fileID: 33318292359282278}
   - component: {fileID: 23789564953582504}
-  - component: {fileID: 3674364826602680302}
+  - component: {fileID: 5615150248139329537}
   m_Layer: 0
   m_Name: WoodPile
   m_TagString: Untagged
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &3674364826602680302
-MeshCollider:
+--- !u!65 &5615150248139329537
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +90,6 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1127982256064878969, guid: 3ed057da1a9f4574abcd4bbad897e0c7, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.68588346, y: 0.35907054, z: 1.1539795}
+  m_Center: {x: 0.005533099, y: 0.035723254, z: 0.0023820102}

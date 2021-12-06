@@ -414,10 +414,10 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 1
-  m_Acceleration: 5
+  m_Acceleration: 2.5
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -2522,6 +2522,31 @@ PrefabInstance:
     - target: {fileID: 456820, guid: ef692f86dcc854a7aba0ac610620cb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2331003534412106063, guid: ef692f86dcc854a7aba0ac610620cb15,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 3.3016543
+      objectReference: {fileID: 0}
+    - target: {fileID: 2331003534412106063, guid: ef692f86dcc854a7aba0ac610620cb15,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 8.902059
+      objectReference: {fileID: 0}
+    - target: {fileID: 2331003534412106063, guid: ef692f86dcc854a7aba0ac610620cb15,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.10849435
+      objectReference: {fileID: 0}
+    - target: {fileID: 2331003534412106063, guid: ef692f86dcc854a7aba0ac610620cb15,
+        type: 3}
+      propertyPath: m_Center.y
+      value: -0.01995247
+      objectReference: {fileID: 0}
+    - target: {fileID: 2331003534412106063, guid: ef692f86dcc854a7aba0ac610620cb15,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 1.8395578
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef692f86dcc854a7aba0ac610620cb15, type: 3}

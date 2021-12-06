@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 458314}
   - component: {fileID: 3318874}
   - component: {fileID: 2356508}
-  - component: {fileID: 64839682411337404}
+  - component: {fileID: 3687045738920150308}
   m_Layer: 0
   m_Name: SM_Wep_Crystal_Ornate_Straightsword_01
   m_TagString: Untagged
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64839682411337404
-MeshCollider:
+--- !u!65 &3687045738920150308
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +90,6 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43986161777339886, guid: 2816e07dbdd809d4d962a69afb384e1b, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 0.076803744, y: 1.1755023, z: 0.21692896}
+  m_Center: {x: 0.000000029802322, y: 0.4193256, z: 0.000000014901161}

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 475210}
   - component: {fileID: 3349116}
   - component: {fileID: 2311790}
+  - component: {fileID: 1456673399966974622}
   m_Layer: 0
   m_Name: SM_Prop_Torch_Ornate_01
   m_TagString: Untagged
@@ -82,6 +83,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &1456673399966974622
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197870}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.17207342, y: 0.80234814, z: 0.15386073}
+  m_Center: {x: 0.00468273, y: -0.042693377, z: -0.0036424822}
 --- !u!1 &1342155373
 GameObject:
   m_ObjectHideFlags: 0

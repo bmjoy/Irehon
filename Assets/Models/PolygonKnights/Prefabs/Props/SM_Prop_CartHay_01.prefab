@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 454216}
   - component: {fileID: 3384516}
   - component: {fileID: 2381044}
-  - component: {fileID: 64641482639296590}
+  - component: {fileID: 744987160030161680}
+  - component: {fileID: 1799835921193140060}
   m_Layer: 0
   m_Name: SM_Prop_CartHay_01
   m_TagString: Untagged
@@ -80,8 +81,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64641482639296590
-MeshCollider:
+--- !u!65 &744987160030161680
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +91,19 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43101160833351442, guid: 8b34c3e571305a34483957743e0e7e82, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 1.2873178, y: 0.7465285, z: 3.2154636}
+  m_Center: {x: 0.040349692, y: 0.37326425, z: -0.00000011920929}
+--- !u!65 &1799835921193140060
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147522}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0507741, y: 0.7193005, z: 1.7887151}
+  m_Center: {x: -0.015891433, y: 1.2132043, z: -0.58417046}

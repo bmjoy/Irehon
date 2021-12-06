@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4371386912546518}
   - component: {fileID: 33270728143047922}
   - component: {fileID: 23293143878011932}
-  - component: {fileID: 64547797360680718}
+  - component: {fileID: 2079665937734334693}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_03
   m_TagString: Walkable
@@ -81,8 +81,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64547797360680718
-MeshCollider:
+--- !u!65 &2079665937734334693
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -91,10 +91,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 76c6a1e22c855174caddf8cf23ce0b5d, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 8.458554, y: 3.8293948, z: 7.6792817}
+  m_Center: {x: 0, y: 1.6175559, z: -0.081403494}
 --- !u!1 &1851216546670572
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +105,6 @@ GameObject:
   - component: {fileID: 4360418347528722}
   - component: {fileID: 33414064963973478}
   - component: {fileID: 23337085109518774}
-  - component: {fileID: 65617698456357130}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_03_Door
   m_TagString: Untagged
@@ -175,16 +173,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &65617698456357130
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1851216546670572}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.5325171, y: 2.1676111, z: 0.11703491}
-  m_Center: {x: -0.7151056, y: 0, z: 0.0084171295}
