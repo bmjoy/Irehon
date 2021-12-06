@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4957848358494126}
   - component: {fileID: 33279477875730632}
   - component: {fileID: 23847679671827196}
-  - component: {fileID: 64886618412807088}
+  - component: {fileID: 5780278190132645086}
+  - component: {fileID: 1761682634000633934}
   m_Layer: 0
   m_Name: SM_Env_Obelisk_Glow_01
   m_TagString: Untagged
@@ -81,8 +82,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64886618412807088
-MeshCollider:
+--- !u!65 &5780278190132645086
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -91,10 +92,22 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43002747925838090, guid: 66c5ff610566aa648868d40190e396bc, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 4.540078, y: 1.3928318, z: 4.5552683}
+  m_Center: {x: 0.017058134, y: 0.6963873, z: 0.011771202}
+--- !u!65 &1761682634000633934
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381170953243090}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.0169566, y: 7.0885906, z: 2.0006404}
+  m_Center: {x: 0.029548764, y: 5.8675375, z: -0.053546727}
 --- !u!1 &3560360693030966265
 GameObject:
   m_ObjectHideFlags: 0

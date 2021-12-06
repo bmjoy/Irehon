@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4974587251804114}
   - component: {fileID: 33544331606065934}
   - component: {fileID: 23946444120827204}
-  - component: {fileID: 64663493333784564}
+  - component: {fileID: 3029361332595617012}
+  - component: {fileID: 89500067586611784}
   m_Layer: 0
   m_Name: SM_Prop_Crate_Stack_01
   m_TagString: Untagged
@@ -80,8 +81,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64663493333784564
-MeshCollider:
+--- !u!65 &3029361332595617012
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +91,19 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43404657412747706, guid: fc348e0f936d292459f5018487f7a267, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 2.2409723, y: 1.0394156, z: 2.2159789}
+  m_Center: {x: 0.5440054, y: 0.5197078, z: 0.5315099}
+--- !u!65 &89500067586611784
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438987585026920}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2296557, y: 0.9905808, z: 1.1659452}
+  m_Center: {x: 0.8065157, y: 1.6825138, z: 0.19481951}

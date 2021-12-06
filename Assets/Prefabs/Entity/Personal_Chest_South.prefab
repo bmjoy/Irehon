@@ -197,11 +197,11 @@ GameObject:
   - component: {fileID: 220709760690508354}
   - component: {fileID: 220709760689652396}
   - component: {fileID: 220709760688685910}
-  - component: {fileID: 285330312180099902}
   - component: {fileID: -2693773826871420102}
   - component: {fileID: -571105174241103435}
+  - component: {fileID: 7226175655850033194}
   m_Layer: 12
-  m_Name: Personal_Chest
+  m_Name: Personal_Chest_South
   m_TagString: EntityBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -271,20 +271,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &285330312180099902
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220709760690744766}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43862928417577270, guid: d487063872abfd245b894576be57e191, type: 2}
 --- !u!114 &-2693773826871420102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +305,19 @@ MonoBehaviour:
   containerId: 0
   chestName: SouthBase
   containerCapacity: 40
+--- !u!65 &7226175655850033194
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220709760690744766}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2738131, y: 0.91578215, z: 0.72447795}
+  m_Center: {x: 0.0012313128, y: 0.45789164, z: -0.00075149536}
 --- !u!1001 &995010267
 PrefabInstance:
   m_ObjectHideFlags: 0

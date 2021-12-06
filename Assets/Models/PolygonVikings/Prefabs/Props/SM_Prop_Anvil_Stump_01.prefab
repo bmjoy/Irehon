@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 417740}
   - component: {fileID: 3355418}
   - component: {fileID: 2309864}
-  - component: {fileID: 64799383797049488}
+  - component: {fileID: 5789719384576606548}
   m_Layer: 11
   m_Name: SM_Prop_Anvil_Stump_01
   m_TagString: Untagged
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64799383797049488
-MeshCollider:
+--- !u!135 &5789719384576606548
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +90,6 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43335791854345494, guid: c47207fad63ed794591cb1f4f4a0e4bf, type: 2}
+  serializedVersion: 2
+  m_Radius: 0.3770357
+  m_Center: {x: -0.006038904, y: 0.049838543, z: -0.0096897185}

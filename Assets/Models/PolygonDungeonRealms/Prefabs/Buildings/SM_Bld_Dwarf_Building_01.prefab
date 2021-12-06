@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4404986655541210}
   - component: {fileID: 33297531492467536}
   - component: {fileID: 23693519992060234}
-  - component: {fileID: 65157689704413818}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_02_Door_R
   m_TagString: Untagged
@@ -80,19 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &65157689704413818
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369203980274830}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.4142532, y: 3.2467453, z: 0.39176756}
-  m_Center: {x: 0.7071266, y: 0.15923166, z: 0.000008068979}
 --- !u!1 &1525460621022290
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,7 +90,13 @@ GameObject:
   - component: {fileID: 4180824332263158}
   - component: {fileID: 33092181282594878}
   - component: {fileID: 23613894328801412}
-  - component: {fileID: 64486990830233492}
+  - component: {fileID: 7236839305659187980}
+  - component: {fileID: 8823072310595086393}
+  - component: {fileID: 5441819865223858399}
+  - component: {fileID: 8278128651102454424}
+  - component: {fileID: 8040776928194429738}
+  - component: {fileID: 8649069392446171852}
+  - component: {fileID: 7356587825391368813}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_01
   m_TagString: Walkable
@@ -175,8 +167,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64486990830233492
-MeshCollider:
+--- !u!65 &7236839305659187980
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -185,10 +177,91 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 2e51836afdb48d84fbcd03ab9063f45a, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 20.571514, y: 6.1130824, z: 10.537735}
+  m_Center: {x: -0.042322636, y: 3.05654, z: 0.02889061}
+--- !u!65 &8823072310595086393
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.037577, y: 3.6080475, z: 8.285517}
+  m_Center: {x: 0.01535511, y: 7.9846325, z: -0.00000071525574}
+--- !u!65 &5441819865223858399
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.1943007, y: 2.5073845, z: 6.930882}
+  m_Center: {x: -0.12698698, y: 11.074926, z: 0.25399017}
+--- !u!136 &8278128651102454424
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 3.19
+  m_Height: 9.4270115
+  m_Direction: 1
+  m_Center: {x: -10.12, y: 1.6701031, z: -5.03}
+--- !u!136 &8040776928194429738
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 3.19
+  m_Height: 9.4270115
+  m_Direction: 1
+  m_Center: {x: 10.18, y: 1.6701031, z: -5.03}
+--- !u!136 &8649069392446171852
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 3.19
+  m_Height: 9.4270115
+  m_Direction: 1
+  m_Center: {x: -10.12, y: 1.6701031, z: 5.07}
+--- !u!136 &7356587825391368813
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525460621022290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 3.19
+  m_Height: 9.4270115
+  m_Direction: 1
+  m_Center: {x: 10.18, y: 1.6701031, z: 5.07}
 --- !u!1 &1860196563654762
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,7 +273,6 @@ GameObject:
   - component: {fileID: 4222428983503886}
   - component: {fileID: 33695780300022836}
   - component: {fileID: 23921223779855762}
-  - component: {fileID: 65777325531837042}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_02_Door_L
   m_TagString: Untagged
@@ -269,16 +341,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &65777325531837042
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1860196563654762}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.4142532, y: 3.2467453, z: 0.39498046}
-  m_Center: {x: -0.7071266, y: 0.15923166, z: 0.0000031888485}

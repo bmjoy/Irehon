@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 1409244273893719220}
   - component: {fileID: 1409244273893719221}
   m_Layer: 10
-  m_Name: training_dummy
+  m_Name: mannequin
   m_TagString: EntityBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,8 +163,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.7220384, y: 2.087295, z: 0.789699}
-  m_Center: {x: -0.0051569934, y: 1.1834366, z: -0.0099746}
+  m_Size: {x: 1.551723, y: 2.087295, z: 0.53942233}
+  m_Center: {x: -0.0014098611, y: 1.1834366, z: 0.11516402}
 --- !u!114 &1409244273893719220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,8 +179,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  fraction: 0
   FractionBehaviourData: {fileID: 0}
+  fraction: 0
   respawnTime: 0
   name: Target Dummy
   maxHealth: 100
@@ -212,8 +212,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1670030829825153328}
   - component: {fileID: 3589900306179792989}
-  - component: {fileID: 1409244273893719217}
-  - component: {fileID: 1409244273893719216}
   m_Layer: 11
   m_Name: training_dummy
   m_TagString: Entity
@@ -293,34 +291,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0009217537, y: -0.000007655006, z: 0.009726296}
     m_Extent: {x: 0.009806726, y: 0.005100461, z: 0.009814843}
   m_DirtyAABB: 0
---- !u!64 &1409244273893719217
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8306941172725378271}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -8437695714734578847, guid: 63a9ac7cbff5d8f4ab9ff7f2905ed2ca, type: 3}
---- !u!114 &1409244273893719216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8306941172725378271}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df13cb3a310a874fa9ddc1a3228875f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageMultiplier: 1
-  parent: {fileID: 1409244273893719220}
 --- !u!1 &8614928032662437611
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +330,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1538365950850327282}
-  - component: {fileID: 1409244273893719230}
   m_Layer: 0
   m_Name: DEF-body
   m_TagString: Untagged
@@ -383,20 +352,6 @@ Transform:
   m_Father: {fileID: 2320429431806652794}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1409244273893719230
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8864641483466413161}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1001 &3210068306819229589
 PrefabInstance:
   m_ObjectHideFlags: 0
