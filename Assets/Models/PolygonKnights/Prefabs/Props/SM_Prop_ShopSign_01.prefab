@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 435028}
   - component: {fileID: 3304310}
   - component: {fileID: 2362752}
-  - component: {fileID: 64030162473684382}
+  - component: {fileID: 1775851350685157222}
   m_Layer: 0
   m_Name: SM_Prop_ShopSign_01
   m_TagString: Untagged
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64030162473684382
-MeshCollider:
+--- !u!65 &1775851350685157222
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,7 +90,6 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43072584531240892, guid: 740f960d56e3702469c25d5b51f3feec, type: 2}
+  serializedVersion: 2
+  m_Size: {x: 1.8987464, y: 0.87490124, z: 0.18032336}
+  m_Center: {x: -0.9493732, y: -0.36849847, z: 0}

@@ -119,6 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4238222748227940}
+  - component: {fileID: 1667741511184848965}
   m_Layer: 0
   m_Name: Prefab_TrainingStrawTarget_static
   m_TagString: Untagged
@@ -141,3 +142,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1667741511184848965
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992766110373762}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.8139033, y: 1.1081719, z: 0.44852072}
+  m_Center: {x: -0.0107138455, y: 0.54841113, z: 0.018391468}

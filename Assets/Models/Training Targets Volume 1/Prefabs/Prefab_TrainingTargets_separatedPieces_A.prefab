@@ -60,6 +60,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4718879471476402}
+  - component: {fileID: 5261177433962404000}
   m_Layer: 0
   m_Name: Prefab_TrainingTargets_separatedPieces_A
   m_TagString: Untagged
@@ -82,6 +83,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5261177433962404000
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469966462743110}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.1919854
+  m_Direction: 2
+  m_Center: {x: 0.060000002, y: 0.36, z: 0.3791951}
 --- !u!1 &1719968428736474
 GameObject:
   m_ObjectHideFlags: 0

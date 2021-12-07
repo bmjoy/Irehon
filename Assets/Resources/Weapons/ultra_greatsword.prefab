@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a5ddb0105fe4c1144968b52a304f3945, type: 2}
+  - {fileID: 2100000, guid: 58e43cc7cb9771d4bbe67f63914f065e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,8 +95,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.14695056, y: 1.9991997, z: 0.08547954}
-  m_Center: {x: 0.0014648214, y: 0.70948833, z: -0.000039868057}
+  m_Size: {x: 0.14695056, y: 2.0296721, z: 0.08547954}
+  m_Center: {x: 0.0014647924, y: 0.694252, z: -0.00003996171}
 --- !u!114 &4394071484461938021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +131,6 @@ MonoBehaviour:
   OnClientAttackStart:
     m_PersistentCalls:
       m_Calls: []
-  swordCollider: {fileID: 2325554912577592222}
   onAttackStartSound: {fileID: 8300000, guid: 03618440ad489bf4db1beaae907bfcb2, type: 3}
   onImpactSound: {fileID: 0}
 --- !u!114 &2325554912577592222
