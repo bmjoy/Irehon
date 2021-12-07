@@ -593,8 +593,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3.9491663, y: 2.1218438, z: 1.482281}
-  m_Center: {x: -1.289207, y: -0.6451838, z: 0.0064693093}
+  m_Size: {x: 3.711491, y: 2.1218438, z: 1.482281}
+  m_Center: {x: -1.1703694, y: -0.6451838, z: 0.0064693093}
 --- !u!114 &1866712555927218033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1134,7 +1134,7 @@ MonoBehaviour:
   respawnTime: 60
   name: Brown Bear
   maxHealth: 4000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 7598479039417953137}
   - {fileID: 8779971375493809909}
   - {fileID: 3052689651572871273}
@@ -1154,6 +1154,7 @@ MonoBehaviour:
   - {fileID: 875287434256229864}
   - {fileID: 891245385435781748}
   - {fileID: 2248957619231791841}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -1220,8 +1221,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 180
+  meleeDamage: 150
   MeleeWeaponCollider: {fileID: 1866712555927218033}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &905578737705161600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1963,7 +1967,7 @@ GameObject:
   - component: {fileID: 8779971375493809909}
   - component: {fileID: 6746225529665368228}
   m_Layer: 10
-  m_Name: nose
+  m_Name: joint39
   m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2083,7 +2087,7 @@ GameObject:
   - component: {fileID: 7598479039417953137}
   - component: {fileID: 5283388565151639260}
   m_Layer: 10
-  m_Name: head
+  m_Name: joint6
   m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

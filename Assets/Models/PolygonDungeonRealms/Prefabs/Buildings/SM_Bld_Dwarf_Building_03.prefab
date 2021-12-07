@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4371386912546518}
   - component: {fileID: 33270728143047922}
   - component: {fileID: 23293143878011932}
-  - component: {fileID: 2079665937734334693}
+  - component: {fileID: 2756312912048527085}
   m_Layer: 11
   m_Name: SM_Bld_Dwarf_Building_03
   m_TagString: Walkable
@@ -81,8 +81,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &2079665937734334693
-BoxCollider:
+--- !u!64 &2756312912048527085
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -91,9 +91,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 8.458554, y: 3.8293948, z: 7.6792817}
-  m_Center: {x: 0, y: 1.6175559, z: -0.081403494}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 6c3ec66b84f218749a88a4b8c4e63c6e, type: 3}
 --- !u!1 &1851216546670572
 GameObject:
   m_ObjectHideFlags: 0

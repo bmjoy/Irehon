@@ -1137,7 +1137,7 @@ MonoBehaviour:
   respawnTime: 15
   name: South warrior
   maxHealth: 4000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 6518872214990072454}
   - {fileID: 1629135249423763291}
   - {fileID: 2148419187480977698}
@@ -1151,6 +1151,7 @@ MonoBehaviour:
   - {fileID: 6499324175601576657}
   - {fileID: 3364983267555953572}
   - {fileID: 3445935221425082473}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -1174,6 +1175,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeDamage: 100
   MeleeWeaponCollider: {fileID: 8586775436127408214}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &557965831292413393
 MonoBehaviour:
   m_ObjectHideFlags: 0

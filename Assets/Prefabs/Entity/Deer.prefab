@@ -2175,8 +2175,7 @@ MonoBehaviour:
   respawnTime: 60
   name: Deer
   maxHealth: 1000
-  hitboxColliders:
-  - {fileID: 8731660509926312242}
+  HitboxColliders:
   - {fileID: 3148884074989614902}
   - {fileID: 7511244321279858660}
   - {fileID: 2213344929369557743}
@@ -2184,6 +2183,7 @@ MonoBehaviour:
   - {fileID: 4035669048505238958}
   - {fileID: 7159565339025239329}
   - {fileID: 8076164034552816723}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:

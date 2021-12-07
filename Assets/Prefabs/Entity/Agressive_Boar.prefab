@@ -802,7 +802,7 @@ MonoBehaviour:
   respawnTime: 60
   name: Boar
   maxHealth: 2000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 7694140673250294867}
   - {fileID: 1507379340580755736}
   - {fileID: 5413327214426617912}
@@ -810,7 +810,8 @@ MonoBehaviour:
   - {fileID: 4006901548072438046}
   - {fileID: 1730514622863303880}
   - {fileID: 1183956652346837398}
-  - {fileID: 210957876359379308}
+  - {fileID: 1267658381728714539}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -877,8 +878,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 90
+  meleeDamage: 50
   MeleeWeaponCollider: {fileID: 5526729608921667506}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3781245626406351551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,6 +1546,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3781245626406448833}
   - component: {fileID: 1267658381728714539}
+  - component: {fileID: 2230111856636126727}
   m_Layer: 10
   m_Name: Tail0_M
   m_TagString: Entity
@@ -1577,6 +1582,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.14
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2230111856636126727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3781245626406351585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df13cb3a310a874fa9ddc1a3228875f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageMultiplier: 1
+  parent: {fileID: 6641433997137516164}
 --- !u!1 &3781245626406351587
 GameObject:
   m_ObjectHideFlags: 0
@@ -1932,8 +1951,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.5390989, y: 0.81394804, z: 0.6074575}
-  m_Center: {x: -0.5412661, y: 0.09302891, z: 0.0027542114}
+  m_Size: {x: 1.449361, y: 0.81394804, z: 0.6074575}
+  m_Center: {x: -0.4963968, y: 0.0930289, z: 0.0027542114}
 --- !u!114 &5526729608921667506
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15115,7 +15115,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.1
+  m_Volume: 0.25
   m_Pitch: 0.62
   Loop: 0
   Mute: 0
@@ -57970,7 +57970,7 @@ Animator:
   m_GameObject: {fileID: 3622006752709158442}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 038320a534bd8b444b43734860d1a211, type: 3}
-  m_Controller: {fileID: 22100000, guid: 9b1ce220b41a93245811789711da864b, type: 2}
+  m_Controller: {fileID: 22100000, guid: 8e8c48baf53e4964e99dc9be669da064, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -57998,20 +57998,7 @@ MonoBehaviour:
   respawnTime: 5
   name: 
   maxHealth: 1000
-  HitboxColliders:
-  - {fileID: 1037910698048657053}
-  - {fileID: 3450897155572697010}
-  - {fileID: 443525010119914396}
-  - {fileID: 7801857452049578178}
-  - {fileID: 8358077435267605394}
-  - {fileID: 4339968918784554727}
-  - {fileID: 1171044128743138321}
-  - {fileID: 5733899839368232470}
-  - {fileID: 818987927441242114}
-  - {fileID: 3746161316452364498}
-  - {fileID: 4168191193157098215}
-  - {fileID: 3761748097344228782}
-  - {fileID: 592047040980551596}
+  HitboxColliders: []
   isAlive: 0
   northData: {fileID: 11400000, guid: 26c931b9b1128ee4b93a9285c9fd8192, type: 2}
   southData: {fileID: 11400000, guid: c77735aa99fbaca42b32f69776117489, type: 2}
