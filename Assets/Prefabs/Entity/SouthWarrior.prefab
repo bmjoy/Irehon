@@ -987,6 +987,7 @@ GameObject:
   - component: {fileID: 8618574314410096801}
   - component: {fileID: -2735746021434040590}
   - component: {fileID: 2110286977232431368}
+  - component: {fileID: 6792663335562894415}
   m_Layer: 11
   m_Name: SouthWarrior
   m_TagString: EntityBase
@@ -1268,6 +1269,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &6792663335562894415
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557965831292527208}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.11
+  m_Height: 1.3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!1 &557965831292527608
 GameObject:
   m_ObjectHideFlags: 0
@@ -2648,9 +2663,9 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 64214549082379724, guid: 3d9fbbf00316ffc4485e2dc40e59aa93, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3d9fbbf00316ffc4485e2dc40e59aa93, type: 3}
---- !u!1 &3147653607416397492 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 185350, guid: 3d9fbbf00316ffc4485e2dc40e59aa93,
+--- !u!23 &3147653607418052348 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2364494, guid: 3d9fbbf00316ffc4485e2dc40e59aa93,
     type: 3}
   m_PrefabInstance: {fileID: 3147653607416212146}
   m_PrefabAsset: {fileID: 0}
@@ -2660,9 +2675,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3147653607416212146}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &3147653607418052348 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2364494, guid: 3d9fbbf00316ffc4485e2dc40e59aa93,
+--- !u!1 &3147653607416397492 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 185350, guid: 3d9fbbf00316ffc4485e2dc40e59aa93,
     type: 3}
   m_PrefabInstance: {fileID: 3147653607416212146}
   m_PrefabAsset: {fileID: 0}

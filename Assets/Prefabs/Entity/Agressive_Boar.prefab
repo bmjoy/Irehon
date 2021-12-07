@@ -570,6 +570,7 @@ GameObject:
   - component: {fileID: -4199665173301302109}
   - component: {fileID: 850375745671494686}
   - component: {fileID: 2965046742045963977}
+  - component: {fileID: 68952172043756326}
   m_Layer: 10
   m_Name: Agressive_Boar
   m_TagString: EntityBase
@@ -883,6 +884,20 @@ MonoBehaviour:
   OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!136 &68952172043756326
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3781245626406351549}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.16
+  m_Height: 0.79
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.42, z: 0.1}
 --- !u!1 &3781245626406351551
 GameObject:
   m_ObjectHideFlags: 0

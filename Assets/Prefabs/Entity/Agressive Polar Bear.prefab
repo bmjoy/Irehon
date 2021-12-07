@@ -505,6 +505,7 @@ GameObject:
   - component: {fileID: 1269967150300719732}
   - component: {fileID: -180083457194434306}
   - component: {fileID: 5939749492686181074}
+  - component: {fileID: 6602821981798543401}
   m_Layer: 10
   m_Name: Agressive Polar Bear
   m_TagString: EntityBase
@@ -828,6 +829,20 @@ MonoBehaviour:
   OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!136 &6602821981798543401
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3511752200014590326}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.47
+  m_Height: 2.61
+  m_Direction: 0
+  m_Center: {x: -0.7, y: 1.06, z: -0.59}
 --- !u!1 &3511840714534918802
 GameObject:
   m_ObjectHideFlags: 0
