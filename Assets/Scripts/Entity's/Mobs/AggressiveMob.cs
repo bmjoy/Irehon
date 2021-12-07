@@ -28,6 +28,13 @@ public class AggressiveMob : Mob
         {
             entity.OnDeathEvent.AddListener(UnAgro);
         });
+
+        var collider = GetComponent<SphereCollider>();
+        if (collider != null && collider.isTrigger)
+        {
+            if (collider.radius > UnagroRadius)
+                UnagroRadius = collider.radius + 1;
+        }
     }
 
     public void UnAgro()
