@@ -97,6 +97,7 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     private void ShootArrow(Vector3 target)
     {
+        print("Shoot");
         Arrow releasedArrow = quiver.GetArrowFromQuiver();
         
         releasedArrow.transform.position = ArrowInHand.transform.position;
@@ -112,6 +113,8 @@ public class HoldReleaseArrowAbility : AbilityBase
     protected override void StopHoldingAbility(Vector3 target)
     {
         abilitySystem.StopPlayingClip(TenseSound);
+        print(aiming);
+        print(holdingTime);
         if (aiming && holdingTime > MIN_HOLDING_TIME)
         {
             animator.SetTrigger("Shoot");
@@ -157,6 +160,7 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     private void OnDestroy()
     {
+        Destroy(quiver.quiverTransform.gameObject);
         Destroy(quiver);
     }
 }

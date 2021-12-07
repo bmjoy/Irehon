@@ -89,6 +89,7 @@ public class Player : Entity
 			FractionBehaviourData = southData;
 	}
 
+	[Server]
 	private void IntializeServerEvents()
     {
 		OnDoDamageEvent.AddListener(OnDoDamageRpc);
@@ -202,6 +203,7 @@ public class Player : Entity
 		stateMachine.ChangePlayerState(PlayerStateType.Idle);
 	}
 
+	[Server]
 	private void TeleportToSpawnPoint()
     {
 		CharacterInfo currentCharacterInfo = ((PlayerConnectionInfo)connectionToClient.authenticationData).character;
@@ -215,6 +217,8 @@ public class Player : Entity
 			SetPositionRpc(currentCharacterInfo.spawnPoint);
 		}
 	}
+
+	[Server]
 	private void SpawnDeathContainer()
 	{
 		GameObject deadBody = Instantiate(deathContainerPrefab);
@@ -239,11 +243,13 @@ public class Player : Entity
 		}
 	}
 
+	[Server]
 	private void EquipmentUpdateSubscriber(int containerId, Container container)
     {
 		containerController.OnEquipmentUpdate.Invoke(container);
     }
 
+	[Server]
 	private void InventoryUpdateSubscriber(int containerId, Container container)
 	{
 		containerController.OnInventoryUpdate.Invoke(container);
