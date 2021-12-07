@@ -157,6 +157,7 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     private void OnDestroy()
     {
+        Destroy(quiver.quiverTransform.gameObject);
         Destroy(quiver);
     }
 }

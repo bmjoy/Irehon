@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Quiver : MonoBehaviour
 {
-    private Transform quiverTransform;
+    public Transform quiverTransform;
     private Queue<Arrow> arrowsInQuiever;
     public Quiver(Transform parent, Player quiverOwner, int arrowQuantityInQuiver, GameObject arrowPrefab, int damage)
     {
@@ -34,6 +34,7 @@ public class Quiver : MonoBehaviour
 
     public Arrow GetArrowFromQuiver()
     {
+        print(arrowsInQuiever.Count);
         if (arrowsInQuiever.Count > 0)
         {
             Arrow arrow = arrowsInQuiever.Dequeue();
