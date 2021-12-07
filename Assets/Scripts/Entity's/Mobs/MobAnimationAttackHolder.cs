@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Events;
 
 public class MobAnimationAttackHolder : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MobAnimationAttackHolder : MonoBehaviour
     protected int meleeDamage;
     public MeleeWeaponCollider MeleeWeaponCollider;
     protected AggressiveMob mob;
+    public UnityEvent OnAttackEvent;
 
     private void Awake()
     {
@@ -22,5 +24,6 @@ public class MobAnimationAttackHolder : MonoBehaviour
             mob.DoDamage(entity.Key, Mathf.RoundToInt(meleeDamage * entity.Value.damageMultiplier));
         MeleeWeaponCollider.StopCollectColliders();
         MeleeWeaponCollider.StartCollectColliders();
+        OnAttackEvent.Invoke();
     }
 }

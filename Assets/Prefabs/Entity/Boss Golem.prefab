@@ -786,8 +786,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 75.92196, y: 166.77744, z: 90.14763}
-  m_Center: {x: 1.4592768, y: 93.50236, z: 27.094944}
+  m_Size: {x: 133.3967, y: 10.44206, z: 138.4842}
+  m_Center: {x: 4.2213445, y: 15.334702, z: 51.263184}
 --- !u!114 &6854967796378739640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1240,6 +1240,7 @@ Transform:
   - {fileID: 805834232321808525}
   - {fileID: 805834232321811911}
   - {fileID: 4802546858272179549}
+  - {fileID: 5792661638255323672}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1387,7 +1388,7 @@ MonoBehaviour:
   respawnTime: 300
   name: Lava Golem
   maxHealth: 30000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 824387933113183605}
   - {fileID: 2091237665148875299}
   - {fileID: 1288920841486713377}
@@ -1395,7 +1396,7 @@ MonoBehaviour:
   - {fileID: 7787456509457216774}
   - {fileID: 1837243274361063014}
   - {fileID: 7421200065275021311}
-  - {fileID: 0}
+  - {fileID: 132081858977349354}
   - {fileID: 3521686286266355679}
   - {fileID: 8054199512612424116}
   - {fileID: 8045805490254307562}
@@ -1403,14 +1404,15 @@ MonoBehaviour:
   - {fileID: 6916187000255870924}
   - {fileID: 5396158701582139833}
   - {fileID: 6699784497844081056}
-  lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
+  isAlive: 0
+  lootContainerPrefab: {fileID: 6129513291549583990, guid: 6ab2f6c6579ca494ca10728530a0b967,
     type: 3}
   modelParts:
   - {fileID: 805834232326789043}
   target: {fileID: 0}
-  UnagroRadius: 30
-  AvoidRadius: 10
-  RequiredAttackDistance: 2
+  UnagroRadius: 18
+  AvoidRadius: 18
+  RequiredAttackDistance: 6
 --- !u!114 &-517598713553060862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1425,6 +1427,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeDamage: 750
   MeleeWeaponCollider: {fileID: 6854967796378739640}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5958028136417081600}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &-6662136806111294798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2555,4 +2571,95 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6073363424752824553, guid: b7b2c32e4dbcb2c428604646ce570a49,
     type: 3}
   m_PrefabInstance: {fileID: 1652532129592423860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6674463817380768912
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 805834232321912415}
+    m_Modifications:
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.107
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.604
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 270
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 921044677203021172, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: m_Name
+      value: Smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 1013132342040040848, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1013132342040040848, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9d5cc0b9a65ab024e9a16f195fcff362, type: 3}
+--- !u!4 &5792661638255323672 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 919823300342843016, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+    type: 3}
+  m_PrefabInstance: {fileID: 6674463817380768912}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5958028136417081600 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1013132342040040848, guid: 9d5cc0b9a65ab024e9a16f195fcff362,
+    type: 3}
+  m_PrefabInstance: {fileID: 6674463817380768912}
   m_PrefabAsset: {fileID: 0}

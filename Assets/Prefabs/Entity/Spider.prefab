@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e87c542174cb5c44a9441b4e618bfe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wanderRadius: 40
+  wanderRadius: 30
   runSpeed: 5
   walkingSpeed: 3.5
 --- !u!135 &4207894126353162847
@@ -1072,7 +1072,7 @@ MonoBehaviour:
   respawnTime: 60
   name: Sand Spider
   maxHealth: 2000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 5676360328061000132}
   - {fileID: 7845122692821414173}
   - {fileID: 4337466369418708345}
@@ -1091,14 +1091,15 @@ MonoBehaviour:
   - {fileID: 3317836863036728298}
   - {fileID: 8171520742763530009}
   - {fileID: 6517300593957318225}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
   - {fileID: 3948734326744061554}
   target: {fileID: 0}
   UnagroRadius: 10
-  AvoidRadius: 42
-  RequiredAttackDistance: 2
+  AvoidRadius: 31
+  RequiredAttackDistance: 2.5
 --- !u!114 &6746156521729977475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1157,8 +1158,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 100
+  meleeDamage: 80
   MeleeWeaponCollider: {fileID: 1516186310805618258}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3972859816771283176
 GameObject:
   m_ObjectHideFlags: 0

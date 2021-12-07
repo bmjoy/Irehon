@@ -357,7 +357,7 @@ MonoBehaviour:
   respawnTime: 15
   name: North warrior
   maxHealth: 4000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 7478382550285350387}
   - {fileID: 7501808462723715152}
   - {fileID: 5957085649607795997}
@@ -372,6 +372,7 @@ MonoBehaviour:
   - {fileID: 6486748486633729304}
   - {fileID: 1798076259717477849}
   - {fileID: 1516886583431302171}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -442,6 +443,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeDamage: 100
   MeleeWeaponCollider: {fileID: 8376423338772606667}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!54 &4467686443816626027
 Rigidbody:
   m_ObjectHideFlags: 0

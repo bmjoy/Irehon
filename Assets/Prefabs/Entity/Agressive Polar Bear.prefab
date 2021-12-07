@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 7475440453753333441}
   - component: {fileID: 740846433231854927}
   m_Layer: 10
-  m_Name: head
+  m_Name: joint6
   m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 1545791021408835320}
   - component: {fileID: 919706387521706621}
   m_Layer: 10
-  m_Name: nose
+  m_Name: joint39
   m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -736,7 +736,7 @@ MonoBehaviour:
   respawnTime: 60
   name: Polar Bear
   maxHealth: 4000
-  hitboxColliders:
+  HitboxColliders:
   - {fileID: 7475440453753333441}
   - {fileID: 1545791021408835320}
   - {fileID: 5140732304945079142}
@@ -756,6 +756,7 @@ MonoBehaviour:
   - {fileID: 2370413091208676535}
   - {fileID: 5367529059409365329}
   - {fileID: 3490575924050994826}
+  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -822,8 +823,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 180
+  meleeDamage: 150
   MeleeWeaponCollider: {fileID: 5599152296185925951}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3511840714534918802
 GameObject:
   m_ObjectHideFlags: 0
