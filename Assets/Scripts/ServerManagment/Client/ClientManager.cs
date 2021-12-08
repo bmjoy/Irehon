@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using DuloGames.UI;
 using kcp2k;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
 
 namespace Client
 {
@@ -102,6 +103,14 @@ namespace Client
             string port = msg.message.Split(':')[1];
             (transport as TelepathyTransport).port = ushort.Parse(port);
             networkAddress = msg.message.Split(':')[0];
+#if UNITY_EDITOR
+            var www = UnityWebRequest.Get("ifconfig.me/all.json");
+            await www.SendWebRequest();
+            SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
+            string externalIpAddres = response["ip_addr"].Value;
+            if (externalIpAddres == networkAddress)
+                networkAddress = "localhost";
+#endif
             GetComponent<NetworkManager>().StartClient();
         }
 
