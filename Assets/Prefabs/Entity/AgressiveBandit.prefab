@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: -4035571407533497335}
   - component: {fileID: -4321976142156330078}
   - component: {fileID: 8609528853186746780}
+  - component: {fileID: 6139703882338356342}
   m_Layer: 11
   m_Name: AgressiveBandit
   m_TagString: EntityBase
@@ -659,6 +660,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &6139703882338356342
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8195724249241091194}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.11
+  m_Height: 1.3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!1 &8195724249241093196
 GameObject:
   m_ObjectHideFlags: 0

@@ -2041,9 +2041,9 @@ GameObject:
   - component: {fileID: 5778025555199550906}
   - component: {fileID: 5778025555199550855}
   - component: {fileID: -3119996611509927135}
-  - component: {fileID: 8731660509926312242}
   - component: {fileID: 2096673231273834762}
   - component: {fileID: -543767009961455366}
+  - component: {fileID: 4467473591318520929}
   m_Layer: 10
   m_Name: Deer
   m_TagString: EntityBase
@@ -2204,19 +2204,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 5870839060303845600}
---- !u!65 &8731660509926312242
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5778025555199550854}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.9934158, y: 2.6402302, z: 2.5608969}
-  m_Center: {x: 0.0000002762509, y: 1.1730893, z: 0.12071273}
 --- !u!114 &2096673231273834762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2334,6 +2321,20 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   ExcludeOwnerUpdate: 0
+--- !u!136 &4467473591318520929
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5778025555199550854}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.23
+  m_Height: 1.21
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.89, z: 0}
 --- !u!1001 &3289832663058436219
 PrefabInstance:
   m_ObjectHideFlags: 0

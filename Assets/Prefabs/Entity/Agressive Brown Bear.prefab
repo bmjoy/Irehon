@@ -903,6 +903,7 @@ GameObject:
   - component: {fileID: 5420965288198534794}
   - component: {fileID: -5047905518563521154}
   - component: {fileID: 8875791786934098085}
+  - component: {fileID: 8781165213595439920}
   m_Layer: 10
   m_Name: Agressive Brown Bear
   m_TagString: EntityBase
@@ -1226,6 +1227,20 @@ MonoBehaviour:
   OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!136 &8781165213595439920
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905574760110524190}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.47
+  m_Height: 2.79
+  m_Direction: 2
+  m_Center: {x: 0, y: 1.06, z: 0.1}
 --- !u!1 &905578737705161600
 GameObject:
   m_ObjectHideFlags: 0
