@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1008537550415442545}
   - component: {fileID: 7391396100360433195}
-  - component: {fileID: 1480717636781692493}
+  - component: {fileID: 5419348884521483245}
   m_Layer: 11
   m_Name: GameObject
   m_TagString: Entity
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageMultiplier: 1
   parent: {fileID: 5659430170875535046}
---- !u!136 &1480717636781692493
+--- !u!136 &5419348884521483245
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,9 +57,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 5.521281
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -0.0046334267, y: 2.453564, z: -0.022874355}
 --- !u!1 &9200274272346131286
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +155,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.45
   m_Height: 5.521281
   m_Direction: 1
   m_Center: {x: -0.0046334267, y: 2.453564, z: -0.022874355}
