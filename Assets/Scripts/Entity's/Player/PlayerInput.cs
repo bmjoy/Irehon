@@ -115,10 +115,14 @@ public class PlayerInput : NetworkBehaviour
 
         Quaternion rot = transform.rotation;
 
+        Physics.autoSimulation = false;
         foreach (var sendedInput in sendedInputs)
         {
             playerStateMachine.InputInState(sendedInput);
+            Physics.Simulate(.0000001f);
         }
+        Physics.autoSimulation = true;
+
         if (sendedInputs.Count > 0)
         {
             float delta = input.Position.y - sendedInputs.Peek().Position.y;

@@ -74,9 +74,9 @@ public class SteamManager : MonoBehaviour
         if (i.isIntialized)
             return true;
 
+        SteamClient.Init(1007, true);
         i.isServer = false;
         i.isIntialized = true;
-        SteamClient.Init(1007, true);
 
         Debug.Log("Steam client intaialized");
 

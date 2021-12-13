@@ -84,6 +84,8 @@ public class HoldReleaseArrowAbility : AbilityBase
 
     private IEnumerator ArrowInHandAnimation()
     {
+        if (!abilitySystem.IsAbilityCasting())
+            yield break;
         abilitySystem.PlaySoundClip(TenseSound);
         aiming = true;
         ArrowInHand.SetActive(true);

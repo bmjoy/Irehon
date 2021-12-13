@@ -20,7 +20,7 @@ public class PlayerJumpingState : PlayerRotatableState
     private CharacterController characterController;
     private Animator animator;
 
-    public override float MovementSpeed => 1;
+    public override float MovementSpeed => 2.2f;
     public override PlayerStateType Type => PlayerStateType.Jump;
     public override bool CanInteract => false;
 

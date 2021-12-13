@@ -20,7 +20,7 @@ public class PlayerFallState : PlayerRotatableState
     private PlayerGroundDetector playerGroundDetector;
 
     public override bool CanRotateCamera => true;
-    public override float MovementSpeed => 0.8f;
+    public override float MovementSpeed => 1.45f;
     public override PlayerStateType Type => PlayerStateType.Fall;
     public override bool CanInteract => false;
     public override void Enter(bool isResimulating)

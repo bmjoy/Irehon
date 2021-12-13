@@ -264,7 +264,8 @@ MonoBehaviour:
   respawnTime: 60
   name: Metall Rock
   maxHealth: 300
-  HitboxColliders: []
+  HitboxColliders:
+  - {fileID: 5419348884521483245}
   isAlive: 0
   lootContainerPrefab: {fileID: 6753851627449734426, guid: 18da8aa5bd51780409df610dc2fa2a78,
     type: 3}

@@ -65,6 +65,9 @@ public class Arrow : MonoBehaviour
             return;
         if (selfColliders.Contains(other))
             return;
+        var entityCollider = other.GetComponent<EntityCollider>();
+        if (entityCollider != null && !entityCollider.GetParentEntityComponent().isAlive)
+            return;
         flying = false;
         rigidBody.useGravity = false;
         rigidBody.velocity = Vector3.zero;

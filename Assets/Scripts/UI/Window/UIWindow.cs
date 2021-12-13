@@ -22,6 +22,7 @@ public class UIWindow : SerializedMonoBehaviour
     private GameObject windowObject;
 
     private static int openedWindowsCount = 0;
+    private static int updateWindowsCount = 0;
 
     private void Awake()
     {
@@ -60,10 +61,26 @@ public class UIWindow : SerializedMonoBehaviour
     {
         if (!GameSession.IsListeningGameKeys)
             return;
-        if (Input.GetKeyDown(KeyCode.Escape) && TriggerKey != KeyCode.Escape)
+        if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount == 0)
+        {
+            if (TriggerKey != KeyCode.Escape)
+                Close();
+            else
+                Open();
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount != 0)
+        {
             Close();
-        if (Input.GetKeyDown(TriggerKey))
+        }
+        else if (Input.GetKeyDown(TriggerKey))
+        {
             SwitchWindowState();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        updateWindowsCount = openedWindowsCount;
     }
 
     public void SwitchWindowState()

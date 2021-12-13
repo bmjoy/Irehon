@@ -57,15 +57,6 @@ public class PlayerContainerController : NetworkBehaviour
         OnEquipmentUpdate.Invoke(equipment);
     }
 
-    private void Update()
-    {
-        if (Containers.ContainsKey(ContainerType.Inventory))
-            print(Containers[ContainerType.Inventory]);
-
-        if (Containers.ContainsKey(ContainerType.Equipment))
-            print(Containers[ContainerType.Equipment]);
-    }
-
     [ClientRpc]
     public void EquipmentUpdateClientRpc(Container equipment)
     {
@@ -160,7 +151,6 @@ public class PlayerContainerController : NetworkBehaviour
     {
         if (newContainer != null && newContainer.slots != null)
         {
-            print(newContainer.ToJson().ToString());
             OnEquipmentUpdate.Invoke(newContainer);
         }
     }
