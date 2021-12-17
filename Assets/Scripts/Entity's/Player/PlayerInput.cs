@@ -95,12 +95,11 @@ public class PlayerInput : NetworkBehaviour
     private void CheckInteractionAttemp(ref InputInfo input)
     {
         var key = KeyCode.E;
-        if (IsKeySinglePressed(key)) 
-        { 
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 8f, 1 << 12))
-                input.interactionTarget = hit.collider.GetComponent<NetworkIdentity>();
+        if (IsKeySinglePressed(key) && CameraController.interactableTarget != null) 
+        {
+            var identity = CameraController.interactableTarget.GetComponent<NetworkIdentity>();
+            if (identity != null)
+                input.interactionTarget = identity;
         }
     }
 

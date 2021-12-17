@@ -9,7 +9,7 @@ public class PeacefulMob : Mob
     {
         base.Start();
         if (isServer)
-            OnTakeDamageEvent.AddListener(dmg => 
+            OnTakeDamageEvent += (dmg => 
             { 
                 if (isAlive)
                     stateMachine.SetNewState(new MobFearState(this)); 

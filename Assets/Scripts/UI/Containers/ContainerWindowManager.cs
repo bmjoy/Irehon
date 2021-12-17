@@ -41,7 +41,7 @@ public class ContainerWindowManager : MonoBehaviour
         else
             i = this;
 
-        Player.OnPlayerIntializeEvent.AddListener(PlayerIntialize);
+        Player.OnPlayerIntializeEvent += PlayerIntialize;
     }
 
     private ContainerSlot GetContainerAttachedSlot(InventorySlotUI slot)

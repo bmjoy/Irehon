@@ -26,7 +26,7 @@ public class MeleeWeaponAbility : AbilityBase
 
         currentAnimationEvent = DamageEntitiesInArea;
 
-        abilitySystem.player.OnDoDamageEvent.AddListener(ImpactSound);
+        abilitySystem.player.OnDoDamageEvent += ImpactSound;
 
         meleeCollider.OnNewCollectedEntityEvent.AddListener(DamageEntity);
     }

@@ -47,7 +47,7 @@ public class CraftWindowManager : MonoBehaviour
         else
             i = this;
 
-        Player.OnPlayerIntializeEvent.AddListener(Intialize);
+        Player.OnPlayerIntializeEvent += Intialize;
     }
 
     public static void Intialize(Player player)

@@ -12,7 +12,7 @@ public class LootableEntity : Entity
     protected override void Start()
     {
         base.Start();
-        OnDeathEvent.AddListener(SpawnDeathContainer);
+        OnDeathEvent += SpawnDeathContainer;
     }
 
     protected virtual void SpawnDeathContainer()

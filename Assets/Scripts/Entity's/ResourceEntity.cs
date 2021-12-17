@@ -13,13 +13,13 @@ public class ResourceEntity : LootableEntity
     protected override void Start()
     {
         base.Start();
-        OnDeathEvent.AddListener(() => {
+        OnDeathEvent += (() => {
             foreach (var model in modelParts)
                 model.enabled = false;
             if (isServer)
                 isModelShown = false;
         });
-        OnRespawnEvent.AddListener(() => {
+        OnRespawnEvent += (() => {
             foreach (var model in modelParts)
                 model.enabled = true;
             if (isServer)

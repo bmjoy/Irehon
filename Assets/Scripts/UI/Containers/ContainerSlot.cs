@@ -9,7 +9,7 @@ public class ContainerSlot : IEquatable<ContainerSlot>
     public int slotIndex;
     public int itemQuantity;
 
-    public ContainerSlot(int slotIndex)
+    public ContainerSlot(Container parent, int slotIndex)
     {
         itemId = 0;
         itemQuantity = 0;
@@ -21,7 +21,7 @@ public class ContainerSlot : IEquatable<ContainerSlot>
 
     }
 
-    public ContainerSlot(JSONNode node)
+    public ContainerSlot(Container parent, JSONNode node)
     {
         itemId = node["item_id"].AsInt;
         slotIndex = 0;
@@ -42,7 +42,7 @@ public class ContainerSlot : IEquatable<ContainerSlot>
         return json;
     }
 
-    public ContainerSlot(JSONNode node, int index)
+    public ContainerSlot(Container parent, JSONNode node, int index)
     {
         itemId = node["item_id"].AsInt;
         slotIndex = index;

@@ -13,7 +13,9 @@ public class TargetDummy : Entity
     }
     public override void TakeDamage(DamageMessage damageMessage)
     {
-        animator.SetTrigger("GotDamage");
-        damageMessage.source?.OnDoDamageEvent.Invoke(damageMessage.damage);
+        Debug.LogError("Ne nastroen!!");
+        //animator.SetTrigger("GotDamage");
+        //if (damageMessage.source != null)
+        //    damageMessage.source.OnDoDamageEvent.Invoke(damageMessage.damage);
     }
 }

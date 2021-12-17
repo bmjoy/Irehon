@@ -41,13 +41,13 @@ public class EntityHealthbar : MonoBehaviour
             return;
         }
 
-        entity.OnDeathEvent.AddListener(() => SetActive(false));
-        entity.OnRespawnEvent.AddListener(() => SetActive(true));
+        entity.OnDeathEvent += () => SetActive(false);
+        entity.OnRespawnEvent += () => SetActive(true);
 
         StartCoroutine(WaitCameraControllerIntialize());
         nickname.text = entity.NickName;
-        entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
-        entity.OnPlayerLookingEvent.AddListener(() => EnableForTime(5f));
+        entity.OnHealthChangeEvent += ChangeHealthOnBar;
+        entity.OnPlayerLookingEvent += () => EnableForTime(5f);
     }
 
     private void Update()

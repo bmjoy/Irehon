@@ -22,18 +22,18 @@ public class Mob : LootableEntity
     protected override void Start()
     {
         stateMachine = GetComponent<MobStateMachine>();
-        OnDeathEvent.AddListener(() => {
+        OnDeathEvent += () => {
             foreach (var model in ModelParts)
                 model.enabled = false;
-                });
-        OnRespawnEvent.AddListener(() => {
+                };
+        OnRespawnEvent += () => {
             foreach (var model in ModelParts)
                 model.enabled = true;
-        });
+        };
         if (isServer)
         {
-            OnDeathEvent.AddListener(() => stateMachine.SetNewState(new MobDeathState(this)));
-            OnRespawnEvent.AddListener(() => stateMachine.SetNewState(new MobIdleState(this)));
+            OnDeathEvent += () => stateMachine.SetNewState(new MobDeathState(this));
+            OnRespawnEvent += () => stateMachine.SetNewState(new MobIdleState(this));
         }
         base.Start();
     }

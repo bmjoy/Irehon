@@ -16,11 +16,10 @@ public struct SpawnPointInfo
 	public string spawnSceneName;
 }
 
-public class PlayerEvent : UnityEvent<Player> { }
-
 public class Player : Entity
 {
-	public static PlayerEvent OnPlayerIntializeEvent { get; private set; } = new PlayerEvent();
+	public delegate void PlayerEventHandler(Player player);
+	public static event PlayerEventHandler OnPlayerIntializeEvent;
 	public CharacterInfoEvent OnCharacterDataUpdateEvent { get; private set; } = new CharacterInfoEvent();
 	public PlayerBonesLinks PlayerBonesLinks { get; private set; }
 	public bool isDataAlreadyRecieved { get; private set; } = false;
@@ -73,15 +72,15 @@ public class Player : Entity
 
 	private void LocalPlayerIntialize()
     {
-		OnPlayerIntializeEvent.Invoke(this);
+		OnPlayerIntializeEvent?.Invoke(this);
 
-		OnDoDamageEvent.AddListener(x => UIController.i.ShowHitMarker());
+		OnDoDamageEvent += x => UIController.i.ShowHitMarker();
 
 		gameObject.layer = 1 << 1;
 
-		OnHealthChangeEvent.AddListener((oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth));
+		OnHealthChangeEvent += (oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / maxHealth);
 
-		OnTakeDamageEvent.AddListener(x => CameraController.CreateShake(5f, .3f));
+		OnTakeDamageEvent += x => CameraController.CreateShake(5f, .3f);
 
 		if (fraction == Fraction.North)
 			FractionBehaviourData = northData;
@@ -92,17 +91,17 @@ public class Player : Entity
 	[Server]
 	private void IntializeServerEvents()
     {
-		OnDoDamageEvent.AddListener(OnDoDamageRpc);
-		OnTakeDamageEvent.AddListener(OnTakeDamageRpc);
+		OnDoDamageEvent += OnDoDamageRpc;
+		OnTakeDamageEvent += OnTakeDamageRpc;
 
-		OnDeathEvent.AddListener(() => stateMachine.ChangePlayerState(PlayerStateType.Death));
-		OnDeathEvent.AddListener(() => SpawnDeathContainer());
-		OnDeathEvent.AddListener(InitiateRespawn);
+		OnDeathEvent += () => stateMachine.ChangePlayerState(PlayerStateType.Death);
+		OnDeathEvent += () => SpawnDeathContainer();
+		OnDeathEvent += InitiateRespawn;
 
-		OnRespawnEvent.AddListener(TeleportToSpawnPoint);
-		OnRespawnEvent.AddListener(SetDefaultState);
+		OnRespawnEvent += TeleportToSpawnPoint;
+		OnRespawnEvent += SetDefaultState;
 
-		OnGetKilledEvent.AddListener(murder =>
+		OnGetKilledEvent += murder =>
 		{
 			if (murder != null && murder is Player)
 			{
@@ -114,7 +113,7 @@ public class Player : Entity
 				};
 				NetworkServer.SendToAll(killMessage);
 			}
-		});
+		};
 
 		containerController.OnEquipmentUpdate += equipment =>
 		{
@@ -153,9 +152,6 @@ public class Player : Entity
 	{
 		isDataAlreadyRecieved = true;
 
-		Container equipment = ContainerData.LoadedContainers[data.equipmentId];
-		Container inventory = ContainerData.LoadedContainers[data.inventoryId];
-
 		characterInfo = data;
 		fraction = characterInfo.fraction;
 		if (fraction == Fraction.North)
@@ -163,9 +159,6 @@ public class Player : Entity
 		else
 			FractionBehaviourData = southData;
 		UpdateCharacterData(characterInfo);
-
-		containerController.SetEquipment(equipment);
-		containerController.SetInventory(inventory);
 	}  
 
 	[ClientRpc]
@@ -179,7 +172,7 @@ public class Player : Entity
 	{
 		isDataAlreadyRecieved = true;
 		characterInfo = data;
-		OnCharacterDataUpdateEvent.Invoke(characterInfo);
+		OnCharacterDataUpdateEvent?.Invoke(characterInfo);
 	}
 
 	public CharacterInfo GetCharacterInfo() => characterInfo;

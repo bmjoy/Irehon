@@ -18,7 +18,7 @@ public class Container : IEquatable<Container>
     {
         slots = new ContainerSlot[node.Count];
         for (int i = 0; i < slots.Length; i++)
-            slots[i] = new ContainerSlot(node[i], i);
+            slots[i] = new ContainerSlot(this, node[i], i);
     }
 
     public Container()
@@ -45,7 +45,7 @@ public class Container : IEquatable<Container>
     {
         slots = new ContainerSlot[capacity];
         for (int i = 0; i < slots.Length; i++)
-            slots[i] = new ContainerSlot(i);
+            slots[i] = new ContainerSlot(this, i);
     }
 
     public int GetEmptySlotsCount() => Array.FindAll(slots, x => x.itemId == 0).Length;
@@ -90,6 +90,8 @@ public class Container : IEquatable<Container>
             slot.itemId = 0;
             slot.itemQuantity = 0;
         }
+
+        OnContainerUpdate.Invoke(this);
     }
 
     public ContainerSlot FindItem(int itemId) => Array.Find(slots, x => x.itemId == itemId);
@@ -131,14 +133,17 @@ public class Container : IEquatable<Container>
         return newContainer;
     }
 
-    public static void MoveSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
+    public static void MoveSlotData(Container oldContainer, int oldSlotIndex, Container container, int containerSlotIndex)
     {
+        ContainerSlot oldContainerSlot = oldContainer[oldSlotIndex];
+        ContainerSlot containerSlot = container[containerSlotIndex];
         if (oldContainerSlot == null || containerSlot == null)
         {
             Debug.LogError("Empty slot not found");
             return;
         }
 
+        Debug.Log($"{oldContainerSlot.itemId} {containerSlot.itemId}");
         if (oldContainerSlot.itemId != containerSlot.itemId)
             SwapSlotData(oldContainerSlot, containerSlot);
         else
@@ -165,6 +170,9 @@ public class Container : IEquatable<Container>
                 }
             }
         }
+
+        container.OnContainerUpdate?.Invoke(container);
+        oldContainer.OnContainerUpdate?.Invoke(oldContainer);
     }
 
     private static void SwapSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
@@ -196,13 +204,8 @@ public class Container : IEquatable<Container>
             containerSlot.itemQuantity = oldQuantity;
         }
     }
-}
 
-
-public static class ContainerExtension
-{
-
-    public static void DragContainerSlotData(this Container container, ContainerSlot containerSlot)
+    public void DragContainerSlotData(ContainerSlot containerSlot)
     {
         if (containerSlot == null)
         {
@@ -213,11 +216,10 @@ public static class ContainerExtension
         if (containerSlot.itemId == 0)
             return;
 
-        var slotsWithItem = container.FindItemSlots(containerSlot.itemId);
-
+        var slotsWithItem = FindItemSlots(containerSlot.itemId);
     }
 
-    public static void GiveContainerItem(this Container container, int itemId, int count)
+    public void GiveContainerItem( int itemId, int count)
     {
         if (itemId <= 0 || count <= 0)
         {
@@ -227,7 +229,7 @@ public static class ContainerExtension
 
         Item item = ItemDatabase.GetItemById(itemId);
 
-        ContainerSlot[] slots = container.FindItemSlots(itemId);
+        ContainerSlot[] slots = FindItemSlots(itemId);
 
         //Такой предмет есть в инвентаре, и под него есть место
         if (slots.Length > 0)
@@ -241,6 +243,7 @@ public static class ContainerExtension
                     if (containerSlot.itemQuantity + countItems <= item.maxInStack)
                     {
                         containerSlot.itemQuantity += countItems;
+                        OnContainerUpdate.Invoke(this);
                         return;
                     }
                     else
@@ -255,6 +258,7 @@ public static class ContainerExtension
                         {
                             containerSlot.itemQuantity += countItems;
                             countItems = 0;
+                            OnContainerUpdate.Invoke(this);
                             return;
                         }
                     }
@@ -262,22 +266,23 @@ public static class ContainerExtension
             }
 
             //Все слоты забиты под фулл
-            container.CreateItemInEmptySlot(itemId, count);
+            CreateItemInEmptySlot(itemId, count);
         }
         else
             //Такого предмета вообще нет в инвентаре
-            container.CreateItemInEmptySlot(itemId, count);
+            CreateItemInEmptySlot(itemId, count);
+        OnContainerUpdate.Invoke(this);
     }
 
-    public static void Sort(this Container container)
+    public void Sort()
     {
-        container.slots.OrderByDescending(slot => slot.itemId);
-
+       slots.OrderByDescending(slot => slot.itemId);
+        OnContainerUpdate.Invoke(this);
     }
 
-    public static void RemoveItemFromInventory(this Container container, int itemId, int count)
+    public void RemoveItemFromInventory(int itemId, int count)
     {
-        foreach (ContainerSlot slot in container.slots)
+        foreach (ContainerSlot slot in slots)
         {
             if (slot.itemId == itemId)
             {
@@ -289,6 +294,7 @@ public static class ContainerExtension
                     {
                         slot.itemId = 0;
                     }
+                    OnContainerUpdate.Invoke(this);
 
                     return;
                 }
@@ -303,9 +309,10 @@ public static class ContainerExtension
                 }
             }
         }
+        OnContainerUpdate.Invoke(this);
     }
 
-    private static void CreateItemInEmptySlot(this Container container, int itemId, int count)
+    private void CreateItemInEmptySlot(int itemId, int count)
     {
         if (itemId <= 0 || count <= 0)
         {
@@ -318,7 +325,7 @@ public static class ContainerExtension
         int requiredSlotCount = count / item.maxInStack;
         requiredSlotCount += count % item.maxInStack == 0 ? 0 : 1;
 
-        if (container.GetEmptySlotsCount() < requiredSlotCount)
+        if (GetEmptySlotsCount() < requiredSlotCount)
             return;
 
         int itemCounts = count;
@@ -327,11 +334,11 @@ public static class ContainerExtension
             int creatingItemCount = itemCounts > item.maxInStack ? item.maxInStack : itemCounts;
             itemCounts -= creatingItemCount;
 
-            container.MoveObjectToEmptySlot(itemId, creatingItemCount);
+            MoveObjectToEmptySlot(itemId, creatingItemCount);
         }
     }
 
-    private static void MoveObjectToEmptySlot(this Container container, int itemId, int itemQuantity)
+    private void MoveObjectToEmptySlot(int itemId, int itemQuantity)
     {
         if (itemId <= 0 || itemQuantity <= 0)
         {
@@ -339,7 +346,7 @@ public static class ContainerExtension
             return;
         }
 
-        ContainerSlot slot = container.GetEmptySlot();
+        ContainerSlot slot = GetEmptySlot();
 
         if (slot == null)
         {

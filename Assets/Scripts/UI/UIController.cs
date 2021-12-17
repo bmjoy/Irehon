@@ -46,8 +46,8 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
-        CameraController.OnChangeCursorStateEvent.AddListener(ChangeCursorHintStatus);
-        CameraController.i.OnLookingOnEntityEvent.AddListener(UpdateCursorColor);
+        CameraController.OnChangeCursorStateEvent += ChangeCursorHintStatus;
+        CameraController.i.OnLookingOnEntityEvent += UpdateCursorColor;
 
         defaultAimPointImage = defaultAimPoint.GetComponent<Image>();
     }

@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public class PlayerContainerController : NetworkBehaviour
 {
-    public Dictionary<ContainerType, Container> Containers { get; private set; } = new Dictionary<ContainerType, Container>();
+    public Dictionary<ContainerType, Container> Containers = new Dictionary<ContainerType, Container>();
     public event Container.ContainerEventHandler OnInventoryUpdate;
     public event Container.ContainerEventHandler OnEquipmentUpdate;
    
@@ -30,44 +30,49 @@ public class PlayerContainerController : NetworkBehaviour
     {
         if (isServer)
         {
-            OnInventoryUpdate += InventoryUpdateTargetRpc;
-            OnEquipmentUpdate += EquipmentUpdateClientRpc;
+            ServerContainersIntialize();
         }
 
         if (equipment != null && equipment.slots != null)
         {
-            OnEquipmentUpdate.Invoke(equipment);
+            OnEquipmentUpdate?.Invoke(equipment);
         }
+        
         if (Containers.ContainsKey(ContainerType.Inventory))
-            OnInventoryUpdate.Invoke(Containers[ContainerType.Inventory]);
+            OnInventoryUpdate?.Invoke(Containers[ContainerType.Inventory]);
         
         if (Containers.ContainsKey(ContainerType.Equipment))
-            OnEquipmentUpdate.Invoke(Containers[ContainerType.Equipment]);
-        if (isServer)
-            ServerContainersIntialize();
+            OnEquipmentUpdate?.Invoke(Containers[ContainerType.Equipment]);
+
     }
 
     [Server]
     private void ServerContainersIntialize()
     {
+        OnInventoryUpdate += InventoryUpdateTargetRpc;
+        OnEquipmentUpdate += EquipmentUpdateClientRpc;
         equipment = ContainerData.LoadedContainers[characterData.equipmentId];
         inventory = ContainerData.LoadedContainers[characterData.inventoryId];
-        OnInventoryUpdate.Invoke(inventory);
-        OnEquipmentUpdate.Invoke(equipment);
+        inventory.OnContainerUpdate += container => OnInventoryUpdate?.Invoke(container);
+        equipment.OnContainerUpdate += container => OnEquipmentUpdate?.Invoke(container);
+        OnInventoryUpdate?.Invoke(inventory);
+        OnEquipmentUpdate?.Invoke(equipment);
     }
 
     [ClientRpc]
     public void EquipmentUpdateClientRpc(Container equipment)
     {
+        print(equipment.ToJson().ToString());
         Containers[ContainerType.Equipment] = equipment;
-        OnEquipmentUpdate.Invoke(equipment);
+        OnEquipmentUpdate?.Invoke(equipment);
     }
 
     [TargetRpc]
     public void InventoryUpdateTargetRpc(Container inventory)
     {
+        print(inventory.ToJson().ToString());
         Containers[ContainerType.Inventory] = inventory;
-        OnInventoryUpdate.Invoke(inventory);
+        OnInventoryUpdate?.Invoke(inventory);
     }
 
     [TargetRpc]
@@ -87,17 +92,6 @@ public class PlayerContainerController : NetworkBehaviour
             case ContainerType.Equipment: return equipment;
             default: return null;
         };
-    }
-
-    [Server]
-    public void SetInventory(Container inventory)
-    {
-        this.inventory = inventory;
-    }
-
-    public void SetEquipment(Container equipment)
-    {
-        this.equipment = equipment;
     }
 
 
@@ -143,14 +137,14 @@ public class PlayerContainerController : NetworkBehaviour
         if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
             return;
 
-        Container.MoveSlotData(inventory[inventorySlot], equipment[equipmentSlot]);
+        Container.MoveSlotData(inventory, inventorySlot, equipment, equipmentSlot);
     }
 
     private void EquipmentHook(Container old, Container newContainer)
     {
         if (newContainer != null && newContainer.slots != null)
         {
-            OnEquipmentUpdate.Invoke(newContainer);
+            OnEquipmentUpdate?.Invoke(newContainer);
         }
     }
 
@@ -169,6 +163,6 @@ public class PlayerContainerController : NetworkBehaviour
         if (firstType == ContainerType.Inventory && secondType == ContainerType.Equipment)
             Equip(secondSlot, firstSlot);
         else
-            Container.MoveSlotData(firstContainer[firstSlot], secondContainer[secondSlot]);
+            Container.MoveSlotData(firstContainer, firstSlot, secondContainer, secondSlot);
     }
 }

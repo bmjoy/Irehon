@@ -3,21 +3,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class OnChangingTarget : UnityEvent<Vector3> {}
-
-public class OnTargetOnEntity : UnityEvent<Entity, Player> { }
-public class OnChangeCursorHidingState : UnityEvent<bool> {}
-
-
-
 public class CameraController : MonoBehaviour
 {
+    public delegate void ChangeLookingTargetEventHandler(Vector3 target);
+    public delegate void TargetingOnEntityEventHandler(Entity entity, Player player);
+    public delegate void ChangeCursorStateEventHandler(bool state);
     public static CameraController i;
     public static bool IsCursosLocked => i.cursorAiming;
-    public OnTargetOnEntity OnLookingOnEntityEvent { get; private set; } = new OnTargetOnEntity();
-    public static OnChangeCursorHidingState OnChangeCursorStateEvent => i.OnChangeCursorState;
-
-    public OnChangeCursorHidingState OnChangeCursorState = new OnChangeCursorHidingState();
+    public TargetingOnEntityEventHandler OnLookingOnEntityEvent;
+    public static event ChangeCursorStateEventHandler OnChangeCursorStateEvent;
+    public static GameObject interactableTarget;
 
     public Camera cameraComponent { get; private set; } 
 
@@ -52,7 +47,7 @@ public class CameraController : MonoBehaviour
             i = this;
 
         cameraComponent = GetComponent<Camera>();
-        Player.OnPlayerIntializeEvent.AddListener(Intialize);
+        Player.OnPlayerIntializeEvent += Intialize;
     }
 
     private void Start()
@@ -61,7 +56,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         cursorAiming = true;
         currentShakeHandler = mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-        OnLookingOnEntityEvent.AddListener((entity, player) => entity?.OnPlayerLookingEvent.Invoke());
+        OnLookingOnEntityEvent += (entity, player) => entity?.InvokePlayerLookingEvent();
     }
 
     public static void CreateShake(float power, float time)
@@ -132,13 +127,6 @@ public class CameraController : MonoBehaviour
         RaycastHit hit;
         Vector3 oldPosition = targetTransform.localPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 12))
-        {
-            oldPosition.z = hit.distance;
-            targetTransform.localPosition = oldPosition;
-            return;
-        }
-
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 13))
         {
             oldPosition.z = hit.distance;
@@ -187,7 +175,7 @@ public class CameraController : MonoBehaviour
             i.cursorAiming = false;
             UIController.i.HideHint();
             UIController.i.DisableDefaultCrosshair();
-            i.OnChangeCursorState.Invoke(true);
+            OnChangeCursorStateEvent.Invoke(true);
         }
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -195,7 +183,7 @@ public class CameraController : MonoBehaviour
 
     public static void DisableCursor()
     {
-        i.OnChangeCursorState.Invoke(false);
+        OnChangeCursorStateEvent.Invoke(false);
         i.cursorAiming = true;
         Cursor.visible = false;
         UIController.i.EnableDefaultCrosshair();
@@ -237,7 +225,15 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 7, 1 << 12))
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 7, 1 << 12))
+        {
+            interactableTarget = hit.collider.gameObject;
+        }
+        else
+            interactableTarget = null;
+
+        if (!interacter.isInteracting && interactableTarget != null)
             UIController.i.ShowHint("Interact", "Press E to interract with this object");
         else
             UIController.i.HideHint();
