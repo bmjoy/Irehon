@@ -21,9 +21,4 @@ public class TestUI : MonoBehaviour
             Environment.SetEnvironmentVariable("Agfs", "fgf");
         }
     }
-
-    public void GiveItem()
-    {
-        ContainerData.GiveContainerItem(Convert.ToInt32(container.text), Convert.ToInt32(item.text));
-    }
 }

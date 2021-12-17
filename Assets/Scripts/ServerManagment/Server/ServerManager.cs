@@ -74,8 +74,7 @@ namespace Server
             clientLoadedScene = false;
             (transport as TelepathyTransport).port = ushort.Parse(Environment.GetEnvironmentVariable("SERVERPORT"));
             StartServer();
-            InvokeRepeating("UpdatePlayerCount", 5, 5);
-            InvokeRepeating("UpdateAllDataCycle", 90, 90);
+            InvokeRepeating(nameof(UpdatePlayerCount), 2, 2);
         }
 
         private async void UpdatePlayerCount()
@@ -103,15 +102,6 @@ namespace Server
             Debug.Log("Loaded crafts database");
         }
 
-        public void UpdateAllDataCycle()
-        {
-            UpdateDatabase();
-        }
-
-        public static void UpdateDatabase()
-        {
-            ContainerData.UpdateDatabaseLoadedContainers();
-        }
         //Insert data in tables and send it to player
         private async Task<bool> PlayerCharacterCreateRequest(NetworkConnection con)
         {
@@ -251,7 +241,6 @@ namespace Server
         {
             base.OnStopServer();
             await DeleteServerInDB();
-            UpdateDatabase();
         }
 
         private async Task DeleteServerInDB()

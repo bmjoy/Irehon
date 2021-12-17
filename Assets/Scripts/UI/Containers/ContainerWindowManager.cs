@@ -54,8 +54,8 @@ public class ContainerWindowManager : MonoBehaviour
     public void PlayerIntialize(Player player)
     {
         playerContainerController = player.GetComponent<PlayerContainerController>();
-        playerContainerController.OnInventoryUpdate.AddListener(UpdateInventory);
-        playerContainerController.OnEquipmentUpdate.AddListener(UpdateEquipment);
+        playerContainerController.OnInventoryUpdate += UpdateInventory;
+        playerContainerController.OnEquipmentUpdate += UpdateEquipment;
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)

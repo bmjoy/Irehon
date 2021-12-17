@@ -28,16 +28,10 @@ public class LootableEntity : Entity
         SpawnDeathContainer(deadBody);
     }
 
-    private async void SpawnDeathContainer(GameObject deadBody)
+    private void SpawnDeathContainer(GameObject deadBody)
     {
-        var www = Api.Request("/containers/?quantity=1", ApiMethod.POST);
-        await www.SendWebRequest();
-        int newContainerId = Api.GetResult(www)["id"].AsInt;
-
         Container lootContainer = GetComponent<LootGenerator>().GenerateLoot();
 
-        ContainerData.SaveContainer(newContainerId, lootContainer);
-
-        deadBody.GetComponent<Chest>().SetChestId(newContainerId);
+        deadBody.GetComponent<Chest>().SetChestContainer(lootContainer);
     }
 }

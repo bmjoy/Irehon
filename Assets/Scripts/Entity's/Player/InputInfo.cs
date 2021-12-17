@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Mirror;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public struct InputInfo
     public Vector2 CameraRotation;
     public Vector3 TargetPoint;
     public Vector3 Position;
+    public NetworkIdentity interactionTarget;
 
     public Vector2 GetMoveVector()
     {

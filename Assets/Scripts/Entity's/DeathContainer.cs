@@ -9,7 +9,7 @@ public class DeathContainer : Chest
     {
         if (isServer)
         {
-            OnContainerUpdate.AddListener(CheckIsContainerEmpty);
+            Container.OnContainerUpdate += CheckIsContainerEmpty;
             StartCoroutine(SelfDestroyOnTime(240f));
         }
     }
@@ -20,12 +20,11 @@ public class DeathContainer : Chest
             StartCoroutine(SelfDestroyOnTime(4f));
     }
 
-    public async void AttachMultipleContainers(List<int> otherContainers)
+    public void AttachMultipleContainers(List<Container> otherContainers)
     {
-        int newContainer = await ContainerData.MergeContainers(otherContainers);
+        Container newContainer = Container.MoveAllItemsInNewContainer(otherContainers);
 
-        SetChestId(newContainer);
-        CheckIsContainerEmpty(ContainerData.LoadedContainers[newContainer]);
+        SetChestContainer(newContainer);
     }
 
     private IEnumerator SelfDestroyOnTime(float time)
@@ -34,9 +33,15 @@ public class DeathContainer : Chest
         NetworkServer.Destroy(this.gameObject);
     }
 
+    protected override void OnContainerSet()
+    {
+        Container.OnContainerUpdate += CheckIsContainerEmpty;
+        CheckIsContainerEmpty(Container);
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        OnContainerUpdate.RemoveListener(CheckIsContainerEmpty);
+        Container.OnContainerUpdate -= CheckIsContainerEmpty;
     }
 }

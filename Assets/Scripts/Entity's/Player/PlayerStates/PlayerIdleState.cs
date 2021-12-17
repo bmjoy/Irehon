@@ -35,8 +35,8 @@ public class PlayerIdleState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.V))
             return PlayerStateType.Dance;
 
-        if (isServer && input.IsKeyPressed(KeyCode.E))
-            playerInteracter.InterractAttemp(input.TargetPoint);
+        if (isServer && input.interactionTarget != null)
+            playerInteracter.InterractAttemp(input.interactionTarget);
 
         if (input.GetMoveVector() != Vector2.zero)
         {

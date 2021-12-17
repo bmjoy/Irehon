@@ -56,7 +56,7 @@ public class CraftWindowManager : MonoBehaviour
         if (player.GetComponent<PlayerContainerController>().Containers.ContainsKey(ContainerType.Inventory))
             i.UpdateInventory(player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory]);
 
-        player.GetComponent<PlayerContainerController>().OnInventoryUpdate.AddListener(x => i.UpdateInventory(x));
+        player.GetComponent<PlayerContainerController>().OnInventoryUpdate += x => i.UpdateInventory(x);
     }
 
     private void UpdateInventory(Container inventory)

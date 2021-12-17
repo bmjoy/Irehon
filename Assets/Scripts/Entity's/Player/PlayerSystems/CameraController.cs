@@ -237,7 +237,7 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 4, 1 << 12))
+        if (!interacter.isInteracting && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), 7, 1 << 12))
             UIController.i.ShowHint("Interact", "Press E to interract with this object");
         else
             UIController.i.HideHint();

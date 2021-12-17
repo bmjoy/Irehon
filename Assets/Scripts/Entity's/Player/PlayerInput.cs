@@ -14,6 +14,8 @@ public class PlayerInput : NetworkBehaviour
     private AbilitySystem abilitySystem;
     private CharacterController characterController;
 
+    private List<KeyCode> pressedButtons = new List<KeyCode>();
+
     private void Start()
     {
         player = GetComponent<Player>();
@@ -46,7 +48,7 @@ public class PlayerInput : NetworkBehaviour
 
     private void FillMovementKeysInput(ref InputInfo input)
     {
-        CheckSinglePressKey(KeyCode.E, ref input);
+        CheckInteractionAttemp(ref input);
         CheckInputKey(abilitySystem.ListeningKey, ref input);
         CheckInputKey(KeyCode.W, ref input);
         CheckInputKey(KeyCode.A, ref input);
@@ -71,10 +73,35 @@ public class PlayerInput : NetworkBehaviour
             input.PressedKeys.Add(key);
     }
 
+    private bool IsKeySinglePressed(KeyCode key)
+    {
+        if (Input.GetKey(key) && !pressedButtons.Contains(key))
+        {
+            pressedButtons.Add(key);
+            return true;
+        }
+
+        if (!Input.GetKey(key) && pressedButtons.Contains(key))
+            pressedButtons.Remove(key);
+        return false;
+    }
+
     private void CheckSinglePressKey(KeyCode key, ref InputInfo input)
     {
-        if (Input.GetKeyDown(key) && !input.PressedKeys.Contains(key))
+        if (IsKeySinglePressed(key))
             input.PressedKeys.Add(key);
+    }
+
+    private void CheckInteractionAttemp(ref InputInfo input)
+    {
+        var key = KeyCode.E;
+        if (IsKeySinglePressed(key)) 
+        { 
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 8f, 1 << 12))
+                input.interactionTarget = hit.collider.GetComponent<NetworkIdentity>();
+        }
     }
 
     [Command]

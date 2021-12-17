@@ -4,55 +4,40 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ContainerEvent : UnityEvent<Container> { }
-
 public class Chest : NetworkBehaviour, IInteractable
 {
     [SerializeField]
-    private int containerId;
-    public int ContainerId { get => containerId; }
-    public ContainerEvent OnContainerUpdate { get; } = new ContainerEvent();
-    public UnityEvent OnDestroyEvent { get; } = new UnityEvent();
+    private Container container;
+    public Container Container { get => container; }
+    public InteractEventHandler OnDestroyEvent;
 
     private void Awake()
     {
         gameObject.layer = 12;
     }
-
-    private void Start()
+    public virtual void SetChestContainer(Container container)
     {
-        if (containerId != 0)
-            ContainerData.ContainerUpdateNotifier.Subscribe(containerId, ContainerUpdateEvent);
-    }
-
-    private void ContainerUpdateEvent(int containerId, Container container) => OnContainerUpdate.Invoke(container);
-
-    public virtual void SetChestId(int containerId)
-    {
-        if (containerId != 0)
-            ContainerData.ContainerUpdateNotifier.Subscribe(containerId, ContainerUpdateEvent);
-
-        if (this.containerId != 0)
-            ContainerData.ContainerUpdateNotifier.UnSubscribe(containerId, ContainerUpdateEvent);
-
-        this.containerId = containerId;
+        this.container = container;
+        OnContainerSet();
     }
 
     public virtual void Interact(Player player)
     {
-        player.GetComponent<PlayerContainerController>().OpenChest(this, containerId);
+        player.GetComponent<PlayerContainerController>().OpenChest(this, container);
     }
 
     public virtual void StopInterract(Player player)
     {
-        player.GetComponent<PlayerContainerController>().CloseChest();
+        player.GetComponent<PlayerContainerController>().CloseChest(this);
+    }
+
+    protected virtual void OnContainerSet()
+    {
+
     }
 
     protected virtual void OnDestroy()
     {
-        if (containerId != 0)
-            ContainerData.ContainerUpdateNotifier.UnSubscribe(containerId, ContainerUpdateEvent);
-
-        OnDestroyEvent.Invoke();
+        OnDestroyEvent?.Invoke(this);
     }
 }

@@ -116,11 +116,11 @@ public class Player : Entity
 			}
 		});
 
-		containerController.OnEquipmentUpdate.AddListener(equipment =>
+		containerController.OnEquipmentUpdate += equipment =>
 		{
 			foreach (PlayerCollider playerCollider in playerColliders)
 				playerCollider.UpdateModifier(equipment);
-		});
+		};
 	}
 
 	private void PassiveRegenerateHealth()
@@ -149,18 +149,8 @@ public class Player : Entity
 	}
 
 	[Server]
-	private void ServerIntialize(CharacterInfo data)
-	{
-		ContainerData.ContainerUpdateNotifier.Subscribe(data.inventoryId, InventoryUpdateSubscriber);
-		ContainerData.ContainerUpdateNotifier.Subscribe(data.equipmentId, EquipmentUpdateSubscriber);
-	}
-
-	[Server]
 	public void SetCharacterInfo(CharacterInfo data)
 	{
-		if (!isDataAlreadyRecieved)
-			ServerIntialize(data);
-
 		isDataAlreadyRecieved = true;
 
 		Container equipment = ContainerData.LoadedContainers[data.equipmentId];
@@ -174,11 +164,9 @@ public class Player : Entity
 			FractionBehaviourData = southData;
 		UpdateCharacterData(characterInfo);
 
-		containerController.OnInventoryUpdate.Invoke(inventory);
-		containerController.OnEquipmentUpdate.Invoke(equipment);
-		containerController.EquipmentUpdateClientRpc(equipment);
-		containerController.InventoryUpdateTargetRpc(inventory);
-	}
+		containerController.SetEquipment(equipment);
+		containerController.SetInventory(inventory);
+	}  
 
 	[ClientRpc]
 	public void ShowModel() => PlayerBonesLinks.Model.gameObject.SetActive(true);
@@ -227,31 +215,6 @@ public class Player : Entity
 		deadBody.transform.position = transform.position + Vector3.up;
 		deadBody.transform.rotation = transform.rotation;
 
-		List<int> characterContainersId = new List<int>();
-
-		characterContainersId.Add(characterInfo.equipmentId);
-		characterContainersId.Add(characterInfo.inventoryId);
-
-		deadBody.GetComponent<DeathContainer>().AttachMultipleContainers(characterContainersId);
-	}
-	private void OnDestroy()
-	{
-		if (isServer)
-		{
-			ContainerData.ContainerUpdateNotifier.UnSubscribe(characterInfo.inventoryId, InventoryUpdateSubscriber);
-			ContainerData.ContainerUpdateNotifier.UnSubscribe(characterInfo.equipmentId, EquipmentUpdateSubscriber);
-		}
-	}
-
-	[Server]
-	private void EquipmentUpdateSubscriber(int containerId, Container container)
-    {
-		containerController.OnEquipmentUpdate.Invoke(container);
-    }
-
-	[Server]
-	private void InventoryUpdateSubscriber(int containerId, Container container)
-	{
-		containerController.OnInventoryUpdate.Invoke(container);
+		deadBody.GetComponent<DeathContainer>().AttachMultipleContainers(new List<Container> { containerController.inventory, containerController.equipment });
 	}
 }

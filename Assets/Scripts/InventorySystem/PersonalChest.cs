@@ -30,7 +30,7 @@ public class PersonalChest : Chest
             playerInfo.character.personalChests.Add(personalChest);
             player.connectionToClient.authenticationData = playerInfo;
         }
-        player.GetComponent<PlayerContainerController>().OpenChest(this, personalChest.ContainerId);
+        player.GetComponent<PlayerContainerController>().OpenChest(this, ContainerData.LoadedContainers[personalChest.ContainerId]);
     }
 
     public override void StopInterract(Player player)

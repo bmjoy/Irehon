@@ -22,33 +22,30 @@ public class PlayerInteracter : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (isServer && currentInteractable != null && Vector3.Distance(interractPosition, model.position) > 7f)
+        if (isServer && currentInteractable != null && Vector3.Distance(interractPosition, model.position) > 10f)
         {
             StopInterracting();
         }
     }
 
     [ServerCallback]
-    public void InterractAttemp(Vector3 interractPos)
+    public void InterractAttemp(NetworkIdentity interractObjectIdentity)
     {
         if (currentInteractable != null)
             return;
 
         Vector3 currentPos = model.position;
 
-        if (Vector3.Distance(interractPos, currentPos) > 10f)
+        if (Vector3.Distance(interractObjectIdentity.transform.position, currentPos) > 10f)
             return;
 
-        RaycastHit hit;
+        currentInteractable = interractObjectIdentity.GetComponent<IInteractable>();
 
-        Vector3 direction = interractPos - currentPos;
-
-        if (!Physics.Raycast(currentPos, direction, out hit, 10f, 1 << 12))
+        if (currentInteractable == null)
             return;
 
-        currentInteractable = hit.collider.GetComponent<IInteractable>();
         isInteracting = true;
-        interractPosition = hit.collider.transform.position;
+        interractPosition = interractObjectIdentity.transform.position;
         currentInteractable.Interact(player);
     }
 

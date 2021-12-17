@@ -11,7 +11,7 @@ public class PlayerWeaponEquipment : NetworkBehaviour
     private void Awake()
     {
         abilitySystem = GetComponent<AbilitySystem>();
-        GetComponent<PlayerContainerController>().OnEquipmentUpdate.AddListener(UpdateWeapon);
+        GetComponent<PlayerContainerController>().OnEquipmentUpdate += UpdateWeapon;
     }
 
     public void UpdateWeapon(Container equipment)
