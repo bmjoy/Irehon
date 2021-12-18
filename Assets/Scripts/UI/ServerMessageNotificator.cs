@@ -10,19 +10,19 @@ namespace Client
         [SerializeField]
         private Text textComponent;
 
-        private static ServerMessageNotificator i;
+        private static ServerMessageNotificator Instance;
         private Image parentBG;
         private Coroutine opacity;
 
         private void Awake()
         {
-            if (i != null && i != this)
+            if (Instance != null && Instance != this)
             {
                 Destroy(this.gameObject);
             }
             else
             {
-                i = this;
+                Instance = this;
             }
 
             DontDestroyOnLoad(this.gameObject);
@@ -47,13 +47,13 @@ namespace Client
         {
             if (msg.messageType == MessageType.Notification || msg.messageType == MessageType.Error)
             {
-                i.MessageShowAndHide(msg);
+                Instance.MessageShowAndHide(msg);
             }
         }
 
         public static void ShowMessage(string msg)
         {
-            i.MessageShowAndHide(new ServerMessage() { message = msg, messageType = MessageType.Notification });
+            Instance.MessageShowAndHide(new ServerMessage() { message = msg, messageType = MessageType.Notification });
         }
 
         private void MessageShowAndHide(ServerMessage msg)
@@ -65,7 +65,7 @@ namespace Client
 
             if (this.opacity != null)
             {
-                this.StopCoroutine(i.opacity);
+                this.StopCoroutine(Instance.opacity);
             }
 
             this.parentBG.gameObject.SetActive(true);
