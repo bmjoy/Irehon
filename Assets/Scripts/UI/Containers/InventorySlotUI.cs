@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Irehon.UI;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -55,7 +56,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             return;
         }
 
-        TooltipWindowController.HideTooltip();
+        TooltipWindow.HideTooltip();
         ContainerWindowManager.i.GetDragger().gameObject.SetActive(true);
         ContainerWindowManager.i.GetDragger().position = this.GetComponent<RectTransform>().position;
         ContainerWindowManager.i.GetDraggerImage().sprite = this.itemSprite.sprite;
@@ -70,7 +71,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             return;
         }
 
-        TooltipWindowController.HideTooltip();
+        TooltipWindow.HideTooltip();
         ContainerWindowManager.i.GetDragger().anchoredPosition += data.delta / this.canvas.scaleFactor;
     }
 
@@ -109,7 +110,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
             if (this.isPointerOverSlot)
             {
-                TooltipWindowController.HideTooltip();
+                TooltipWindow.HideTooltip();
 
                 this.isPointerOverSlot = false;
             }
@@ -144,14 +145,14 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
 
         this.item = ItemDatabase.GetItemById(this.itemId);
-        TooltipWindowController.ShowTooltip(this.item.GetStringMessage());
+        TooltipWindow.ShowTooltip(this.item.GetStringMessage());
 
         this.isPointerOverSlot = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TooltipWindowController.HideTooltip();
+        TooltipWindow.HideTooltip();
 
         this.isPointerOverSlot = false;
     }
@@ -160,7 +161,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         if (this.isPointerOverSlot)
         {
-            TooltipWindowController.HideTooltip();
+            TooltipWindow.HideTooltip();
             this.isPointerOverSlot = false;
         }
         if (this.isDragging)

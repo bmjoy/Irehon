@@ -4,10 +4,7 @@ public class PlayerDeathState : PlayerState
 {
     public PlayerDeathState(Player player) : base(player)
     {
-        this.playerBonesLinks = player.GetComponent<PlayerBonesLinks>();
     }
-
-    private PlayerBonesLinks playerBonesLinks;
 
     public override bool CanTakeDamage => false;
     public override bool CanRotateCamera => false;

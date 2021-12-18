@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Irehon
+namespace Irehon.Camera
 {
     public class PlayerCameraSwitcher : MonoBehaviour
     {

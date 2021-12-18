@@ -1,4 +1,5 @@
-﻿using Irehon.Entitys;
+﻿using Irehon.Camera;
+using Irehon.Entitys;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;

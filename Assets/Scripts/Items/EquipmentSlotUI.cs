@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Irehon.UI;
+using UnityEngine;
 using UnityEngine.UI;
 public class EquipmentSlotUI : InventorySlotUI
 {
@@ -32,7 +33,7 @@ public class EquipmentSlotUI : InventorySlotUI
 
             if (this.isPointerOverSlot)
             {
-                TooltipWindowController.HideTooltip();
+                TooltipWindow.HideTooltip();
 
                 this.isPointerOverSlot = false;
             }

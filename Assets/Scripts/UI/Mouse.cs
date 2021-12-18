@@ -45,7 +45,7 @@ namespace Irehon.UI
         public static void DisableCursor()
         {
             Crosshair.Instance?.EnableDefaultCrosshair();
-            TooltipWindowController.HideTooltip();
+            TooltipWindow.HideTooltip();
 
             CursorChanged.Invoke(false);
             IsCursorEnabled = false;

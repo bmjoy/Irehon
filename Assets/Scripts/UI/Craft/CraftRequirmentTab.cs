@@ -1,4 +1,5 @@
 ﻿using Irehon.Interactable;
+using Irehon.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -30,14 +31,14 @@ public class CraftRequirmentTab : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         }
 
-        TooltipWindowController.ShowTooltip(this.requirmentItem.GetStringMessage());
+        TooltipWindow.ShowTooltip(this.requirmentItem.GetStringMessage());
 
         this.isPointerOverSlot = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TooltipWindowController.HideTooltip();
+        TooltipWindow.HideTooltip();
 
         this.isPointerOverSlot = false;
     }
@@ -46,7 +47,7 @@ public class CraftRequirmentTab : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (this.isPointerOverSlot)
         {
-            TooltipWindowController.HideTooltip();
+            TooltipWindow.HideTooltip();
             this.isPointerOverSlot = false;
         }
     }

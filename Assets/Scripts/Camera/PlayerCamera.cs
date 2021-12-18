@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-namespace Irehon
+namespace Irehon.Camera
 {
     public class PlayerCamera : MonoBehaviour
     {
         public static PlayerCamera Instance { get; private set; }
         public static bool CanRotateCamera;
 
-        public Camera Camera { get; private set; }
+        public UnityEngine.Camera Camera { get; private set; }
 
         [SerializeField]
         private Transform forwardCameraPoint;
@@ -22,7 +22,7 @@ namespace Irehon
         {
             Instance = this;
 
-            this.Camera = this.GetComponent<Camera>();
+            this.Camera = this.GetComponent<UnityEngine.Camera>();
             Player.OnPlayerIntializeEvent += this.Intialize;
         }
 

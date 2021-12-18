@@ -1,4 +1,5 @@
 using Irehon;
+using Irehon.Camera;
 using Irehon.Client;
 using Irehon.Entitys;
 using Irehon.UI;

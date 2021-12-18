@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using Irehon.Entitys;
+using Irehon.Camera;
 
 namespace Irehon.Abilitys
 {

@@ -2,16 +2,16 @@
 using Irehon.UI;
 using UnityEngine;
 
-namespace Irehon
+namespace Irehon.Camera
 {
     public class CameraController : MonoBehaviour
     {
         public static CameraController Instance;
-        
+
         public delegate void ChangeLookingTargetEventHandler(Vector3 target);
         public delegate void TargetingOnEntityEventHandler(Entity entity, Player player);
         public delegate void ChangeCursorStateEventHandler(bool state);
-        
+
         public GameObject InteractTarget { get; private set; }
 
         private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
