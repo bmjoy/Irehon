@@ -1,23 +1,23 @@
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MineDamage : MonoBehaviour
 {
     private List<ParticleCollisionEvent> collisionEvents = new List<ParticleCollisionEvent>();
     private ParticleSystem ps;
 
-    void Start()
+    private void Start()
     {
-        ps = GetComponent<ParticleSystem>();
+        this.ps = this.GetComponent<ParticleSystem>();
     }
-    void OnParticleCollision(GameObject other)
+
+    private void OnParticleCollision(GameObject other)
     {
-        int numCollisionEvents = ps.GetCollisionEvents(other, collisionEvents);
+        int numCollisionEvents = this.ps.GetCollisionEvents(other, this.collisionEvents);
         int i = 0;
         while (i < numCollisionEvents)
         {
-            Visible();
+            this.Visible();
             i++;
         }
     }
@@ -25,6 +25,6 @@ public class MineDamage : MonoBehaviour
     public GameObject Object;
     private void Visible()
     {
-        Object.SetActive(true);
+        this.Object.SetActive(true);
     }
 }

@@ -1,11 +1,11 @@
+using DuloGames.UI.Tweens;
 using System;
-using UnityEngine.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using DuloGames.UI.Tweens;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -51,7 +51,7 @@ namespace DuloGames.UI
         }
 
         // Currently selected item
-        [HideInInspector][SerializeField] private string m_SelectedItem;
+        [HideInInspector] [SerializeField] private string m_SelectedItem;
 
         private List<UISelectField_Option> m_OptionObjects = new List<UISelectField_Option>();
         private VisualState m_CurrentVisualState = VisualState.Normal;
@@ -75,8 +75,8 @@ namespace DuloGames.UI
         /// </summary>
         public Direction direction
         {
-            get { return this.m_Direction; }
-            set { this.m_Direction = value; }
+            get => this.m_Direction;
+            set => this.m_Direction = value;
         }
 
         /// <summary>
@@ -88,42 +88,27 @@ namespace DuloGames.UI
         /// <summary>
         /// Gets the list of options.
         /// </summary>
-        public List<string> options
-        {
-            get { return this.m_Options; }
-        }
+        public List<string> options => this.m_Options;
 
         /// <summary>
         /// Currently selected option.
         /// </summary>
         public string value
         {
-            get
-            {
-                return this.m_SelectedItem;
-            }
-            set
-            {
-                this.SelectOption(value);
-            }
+            get => this.m_SelectedItem;
+            set => this.SelectOption(value);
         }
 
         /// <summary>
         /// Gets the index of the selected option.
         /// </summary>
         /// <value>The index of the selected option.</value>
-        public int selectedOptionIndex
-        {
-            get
-            {
-                return this.GetOptionIndex(this.m_SelectedItem);
-            }
-        }
+        public int selectedOptionIndex => this.GetOptionIndex(this.m_SelectedItem);
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         // The label text
         [SerializeField] private Text m_LabelText;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         // Select Field layout properties
         public new ColorBlockExtended colors = ColorBlockExtended.defaultColorBlock;
@@ -217,7 +202,9 @@ namespace DuloGames.UI
         protected UISelectField()
         {
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_FloatTweenRunner.Init(this);
         }
@@ -228,7 +215,9 @@ namespace DuloGames.UI
 
             // Get the background image
             if (this.targetGraphic == null)
+            {
                 this.targetGraphic = this.GetComponent<Image>();
+            }
         }
 
         protected override void Start()
@@ -246,7 +235,9 @@ namespace DuloGames.UI
 
             // Make sure we always have a font
             if (this.optionFont == null)
+            {
                 this.optionFont = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+            }
         }
 #endif
 
@@ -255,7 +246,7 @@ namespace DuloGames.UI
             base.OnEnable();
 
             // Hook the on change event
-            this.onValueChanged.AddListener(OnToggleValueChanged);
+            this.onValueChanged.AddListener(this.OnToggleValueChanged);
         }
 
         protected override void OnDisable()
@@ -263,7 +254,7 @@ namespace DuloGames.UI
             base.OnDisable();
 
             // Unhook the on change event
-            this.onValueChanged.RemoveListener(OnToggleValueChanged);
+            this.onValueChanged.RemoveListener(this.OnToggleValueChanged);
 
             // Close if open
             this.isOn = false;
@@ -286,13 +277,7 @@ namespace DuloGames.UI
         /// Gets a value indicating whether the list is open.
         /// </summary>
         /// <value><c>true</c> if the list is open; otherwise, <c>false</c>.</value>
-        public bool IsOpen
-        {
-            get
-            {
-                return this.isOn;
-            }
-        }
+        public bool IsOpen => this.isOn;
 
         /// <summary>
         /// Gets the index of the given option.
@@ -303,9 +288,15 @@ namespace DuloGames.UI
         {
             // Find the option index in the options list
             if (this.m_Options != null && this.m_Options.Count > 0 && !string.IsNullOrEmpty(optionValue))
+            {
                 for (int i = 0; i < this.m_Options.Count; i++)
+                {
                     if (optionValue.Equals(this.m_Options[i], System.StringComparison.OrdinalIgnoreCase))
+                    {
                         return i;
+                    }
+                }
+            }
 
             // Default
             return -1;
@@ -323,7 +314,9 @@ namespace DuloGames.UI
                 UISelectField_Option option = this.m_OptionObjects[index];
 
                 if (option != null)
+                {
                     option.isOn = true;
+                }
             }
             else // otherwise set as selected
             {
@@ -342,14 +335,18 @@ namespace DuloGames.UI
         public void SelectOption(string optionValue)
         {
             if (string.IsNullOrEmpty(optionValue))
+            {
                 return;
+            }
 
             // Get the option
             int index = this.GetOptionIndex(optionValue);
 
             // Check if the option index is valid
             if (index < 0 || index >= this.m_Options.Count)
+            {
                 return;
+            }
 
             // Select the option
             this.SelectOptionByIndex(index);
@@ -376,7 +373,9 @@ namespace DuloGames.UI
         public void AddOptionAtIndex(string optionValue, int index)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Check if the index is outside the list
             if (index >= this.m_Options.Count)
@@ -398,7 +397,9 @@ namespace DuloGames.UI
         public void RemoveOption(string optionValue)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Remove the option if exists
             if (this.m_Options.Contains(optionValue))
@@ -416,7 +417,9 @@ namespace DuloGames.UI
         public void RemoveOptionAtIndex(int index)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Remove the option if the index is valid
             if (index >= 0 && index < this.m_Options.Count)
@@ -433,7 +436,9 @@ namespace DuloGames.UI
         public void ClearOptions()
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             this.m_Options.Clear();
             this.OptionListChanged();
@@ -445,7 +450,9 @@ namespace DuloGames.UI
         public void ValidateSelectedOption()
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Fix the selected option if it no longer exists
             if (!this.m_Options.Contains(this.m_SelectedItem))
@@ -463,7 +470,9 @@ namespace DuloGames.UI
         public void OnOptionSelect(string option)
         {
             if (string.IsNullOrEmpty(option))
+            {
                 return;
+            }
 
             // Save the current string to compare later
             string current = this.m_SelectedItem;
@@ -473,7 +482,9 @@ namespace DuloGames.UI
 
             // Trigger change event
             if (!current.Equals(this.m_SelectedItem))
+            {
                 this.TriggerChangeEvent();
+            }
 
             // Close the list if it's opened and the pointer was used to select the option
             if (this.IsOpen && this.m_PointerWasUsedOnOption)
@@ -506,11 +517,15 @@ namespace DuloGames.UI
         {
             // Apply the string to the label componenet
             if (this.m_LabelText != null)
+            {
                 this.m_LabelText.text = this.m_SelectedItem;
+            }
 
             // Invoke the on change event
-            if (onChange != null)
-                onChange.Invoke(this.selectedOptionIndex, this.m_SelectedItem);
+            if (this.onChange != null)
+            {
+                this.onChange.Invoke(this.selectedOptionIndex, this.m_SelectedItem);
+            }
         }
 
         /// <summary>
@@ -520,7 +535,9 @@ namespace DuloGames.UI
         private void OnToggleValueChanged(bool state)
         {
             if (!Application.isPlaying)
+            {
                 return;
+            }
 
             // Transition to the current state
             this.DoStateTransition(this.currentSelectionState, false);
@@ -530,7 +547,9 @@ namespace DuloGames.UI
 
             // Destroy the block on close
             if (!this.isOn && this.m_Blocker != null)
+            {
                 Destroy(this.m_Blocker);
+            }
         }
 
         /// <summary>
@@ -545,14 +564,18 @@ namespace DuloGames.UI
                 UISelectField_List list = this.m_ListObject.GetComponent<UISelectField_List>();
 
                 if (list.IsHighlighted(eventData))
+                {
                     return;
+                }
             }
 
             // Check if the mouse is over one of our options
             foreach (UISelectField_Option option in this.m_OptionObjects)
             {
                 if (option.IsHighlighted(eventData))
+                {
                     return;
+                }
             }
 
             // When the select field loses focus
@@ -614,7 +637,9 @@ namespace DuloGames.UI
         protected override void DoStateTransition(Selectable.SelectionState state, bool instant)
         {
             if (!this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             Color color = this.colors.normalColor;
             Sprite newSprite = null;
@@ -684,7 +709,9 @@ namespace DuloGames.UI
         private void StartColorTween(Color color, float duration)
         {
             if (this.targetGraphic == null)
+            {
                 return;
+            }
 
             this.targetGraphic.CrossFadeColor(color, duration, true, true);
         }
@@ -698,7 +725,9 @@ namespace DuloGames.UI
             Image image = this.targetGraphic as Image;
 
             if (image == null)
+            {
                 return;
+            }
 
             image.overrideSprite = newSprite;
         }
@@ -710,7 +739,9 @@ namespace DuloGames.UI
         private void TriggerAnimation(string trigger)
         {
             if (this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(trigger))
+            {
                 return;
+            }
 
             this.animator.ResetTrigger(this.animationTriggers.normalTrigger);
             this.animator.ResetTrigger(this.animationTriggers.pressedTrigger);
@@ -729,15 +760,21 @@ namespace DuloGames.UI
         protected virtual void ToggleList(bool state)
         {
             if (!this.IsActive())
+            {
                 return;
+            }
 
             // Check if the list is not yet created
             if (this.m_ListObject == null)
+            {
                 this.CreateList();
+            }
 
             // Make sure the creating of the list was successful
             if (this.m_ListObject == null)
+            {
                 return;
+            }
 
             // Make sure we have the canvas group
             if (this.m_ListCanvasGroup != null)
@@ -766,11 +803,16 @@ namespace DuloGames.UI
                 this.navigation = newNav;
 
                 if (!EventSystem.current.alreadySelecting && this.m_LastSelectedGameObject != null)
+                {
                     EventSystem.current.SetSelectedGameObject(this.m_LastSelectedGameObject);
+                }
             }
 
             // Bring to front
-            if (state) UIUtility.BringToFront(this.m_ListObject);
+            if (state)
+            {
+                UIUtility.BringToFront(this.m_ListObject);
+            }
 
             // Start the opening/closing animation
             if (this.listAnimationType == ListAnimationType.None || this.listAnimationType == ListAnimationType.Fade)
@@ -827,17 +869,36 @@ namespace DuloGames.UI
 
             // Prepare the width of the list
             float width = (this.transform as RectTransform).sizeDelta.x;
-            if (this.listMargins.left > 0) width -= this.listMargins.left; else width += Math.Abs(this.listMargins.left);
-            if (this.listMargins.right > 0) width -= this.listMargins.right; else width += Math.Abs(this.listMargins.right);
+            if (this.listMargins.left > 0)
+            {
+                width -= this.listMargins.left;
+            }
+            else
+            {
+                width += Math.Abs(this.listMargins.left);
+            }
+
+            if (this.listMargins.right > 0)
+            {
+                width -= this.listMargins.right;
+            }
+            else
+            {
+                width += Math.Abs(this.listMargins.right);
+            }
+
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
 
             // Hook the Dimensions Change event
-            listComp.onDimensionsChange.AddListener(ListDimensionsChanged);
+            listComp.onDimensionsChange.AddListener(this.ListDimensionsChanged);
 
             // Apply the background sprite
             Image image = this.m_ListObject.AddComponent<Image>();
             if (this.listBackgroundSprite != null)
+            {
                 image.sprite = this.listBackgroundSprite;
+            }
+
             image.type = this.listBackgroundSpriteType;
             image.color = this.listBackgroundColor;
 
@@ -913,7 +974,7 @@ namespace DuloGames.UI
 
                 // Get the select field list component
                 UISelectField_List contentListComp = this.m_ListContentObject.AddComponent<UISelectField_List>();
-                contentListComp.onDimensionsChange.AddListener(ScrollContentDimensionsChanged);
+                contentListComp.onDimensionsChange.AddListener(this.ScrollContentDimensionsChanged);
 
                 // Set the content and viewport to the scroll rect
                 this.m_ScrollRect.content = contentRect;
@@ -954,14 +1015,18 @@ namespace DuloGames.UI
             for (int i = 0; i < this.m_Options.Count; i++)
             {
                 if (i == 0 && this.startSeparator)
+                {
                     this.m_StartSeparatorObject = this.CreateSeparator(i - 1);
+                }
 
                 // Create the option
                 this.CreateOption(i, toggleGroup);
 
                 // Create a separator if this is not the last option
                 if (i < (this.m_Options.Count - 1))
+                {
                     this.CreateSeparator(i);
+                }
             }
 
             // Prepare the list for the animation
@@ -982,7 +1047,7 @@ namespace DuloGames.UI
                 listComp.SetTriggers(this.listAnimationOpenTrigger, this.listAnimationCloseTrigger);
 
                 // Hook a callback on the finish event
-                listComp.onAnimationFinish.AddListener(OnListAnimationFinish);
+                listComp.onAnimationFinish.AddListener(this.OnListAnimationFinish);
             }
 
             // Check if the navigation is disabled
@@ -1015,7 +1080,7 @@ namespace DuloGames.UI
 
             // Add button since it's needed to block, and to close the dropdown when blocking area is clicked.
             Button blockerButton = blocker.AddComponent<Button>();
-            blockerButton.onClick.AddListener(Close);
+            blockerButton.onClick.AddListener(this.Close);
 
             // Make sure it's the top-most element
             UIAlwaysOnTop aot = blocker.AddComponent<UIAlwaysOnTop>();
@@ -1039,7 +1104,9 @@ namespace DuloGames.UI
         protected void CreateOption(int index, ToggleGroup toggleGroup)
         {
             if (this.m_ListContentObject == null)
+            {
                 return;
+            }
 
             // Create the option game object with it's components
             GameObject optionObject = new GameObject("Option " + index.ToString(), typeof(RectTransform));
@@ -1098,11 +1165,15 @@ namespace DuloGames.UI
             text.color = this.optionColor;
 
             if (this.m_Options != null)
+            {
                 text.text = this.m_Options[index];
+            }
 
             // Apply normal state transition color
             if (this.optionTextTransitionType == OptionTextTransitionType.CrossFade)
+            {
                 text.canvasRenderer.SetColor(this.optionTextTransitionColors.normalColor);
+            }
 
             // Add and prepare the text effect
             if (this.optionTextEffectType != OptionTextEffectType.None)
@@ -1210,19 +1281,25 @@ namespace DuloGames.UI
 
             // Set active if it's the selected one
             if (index == this.selectedOptionIndex)
+            {
                 optionComp.isOn = true;
+            }
 
             // Register to the toggle group
             if (toggleGroup != null)
+            {
                 optionComp.group = toggleGroup;
+            }
 
             // Hook some events
-            optionComp.onSelectOption.AddListener(OnOptionSelect);
-            optionComp.onPointerUp.AddListener(OnOptionPointerUp);
+            optionComp.onSelectOption.AddListener(this.OnOptionSelect);
+            optionComp.onPointerUp.AddListener(this.OnOptionPointerUp);
 
             // Add it to the list
             if (this.m_OptionObjects != null)
+            {
                 this.m_OptionObjects.Add(optionComp);
+            }
         }
 
         /// <summary>
@@ -1233,7 +1310,9 @@ namespace DuloGames.UI
         protected GameObject CreateSeparator(int index)
         {
             if (this.m_ListContentObject == null || this.listSeparatorSprite == null)
+            {
                 return null;
+            }
 
             GameObject separatorObject = new GameObject("Separator " + index.ToString(), typeof(RectTransform));
 
@@ -1261,7 +1340,9 @@ namespace DuloGames.UI
         protected virtual void ListCleanup()
         {
             if (this.m_ListObject != null)
+            {
                 Destroy(this.m_ListObject);
+            }
 
             this.m_OptionObjects.Clear();
         }
@@ -1274,7 +1355,9 @@ namespace DuloGames.UI
         {
             // Make sure the creating of the list was successful
             if (this.m_ListObject == null)
+            {
                 return;
+            }
 
             // Get the list rect transforms
             RectTransform listRect = (this.m_ListObject.transform as RectTransform);
@@ -1319,7 +1402,9 @@ namespace DuloGames.UI
                 listRect.anchoredPosition = new Vector2(listRect.anchoredPosition.x, this.listMargins.bottom);
 
                 if (this.m_StartSeparatorObject != null)
+                {
                     this.m_StartSeparatorObject.transform.SetAsLastSibling();
+                }
 
                 UIUtility.BringToFront(listRect.gameObject);
             }
@@ -1331,11 +1416,15 @@ namespace DuloGames.UI
         protected virtual void ListDimensionsChanged()
         {
             if (!this.IsActive() || this.m_ListObject == null)
+            {
                 return;
+            }
 
             // Check if the list size has changed
             if (this.m_LastListSize.Equals((this.m_ListObject.transform as RectTransform).sizeDelta))
+            {
                 return;
+            }
 
             // Update the last list size
             this.m_LastListSize = (this.m_ListObject.transform as RectTransform).sizeDelta;
@@ -1350,11 +1439,13 @@ namespace DuloGames.UI
         protected virtual void ScrollContentDimensionsChanged()
         {
             if (!this.IsActive() || this.m_ScrollRect == null)
+            {
                 return;
+            }
 
-            float contentHeight = (this.m_ScrollRect.content as RectTransform).sizeDelta.y;
-            float optionHeight = contentHeight / (float)this.m_Options.Count;
-            float optionPosition = optionHeight * (float)this.selectedOptionIndex;
+            float contentHeight = this.m_ScrollRect.content.sizeDelta.y;
+            float optionHeight = contentHeight / this.m_Options.Count;
+            float optionPosition = optionHeight * this.selectedOptionIndex;
 
             this.m_ScrollRect.content.anchoredPosition = new Vector2(this.m_ScrollRect.content.anchoredPosition.x, optionPosition);
         }
@@ -1373,16 +1464,20 @@ namespace DuloGames.UI
         private void TweenListAlpha(float targetAlpha, float duration, bool ignoreTimeScale)
         {
             if (this.m_ListCanvasGroup == null)
+            {
                 return;
+            }
 
             float currentAlpha = this.m_ListCanvasGroup.alpha;
 
             if (currentAlpha.Equals(targetAlpha))
+            {
                 return;
+            }
 
-            var floatTween = new FloatTween { duration = duration, startFloat = currentAlpha, targetFloat = targetAlpha };
-            floatTween.AddOnChangedCallback(SetListAlpha);
-            floatTween.AddOnFinishCallback(OnListTweenFinished);
+            FloatTween floatTween = new FloatTween { duration = duration, startFloat = currentAlpha, targetFloat = targetAlpha };
+            floatTween.AddOnChangedCallback(this.SetListAlpha);
+            floatTween.AddOnFinishCallback(this.OnListTweenFinished);
             floatTween.ignoreTimeScale = ignoreTimeScale;
             this.m_FloatTweenRunner.StartTween(floatTween);
         }
@@ -1394,7 +1489,9 @@ namespace DuloGames.UI
         private void SetListAlpha(float alpha)
         {
             if (this.m_ListCanvasGroup == null)
+            {
                 return;
+            }
 
             // Set the alpha
             this.m_ListCanvasGroup.alpha = alpha;
@@ -1407,12 +1504,16 @@ namespace DuloGames.UI
         private void TriggerListAnimation(string trigger)
         {
             if (this.m_ListObject == null || string.IsNullOrEmpty(trigger))
+            {
                 return;
+            }
 
             Animator animator = this.m_ListObject.GetComponent<Animator>();
 
             if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables)
+            {
                 return;
+            }
 
             animator.ResetTrigger(this.listAnimationOpenTrigger);
             animator.ResetTrigger(this.listAnimationCloseTrigger);
@@ -1426,7 +1527,9 @@ namespace DuloGames.UI
         {
             // If the list is closed do a cleanup
             if (!this.IsOpen)
+            {
                 this.ListCleanup();
+            }
         }
 
         /// <summary>
@@ -1437,7 +1540,9 @@ namespace DuloGames.UI
         {
             // If the list is closed do a cleanup
             if (state == UISelectField_List.State.Closed && !this.IsOpen)
+            {
                 this.ListCleanup();
+            }
         }
     }
 }

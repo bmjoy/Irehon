@@ -3,7 +3,8 @@ using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
-    [RequireComponent(typeof(InputField))][DefaultExecutionOrder(100)]
+    [RequireComponent(typeof(InputField))]
+    [DefaultExecutionOrder(100)]
     public class UIInputCaretOffset : MonoBehaviour
     {
         [SerializeField] private Vector2 m_Offset = Vector2.zero;
@@ -26,7 +27,7 @@ namespace DuloGames.UI
 
         public void LateUpdate()
         {
-            ApplyOffset();
+            this.ApplyOffset();
         }
     }
 }

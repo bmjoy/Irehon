@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using Irehon.Interactable;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 using UnityEngine.UI;
 
 public class CraftWindowManager : MonoBehaviour
@@ -43,9 +42,13 @@ public class CraftWindowManager : MonoBehaviour
     private void Awake()
     {
         if (i != null && i != this)
+        {
             Destroy(this);
+        }
         else
+        {
             i = this;
+        }
 
         Player.OnPlayerIntializeEvent += Intialize;
     }
@@ -54,7 +57,9 @@ public class CraftWindowManager : MonoBehaviour
     {
         i.player = player;
         if (player.GetComponent<PlayerContainerController>().Containers.ContainsKey(ContainerType.Inventory))
+        {
             i.UpdateInventory(player.GetComponent<PlayerContainerController>().Containers[ContainerType.Inventory]);
+        }
 
         player.GetComponent<PlayerContainerController>().OnInventoryUpdate += x => i.UpdateInventory(x);
     }
@@ -62,8 +67,10 @@ public class CraftWindowManager : MonoBehaviour
     private void UpdateInventory(Container inventory)
     {
         this.inventory = inventory;
-        if (selectedRecipe != null)
-            UpdateRequirmentTab(selectedRecipe.requirment);
+        if (this.selectedRecipe != null)
+        {
+            UpdateRequirmentTab(this.selectedRecipe.requirment);
+        }
     }
 
     public static void CloseCraftWindow()
@@ -74,12 +81,16 @@ public class CraftWindowManager : MonoBehaviour
     public static void ShowRecipes(CraftRecipe[] recipes)
     {
         if (recipes.Length <= 0)
+        {
             return;
+        }
 
         i.craftWindow.Open();
 
         foreach (GameObject tab in i.spawnedTabs)
+        {
             Destroy(tab);
+        }
 
         i.spawnedTabs.Clear();
 
@@ -113,7 +124,9 @@ public class CraftWindowManager : MonoBehaviour
     private static void UpdateRequirmentTab(CraftRecipe.CraftRecipeRequirment[] requirments)
     {
         foreach (GameObject tab in i.spawnedRequirmentTabs)
+        {
             Destroy(tab);
+        }
 
         i.spawnedRequirmentTabs.Clear();
 
@@ -127,6 +140,6 @@ public class CraftWindowManager : MonoBehaviour
 
     public void CraftSelectedRecipe()
     {
-        player.GetComponent<PlayerCraftController>().Craft(selectedRecipeIndex);
+        this.player.GetComponent<PlayerCraftController>().Craft(this.selectedRecipeIndex);
     }
 }

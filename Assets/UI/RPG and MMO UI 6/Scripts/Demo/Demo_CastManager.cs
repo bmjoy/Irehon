@@ -4,10 +4,10 @@ namespace DuloGames.UI
 {
     public class Demo_CastManager : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UICastBar m_CastBar;
         [SerializeField] private Transform[] m_SlotContainers;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         protected void Start()
         {
@@ -19,7 +19,7 @@ namespace DuloGames.UI
 
                     foreach (UISpellSlot slot in slots)
                     {
-                        slot.onClick.AddListener(OnSpellClick);
+                        slot.onClick.AddListener(this.OnSpellClick);
                     }
                 }
             }
@@ -29,22 +29,30 @@ namespace DuloGames.UI
         {
             // Make sure we have the cast bar component and the slot is assigned
             if (this.m_CastBar == null || !slot.IsAssigned())
+            {
                 return;
+            }
 
             // Check if we are already casting
             if (this.m_CastBar.IsCasting)
+            {
                 return;
+            }
 
             // Get the spell info from the slot
             UISpellInfo spellInfo = slot.GetSpellInfo();
 
             // Make sure we have spell info
             if (spellInfo == null)
+            {
                 return;
+            }
 
             // Check if we are on cooldown
             if (spellInfo.Cooldown > 0f && slot.cooldownComponent != null && slot.cooldownComponent.IsOnCooldown)
+            {
                 return;
+            }
 
             // Check if the spell is not insta cast
             if (!spellInfo.Flags.Has(UISpellInfo_Flags.InstantCast))

@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraDepth : MonoBehaviour
 {
     public DepthTextureMode Mode;
     private Camera cam;
-    void OnEnable()
+
+    private void OnEnable()
     {
-        cam = GetComponent<Camera>();
-        cam.depthTextureMode = Mode;
+        this.cam = this.GetComponent<Camera>();
+        this.cam.depthTextureMode = this.Mode;
     }
 }

@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon.Chat;
+using System.Collections;
 using UnityEngine;
-using Mirror;
-using Steamworks;
 using UnityEngine.UI;
 
 public class KillLogTab : MonoBehaviour
@@ -14,14 +12,14 @@ public class KillLogTab : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Dissapear());
+        this.StartCoroutine(this.Dissapear());
     }
 
     private IEnumerator Dissapear()
     {
         yield return new WaitForSeconds(5f);
 
-        CanvasGroup group = GetComponent<CanvasGroup>();
+        CanvasGroup group = this.GetComponent<CanvasGroup>();
 
         while (group.alpha > 0)
         {
@@ -29,13 +27,13 @@ public class KillLogTab : MonoBehaviour
             yield return new WaitForSeconds(.1f);
         }
 
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
 
     public async void Intialize(ulong murderId, ulong killedId)
     {
-        murderName.text = await SteamUserInformation.GetNicknameAsync(murderId);
+        this.murderName.text = await SteamDataLoader.GetNicknameAsync(murderId);
 
-        killedName.text = await SteamUserInformation.GetNicknameAsync(killedId);
+        this.killedName.text = await SteamDataLoader.GetNicknameAsync(killedId);
     }
 }

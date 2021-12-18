@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LayerLab
 {
@@ -10,12 +8,18 @@ namespace LayerLab
 
         public void OnEnable()
         {
-            for (int i = 0; i < otherPanels.Length; i++) otherPanels[i].SetActive(true);
+            for (int i = 0; i < this.otherPanels.Length; i++)
+            {
+                this.otherPanels[i].SetActive(true);
+            }
         }
 
         public void OnDisable()
         {
-            for (int i = 0; i < otherPanels.Length; i++) otherPanels[i].SetActive(false);
+            for (int i = 0; i < this.otherPanels.Length; i++)
+            {
+                this.otherPanels[i].SetActive(false);
+            }
         }
     }
 }

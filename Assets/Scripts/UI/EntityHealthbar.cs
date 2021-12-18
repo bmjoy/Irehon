@@ -1,6 +1,7 @@
-﻿using Mirror;
+﻿using Irehon;
+using Irehon.Entitys;
+using Mirror;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,94 +28,109 @@ public class EntityHealthbar : MonoBehaviour
     private Entity entity;
     private void Start()
     {
-        entity = transform.parent.GetComponent<Entity>();
+        this.entity = this.transform.parent.GetComponent<Entity>();
 
-        if (entity == null)
+        if (this.entity == null)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
             return;
         }
 
-        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer && !entity.GetComponent<NetworkIdentity>().isServer)
+        if (this.entity.GetComponent<NetworkIdentity>().isLocalPlayer && !this.entity.GetComponent<NetworkIdentity>().isServer)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
             return;
         }
 
-        entity.OnDeathEvent += () => SetActive(false);
-        entity.OnRespawnEvent += () => SetActive(true);
+        this.entity.OnDeathEvent += () => this.SetActive(false);
+        this.entity.OnRespawnEvent += () => this.SetActive(true);
 
-        StartCoroutine(WaitCameraControllerIntialize());
-        nickname.text = entity.NickName;
-        entity.OnHealthChangeEvent += ChangeHealthOnBar;
-        entity.OnPlayerLookingEvent += () => EnableForTime(5f);
+        this.StartCoroutine(this.WaitCameraControllerIntialize());
+        this.nickname.text = this.entity.NickName;
+        this.entity.OnHealthChangeEvent += this.ChangeHealthOnBar;
+        this.entity.OnPlayerLookingEvent += () => this.EnableForTime(5f);
     }
 
     private void Update()
     {
-        if (cameraTransform == null)
-            return;
-
-        RepositionBar();
-        if (Vector3.Distance(transform.position, cameraTransform.position) < showingDistance && entity.isAlive)
+        if (this.cameraTransform == null)
         {
-            disablingDelay = 2f;
-            SetActive(true);
+            return;
         }
-        disablingDelay -= Time.deltaTime;
-        if (disablingDelay < 0)
-            SetActive(false);
+
+        this.RepositionBar();
+        if (Vector3.Distance(this.transform.position, this.cameraTransform.position) < this.showingDistance && this.entity.isAlive)
+        {
+            this.disablingDelay = 2f;
+            this.SetActive(true);
+        }
+        this.disablingDelay -= Time.deltaTime;
+        if (this.disablingDelay < 0)
+        {
+            this.SetActive(false);
+        }
     }
 
     public void EnableForTime(float time)
     {
-        if (entity.isAlive)
+        if (this.entity.isAlive)
         {
-            disablingDelay = time;
-            SetActive(true);
+            this.disablingDelay = time;
+            this.SetActive(true);
         }
     }
 
     public void SetActive(bool isActive)
     {
-        canvas.enabled = isActive;
-        nickname.enabled = isActive;
+        this.canvas.enabled = isActive;
+        this.nickname.enabled = isActive;
     }
 
     private IEnumerator WaitCameraControllerIntialize()
     {
         while (CameraController.i == null)
+        {
             yield return null;
+        }
 
-        cameraTransform = CameraController.i.transform;
-        canvas.worldCamera = CameraController.i.cameraComponent;
+        this.cameraTransform = CameraController.i.transform;
+        this.canvas.worldCamera = CameraController.i.cameraComponent;
     }
 
     private void ChangeHealthOnBar(int maxHealth, int health)
     {
         if (health == 0)
+        {
             return;
+        }
 
         float fill = 1.0f * health / maxHealth;
 
-        healthBarFiller.fillAmount = fill;
+        this.healthBarFiller.fillAmount = fill;
 
         float passedTime = 0f;
 
-        StopAllCoroutines();
+        this.StopAllCoroutines();
 
-        if (isActiveAndEnabled && healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
-            StartCoroutine(ChangeFillAmount());
+        if (this.isActiveAndEnabled && this.healthBarPostFiller.fillAmount > this.healthBarFiller.fillAmount)
+        {
+            this.StartCoroutine(ChangeFillAmount());
+        }
         else
-            healthBarPostFiller.fillAmount = healthBarFiller.fillAmount;
+        {
+            this.healthBarPostFiller.fillAmount = this.healthBarFiller.fillAmount;
+        }
 
         IEnumerator ChangeFillAmount()
         {
-            while (healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
+            while (this.healthBarPostFiller.fillAmount > this.healthBarFiller.fillAmount)
             {
                 passedTime += Time.deltaTime;
-                if (passedTime > updateDelay)
-                    healthBarPostFiller.fillAmount -= reducingPostBarAmmount * Time.deltaTime;
+                if (passedTime > this.updateDelay)
+                {
+                    this.healthBarPostFiller.fillAmount -= this.reducingPostBarAmmount * Time.deltaTime;
+                }
+
                 yield return null;
             }
         }
@@ -122,7 +138,7 @@ public class EntityHealthbar : MonoBehaviour
 
     private void RepositionBar()
     {
-        transform.LookAt(cameraTransform);
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+        this.transform.LookAt(this.cameraTransform);
+        this.transform.rotation = Quaternion.Euler(this.transform.rotation.eulerAngles.x, this.transform.rotation.eulerAngles.y, 0);
     }
 }

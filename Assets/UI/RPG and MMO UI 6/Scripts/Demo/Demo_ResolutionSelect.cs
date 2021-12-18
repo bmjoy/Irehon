@@ -2,20 +2,23 @@ using UnityEngine;
 
 namespace DuloGames.UI
 {
-    public class Demo_ResolutionSelect : MonoBehaviour {
+    public class Demo_ResolutionSelect : MonoBehaviour
+    {
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UISelectField m_SelectField;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         protected void Start()
         {
             if (this.m_SelectField == null)
+            {
                 return;
+            }
 
             // Clear the options
             this.m_SelectField.ClearOptions();
-            
+
             // Add the supported resolutions
             Resolution[] resolutions = Screen.resolutions;
 
@@ -34,17 +37,21 @@ namespace DuloGames.UI
         protected void OnEnable()
         {
             if (this.m_SelectField == null)
+            {
                 return;
+            }
 
-            this.m_SelectField.onChange.AddListener(OnSelectedOption);
+            this.m_SelectField.onChange.AddListener(this.OnSelectedOption);
         }
 
         protected void OnDisable()
         {
             if (this.m_SelectField == null)
+            {
                 return;
+            }
 
-            this.m_SelectField.onChange.RemoveListener(OnSelectedOption);
+            this.m_SelectField.onChange.RemoveListener(this.OnSelectedOption);
         }
 
         protected void OnSelectedOption(int index, string option)
@@ -52,7 +59,9 @@ namespace DuloGames.UI
             Resolution res = Screen.resolutions[index];
 
             if (res.Equals(Screen.currentResolution))
+            {
                 return;
+            }
 
             Screen.SetResolution(res.width, res.height, true, res.refreshRate);
         }

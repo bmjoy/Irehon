@@ -34,13 +34,13 @@ namespace PolyPerfect
 
         public float MaxDistance
         {
-            get { return wanderZone; }
+            get => this.wanderZone;
             set
             {
 #if UNITY_EDITOR
                 SceneView.RepaintAll();
 #endif
-                wanderZone = value;
+                this.wanderZone = value;
             }
         }
 
@@ -86,10 +86,7 @@ namespace PolyPerfect
 
         private static List<Common_WanderScript> allAnimals = new List<Common_WanderScript>();
 
-        public static List<Common_WanderScript> AllAnimals
-        {
-            get { return allAnimals; }
-        }
+        public static List<Common_WanderScript> AllAnimals => allAnimals;
 
         //[Space(), Space(5)]
         [SerializeField, Tooltip("If true, this animal will rotate to match the terrain. Ensure you have set the layer of the terrain as 'Terrain'.")]
@@ -140,600 +137,689 @@ namespace PolyPerfect
             Dead
         }
 
-        float attackTimer = 0;
-        float MinimumStaminaForAggression
-        {
-            get { return stats.stamina * .9f; }
-        }
+        private float attackTimer = 0;
 
-        float MinimumStaminaForFlee
-        {
-            get { return stats.stamina * .1f; }
-        }
+        private float MinimumStaminaForAggression => this.stats.stamina * .9f;
+
+        private float MinimumStaminaForFlee => this.stats.stamina * .1f;
 
         public WanderState CurrentState;
-        Common_WanderScript primaryPrey;
-        Common_WanderScript primaryPursuer;
-        Common_WanderScript attackTarget;
-        float moveSpeed = 0f;
-        float attackReach =2f;
-        bool forceUpdate = false;
-        float idleStateDuration;
-        Vector3 startPosition;
-        Vector3 wanderTarget;
-        IdleState currentIdleState;
-        float idleUpdateTime;
-        
+        private Common_WanderScript primaryPrey;
+        private Common_WanderScript primaryPursuer;
+        private Common_WanderScript attackTarget;
+        private float moveSpeed = 0f;
+        private float attackReach = 2f;
+        private bool forceUpdate = false;
+        private float idleStateDuration;
+        private Vector3 startPosition;
+        private Vector3 wanderTarget;
+        private IdleState currentIdleState;
+        private float idleUpdateTime;
+
 
         public void OnDrawGizmosSelected()
         {
-            if (!showGizmos)
+            if (!this.showGizmos)
+            {
                 return;
+            }
 
-            if (drawWanderRange)
+            if (this.drawWanderRange)
             {
                 // Draw circle of radius wander zone
-                Gizmos.color = distanceColor;
-                Gizmos.DrawWireSphere(origin == Vector3.zero ? transform.position : origin, wanderZone);
+                Gizmos.color = this.distanceColor;
+                Gizmos.DrawWireSphere(this.origin == Vector3.zero ? this.transform.position : this.origin, this.wanderZone);
 
-                Vector3 IconWander = new Vector3(transform.position.x, transform.position.y + wanderZone, transform.position.z);
+                Vector3 IconWander = new Vector3(this.transform.position.x, this.transform.position.y + this.wanderZone, this.transform.position.z);
                 Gizmos.DrawIcon(IconWander, "ico-wander", true);
             }
 
-            if (drawAwarenessRange)
+            if (this.drawAwarenessRange)
             {
                 //Draw circle radius for Awarness.
-                Gizmos.color = awarnessColor;
-                Gizmos.DrawWireSphere(transform.position, awareness);
+                Gizmos.color = this.awarnessColor;
+                Gizmos.DrawWireSphere(this.transform.position, this.awareness);
 
 
-                Vector3 IconAwareness = new Vector3(transform.position.x, transform.position.y + awareness, transform.position.z);
+                Vector3 IconAwareness = new Vector3(this.transform.position.x, this.transform.position.y + this.awareness, this.transform.position.z);
                 Gizmos.DrawIcon(IconAwareness, "ico-awareness", true);
             }
 
-            if (drawScentRange)
+            if (this.drawScentRange)
             {
                 //Draw circle radius for Scent.
-                Gizmos.color = scentColor;
-                Gizmos.DrawWireSphere(transform.position, scent);
+                Gizmos.color = this.scentColor;
+                Gizmos.DrawWireSphere(this.transform.position, this.scent);
 
-                Vector3 IconScent = new Vector3(transform.position.x, transform.position.y + scent, transform.position.z);
+                Vector3 IconScent = new Vector3(this.transform.position.x, this.transform.position.y + this.scent, this.transform.position.z);
                 Gizmos.DrawIcon(IconScent, "ico-scent", true);
             }
 
             if (!Application.isPlaying)
+            {
                 return;
+            }
 
             // Draw target position.
-            if (useNavMesh)
+            if (this.useNavMesh)
             {
-                if (navMeshAgent.remainingDistance > 1f)
+                if (this.navMeshAgent.remainingDistance > 1f)
                 {
-                    Gizmos.DrawSphere(navMeshAgent.destination + new Vector3(0f, 0.1f, 0f), 0.2f);
-                    Gizmos.DrawLine(transform.position, navMeshAgent.destination);
+                    Gizmos.DrawSphere(this.navMeshAgent.destination + new Vector3(0f, 0.1f, 0f), 0.2f);
+                    Gizmos.DrawLine(this.transform.position, this.navMeshAgent.destination);
                 }
             }
             else
             {
-                if (targetLocation != Vector3.zero)
+                if (this.targetLocation != Vector3.zero)
                 {
-                    Gizmos.DrawSphere(targetLocation + new Vector3(0f, 0.1f, 0f), 0.2f);
-                    Gizmos.DrawLine(transform.position, targetLocation);
+                    Gizmos.DrawSphere(this.targetLocation + new Vector3(0f, 0.1f, 0f), 0.2f);
+                    Gizmos.DrawLine(this.transform.position, this.targetLocation);
                 }
             }
         }
 
         private void Awake()
         {
-            if (!stats)
+            if (!this.stats)
             {
-                Debug.LogError(string.Format("No stats attached to {0}'s Wander Script.", gameObject.name));
-                enabled = false;
+                Debug.LogError(string.Format("No stats attached to {0}'s Wander Script.", this.gameObject.name));
+                this.enabled = false;
                 return;
             }
 
-            animator = GetComponent<Animator>();
+            this.animator = this.GetComponent<Animator>();
 
-            var runtimeController = animator.runtimeAnimatorController;
-            if (animator)
-                animatorParameters.UnionWith(animator.parameters.Select(p=>p.name));
-            
-            if (logChanges)
+            RuntimeAnimatorController runtimeController = this.animator.runtimeAnimatorController;
+            if (this.animator)
+            {
+                this.animatorParameters.UnionWith(this.animator.parameters.Select(p => p.name));
+            }
+
+            if (this.logChanges)
             {
                 if (runtimeController == null)
                 {
                     Debug.LogError(string.Format(
                         "{0} has no animator controller, make sure you put one in to allow the character to walk. See documentation for more details (1)",
-                        gameObject.name));
-                    enabled = false;
+                        this.gameObject.name));
+                    this.enabled = false;
                     return;
                 }
 
-                if (animator.avatar == null)
+                if (this.animator.avatar == null)
                 {
                     Debug.LogError(string.Format("{0} has no avatar, make sure you put one in to allow the character to animate. See documentation for more details (2)",
-                        gameObject.name));
-                    enabled = false;
+                        this.gameObject.name));
+                    this.enabled = false;
                     return;
                 }
 
-                if (animator.hasRootMotion == true)
+                if (this.animator.hasRootMotion == true)
                 {
                     Debug.LogError(string.Format(
-                        "{0} has root motion applied, consider turning this off as our script will deactivate this on play as we do not use it (3)", gameObject.name));
-                    animator.applyRootMotion = false;
+                        "{0} has root motion applied, consider turning this off as our script will deactivate this on play as we do not use it (3)", this.gameObject.name));
+                    this.animator.applyRootMotion = false;
                 }
 
-                if (idleStates.Length == 0 || movementStates.Length == 0)
+                if (this.idleStates.Length == 0 || this.movementStates.Length == 0)
                 {
                     Debug.LogError(string.Format("{0} has no idle or movement states, make sure you fill these out. See documentation for more details (4)",
-                        gameObject.name));
-                    enabled = false;
+                        this.gameObject.name));
+                    this.enabled = false;
                     return;
                 }
 
-                if (idleStates.Length > 0)
+                if (this.idleStates.Length > 0)
                 {
-                    for (int i = 0; i < idleStates.Length; i++)
+                    for (int i = 0; i < this.idleStates.Length; i++)
                     {
-                        if (idleStates[i].animationBool == "")
+                        if (this.idleStates[i].animationBool == "")
                         {
                             Debug.LogError(string.Format(
-                                "{0} has " + idleStates.Length +
-                                " Idle states, you need to make sure that each state has an animation boolean. See documentation for more details (4)", gameObject.name));
-                            enabled = false;
+                                "{0} has " + this.idleStates.Length +
+                                " Idle states, you need to make sure that each state has an animation boolean. See documentation for more details (4)", this.gameObject.name));
+                            this.enabled = false;
                             return;
                         }
                     }
                 }
 
-                if (movementStates.Length > 0)
+                if (this.movementStates.Length > 0)
                 {
-                    for (int i = 0; i < movementStates.Length; i++)
+                    for (int i = 0; i < this.movementStates.Length; i++)
                     {
-                        if (movementStates[i].animationBool == "")
+                        if (this.movementStates[i].animationBool == "")
                         {
                             Debug.LogError(string.Format(
-                                "{0} has " + movementStates.Length +
+                                "{0} has " + this.movementStates.Length +
                                 " Movement states, you need to make sure that each state has an animation boolean to see the character walk. See documentation for more details (4)",
-                                gameObject.name));
-                            enabled = false;
+                                this.gameObject.name));
+                            this.enabled = false;
                             return;
                         }
 
-                        if (movementStates[i].moveSpeed <= 0)
+                        if (this.movementStates[i].moveSpeed <= 0)
                         {
                             Debug.LogError(string.Format(
                                 "{0} has a movement state with a speed of 0 or less, you need to set the speed higher than 0 to see the character move. See documentation for more details (4)",
-                                gameObject.name));
-                            enabled = false;
+                                this.gameObject.name));
+                            this.enabled = false;
                             return;
                         }
 
-                        if (movementStates[i].turnSpeed <= 0)
+                        if (this.movementStates[i].turnSpeed <= 0)
                         {
                             Debug.LogError(string.Format(
                                 "{0} has a turn speed state with a speed of 0 or less, you need to set the speed higher than 0 to see the character turn. See documentation for more details (4)",
-                                gameObject.name));
-                            enabled = false;
+                                this.gameObject.name));
+                            this.enabled = false;
                             return;
                         }
                     }
                 }
 
-                if (attackingStates.Length == 0)
+                if (this.attackingStates.Length == 0)
                 {
-                    Debug.Log(string.Format("{0} has " + attackingStates.Length + " this character will not be able to attack. See documentation for more details (4)",
-                        gameObject.name));
+                    Debug.Log(string.Format("{0} has " + this.attackingStates.Length + " this character will not be able to attack. See documentation for more details (4)",
+                        this.gameObject.name));
                 }
 
-                if (attackingStates.Length > 0)
+                if (this.attackingStates.Length > 0)
                 {
-                    for (int i = 0; i < attackingStates.Length; i++)
+                    for (int i = 0; i < this.attackingStates.Length; i++)
                     {
-                        if (attackingStates[i].animationBool == "")
+                        if (this.attackingStates[i].animationBool == "")
                         {
                             Debug.LogError(string.Format(
-                                "{0} has " + attackingStates.Length +
+                                "{0} has " + this.attackingStates.Length +
                                 " attacking states, you need to make sure that each state has an animation boolean. See documentation for more details (4)",
-                                gameObject.name));
-                            enabled = false;
+                                this.gameObject.name));
+                            this.enabled = false;
                             return;
                         }
                     }
                 }
 
-                if (stats == null)
+                if (this.stats == null)
                 {
                     Debug.LogError(string.Format("{0} has no AI stats, make sure you assign one to the wander script. See documentation for more details (5)",
-                        gameObject.name));
-                    enabled = false;
+                        this.gameObject.name));
+                    this.enabled = false;
                     return;
                 }
 
-                if (animator)
+                if (this.animator)
                 {
-                    foreach (var item in AllStates)
+                    foreach (AIState item in this.AllStates)
                     {
-                        if (!animatorParameters.Contains(item.animationBool))
+                        if (!this.animatorParameters.Contains(item.animationBool))
                         {
                             Debug.LogError(string.Format(
                                 "{0} did not contain {1}. Make sure you set it in the Animation States on the character, and have a matching parameter in the Animator Controller assigned.",
-                                gameObject.name, item.animationBool));
-                            enabled = false;
+                                this.gameObject.name, item.animationBool));
+                            this.enabled = false;
                             return;
                         }
                     }
                 }
             }
 
-            foreach (IdleState state in idleStates)
+            foreach (IdleState state in this.idleStates)
             {
-                totalIdleStateWeight += state.stateWeight;
+                this.totalIdleStateWeight += state.stateWeight;
             }
 
-            origin = transform.position;
-            animator.applyRootMotion = false;
-            characterController = GetComponent<CharacterController>();
-            navMeshAgent = GetComponent<NavMeshAgent>();
+            this.origin = this.transform.position;
+            this.animator.applyRootMotion = false;
+            this.characterController = this.GetComponent<CharacterController>();
+            this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 
             //Assign the stats to variables
-            originalDominance = stats.dominance;
-            dominance = originalDominance;
+            this.originalDominance = this.stats.dominance;
+            this.dominance = this.originalDominance;
 
-            toughness = stats.toughness;
-            territorial = stats.territorial;
+            this.toughness = this.stats.toughness;
+            this.territorial = this.stats.territorial;
 
-            stamina = stats.stamina;
+            this.stamina = this.stats.stamina;
 
-            originalAggression = stats.agression;
-            aggression = originalAggression;
+            this.originalAggression = this.stats.agression;
+            this.aggression = this.originalAggression;
 
-            attackSpeed = stats.attackSpeed;
-            stealthy = stats.stealthy;
+            this.attackSpeed = this.stats.attackSpeed;
+            this.stealthy = this.stats.stealthy;
 
-            originalScent = scent;
-            scent = originalScent;
+            this.originalScent = this.scent;
+            this.scent = this.originalScent;
 
-            if (navMeshAgent)
+            if (this.navMeshAgent)
             {
-                useNavMesh = true;
-                navMeshAgent.stoppingDistance = contingencyDistance;
+                this.useNavMesh = true;
+                this.navMeshAgent.stoppingDistance = contingencyDistance;
             }
 
-            if (matchSurfaceRotation && transform.childCount > 0)
+            if (this.matchSurfaceRotation && this.transform.childCount > 0)
             {
-                transform.GetChild(0).gameObject.AddComponent<Common_SurfaceRotation>().SetRotationSpeed(surfaceRotationSpeed);
+                this.transform.GetChild(0).gameObject.AddComponent<Common_SurfaceRotation>().SetRotationSpeed(this.surfaceRotationSpeed);
             }
         }
 
-        IEnumerable<AIState> AllStates
+        private IEnumerable<AIState> AllStates
         {
             get
             {
-                foreach (var item in idleStates)
+                foreach (IdleState item in this.idleStates)
+                {
                     yield return item;
-                foreach (var item in movementStates)
+                }
+
+                foreach (MovementState item in this.movementStates)
+                {
                     yield return item;
-                foreach (var item in attackingStates)
+                }
+
+                foreach (AIState item in this.attackingStates)
+                {
                     yield return item;
-                foreach (var item in deathStates)
+                }
+
+                foreach (AIState item in this.deathStates)
+                {
                     yield return item;
+                }
             }
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             allAnimals.Add(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             allAnimals.Remove(this);
-            StopAllCoroutines();
+            this.StopAllCoroutines();
         }
 
 
         private void Start()
         {
-            startPosition = transform.position;
+            this.startPosition = this.transform.position;
             if (Common_WanderManager.Instance != null && Common_WanderManager.Instance.PeaceTime)
             {
-                SetPeaceTime(true);
+                this.SetPeaceTime(true);
             }
 
-            StartCoroutine(RandomStartingDelay());
+            this.StartCoroutine(this.RandomStartingDelay());
         }
 
-        bool started = false;
-        readonly HashSet<string> animatorParameters = new HashSet<string>();
+        private bool started = false;
+        private readonly HashSet<string> animatorParameters = new HashSet<string>();
 
-        void Update()
+        private void Update()
         {
-            if (!started)
-                return;
-            if (forceUpdate)
+            if (!this.started)
             {
-                UpdateAI();
-                forceUpdate = false;
+                return;
             }
 
-            if (CurrentState == WanderState.Attack)
+            if (this.forceUpdate)
             {
-                if (!attackTarget || attackTarget.CurrentState == WanderState.Dead)
+                this.UpdateAI();
+                this.forceUpdate = false;
+            }
+
+            if (this.CurrentState == WanderState.Attack)
+            {
+                if (!this.attackTarget || this.attackTarget.CurrentState == WanderState.Dead)
                 {
-                    var previous = attackTarget;
-                    UpdateAI();
-                    if (previous && previous == attackTarget)
+                    Common_WanderScript previous = this.attackTarget;
+                    this.UpdateAI();
+                    if (previous && previous == this.attackTarget)
+                    {
                         Debug.LogError(string.Format("Target was same {0}", previous.gameObject.name));
+                    }
                 }
 
-                attackTimer += Time.deltaTime;
+                this.attackTimer += Time.deltaTime;
             }
 
-            if (attackTimer>attackSpeed)
+            if (this.attackTimer > this.attackSpeed)
             {
-                attackTimer -= attackSpeed;
-                if (attackTarget)
-                    attackTarget.TakeDamage(power);
-                if (attackTarget.CurrentState == WanderState.Dead) 
-                    UpdateAI();
+                this.attackTimer -= this.attackSpeed;
+                if (this.attackTarget)
+                {
+                    this.attackTarget.TakeDamage(this.power);
+                }
+
+                if (this.attackTarget.CurrentState == WanderState.Dead)
+                {
+                    this.UpdateAI();
+                }
             }
 
-            var position = transform.position;
-            var targetPosition = position;
-            switch (CurrentState)
+            Vector3 position = this.transform.position;
+            Vector3 targetPosition = position;
+            switch (this.CurrentState)
             {
                 case WanderState.Attack:
-                    FaceDirection((attackTarget.transform.position - position).normalized);
+                    this.FaceDirection((this.attackTarget.transform.position - position).normalized);
                     targetPosition = position;
                     break;
                 case WanderState.Chase:
-                    if (!primaryPrey || primaryPrey.CurrentState == WanderState.Dead)
+                    if (!this.primaryPrey || this.primaryPrey.CurrentState == WanderState.Dead)
                     {
-                        primaryPrey = null;
-                        SetState(WanderState.Idle);
+                        this.primaryPrey = null;
+                        this.SetState(WanderState.Idle);
                         goto case WanderState.Idle;
                     }
-                    targetPosition = primaryPrey.transform.position;
-                    ValidatePosition(ref targetPosition);
-                    if (!IsValidLocation(targetPosition))
+                    targetPosition = this.primaryPrey.transform.position;
+                    this.ValidatePosition(ref targetPosition);
+                    if (!this.IsValidLocation(targetPosition))
                     {
-                        SetState(WanderState.Idle);
+                        this.SetState(WanderState.Idle);
                         targetPosition = position;
-                        UpdateAI();
+                        this.UpdateAI();
                         break;
                     }
 
-                    FaceDirection((targetPosition - position).normalized);
-                    stamina -= Time.deltaTime;
-                    if (stamina<=0f)
-                        UpdateAI();
+                    this.FaceDirection((targetPosition - position).normalized);
+                    this.stamina -= Time.deltaTime;
+                    if (this.stamina <= 0f)
+                    {
+                        this.UpdateAI();
+                    }
+
                     break;
                 case WanderState.Evade:
-                    targetPosition = position + Vector3.ProjectOnPlane(position - primaryPursuer.transform.position, Vector3.up);
-                    if (!IsValidLocation(targetPosition))
-                        targetPosition = startPosition;
-                    ValidatePosition(ref targetPosition);
-                    FaceDirection((targetPosition - position).normalized);
-                    stamina -= Time.deltaTime;
-                    if (stamina<=0f)
-                        UpdateAI();
+                    targetPosition = position + Vector3.ProjectOnPlane(position - this.primaryPursuer.transform.position, Vector3.up);
+                    if (!this.IsValidLocation(targetPosition))
+                    {
+                        targetPosition = this.startPosition;
+                    }
+
+                    this.ValidatePosition(ref targetPosition);
+                    this.FaceDirection((targetPosition - position).normalized);
+                    this.stamina -= Time.deltaTime;
+                    if (this.stamina <= 0f)
+                    {
+                        this.UpdateAI();
+                    }
+
                     break;
                 case WanderState.Wander:
-                    stamina = Mathf.MoveTowards(stamina, stats.stamina, Time.deltaTime);
-                    targetPosition = wanderTarget;
-                    Debug.DrawLine(position,targetPosition,Color.yellow);
-                    FaceDirection((targetPosition-position).normalized);
-                    var displacementFromTarget = Vector3.ProjectOnPlane(targetPosition - transform.position, Vector3.up);
+                    this.stamina = Mathf.MoveTowards(this.stamina, this.stats.stamina, Time.deltaTime);
+                    targetPosition = this.wanderTarget;
+                    Debug.DrawLine(position, targetPosition, Color.yellow);
+                    this.FaceDirection((targetPosition - position).normalized);
+                    Vector3 displacementFromTarget = Vector3.ProjectOnPlane(targetPosition - this.transform.position, Vector3.up);
                     if (displacementFromTarget.magnitude < contingencyDistance)
                     {
-                        SetState(WanderState.Idle);
-                        UpdateAI();
+                        this.SetState(WanderState.Idle);
+                        this.UpdateAI();
                     }
 
                     break;
                 case WanderState.Idle:
-                    stamina = Mathf.MoveTowards(stamina, stats.stamina, Time.deltaTime);
-                    if (Time.time>=idleUpdateTime)
+                    this.stamina = Mathf.MoveTowards(this.stamina, this.stats.stamina, Time.deltaTime);
+                    if (Time.time >= this.idleUpdateTime)
                     {
-                        SetState(WanderState.Wander);
-                        UpdateAI();
+                        this.SetState(WanderState.Wander);
+                        this.UpdateAI();
                     }
                     break;
             }
 
-            if (navMeshAgent)
+            if (this.navMeshAgent)
             {
-                navMeshAgent.destination = targetPosition;
-                navMeshAgent.speed = moveSpeed;
-                navMeshAgent.angularSpeed = turnSpeed;
+                this.navMeshAgent.destination = targetPosition;
+                this.navMeshAgent.speed = this.moveSpeed;
+                this.navMeshAgent.angularSpeed = this.turnSpeed;
             }
             else
-                characterController.SimpleMove(moveSpeed * UnityEngine.Vector3.ProjectOnPlane(targetPosition - position,Vector3.up).normalized);
-
-
+            {
+                this.characterController.SimpleMove(this.moveSpeed * UnityEngine.Vector3.ProjectOnPlane(targetPosition - position, Vector3.up).normalized);
+            }
         }
 
-        void FaceDirection(Vector3 facePosition)
+        private void FaceDirection(Vector3 facePosition)
         {
-            transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Vector3.RotateTowards(transform.forward,
-                facePosition, turnSpeed * Time.deltaTime*Mathf.Deg2Rad, 0f), Vector3.up), Vector3.up);
+            this.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Vector3.RotateTowards(this.transform.forward,
+                facePosition, this.turnSpeed * Time.deltaTime * Mathf.Deg2Rad, 0f), Vector3.up), Vector3.up);
         }
 
         public void TakeDamage(float damage)
         {
-            toughness -= damage;
-            if (toughness <= 0f)
-                Die();
+            this.toughness -= damage;
+            if (this.toughness <= 0f)
+            {
+                this.Die();
+            }
         }
         public void Die()
         {
-            SetState(WanderState.Dead);
+            this.SetState(WanderState.Dead);
         }
 
         public void SetPeaceTime(bool peace)
         {
             if (peace)
             {
-                dominance = 0;
-                scent = 0f;
-                aggression = 0f;
+                this.dominance = 0;
+                this.scent = 0f;
+                this.aggression = 0f;
             }
             else
             {
-                dominance = originalDominance;
-                scent = originalScent;
-                aggression = originalAggression;
+                this.dominance = this.originalDominance;
+                this.scent = this.originalScent;
+                this.aggression = this.originalAggression;
             }
         }
-        
-        void UpdateAI()
+
+        private void UpdateAI()
         {
-            if (CurrentState == WanderState.Dead)
+            if (this.CurrentState == WanderState.Dead)
             {
                 Debug.LogError("Trying to update the AI of a dead animal, something probably went wrong somewhere.");
                 return;
             }
 
-            var position = transform.position;
-            primaryPursuer = null;
-            if (awareness > 0)
+            Vector3 position = this.transform.position;
+            this.primaryPursuer = null;
+            if (this.awareness > 0)
             {
-                var closestDistance = awareness;
+                float closestDistance = this.awareness;
                 if (allAnimals.Count > 0)
                 {
-                    foreach (var chaser in allAnimals)
+                    foreach (Common_WanderScript chaser in allAnimals)
                     {
                         if (chaser.primaryPrey != this && chaser.attackTarget != this)
+                        {
                             continue;
+                        }
 
                         if (chaser.CurrentState == WanderState.Dead)
+                        {
                             continue;
-                        var distance = Vector3.Distance(position, chaser.transform.position);
-                        if ((chaser.attackTarget!=this&&chaser.stealthy) || chaser.dominance <= this.dominance || distance > closestDistance)
+                        }
+
+                        float distance = Vector3.Distance(position, chaser.transform.position);
+                        if ((chaser.attackTarget != this && chaser.stealthy) || chaser.dominance <= this.dominance || distance > closestDistance)
+                        {
                             continue;
-                        
+                        }
+
                         closestDistance = distance;
-                        primaryPursuer = chaser;
+                        this.primaryPursuer = chaser;
                     }
                 }
             }
 
-            var wasSameTarget = false;
-            if (primaryPrey)
+            bool wasSameTarget = false;
+            if (this.primaryPrey)
             {
-                if (primaryPrey.CurrentState == WanderState.Dead)
-                    primaryPrey = null;
+                if (this.primaryPrey.CurrentState == WanderState.Dead)
+                {
+                    this.primaryPrey = null;
+                }
                 else
                 {
-                    var distanceToPrey = Vector3.Distance(position, primaryPrey.transform.position);
-                    if (distanceToPrey > scent)
-                        primaryPrey = null;
+                    float distanceToPrey = Vector3.Distance(position, this.primaryPrey.transform.position);
+                    if (distanceToPrey > this.scent)
+                    {
+                        this.primaryPrey = null;
+                    }
                     else
+                    {
                         wasSameTarget = true;
+                    }
                 }
             }
-            if (!primaryPrey)
+            if (!this.primaryPrey)
             {
-                primaryPrey = null;
-                if (dominance > 0 && attackingStates.Length>0)
+                this.primaryPrey = null;
+                if (this.dominance > 0 && this.attackingStates.Length > 0)
                 {
-                    var aggFrac = aggression * .01f;
+                    float aggFrac = this.aggression * .01f;
                     aggFrac *= aggFrac;
-                    var closestDistance = scent;
-                    foreach (var potentialPrey in allAnimals)
+                    float closestDistance = this.scent;
+                    foreach (Common_WanderScript potentialPrey in allAnimals)
                     {
                         if (potentialPrey.CurrentState == WanderState.Dead)
+                        {
                             Debug.LogError(string.Format("Dead animal found: {0}", potentialPrey.gameObject.name));
-                        if (potentialPrey == this || (potentialPrey.species == species && !territorial) ||
-                            potentialPrey.dominance > dominance || potentialPrey.stealthy)
-                            continue;
-                        if (nonAgressiveTowards.Contains(potentialPrey.species))
-                            continue;
-                        if (Random.Range(0f,0.99999f) >= aggFrac)
-                            continue;
-                        
-                        var preyPosition = potentialPrey.transform.position;
-                        if (!IsValidLocation(preyPosition)) 
-                            continue;
+                        }
 
-                        var distance = Vector3.Distance(position, preyPosition);
-                        if (distance > closestDistance)
+                        if (potentialPrey == this || (potentialPrey.species == this.species && !this.territorial) ||
+                            potentialPrey.dominance > this.dominance || potentialPrey.stealthy)
+                        {
                             continue;
-                        if (logChanges)
-                            Debug.Log(string.Format("{0}: Found prey ({1}), chasing.", gameObject.name, potentialPrey.gameObject.name));
+                        }
+
+                        if (this.nonAgressiveTowards.Contains(potentialPrey.species))
+                        {
+                            continue;
+                        }
+
+                        if (Random.Range(0f, 0.99999f) >= aggFrac)
+                        {
+                            continue;
+                        }
+
+                        Vector3 preyPosition = potentialPrey.transform.position;
+                        if (!this.IsValidLocation(preyPosition))
+                        {
+                            continue;
+                        }
+
+                        float distance = Vector3.Distance(position, preyPosition);
+                        if (distance > closestDistance)
+                        {
+                            continue;
+                        }
+
+                        if (this.logChanges)
+                        {
+                            Debug.Log(string.Format("{0}: Found prey ({1}), chasing.", this.gameObject.name, potentialPrey.gameObject.name));
+                        }
 
                         closestDistance = distance;
-                        primaryPrey = potentialPrey;
+                        this.primaryPrey = potentialPrey;
                     }
                 }
             }
 
-            var aggressiveOption = false;
-            if (primaryPrey)
+            bool aggressiveOption = false;
+            if (this.primaryPrey)
             {
-                if ((wasSameTarget&&stamina>0) || stamina > MinimumStaminaForAggression)
+                if ((wasSameTarget && this.stamina > 0) || this.stamina > this.MinimumStaminaForAggression)
+                {
                     aggressiveOption = true;
+                }
                 else
-                    primaryPrey = null;
+                {
+                    this.primaryPrey = null;
+                }
             }
 
-            var defensiveOption = false;
-            if (primaryPursuer && !aggressiveOption)
+            bool defensiveOption = false;
+            if (this.primaryPursuer && !aggressiveOption)
             {
-                if (stamina > MinimumStaminaForFlee)
+                if (this.stamina > this.MinimumStaminaForFlee)
+                {
                     defensiveOption = true;
+                }
             }
 
-            var updateTargetAI = false;
-            var isPreyInAttackRange = aggressiveOption && Vector3.Distance(position, primaryPrey.transform.position) < CalcAttackRange(primaryPrey);
-            var isPursuerInAttackRange = defensiveOption && Vector3.Distance(position, primaryPursuer.transform.position) < CalcAttackRange(primaryPursuer);
+            bool updateTargetAI = false;
+            bool isPreyInAttackRange = aggressiveOption && Vector3.Distance(position, this.primaryPrey.transform.position) < this.CalcAttackRange(this.primaryPrey);
+            bool isPursuerInAttackRange = defensiveOption && Vector3.Distance(position, this.primaryPursuer.transform.position) < this.CalcAttackRange(this.primaryPursuer);
             if (isPursuerInAttackRange)
             {
-                attackTarget = primaryPursuer;
+                this.attackTarget = this.primaryPursuer;
             }
             else if (isPreyInAttackRange)
             {
-                attackTarget = primaryPrey;
-                if (!attackTarget.attackTarget==this)
+                this.attackTarget = this.primaryPrey;
+                if (!this.attackTarget.attackTarget == this)
+                {
                     updateTargetAI = true;
+                }
             }
             else
-                attackTarget = null;
-            var shouldAttack = attackingStates.Length > 0 && (isPreyInAttackRange || isPursuerInAttackRange);
+            {
+                this.attackTarget = null;
+            }
+
+            bool shouldAttack = this.attackingStates.Length > 0 && (isPreyInAttackRange || isPursuerInAttackRange);
 
             if (shouldAttack)
-                SetState(WanderState.Attack);
+            {
+                this.SetState(WanderState.Attack);
+            }
             else if (aggressiveOption)
-                SetState(WanderState.Chase);
+            {
+                this.SetState(WanderState.Chase);
+            }
             else if (defensiveOption)
-                SetState(WanderState.Evade);
-            else if (CurrentState!= WanderState.Idle && CurrentState != WanderState.Wander)
-                SetState(WanderState.Idle);
-            if (shouldAttack&&updateTargetAI) 
-                attackTarget.forceUpdate = true;
+            {
+                this.SetState(WanderState.Evade);
+            }
+            else if (this.CurrentState != WanderState.Idle && this.CurrentState != WanderState.Wander)
+            {
+                this.SetState(WanderState.Idle);
+            }
+
+            if (shouldAttack && updateTargetAI)
+            {
+                this.attackTarget.forceUpdate = true;
+            }
         }
 
-        bool IsValidLocation(Vector3 targetPosition)
+        private bool IsValidLocation(Vector3 targetPosition)
         {
-            if (!constainedToWanderZone)
+            if (!this.constainedToWanderZone)
+            {
                 return true;
-            var distanceFromWander = Vector3.Distance(startPosition, targetPosition);
-            var isInWander = distanceFromWander < wanderZone;
+            }
+
+            float distanceFromWander = Vector3.Distance(this.startPosition, targetPosition);
+            bool isInWander = distanceFromWander < this.wanderZone;
             return isInWander;
         }
 
-        float CalcAttackRange(Common_WanderScript other)
+        private float CalcAttackRange(Common_WanderScript other)
         {
-            var thisRange = navMeshAgent ? navMeshAgent.radius : characterController.radius;
-            var thatRange = other.navMeshAgent ? other.navMeshAgent.radius : other.characterController.radius;
-            return attackReach+thisRange+thatRange;
+            float thisRange = this.navMeshAgent ? this.navMeshAgent.radius : this.characterController.radius;
+            float thatRange = other.navMeshAgent ? other.navMeshAgent.radius : other.characterController.radius;
+            return this.attackReach + thisRange + thatRange;
         }
 
-        void SetState(WanderState state)
+        private void SetState(WanderState state)
         {
-            var previousState = CurrentState;
+            WanderState previousState = this.CurrentState;
             if (previousState == WanderState.Dead)
             {
                 Debug.LogError("Attempting to set a state to a dead animal.");
@@ -741,26 +827,26 @@ namespace PolyPerfect
             }
             //if (state != previousState)
             {
-                CurrentState = state;
-                switch (CurrentState)
+                this.CurrentState = state;
+                switch (this.CurrentState)
                 {
                     case WanderState.Idle:
-                        HandleBeginIdle();
+                        this.HandleBeginIdle();
                         break;
                     case WanderState.Chase:
-                        HandleBeginChase();
+                        this.HandleBeginChase();
                         break;
                     case WanderState.Evade:
-                        HandleBeginEvade();
+                        this.HandleBeginEvade();
                         break;
                     case WanderState.Attack:
-                        HandleBeginAttack();
+                        this.HandleBeginAttack();
                         break;
                     case WanderState.Dead:
-                        HandleBeginDeath();
+                        this.HandleBeginDeath();
                         break;
                     case WanderState.Wander:
-                        HandleBeginWander();
+                        this.HandleBeginWander();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -768,67 +854,85 @@ namespace PolyPerfect
             }
         }
 
-
-        void ClearAnimatorBools()
+        private void ClearAnimatorBools()
         {
-            foreach (var item in idleStates) 
-                TrySetBool(item.animationBool, false);
-            foreach (var item in movementStates) 
-                TrySetBool(item.animationBool, false);
-            foreach (var item in attackingStates) 
-                TrySetBool(item.animationBool, false);
-            foreach (var item in deathStates) 
-                TrySetBool(item.animationBool, false);
-        }
-        void TrySetBool(string parameterName,bool value)
-        {
-            if (!string.IsNullOrEmpty(parameterName))
+            foreach (IdleState item in this.idleStates)
             {
-                if (logChanges||animatorParameters.Contains(parameterName))
-                    animator.SetBool(parameterName, value);
+                this.TrySetBool(item.animationBool, false);
+            }
+
+            foreach (MovementState item in this.movementStates)
+            {
+                this.TrySetBool(item.animationBool, false);
+            }
+
+            foreach (AIState item in this.attackingStates)
+            {
+                this.TrySetBool(item.animationBool, false);
+            }
+
+            foreach (AIState item in this.deathStates)
+            {
+                this.TrySetBool(item.animationBool, false);
             }
         }
 
-        void HandleBeginDeath()
+        private void TrySetBool(string parameterName, bool value)
         {
-            ClearAnimatorBools();
-            if (deathStates.Length > 0) 
-                TrySetBool(deathStates[Random.Range(0, deathStates.Length)].animationBool, true);
-
-            deathEvent.Invoke();
-            if (navMeshAgent && navMeshAgent.isOnNavMesh)
-                navMeshAgent.destination = transform.position;
-            enabled = false;
+            if (!string.IsNullOrEmpty(parameterName))
+            {
+                if (this.logChanges || this.animatorParameters.Contains(parameterName))
+                {
+                    this.animator.SetBool(parameterName, value);
+                }
+            }
         }
 
-        void HandleBeginAttack()
+        private void HandleBeginDeath()
         {
-            var attackState = Random.Range(0, attackingStates.Length);
-            turnSpeed = 120f;
-            ClearAnimatorBools();
-            TrySetBool(attackingStates[attackState].animationBool,true);
-            attackingEvent.Invoke();
+            this.ClearAnimatorBools();
+            if (this.deathStates.Length > 0)
+            {
+                this.TrySetBool(this.deathStates[Random.Range(0, this.deathStates.Length)].animationBool, true);
+            }
+
+            this.deathEvent.Invoke();
+            if (this.navMeshAgent && this.navMeshAgent.isOnNavMesh)
+            {
+                this.navMeshAgent.destination = this.transform.position;
+            }
+
+            this.enabled = false;
         }
 
-        void HandleBeginEvade()
+        private void HandleBeginAttack()
         {
-            SetMoveFast();
-            movementEvent.Invoke();
+            int attackState = Random.Range(0, this.attackingStates.Length);
+            this.turnSpeed = 120f;
+            this.ClearAnimatorBools();
+            this.TrySetBool(this.attackingStates[attackState].animationBool, true);
+            this.attackingEvent.Invoke();
         }
 
-        void HandleBeginChase()
+        private void HandleBeginEvade()
         {
-            SetMoveFast();
-            movementEvent.Invoke();
+            this.SetMoveFast();
+            this.movementEvent.Invoke();
         }
 
-        void SetMoveFast()
+        private void HandleBeginChase()
+        {
+            this.SetMoveFast();
+            this.movementEvent.Invoke();
+        }
+
+        private void SetMoveFast()
         {
             MovementState moveState = null;
-            var maxSpeed = 0f;
-            foreach (var state in movementStates)
+            float maxSpeed = 0f;
+            foreach (MovementState state in this.movementStates)
             {
-                var stateSpeed = state.moveSpeed;
+                float stateSpeed = state.moveSpeed;
                 if (stateSpeed > maxSpeed)
                 {
                     moveState = state;
@@ -836,20 +940,20 @@ namespace PolyPerfect
                 }
             }
 
-            UnityEngine.Assertions.Assert.IsNotNull(moveState, string.Format("{0}'s wander script does not have any movement states.", gameObject.name));
-            turnSpeed = moveState.turnSpeed;
-            moveSpeed = maxSpeed;
-            ClearAnimatorBools();
-            TrySetBool(moveState.animationBool,true);
+            UnityEngine.Assertions.Assert.IsNotNull(moveState, string.Format("{0}'s wander script does not have any movement states.", this.gameObject.name));
+            this.turnSpeed = moveState.turnSpeed;
+            this.moveSpeed = maxSpeed;
+            this.ClearAnimatorBools();
+            this.TrySetBool(moveState.animationBool, true);
         }
 
-        void SetMoveSlow()
+        private void SetMoveSlow()
         {
             MovementState moveState = null;
-            var minSpeed = float.MaxValue;
-            foreach (var state in movementStates)
+            float minSpeed = float.MaxValue;
+            foreach (MovementState state in this.movementStates)
             {
-                var stateSpeed = state.moveSpeed;
+                float stateSpeed = state.moveSpeed;
                 if (stateSpeed < minSpeed)
                 {
                     moveState = state;
@@ -857,50 +961,55 @@ namespace PolyPerfect
                 }
             }
 
-            UnityEngine.Assertions.Assert.IsNotNull(moveState, string.Format("{0}'s wander script does not have any movement states.", gameObject.name));
-            turnSpeed = moveState.turnSpeed;
-            moveSpeed = minSpeed;
-            ClearAnimatorBools();
-            TrySetBool(moveState.animationBool, true);
+            UnityEngine.Assertions.Assert.IsNotNull(moveState, string.Format("{0}'s wander script does not have any movement states.", this.gameObject.name));
+            this.turnSpeed = moveState.turnSpeed;
+            this.moveSpeed = minSpeed;
+            this.ClearAnimatorBools();
+            this.TrySetBool(moveState.animationBool, true);
         }
-        void HandleBeginIdle()
+
+        private void HandleBeginIdle()
         {
-            primaryPrey = null;
-            var targetWeight = Random.Range(0, totalIdleStateWeight);
-            var curWeight = 0;
-            foreach (var idleState in idleStates)
+            this.primaryPrey = null;
+            int targetWeight = Random.Range(0, this.totalIdleStateWeight);
+            int curWeight = 0;
+            foreach (IdleState idleState in this.idleStates)
             {
                 curWeight += idleState.stateWeight;
                 if (targetWeight > curWeight)
+                {
                     continue;
-                idleUpdateTime = Time.time + Random.Range(idleState.minStateTime, idleState.maxStateTime);
-                ClearAnimatorBools();
-                TrySetBool(idleState.animationBool,true);
-                moveSpeed = 0f;
+                }
+
+                this.idleUpdateTime = Time.time + Random.Range(idleState.minStateTime, idleState.maxStateTime);
+                this.ClearAnimatorBools();
+                this.TrySetBool(idleState.animationBool, true);
+                this.moveSpeed = 0f;
                 break;
             }
-            idleEvent.Invoke();
-        }
-        void HandleBeginWander()
-        {
-            primaryPrey = null;
-            var rand = Random.insideUnitSphere * wanderZone;
-            var targetPos = startPosition + rand;
-            ValidatePosition(ref targetPos);
-
-            wanderTarget = targetPos;
-            SetMoveSlow();
+            this.idleEvent.Invoke();
         }
 
-        void ValidatePosition(ref Vector3 targetPos)
+        private void HandleBeginWander()
         {
-            if (navMeshAgent)
+            this.primaryPrey = null;
+            Vector3 rand = Random.insideUnitSphere * this.wanderZone;
+            Vector3 targetPos = this.startPosition + rand;
+            this.ValidatePosition(ref targetPos);
+
+            this.wanderTarget = targetPos;
+            this.SetMoveSlow();
+        }
+
+        private void ValidatePosition(ref Vector3 targetPos)
+        {
+            if (this.navMeshAgent)
             {
                 NavMeshHit hit;
                 if (!NavMesh.SamplePosition(targetPos, out hit, Mathf.Infinity, 1 << NavMesh.GetAreaFromName("Walkable")))
                 {
                     Debug.LogError("Unable to sample nav mesh. Please ensure there's a Nav Mesh layer with the name Walkable");
-                    enabled = false;
+                    this.enabled = false;
                     return;
                 }
 
@@ -908,19 +1017,18 @@ namespace PolyPerfect
             }
         }
 
-
-        IEnumerator RandomStartingDelay()
+        private IEnumerator RandomStartingDelay()
         {
             yield return new WaitForSeconds(Random.Range(0f, 2f));
-            started = true;
-            StartCoroutine(ConstantTicking(Random.Range(.7f,1f)));
+            this.started = true;
+            this.StartCoroutine(this.ConstantTicking(Random.Range(.7f, 1f)));
         }
 
-        IEnumerator ConstantTicking(float delay)
+        private IEnumerator ConstantTicking(float delay)
         {
             while (true)
             {
-                UpdateAI();
+                this.UpdateAI();
                 yield return new WaitForSeconds(delay);
             }
             // ReSharper disable once IteratorNeverReturns
@@ -937,25 +1045,25 @@ namespace PolyPerfect
             walking.animationBool = "isWalking";
             running.stateName = "Running";
             running.animationBool = "isRunning";
-            movementStates = new MovementState[2];
-            movementStates[0] = walking;
-            movementStates[1] = running;
+            this.movementStates = new MovementState[2];
+            this.movementStates[0] = walking;
+            this.movementStates[1] = running;
 
 
             idle.stateName = "Idle";
             idle.animationBool = "isIdling";
-            idleStates = new IdleState[1];
-            idleStates[0] = idle;
+            this.idleStates = new IdleState[1];
+            this.idleStates[0] = idle;
 
             attacking.stateName = "Attacking";
             attacking.animationBool = "isAttacking";
-            attackingStates = new AIState[1];
-            attackingStates[0] = attacking;
+            this.attackingStates = new AIState[1];
+            this.attackingStates[0] = attacking;
 
             death.stateName = "Dead";
             death.animationBool = "isDead";
-            deathStates = new AIState[1];
-            deathStates[0] = death;
+            this.deathStates = new AIState[1];
+            this.deathStates[0] = death;
         }
     }
 }

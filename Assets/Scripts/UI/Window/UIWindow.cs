@@ -1,6 +1,5 @@
-﻿using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -26,55 +25,69 @@ public class UIWindow : SerializedMonoBehaviour
 
     private void Awake()
     {
-        windowObject = transform.GetChild(0).gameObject;
+        this.windowObject = this.transform.GetChild(0).gameObject;
     }
 
     public void Open()
     {
-        if (!isEnabled)
+        if (!this.isEnabled)
+        {
             openedWindowsCount++;
+        }
 
-        isEnabled = true;
-        windowObject.SetActive(true);
-        OnOpenWindow?.Invoke();
+        this.isEnabled = true;
+        this.windowObject.SetActive(true);
+        this.OnOpenWindow?.Invoke();
         CameraController.EnableCursor();
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)windowObject.transform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)this.windowObject.transform);
     }
 
     public void Close()
     {
-        if (isEnabled)
+        if (this.isEnabled)
+        {
             openedWindowsCount--;
-        
-        if (openedWindowsCount == 0)
-            CameraController.DisableCursor();
+        }
 
-        isEnabled = false;
-        windowObject.SetActive(false);
-        OnCloseWindow?.Invoke();
-        if (isClosingStoppingInterract)
+        if (openedWindowsCount == 0)
+        {
+            CameraController.DisableCursor();
+        }
+
+        this.isEnabled = false;
+        this.windowObject.SetActive(false);
+        this.OnCloseWindow?.Invoke();
+        if (this.isClosingStoppingInterract)
+        {
             ContainerWindowManager.i.StopInterractOnServer();
-        
+        }
     }
 
     private void Update()
     {
         if (!GameSession.IsListeningGameKeys)
+        {
             return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount == 0)
         {
-            if (TriggerKey != KeyCode.Escape)
-                Close();
+            if (this.TriggerKey != KeyCode.Escape)
+            {
+                this.Close();
+            }
             else
-                Open();
+            {
+                this.Open();
+            }
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount != 0)
         {
-            Close();
+            this.Close();
         }
-        else if (Input.GetKeyDown(TriggerKey))
+        else if (Input.GetKeyDown(this.TriggerKey))
         {
-            SwitchWindowState();
+            this.SwitchWindowState();
         }
     }
 
@@ -85,9 +98,13 @@ public class UIWindow : SerializedMonoBehaviour
 
     public void SwitchWindowState()
     {
-        if (isEnabled)
-            Close();
+        if (this.isEnabled)
+        {
+            this.Close();
+        }
         else
-            Open();
+        {
+            this.Open();
+        }
     }
 }

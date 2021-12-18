@@ -8,23 +8,20 @@ namespace UnityEngine.PostProcessing
         [Serializable]
         public struct Settings
         {
-            public static Settings defaultSettings
-            {
-                get { return new Settings(); }
-            }
+            public static Settings defaultSettings => new Settings();
         }
 
         [SerializeField]
-        Settings m_Settings = Settings.defaultSettings;
+        private Settings m_Settings = Settings.defaultSettings;
         public Settings settings
         {
-            get { return m_Settings; }
-            set { m_Settings = value; }
+            get => this.m_Settings;
+            set => this.m_Settings = value;
         }
 
         public override void Reset()
         {
-            m_Settings = Settings.defaultSettings;
+            this.m_Settings = Settings.defaultSettings;
         }
     }
 }

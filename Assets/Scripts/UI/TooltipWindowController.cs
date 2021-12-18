@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,49 +10,51 @@ public struct TooltipMessage
 
     public TooltipMessage(Color color, string message, int font)
     {
-        Color = color;
-        Message = message;
-        Font = font;
+        this.Color = color;
+        this.Message = message;
+        this.Font = font;
     }
 
     public TooltipMessage(Color color, string message)
     {
-        Message = message;
-        Color = color;
-        Font = 14;
+        this.Message = message;
+        this.Color = color;
+        this.Font = 14;
     }
 
     public TooltipMessage(string message, int font, int maxWordsInLine = 0)
     {
-        Color = Color.white;
-        Font = font;
+        this.Color = Color.white;
+        this.Font = font;
 
         if (maxWordsInLine != 0)
         {
             string[] words = message.Split(' ');
-            
+
             int wordCount = words.Length;
-            
+
             int requiredLinesAmount = wordCount / maxWordsInLine;
-            
+
             message = "";
-            
+
             for (int i = 0; i < wordCount; i++)
             {
                 message += words[i] + " ";
                 if (i % 4 == 0 && i != 0 && i != wordCount - 1)
+                {
                     message += System.Environment.NewLine;
+                }
             }
         }
 
-        Message = message;
+        this.Message = message;
     }
 
     public TooltipMessage(string message)
     {
-        Color = Color.white;
-        Font = 14;
-        Message = message;
+        this.Color = Color.white;
+        this.Font = 14;
+        this.Message = message;
     }
 }
 
@@ -77,14 +78,18 @@ public class TooltipWindowController : MonoBehaviour
     private void Awake()
     {
         if (i != null && i != this)
-            Destroy(gameObject);
+        {
+            Destroy(this.gameObject);
+        }
         else
+        {
             i = this;
+        }
     }
 
     private void Update()
     {
-        if (isCursorFollowing)
+        if (this.isCursorFollowing)
         {
             i.customTextWindow.position = Input.mousePosition;
         }
@@ -99,12 +104,14 @@ public class TooltipWindowController : MonoBehaviour
     public static void ShowTooltip(List<TooltipMessage> messages)
     {
         foreach (RectTransform previousText in i.spawningTextWindow)
+        {
             Destroy(previousText.gameObject);
+        }
 
         foreach (TooltipMessage message in messages)
         {
             GameObject currentText = Instantiate(i.textPrefab, i.spawningTextWindow);
-            var textComponent = currentText.GetComponent<TMPro.TMP_Text>();
+            TMPro.TMP_Text textComponent = currentText.GetComponent<TMPro.TMP_Text>();
             textComponent.text = message.Message;
             textComponent.color = message.Color;
             textComponent.fontSize = message.Font;

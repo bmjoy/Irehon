@@ -1,20 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PolyPerfect
 {
     public class Common_AnimationControl : MonoBehaviour
     {
-        string currentAnimation = "";
+        private string currentAnimation = "";
+
         // Use this for initialization
-        void Start()
+        private void Start()
         {
 
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
 
 
@@ -22,20 +21,20 @@ namespace PolyPerfect
         public void SetAnimation(string animationName)
         {
 
-            if (currentAnimation != "")
+            if (this.currentAnimation != "")
             {
-                this.GetComponent<Animator>().SetBool(currentAnimation, false);
+                this.GetComponent<Animator>().SetBool(this.currentAnimation, false);
             }
             this.GetComponent<Animator>().SetBool(animationName, true);
-            currentAnimation = animationName;
+            this.currentAnimation = animationName;
         }
 
         public void SetAnimationIdle()
         {
 
-            if (currentAnimation != "")
+            if (this.currentAnimation != "")
             {
-                this.GetComponent<Animator>().SetBool(currentAnimation, false);
+                this.GetComponent<Animator>().SetBool(this.currentAnimation, false);
             }
 
 

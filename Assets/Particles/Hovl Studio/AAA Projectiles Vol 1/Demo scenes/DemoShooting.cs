@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DemoShooting : MonoBehaviour
 {
@@ -28,54 +24,65 @@ public class DemoShooting : MonoBehaviour
     //For Camera shake 
     public Animation camAnim;
 
-    void Start()
+    private void Start()
     {
-        if (Screen.dpi < 1) windowDpi = 1;
-        if (Screen.dpi < 200) windowDpi = 1;
-        else windowDpi = Screen.dpi / 200f;
-        Counter(0);
+        if (Screen.dpi < 1)
+        {
+            this.windowDpi = 1;
+        }
+
+        if (Screen.dpi < 200)
+        {
+            this.windowDpi = 1;
+        }
+        else
+        {
+            this.windowDpi = Screen.dpi / 200f;
+        }
+
+        this.Counter(0);
     }
 
-    void Update()
+    private void Update()
     {
         //Single shoot
         if (Input.GetButtonDown("Fire1"))
         {
-            camAnim.Play(camAnim.clip.name);
-            Instantiate(Prefabs[Prefab], FirePoint.transform.position, FirePoint.transform.rotation);
+            this.camAnim.Play(this.camAnim.clip.name);
+            Instantiate(this.Prefabs[this.Prefab], this.FirePoint.transform.position, this.FirePoint.transform.rotation);
         }
 
         //Fast shooting
-        if (Input.GetMouseButton(1) && fireCountdown <= 0f)
+        if (Input.GetMouseButton(1) && this.fireCountdown <= 0f)
         {
-            Instantiate(Prefabs[Prefab], FirePoint.transform.position, FirePoint.transform.rotation);
-            fireCountdown = 0;
-            fireCountdown += hSliderValue;
+            Instantiate(this.Prefabs[this.Prefab], this.FirePoint.transform.position, this.FirePoint.transform.rotation);
+            this.fireCountdown = 0;
+            this.fireCountdown += this.hSliderValue;
         }
-        fireCountdown -= Time.deltaTime;
+        this.fireCountdown -= Time.deltaTime;
 
         //To change projectiles
-        if ((Input.GetKey(KeyCode.A) || Input.GetAxis("Horizontal") < 0) && buttonSaver >= 0.4f)// left button
+        if ((Input.GetKey(KeyCode.A) || Input.GetAxis("Horizontal") < 0) && this.buttonSaver >= 0.4f)// left button
         {
-            buttonSaver = 0f;
-            Counter(-1);
+            this.buttonSaver = 0f;
+            this.Counter(-1);
         }
-        if ((Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") > 0) && buttonSaver >= 0.4f)// right button
+        if ((Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") > 0) && this.buttonSaver >= 0.4f)// right button
         {
-            buttonSaver = 0f;
-            Counter(+1);
+            this.buttonSaver = 0f;
+            this.Counter(+1);
         }
-        buttonSaver += Time.deltaTime;
+        this.buttonSaver += Time.deltaTime;
 
         //To rotate fire point
-        if (Cam != null)
+        if (this.Cam != null)
         {
             RaycastHit hit;
-            var mousePos = Input.mousePosition;
-            RayMouse = Cam.ScreenPointToRay(mousePos);
-            if (Physics.Raycast(RayMouse.origin, RayMouse.direction, out hit, MaxLength))
+            Vector3 mousePos = Input.mousePosition;
+            this.RayMouse = this.Cam.ScreenPointToRay(mousePos);
+            if (Physics.Raycast(this.RayMouse.origin, this.RayMouse.direction, out hit, this.MaxLength))
             {
-                RotateToMouseDirection(gameObject, hit.point);
+                this.RotateToMouseDirection(this.gameObject, hit.point);
             }
         }
         else
@@ -85,34 +92,34 @@ public class DemoShooting : MonoBehaviour
     }
 
     //GUI Text
-    void OnGUI()
+    private void OnGUI()
     {
-        GUI.Label(new Rect(10 * windowDpi, 5 * windowDpi, 400 * windowDpi, 20 * windowDpi), "Use left mouse button to single shoot!");
-        GUI.Label(new Rect(10 * windowDpi, 25 * windowDpi, 400 * windowDpi, 20 * windowDpi), "Use and hold the right mouse button for quick shooting!");
-        GUI.Label(new Rect(10 * windowDpi, 45 * windowDpi, 400 * windowDpi, 20 * windowDpi), "Fire rate:");
-        hSliderValue = GUI.HorizontalSlider(new Rect(70 * windowDpi, 50 * windowDpi, 100 * windowDpi, 20 * windowDpi), hSliderValue, 0.0f, 1.0f);
-        GUI.Label(new Rect(10 * windowDpi, 65 * windowDpi, 400 * windowDpi, 20 * windowDpi), "Use the keyboard buttons A/<- and D/-> to change projectiles!");
+        GUI.Label(new Rect(10 * this.windowDpi, 5 * this.windowDpi, 400 * this.windowDpi, 20 * this.windowDpi), "Use left mouse button to single shoot!");
+        GUI.Label(new Rect(10 * this.windowDpi, 25 * this.windowDpi, 400 * this.windowDpi, 20 * this.windowDpi), "Use and hold the right mouse button for quick shooting!");
+        GUI.Label(new Rect(10 * this.windowDpi, 45 * this.windowDpi, 400 * this.windowDpi, 20 * this.windowDpi), "Fire rate:");
+        this.hSliderValue = GUI.HorizontalSlider(new Rect(70 * this.windowDpi, 50 * this.windowDpi, 100 * this.windowDpi, 20 * this.windowDpi), this.hSliderValue, 0.0f, 1.0f);
+        GUI.Label(new Rect(10 * this.windowDpi, 65 * this.windowDpi, 400 * this.windowDpi, 20 * this.windowDpi), "Use the keyboard buttons A/<- and D/-> to change projectiles!");
     }
 
     // To change prefabs (count - prefab number)
-    void Counter(int count)
+    private void Counter(int count)
     {
-        Prefab += count;
-        if (Prefab > Prefabs.Length - 1)
+        this.Prefab += count;
+        if (this.Prefab > this.Prefabs.Length - 1)
         {
-            Prefab = 0;
+            this.Prefab = 0;
         }
-        else if (Prefab < 0)
+        else if (this.Prefab < 0)
         {
-            Prefab = Prefabs.Length - 1;
+            this.Prefab = this.Prefabs.Length - 1;
         }
     }
 
     //To rotate fire point
-    void RotateToMouseDirection(GameObject obj, Vector3 destination)
+    private void RotateToMouseDirection(GameObject obj, Vector3 destination)
     {
-        direction = destination - obj.transform.position;
-        rotation = Quaternion.LookRotation(direction);
-        obj.transform.localRotation = Quaternion.Lerp(obj.transform.rotation, rotation, 1);
+        this.direction = destination - obj.transform.position;
+        this.rotation = Quaternion.LookRotation(this.direction);
+        obj.transform.localRotation = Quaternion.Lerp(obj.transform.rotation, this.rotation, 1);
     }
 }

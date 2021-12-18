@@ -14,7 +14,9 @@ namespace DuloGames.UI
             get
             {
                 if (m_Instance == null)
+                {
                     m_Instance = Resources.Load("ColorSchemeManager") as ColorSchemeManager;
+                }
 
                 return m_Instance;
             }
@@ -28,8 +30,9 @@ namespace DuloGames.UI
         /// </summary>
         public ColorScheme activeColorScheme
         {
-            get { return this.m_ActiveColorScheme; }
-            set {
+            get => this.m_ActiveColorScheme;
+            set
+            {
                 this.m_ActiveColorScheme = value;
 #if UNITY_EDITOR
                 EditorUtility.SetDirty(this);

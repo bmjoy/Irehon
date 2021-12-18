@@ -1,4 +1,6 @@
-﻿    using System.Collections;
+﻿using Irehon;
+using Irehon.Entitys;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,100 +41,118 @@ public class UIController : MonoBehaviour
     private void Awake()
     {
         if (i != null && i != this)
-            Destroy(gameObject);
+        {
+            Destroy(this.gameObject);
+        }
         else
+        {
             i = this;
+        }
     }
 
     private void Start()
     {
-        CameraController.OnChangeCursorStateEvent += ChangeCursorHintStatus;
-        CameraController.i.OnLookingOnEntityEvent += UpdateCursorColor;
+        CameraController.OnChangeCursorStateEvent += this.ChangeCursorHintStatus;
+        CameraController.i.OnLookingOnEntityEvent += this.UpdateCursorColor;
 
-        defaultAimPointImage = defaultAimPoint.GetComponent<Image>();
+        this.defaultAimPointImage = this.defaultAimPoint.GetComponent<Image>();
     }
 
     private void UpdateCursorColor(Entity target, Player player)
     {
         if (target == null || !target.isAlive)
-            defaultAimPointImage.color = Color.white;
+        {
+            this.defaultAimPointImage.color = Color.white;
+        }
         else
         {
-            var entityFraction = target.fraction;
+            Fraction entityFraction = target.fraction;
             if (player.FractionBehaviourData.Behaviours.ContainsKey(entityFraction))
             {
-                var behaviour = player.FractionBehaviourData.Behaviours[entityFraction];
+                FractionBehaviour behaviour = player.FractionBehaviourData.Behaviours[entityFraction];
                 switch (behaviour)
                 {
                     case FractionBehaviour.Friendly:
-                        defaultAimPointImage.color = Color.green;
+                        this.defaultAimPointImage.color = Color.green;
                         break;
                     case FractionBehaviour.Neutral:
-                        defaultAimPointImage.color = Color.white;
+                        this.defaultAimPointImage.color = Color.white;
                         break;
                     case FractionBehaviour.Agressive:
-                        defaultAimPointImage.color = Color.red;
+                        this.defaultAimPointImage.color = Color.red;
                         break;
                 }
             }
             else
-                defaultAimPointImage.color = Color.white;
+            {
+                this.defaultAimPointImage.color = Color.white;
+            }
         }
     }
 
-    public void ShowStatusCanvas() => statusBarCanvas.gameObject.SetActive(true);
-    public void HideStatusCanvas() => statusBarCanvas.gameObject.SetActive(false);
+    public void ShowStatusCanvas()
+    {
+        this.statusBarCanvas.gameObject.SetActive(true);
+    }
+
+    public void HideStatusCanvas()
+    {
+        this.statusBarCanvas.gameObject.SetActive(false);
+    }
 
     public void DisableDefaultCrosshair()
     {
-        defaultAimPoint.gameObject.SetActive(false);
+        this.defaultAimPoint.gameObject.SetActive(false);
     }
 
     public void EnableDefaultCrosshair()
     {
-        defaultAimPoint.gameObject.SetActive(true);
-        triangleAimingRectangle.gameObject.SetActive(false);
+        this.defaultAimPoint.gameObject.SetActive(true);
+        this.triangleAimingRectangle.gameObject.SetActive(false);
     }
 
     public void EnableTriangleCrosshair()
     {
-        DisableDefaultCrosshair();
-        triangleAimingRectangle.gameObject.SetActive(true);
-        ChangeTriangleAimSize(0);
+        this.DisableDefaultCrosshair();
+        this.triangleAimingRectangle.gameObject.SetActive(true);
+        this.ChangeTriangleAimSize(0);
     }
 
     public void ChangeTriangleAimSize(float newSize)
     {
-        float sizeDelta = (defaultTriangleSize - minimumTriangleSize) * newSize;
-        float size = defaultTriangleSize - sizeDelta;
-        triangleAimingRectangle.sizeDelta = new Vector2(size, size);
+        float sizeDelta = (this.defaultTriangleSize - this.minimumTriangleSize) * newSize;
+        float size = this.defaultTriangleSize - sizeDelta;
+        this.triangleAimingRectangle.sizeDelta = new Vector2(size, size);
     }
 
     public void ShowHint(string header, string content)
     {
-        interactableHint.SetActive(true);
-        interactableHint.GetComponent<HintUI>().UpdateHint(header, content);
+        this.interactableHint.SetActive(true);
+        this.interactableHint.GetComponent<HintUI>().UpdateHint(header, content);
     }
 
     public void HideHint()
     {
-        interactableHint.SetActive(false);
+        this.interactableHint.SetActive(false);
     }
 
     public void ShowHitMarker()
     {
-        if (hitMarkerCoroutine != null)
-            StopCoroutine(hitMarkerCoroutine);
-        hitMarker.alpha = 1;
-        hitMarkerCoroutine = StartCoroutine(DisappearHitMarker());
-        hitMarkerSound.Play();
+        if (this.hitMarkerCoroutine != null)
+        {
+            this.StopCoroutine(this.hitMarkerCoroutine);
+        }
+
+        this.hitMarker.alpha = 1;
+        this.hitMarkerCoroutine = this.StartCoroutine(this.DisappearHitMarker());
+        this.hitMarkerSound.Play();
     }
 
     private IEnumerator DisappearHitMarker()
     {
-        while (hitMarker.alpha > 0)
+        while (this.hitMarker.alpha > 0)
         {
-            hitMarker.alpha -= .1f;
+            this.hitMarker.alpha -= .1f;
             yield return new WaitForSeconds(.1f);
         }
     }
@@ -148,25 +168,34 @@ public class UIController : MonoBehaviour
 
     public void SetHealthBarValue(float value)
     {
-        healthBar.value = value;
+        this.healthBar.value = value;
 
         float passedTime = 0f;
 
-        if (healthBarCoroutine != null)
-            StopCoroutine(healthBarCoroutine);
+        if (this.healthBarCoroutine != null)
+        {
+            this.StopCoroutine(this.healthBarCoroutine);
+        }
 
-        if (postHealthBar.value > healthBar.value)
-            healthBarCoroutine = StartCoroutine(ChangeFillAmount());
+        if (this.postHealthBar.value > this.healthBar.value)
+        {
+            this.healthBarCoroutine = this.StartCoroutine(ChangeFillAmount());
+        }
         else
-            postHealthBar.value = healthBar.value;
+        {
+            this.postHealthBar.value = this.healthBar.value;
+        }
 
         IEnumerator ChangeFillAmount()
         {
-            while (postHealthBar.value > healthBar.value)
+            while (this.postHealthBar.value > this.healthBar.value)
             {
                 passedTime += Time.deltaTime;
-                if (passedTime > healthBarUpdateDelay)
-                    postHealthBar.value -= reducingAmount * Time.deltaTime;
+                if (passedTime > this.healthBarUpdateDelay)
+                {
+                    this.postHealthBar.value -= this.reducingAmount * Time.deltaTime;
+                }
+
                 yield return null;
             }
         }
@@ -176,9 +205,9 @@ public class UIController : MonoBehaviour
     {
         float alpha = isCursorEnabled ? 0.9f : 0.3f;
 
-        var color = Color.white;
+        Color color = Color.white;
         color.a = alpha;
-        cursorHint.color = color;
+        this.cursorHint.color = color;
     }
 
     public static void SetDefaultUI()

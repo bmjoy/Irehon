@@ -4,18 +4,20 @@ namespace DuloGames.UI
 {
     public class Test_UIEquipSlot_Assign : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UIEquipSlot slot;
         [SerializeField] private int assignItem;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
-        void Awake()
+        private void Awake()
         {
             if (this.slot == null)
+            {
                 this.slot = this.GetComponent<UIEquipSlot>();
+            }
         }
 
-        void Start()
+        private void Start()
         {
             if (this.slot == null || UIItemDatabase.Instance == null)
             {

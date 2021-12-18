@@ -1,43 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class Chest : NetworkBehaviour, IInteractable
+namespace Irehon.Interactable
 {
-    [SerializeField]
-    private Container container;
-    public Container Container { get => container; }
-    public InteractEventHandler OnDestroyEvent;
-
-    private void Awake()
+    public class Chest : NetworkBehaviour, IInteractable
     {
-        gameObject.layer = 12;
-    }
-    public virtual void SetChestContainer(Container container)
-    {
-        this.container = container;
-        OnContainerSet();
-    }
+        [SerializeField]
+        private Container container;
+        public Container Container => this.container;
+        public InteractEventHandler OnDestroyEvent;
 
-    public virtual void Interact(Player player)
-    {
-        player.GetComponent<PlayerContainerController>().OpenChest(this, container);
-    }
+        private void Awake()
+        {
+            this.gameObject.layer = 12;
+        }
+        public virtual void SetChestContainer(Container container)
+        {
+            this.container = container;
+            this.OnContainerSet();
+        }
 
-    public virtual void StopInterract(Player player)
-    {
-        player.GetComponent<PlayerContainerController>().CloseChest(this);
-    }
+        public virtual void Interact(Player player)
+        {
+            player.GetComponent<PlayerContainerController>().OpenChest(this, this.container);
+        }
 
-    protected virtual void OnContainerSet()
-    {
+        public virtual void StopInterract(Player player)
+        {
+            player.GetComponent<PlayerContainerController>().CloseChest(this);
+        }
 
-    }
+        protected virtual void OnContainerSet()
+        {
 
-    protected virtual void OnDestroy()
-    {
-        OnDestroyEvent?.Invoke(this);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            this.OnDestroyEvent?.Invoke(this);
+        }
     }
 }

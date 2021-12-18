@@ -1,5 +1,5 @@
-using UnityEngine;
 using DuloGames.UI.Tweens;
+using UnityEngine;
 
 namespace DuloGames.UI
 {
@@ -18,7 +18,9 @@ namespace DuloGames.UI
         protected Test_CompassTester()
         {
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_FloatTweenRunner.Init(this);
         }
@@ -39,11 +41,13 @@ namespace DuloGames.UI
             float currentRotation = this.transform.eulerAngles.y;
 
             if (currentRotation.Equals(targetRotation))
+            {
                 return;
+            }
 
-            var floatTween = new FloatTween { duration = duration, startFloat = currentRotation, targetFloat = targetRotation };
-            floatTween.AddOnChangedCallback(SetRotation);
-            floatTween.AddOnFinishCallback(OnTweenFinished);
+            FloatTween floatTween = new FloatTween { duration = duration, startFloat = currentRotation, targetFloat = targetRotation };
+            floatTween.AddOnChangedCallback(this.SetRotation);
+            floatTween.AddOnFinishCallback(this.OnTweenFinished);
             floatTween.ignoreTimeScale = ignoreTimeScale;
             floatTween.easing = this.m_Easing;
             this.m_FloatTweenRunner.StartTween(floatTween);

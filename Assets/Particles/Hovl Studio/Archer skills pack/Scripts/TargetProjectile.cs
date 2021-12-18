@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TargetProjectile : MonoBehaviour
 {
@@ -19,105 +17,105 @@ public class TargetProjectile : MonoBehaviour
     public float sideAngle = 25;
     public float upAngle = 20;
 
-    void Start()
+    private void Start()
     {
-        FlashEffect();
-        newRandom();
+        this.FlashEffect();
+        this.newRandom();
     }
 
-    void newRandom()
+    private void newRandom()
     {
-        randomUpAngle = Random.Range(0, upAngle);
-        randomSideAngle = Random.Range(-sideAngle, sideAngle);
+        this.randomUpAngle = Random.Range(0, this.upAngle);
+        this.randomSideAngle = Random.Range(-this.sideAngle, this.sideAngle);
     }
 
     //Link from movement controller
     //TARGET POSITION + TARGET OFFSET
-    public void UpdateTarget(Transform targetPosition , Vector3 Offset)
+    public void UpdateTarget(Transform targetPosition, Vector3 Offset)
     {
-        target = targetPosition;
-        targetOffset = Offset;
+        this.target = targetPosition;
+        this.targetOffset = Offset;
     }
 
-    void Update()
+    private void Update()
     {
-        if (target == null)
+        if (this.target == null)
         {
-            foreach (var detachedPrefab in Detached)
+            foreach (GameObject detachedPrefab in this.Detached)
             {
                 if (detachedPrefab != null)
                 {
                     detachedPrefab.transform.parent = null;
                 }
             }
-            Destroy(gameObject);
+            Destroy(this.gameObject);
             return;
         }
 
-        Vector3 forward = ((target.position + targetOffset) - transform.position);
+        Vector3 forward = ((this.target.position + this.targetOffset) - this.transform.position);
         Vector3 crossDirection = Vector3.Cross(forward, Vector3.up);
-        Quaternion randomDeltaRotation = Quaternion.Euler(0, randomSideAngle, 0) * Quaternion.AngleAxis(randomUpAngle, crossDirection);
-        Vector3 direction = randomDeltaRotation * ((target.position + targetOffset) - transform.position);
+        Quaternion randomDeltaRotation = Quaternion.Euler(0, this.randomSideAngle, 0) * Quaternion.AngleAxis(this.randomUpAngle, crossDirection);
+        Vector3 direction = randomDeltaRotation * ((this.target.position + this.targetOffset) - this.transform.position);
 
-        float distanceThisFrame = Time.deltaTime * speed;
+        float distanceThisFrame = Time.deltaTime * this.speed;
 
         if (direction.magnitude <= distanceThisFrame)
         {
-            HitTarget();
+            this.HitTarget();
             return;
         }
 
-        transform.Translate(direction.normalized * distanceThisFrame, Space.World);
-        transform.rotation = Quaternion.LookRotation(direction);
+        this.transform.Translate(direction.normalized * distanceThisFrame, Space.World);
+        this.transform.rotation = Quaternion.LookRotation(direction);
     }
 
-    void FlashEffect()
+    private void FlashEffect()
     {
-        if (flash != null)
+        if (this.flash != null)
         {
-            var flashInstance = Instantiate(flash, transform.position, Quaternion.identity);
-            flashInstance.transform.forward = gameObject.transform.forward;
-            var flashPs = flashInstance.GetComponent<ParticleSystem>();
+            GameObject flashInstance = Instantiate(this.flash, this.transform.position, Quaternion.identity);
+            flashInstance.transform.forward = this.gameObject.transform.forward;
+            ParticleSystem flashPs = flashInstance.GetComponent<ParticleSystem>();
             if (flashPs != null)
             {
                 Destroy(flashInstance, flashPs.main.duration);
             }
             else
             {
-                var flashPsParts = flashInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+                ParticleSystem flashPsParts = flashInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
                 Destroy(flashInstance, flashPsParts.main.duration);
             }
         }
     }
 
-    void HitTarget()
+    private void HitTarget()
     {
-        if (hit != null)
+        if (this.hit != null)
         {
-            var hitRotation = transform.rotation;
-            if (LocalRotation == true)
+            Quaternion hitRotation = this.transform.rotation;
+            if (this.LocalRotation == true)
             {
                 hitRotation = Quaternion.Euler(0, 0, 0);
             }
-            var hitInstance = Instantiate(hit, target.position + targetOffset, hitRotation);
-            var hitPs = hitInstance.GetComponent<ParticleSystem>();
+            GameObject hitInstance = Instantiate(this.hit, this.target.position + this.targetOffset, hitRotation);
+            ParticleSystem hitPs = hitInstance.GetComponent<ParticleSystem>();
             if (hitPs != null)
             {
                 Destroy(hitInstance, hitPs.main.duration);
             }
             else
             {
-                var hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+                ParticleSystem hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
                 Destroy(hitInstance, hitPsParts.main.duration);
             }
         }
-        foreach (var detachedPrefab in Detached)
+        foreach (GameObject detachedPrefab in this.Detached)
         {
             if (detachedPrefab != null)
             {
                 detachedPrefab.transform.parent = null;
             }
         }
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
 }

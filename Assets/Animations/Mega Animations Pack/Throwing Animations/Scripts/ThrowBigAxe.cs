@@ -5,40 +5,41 @@
 ///////////////////////////////////////////////////////////////////////////
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace KevinIglesias {
-    
-    public class ThrowBigAxe : MonoBehaviour {
+namespace KevinIglesias
+{
+
+    public class ThrowBigAxe : MonoBehaviour
+    {
 
         //Retargeter
         public Transform retargeter;
 
         //Prop to move
         public Transform propToSpin;
-        
+
         //Hand that holds the prop
         public Transform hand;
-        
+
         //How far will the prop launched
         public float spinDistance;
-        
+
         //Movement speed of the prop
         public float translationSpeed;
-        
+
         //Rotation speed of the prop
         public float spinSpeed;
-        
+
         //Needed for check if the trick is active
         public bool spinActive = false;
-        
+
         //Offset for fitting the prop in end distance
         public Vector3 endPositionOffset;
-        
+
         //Offset for fitting the prop in hand when returning
         public Vector3 returningPositionOffset;
-        
+
         //Character root (for parenting when prop is thrown)
         private Transform characterRoot;
         //Needed for getting the prop back
@@ -54,85 +55,87 @@ namespace KevinIglesias {
 
         public void Awake()
         {
-            characterRoot = this.transform;
-            
-            zeroPosition = propToSpin.localPosition;
-            zeroRotation = propToSpin.localRotation;
+            this.characterRoot = this.transform;
+
+            this.zeroPosition = this.propToSpin.localPosition;
+            this.zeroRotation = this.propToSpin.localRotation;
         }
-        
+
         public void Update()
         {
-            if(retargeter.localPosition.y > 0)
+            if (this.retargeter.localPosition.y > 0)
             {
-                if(!spinActive)
+                if (!this.spinActive)
                 {
-                    SpinProp();
-                    spinActive = true;
+                    this.SpinProp();
+                    this.spinActive = true;
                 }
-            }else{
-                
-                if(spinActive)
+            }
+            else
+            {
+
+                if (this.spinActive)
                 {
-                    if(spinCO != null)
+                    if (this.spinCO != null)
                     {
-                        StopCoroutine(spinCO);
+                        this.StopCoroutine(this.spinCO);
                     }
-                    propToSpin.SetParent(hand);
-                    propToSpin.localPosition = zeroPosition;
-                    propToSpin.localRotation = zeroRotation;
+                    this.propToSpin.SetParent(this.hand);
+                    this.propToSpin.localPosition = this.zeroPosition;
+                    this.propToSpin.localRotation = this.zeroRotation;
                 }
-                spinActive = false;
+                this.spinActive = false;
             }
         }
-    
+
         //Function called when retargeter is active
         public void SpinProp()
         {
-            if(spinCO != null)
+            if (this.spinCO != null)
             {
-                StopCoroutine(spinCO);
+                this.StopCoroutine(this.spinCO);
             }
-            spinCO = StartSpin();
-            StartCoroutine(spinCO);
+            this.spinCO = this.StartSpin();
+            this.StartCoroutine(this.spinCO);
         }
-        
-        IEnumerator StartSpin()
+
+        private IEnumerator StartSpin()
         {
             //Remove prop from hand
-            propToSpin.SetParent(characterRoot);
-            
+            this.propToSpin.SetParent(this.characterRoot);
+
             //Get initial position/rotation
-            startPosition = propToSpin.position;
-            startRotation = propToSpin.localRotation;
+            this.startPosition = this.propToSpin.position;
+            this.startRotation = this.propToSpin.localRotation;
 
             //Set end position (farthest point the prop will get)
-            endPosition = new Vector3(propToSpin.position.x-spinDistance, propToSpin.position.y, propToSpin.position.z);
-            endPosition = endPosition+endPositionOffset;
-            
+            this.endPosition = new Vector3(this.propToSpin.position.x - this.spinDistance, this.propToSpin.position.y, this.propToSpin.position.z);
+            this.endPosition = this.endPosition + this.endPositionOffset;
+
             //Going away
             float i = 0;
-            while(i < 1f)
+            while (i < 1f)
             {
-                
-                i += Time.deltaTime * translationSpeed;
 
-                propToSpin.position = Vector3.Lerp(startPosition, endPosition, Mathf.Sin(i * Mathf.PI * 0.5f));
-                propToSpin.transform.Rotate(0.0f, -spinSpeed, 0.0f, Space.World);
+                i += Time.deltaTime * this.translationSpeed;
+
+                this.propToSpin.position = Vector3.Lerp(this.startPosition, this.endPosition, Mathf.Sin(i * Mathf.PI * 0.5f));
+                this.propToSpin.transform.Rotate(0.0f, -this.spinSpeed, 0.0f, Space.World);
                 yield return 0;
             }
-            
+
             //Coming back
             i = 0;
-            while(i < 1f)
+            while (i < 1f)
             {
-                i += Time.deltaTime * translationSpeed;
-                
-                propToSpin.position = Vector3.Lerp(endPosition, startPosition+returningPositionOffset, 1f - Mathf.Cos(i * Mathf.PI * 0.5f));
-                propToSpin.transform.Rotate(0f, -spinSpeed, 0.0f, Space.World);
-                
+                i += Time.deltaTime * this.translationSpeed;
+
+                this.propToSpin.position = Vector3.Lerp(this.endPosition, this.startPosition + this.returningPositionOffset, 1f - Mathf.Cos(i * Mathf.PI * 0.5f));
+                this.propToSpin.transform.Rotate(0f, -this.spinSpeed, 0.0f, Space.World);
+
                 yield return 0;
             }
         }
-        
+
     }
 }

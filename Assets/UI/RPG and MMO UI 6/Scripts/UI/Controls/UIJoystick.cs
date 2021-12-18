@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 /* REMOVE COMMENT TO MAKE FUNCTIONAL
 using UnityStandardAssets.CrossPlatformInput;
 */
@@ -23,11 +23,11 @@ namespace DuloGames.UI
         private RectTransform m_Handle;
         public RectTransform Handle
         {
-            get { return this.m_Handle; }
+            get => this.m_Handle;
             set
             {
                 this.m_Handle = value;
-                UpdateHandle();
+                this.UpdateHandle();
             }
         }
 
@@ -35,16 +35,16 @@ namespace DuloGames.UI
         private RectTransform m_HandlingArea;
         public RectTransform HandlingArea
         {
-            get { return this.m_HandlingArea; }
-            set { this.m_HandlingArea = value; }
+            get => this.m_HandlingArea;
+            set => this.m_HandlingArea = value;
         }
 
         [SerializeField, Tooltip("The child graphic that will be shown when the joystick is active.")]
         private Image m_ActiveGraphic;
         public Image ActiveGraphic
         {
-            get { return this.m_ActiveGraphic; }
-            set { this.m_ActiveGraphic = value; }
+            get => this.m_ActiveGraphic;
+            set => this.m_ActiveGraphic = value;
         }
 
         [SerializeField] private Vector2 m_Axis;
@@ -56,16 +56,16 @@ namespace DuloGames.UI
         private float m_Spring = 25f;
         public float Spring
         {
-            get { return this.m_Spring; }
-            set { this.m_Spring = value; }
+            get => this.m_Spring;
+            set => this.m_Spring = value;
         }
 
         [SerializeField, Tooltip("How close to the center that the axis will be output as 0")]
         private float m_DeadZone = 0.1f;
         public float DeadZone
         {
-            get { return this.m_DeadZone; }
-            set { this.m_DeadZone = value; }
+            get => this.m_DeadZone;
+            set => this.m_DeadZone = value;
         }
 
         [Tooltip("Customize the output that is sent in OnValueChange")]
@@ -96,7 +96,9 @@ namespace DuloGames.UI
 
             // Hide active
             if (this.m_ActiveGraphic != null)
+            {
                 this.m_ActiveGraphic.canvasRenderer.SetAlpha(0f);
+            }
 
             this.UpdateHandle();
         }
@@ -108,10 +110,14 @@ namespace DuloGames.UI
             this.CreateVirtualAxes();
 
             if (this.m_HandlingArea == null)
+            {
                 this.m_HandlingArea = this.transform as RectTransform;
+            }
 
             if (this.m_ActiveGraphic != null)
+            {
                 this.m_ActiveGraphic.canvasRenderer.SetAlpha(0f);
+            }
         }
 
         protected void CreateVirtualAxes()
@@ -144,7 +150,9 @@ namespace DuloGames.UI
                     Vector2 newAxis = this.m_Axis - (this.m_Axis * Time.unscaledDeltaTime * this.m_Spring);
 
                     if (newAxis.sqrMagnitude <= .0001f)
+                    {
                         newAxis = Vector2.zero;
+                    }
 
                     this.SetAxis(newAxis);
                 }
@@ -158,11 +166,11 @@ namespace DuloGames.UI
                 Vector2 outputPoint = this.m_Axis.magnitude > this.m_DeadZone ? this.m_Axis : Vector2.zero;
                 float magnitude = outputPoint.magnitude;
 
-                outputPoint *= outputCurve.Evaluate(magnitude);
+                outputPoint *= this.outputCurve.Evaluate(magnitude);
 
                 return outputPoint;
             }
-            set { this.SetAxis(value); }
+            set => this.SetAxis(value);
         }
 
         public void SetAxis(Vector2 axis)
@@ -172,7 +180,7 @@ namespace DuloGames.UI
             Vector2 outputPoint = this.m_Axis.magnitude > this.m_DeadZone ? this.m_Axis : Vector2.zero;
             float magnitude = outputPoint.magnitude;
 
-            outputPoint *= outputCurve.Evaluate(magnitude);
+            outputPoint *= this.outputCurve.Evaluate(magnitude);
 
             /* REMOVE COMMENT TO MAKE FUNCTIONAL
             if (this.m_UseX) this.m_HorizontalVirtualAxis.Update(outputPoint.x);
@@ -185,7 +193,9 @@ namespace DuloGames.UI
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!this.IsActive() || this.m_HandlingArea == null)
+            {
                 return;
+            }
 
             Vector2 newAxis = this.m_HandlingArea.InverseTransformPoint(eventData.position);
             newAxis.x /= this.m_HandlingArea.sizeDelta.x * 0.5f;
@@ -203,7 +213,9 @@ namespace DuloGames.UI
         public void OnDrag(PointerEventData eventData)
         {
             if (this.m_HandlingArea == null)
+            {
                 return;
+            }
 
             Vector2 axis = Vector2.zero;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(this.m_HandlingArea, eventData.position, eventData.pressEventCamera, out axis);
@@ -226,13 +238,17 @@ namespace DuloGames.UI
         public void OnPointerDown(PointerEventData eventData)
         {
             if (this.m_ActiveGraphic != null)
+            {
                 this.m_ActiveGraphic.CrossFadeAlpha(1f, 0.2f, false);
+            }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
             if (this.m_ActiveGraphic != null)
+            {
                 this.m_ActiveGraphic.CrossFadeAlpha(0f, 0.2f, false);
+            }
         }
     }
 }

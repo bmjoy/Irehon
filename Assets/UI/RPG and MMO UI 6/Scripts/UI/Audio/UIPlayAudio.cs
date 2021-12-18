@@ -18,43 +18,49 @@ namespace DuloGames.UI
         }
 
         [SerializeField] private AudioClip m_AudioClip;
-        [SerializeField][Range(0f, 1f)] private float m_Volume = 1f;
+        [SerializeField] [Range(0f, 1f)] private float m_Volume = 1f;
         [SerializeField] private Event m_PlayOnEvent = Event.None;
 
         /// <summary>
         /// Gets or sets the audio clip.
         /// </summary>
-        public AudioClip audioClip { get { return this.m_AudioClip; } set { this.m_AudioClip = value; } }
+        public AudioClip audioClip { get => this.m_AudioClip; set => this.m_AudioClip = value; }
 
         /// <summary>
         /// Gets or sets the volume level.
         /// </summary>
-        public float volume { get { return this.m_Volume; } set { this.m_Volume = value; } }
+        public float volume { get => this.m_Volume; set => this.m_Volume = value; }
 
         /// <summary>
         /// Gets or sets the event on which the audio clip should be played.
         /// </summary>
-        public Event playOnEvent { get { return this.m_PlayOnEvent; } set { this.m_PlayOnEvent = value; } }
-        
+        public Event playOnEvent { get => this.m_PlayOnEvent; set => this.m_PlayOnEvent = value; }
+
         private bool m_Pressed = false;
-        
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (!this.m_Pressed)
+            {
                 this.TriggerEvent(Event.PointerEnter);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             if (!this.m_Pressed)
+            {
                 this.TriggerEvent(Event.PointerExit);
+            }
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
-            
+            }
+
             this.TriggerEvent(Event.PointerDown);
 
             this.m_Pressed = true;
@@ -63,8 +69,10 @@ namespace DuloGames.UI
         public void OnPointerUp(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
-            
+            }
+
             this.TriggerEvent(Event.PointerUp);
 
             if (this.m_Pressed)

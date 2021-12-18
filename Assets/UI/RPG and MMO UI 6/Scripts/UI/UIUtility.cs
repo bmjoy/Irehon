@@ -1,9 +1,10 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 namespace DuloGames.UI
 {
-	public static class UIUtility {
+    public static class UIUtility
+    {
 
         /// <summary>
         /// Brings the game object to the front.
@@ -35,12 +36,17 @@ namespace DuloGames.UI
             {
                 // Use canvas as root
                 Canvas canvas = UIUtility.FindInParents<Canvas>(go);
-                if (canvas != null) root = canvas.transform;
+                if (canvas != null)
+                {
+                    root = canvas.transform;
+                }
             }
 
             // If the object has a parent canvas
             if (allowReparent && root != null)
+            {
                 go.transform.SetParent(root, true);
+            }
 
             // Set as last sibling
             go.transform.SetAsLastSibling();
@@ -70,24 +76,28 @@ namespace DuloGames.UI
         /// <param name="go">Game Object.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T FindInParents<T>(GameObject go) where T : Component
-		{
-			if (go == null)
-				return null;
-			
-			var comp = go.GetComponent<T>();
-			
-			if (comp != null)
-				return comp;
-			
-			Transform t = go.transform.parent;
-			
-			while (t != null && comp == null)
-			{
-				comp = t.gameObject.GetComponent<T>();
-				t = t.parent;
-			}
-			
-			return comp;
-		}
-	}
+        {
+            if (go == null)
+            {
+                return null;
+            }
+
+            T comp = go.GetComponent<T>();
+
+            if (comp != null)
+            {
+                return comp;
+            }
+
+            Transform t = go.transform.parent;
+
+            while (t != null && comp == null)
+            {
+                comp = t.gameObject.GetComponent<T>();
+                t = t.parent;
+            }
+
+            return comp;
+        }
+    }
 }

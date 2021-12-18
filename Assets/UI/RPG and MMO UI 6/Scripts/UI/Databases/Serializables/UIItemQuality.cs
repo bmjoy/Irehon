@@ -1,5 +1,5 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 namespace DuloGames.UI
 {
@@ -13,7 +13,7 @@ namespace DuloGames.UI
         Epic = 4,
         Legendary = 5
     }
-    
+
     public class UIItemQualityColor
     {
         public const string Poor = "9d9d9dff";

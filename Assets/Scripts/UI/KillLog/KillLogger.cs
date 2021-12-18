@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Irehon.Client;
 using Mirror;
-using Client;
+using UnityEngine;
 
 public class KillLogger : MonoBehaviour
 {
@@ -14,31 +12,35 @@ public class KillLogger : MonoBehaviour
     private void Start()
     {
         if (!NetworkClient.isConnected)
+        {
             return;
+        }
 
-        ClientManager.OnGetServerMessage.AddListener(RecieveServerMessage);
-        isIntialized = true;
+        ClientManager.OnGetServerMessage.AddListener(this.RecieveServerMessage);
+        this.isIntialized = true;
     }
 
     private void RecieveServerMessage(ServerMessage message)
     {
         if (message.messageType != MessageType.KillLog)
+        {
             return;
+        }
 
-        ShowKill(ulong.Parse(message.message), ulong.Parse(message.subMessage));
+        this.ShowKill(ulong.Parse(message.message), ulong.Parse(message.subMessage));
     }
 
     public void ShowKill(ulong murder, ulong killed)
     {
-        var log = Instantiate(killLogTabPrefab, logParent);
+        GameObject log = Instantiate(this.killLogTabPrefab, this.logParent);
         log.GetComponent<KillLogTab>().Intialize(murder, killed);
     }
 
     private void OnDestroy()
     {
-        if (isIntialized)
+        if (this.isIntialized)
         {
-            ClientManager.OnGetServerMessage.RemoveListener(RecieveServerMessage);
+            ClientManager.OnGetServerMessage.RemoveListener(this.RecieveServerMessage);
         }
     }
 }

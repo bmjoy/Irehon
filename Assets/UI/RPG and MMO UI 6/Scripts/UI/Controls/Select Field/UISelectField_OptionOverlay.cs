@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -19,13 +19,13 @@ namespace DuloGames.UI
             None,
             ColorTint
         }
-        
+
         [SerializeField] private Transition m_Transition = Transition.None;
         [SerializeField] private ColorBlock m_ColorBlock = ColorBlock.defaultColorBlock;
-        
+
         [SerializeField, Tooltip("Graphic that will have the selected transtion applied.")]
         private Graphic m_TargetGraphic;
-        
+
         private bool m_Highlighted = false;
         private bool m_Selected = false;
         private bool m_Pressed = false;
@@ -36,14 +36,8 @@ namespace DuloGames.UI
         /// <value>The transition.</value>
         public Transition transition
         {
-            get
-            {
-                return this.m_Transition;
-            }
-            set
-            {
-                this.m_Transition = value;
-            }
+            get => this.m_Transition;
+            set => this.m_Transition = value;
         }
 
         /// <summary>
@@ -51,14 +45,8 @@ namespace DuloGames.UI
         /// </summary>
         public ColorBlock colorBlock
         {
-            get
-            {
-                return this.m_ColorBlock;
-            }
-            set
-            {
-                this.m_ColorBlock = value;
-            }
+            get => this.m_ColorBlock;
+            set => this.m_ColorBlock = value;
         }
 
         /// <summary>
@@ -67,16 +55,10 @@ namespace DuloGames.UI
         /// <value>The target graphic.</value>
         public Graphic targetGraphic
         {
-            get
-            {
-                return this.m_TargetGraphic;
-            }
-            set
-            {
-                this.m_TargetGraphic = value;
-            }
+            get => this.m_TargetGraphic;
+            set => this.m_TargetGraphic = value;
         }
-        
+
         protected void OnEnable()
         {
             this.InternalEvaluateAndTransitionToNormalState(true);
@@ -108,13 +90,15 @@ namespace DuloGames.UI
         {
             this.DoStateTransition(VisualState.Normal, instant);
         }
-        
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             this.m_Highlighted = true;
 
             if (!this.m_Selected && !this.m_Pressed)
+            {
                 this.DoStateTransition(VisualState.Highlighted, false);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -122,16 +106,22 @@ namespace DuloGames.UI
             this.m_Highlighted = false;
 
             if (!this.m_Selected && !this.m_Pressed)
+            {
                 this.DoStateTransition(VisualState.Normal, false);
+            }
         }
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
+            }
 
             if (!this.m_Highlighted)
+            {
                 return;
+            }
 
             this.m_Pressed = true;
             this.DoStateTransition(VisualState.Pressed, false);
@@ -140,7 +130,9 @@ namespace DuloGames.UI
         public virtual void OnPointerUp(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
+            }
 
             this.m_Pressed = false;
 
@@ -167,7 +159,9 @@ namespace DuloGames.UI
         {
             // Check if the script is enabled
             if (!this.enabled || !this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             Color color = this.m_ColorBlock.normalColor;
 
@@ -202,7 +196,9 @@ namespace DuloGames.UI
         private void StartColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if (instant || this.m_ColorBlock.fadeDuration == 0f || !Application.isPlaying)
             {

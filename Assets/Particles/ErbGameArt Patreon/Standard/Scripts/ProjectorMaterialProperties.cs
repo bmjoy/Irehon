@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ProjectorMaterialProperties : MonoBehaviour
 {
@@ -11,49 +9,53 @@ public class ProjectorMaterialProperties : MonoBehaviour
     public bool opacity = false;
     private Material mat;
 
-    void Start()
+    private void Start()
     {
-        Undo = false;
-        var proj = GetComponent<Projector>();
+        this.Undo = false;
+        Projector proj = this.GetComponent<Projector>();
         if (!proj.material.name.EndsWith("(Instance)"))
+        {
             proj.material = new Material(proj.material) { name = proj.material.name + " (Instance)" };
-        mat = proj.material;
-    }
-    void Update ()
-    {
-        if (opacity == true && TimeRate <= Timer && Undo == false)
-        {
-            TimeRate += Time.deltaTime;
-            value = Mathf.Lerp(1f, 0f, TimeRate / Timer);
-            mat.SetFloat("_Opacity", value);
         }
 
-        if (opacity == false)
+        this.mat = proj.material;
+    }
+
+    private void Update()
+    {
+        if (this.opacity == true && this.TimeRate <= this.Timer && this.Undo == false)
         {
-            if (TimeRate <= Timer && Undo == false)
+            this.TimeRate += Time.deltaTime;
+            this.value = Mathf.Lerp(1f, 0f, this.TimeRate / this.Timer);
+            this.mat.SetFloat("_Opacity", this.value);
+        }
+
+        if (this.opacity == false)
+        {
+            if (this.TimeRate <= this.Timer && this.Undo == false)
             {
-                TimeRate += Time.deltaTime;
-                value = Mathf.Lerp(0.01f, 4f, TimeRate / Timer);
-                mat.SetFloat("_MoveCirle", value);
+                this.TimeRate += Time.deltaTime;
+                this.value = Mathf.Lerp(0.01f, 4f, this.TimeRate / this.Timer);
+                this.mat.SetFloat("_MoveCirle", this.value);
             }
 
-            if (TimeRate >= Timer && Undo == false)
+            if (this.TimeRate >= this.Timer && this.Undo == false)
             {
-                check();
+                this.check();
             }
 
-            if (Undo == true && TimeRate <= Timer)
+            if (this.Undo == true && this.TimeRate <= this.Timer)
             {
-                TimeRate += Time.deltaTime;
-                value = Mathf.Lerp(4f, 0.01f, TimeRate / Timer);
-                mat.SetFloat("_MoveCirle", value);
+                this.TimeRate += Time.deltaTime;
+                this.value = Mathf.Lerp(4f, 0.01f, this.TimeRate / this.Timer);
+                this.mat.SetFloat("_MoveCirle", this.value);
             }
         }
     }
 
-    void check()
+    private void check()
     {
-        Undo = true;
-        TimeRate = 0;
+        this.Undo = true;
+        this.TimeRate = 0;
     }
 }

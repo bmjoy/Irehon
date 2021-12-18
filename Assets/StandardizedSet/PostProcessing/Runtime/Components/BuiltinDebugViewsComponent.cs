@@ -7,20 +7,20 @@ namespace UnityEngine.PostProcessing
 
     public sealed class BuiltinDebugViewsComponent : PostProcessingComponentCommandBuffer<BuiltinDebugViewsModel>
     {
-        static class Uniforms
+        private static class Uniforms
         {
             internal static readonly int _DepthScale = Shader.PropertyToID("_DepthScale");
-            internal static readonly int _TempRT     = Shader.PropertyToID("_TempRT");
-            internal static readonly int _Opacity    = Shader.PropertyToID("_Opacity");
-            internal static readonly int _MainTex    = Shader.PropertyToID("_MainTex");
-            internal static readonly int _TempRT2    = Shader.PropertyToID("_TempRT2");
-            internal static readonly int _Amplitude  = Shader.PropertyToID("_Amplitude");
-            internal static readonly int _Scale      = Shader.PropertyToID("_Scale");
+            internal static readonly int _TempRT = Shader.PropertyToID("_TempRT");
+            internal static readonly int _Opacity = Shader.PropertyToID("_Opacity");
+            internal static readonly int _MainTex = Shader.PropertyToID("_MainTex");
+            internal static readonly int _TempRT2 = Shader.PropertyToID("_TempRT2");
+            internal static readonly int _Amplitude = Shader.PropertyToID("_Amplitude");
+            internal static readonly int _Scale = Shader.PropertyToID("_Scale");
         }
 
-        const string k_ShaderString = "Hidden/Post FX/Builtin Debug Views";
+        private const string k_ShaderString = "Hidden/Post FX/Builtin Debug Views";
 
-        enum Pass
+        private enum Pass
         {
             Depth,
             Normals,
@@ -29,9 +29,9 @@ namespace UnityEngine.PostProcessing
             MovecArrows
         }
 
-        ArrowArray m_Arrows;
+        private ArrowArray m_Arrows;
 
-        class ArrowArray
+        private class ArrowArray
         {
             public Mesh mesh { get; private set; }
 
@@ -41,7 +41,7 @@ namespace UnityEngine.PostProcessing
             public void BuildMesh(int columns, int rows)
             {
                 // Base shape
-                var arrow = new Vector3[6]
+                Vector3[] arrow = new Vector3[6]
                 {
                     new Vector3(0f, 0f, 0f),
                     new Vector3(0f, 1f, 0f),
@@ -53,14 +53,14 @@ namespace UnityEngine.PostProcessing
 
                 // make the vertex array
                 int vcount = 6 * columns * rows;
-                var vertices = new List<Vector3>(vcount);
-                var uvs = new List<Vector2>(vcount);
+                List<Vector3> vertices = new List<Vector3>(vcount);
+                List<Vector2> uvs = new List<Vector2>(vcount);
 
                 for (int iy = 0; iy < rows; iy++)
                 {
                     for (int ix = 0; ix < columns; ix++)
                     {
-                        var uv = new Vector2(
+                        Vector2 uv = new Vector2(
                                 (0.5f + ix) / columns,
                                 (0.5f + iy) / rows
                                 );
@@ -74,44 +74,40 @@ namespace UnityEngine.PostProcessing
                 }
 
                 // make the index array
-                var indices = new int[vcount];
+                int[] indices = new int[vcount];
 
                 for (int i = 0; i < vcount; i++)
+                {
                     indices[i] = i;
+                }
 
                 // initialize the mesh object
-                mesh = new Mesh { hideFlags = HideFlags.DontSave };
-                mesh.SetVertices(vertices);
-                mesh.SetUVs(0, uvs);
-                mesh.SetIndices(indices, MeshTopology.Lines, 0);
-                mesh.UploadMeshData(true);
+                this.mesh = new Mesh { hideFlags = HideFlags.DontSave };
+                this.mesh.SetVertices(vertices);
+                this.mesh.SetUVs(0, uvs);
+                this.mesh.SetIndices(indices, MeshTopology.Lines, 0);
+                this.mesh.UploadMeshData(true);
 
                 // update the properties
-                columnCount = columns;
-                rowCount = rows;
+                this.columnCount = columns;
+                this.rowCount = rows;
             }
 
             public void Release()
             {
-                GraphicsUtils.Destroy(mesh);
-                mesh = null;
+                GraphicsUtils.Destroy(this.mesh);
+                this.mesh = null;
             }
         }
 
-        public override bool active
-        {
-            get
-            {
-                return model.IsModeActive(Mode.Depth)
-                       || model.IsModeActive(Mode.Normals)
-                       || model.IsModeActive(Mode.MotionVectors);
-            }
-        }
+        public override bool active => this.model.IsModeActive(Mode.Depth)
+                       || this.model.IsModeActive(Mode.Normals)
+                       || this.model.IsModeActive(Mode.MotionVectors);
 
         public override DepthTextureMode GetCameraFlags()
         {
-            var mode = model.settings.mode;
-            var flags = DepthTextureMode.None;
+            Mode mode = this.model.settings.mode;
+            DepthTextureMode flags = DepthTextureMode.None;
 
             switch (mode)
             {
@@ -131,7 +127,7 @@ namespace UnityEngine.PostProcessing
 
         public override CameraEvent GetCameraEvent()
         {
-            return model.settings.mode == Mode.MotionVectors
+            return this.model.settings.mode == Mode.MotionVectors
                    ? CameraEvent.BeforeImageEffects
                    : CameraEvent.BeforeImageEffectsOpaque;
         }
@@ -143,59 +139,63 @@ namespace UnityEngine.PostProcessing
 
         public override void PopulateCommandBuffer(CommandBuffer cb)
         {
-            var settings = model.settings;
-            var material = context.materialFactory.Get(k_ShaderString);
+            BuiltinDebugViewsModel.Settings settings = this.model.settings;
+            Material material = this.context.materialFactory.Get(k_ShaderString);
             material.shaderKeywords = null;
 
-            if (context.isGBufferAvailable)
+            if (this.context.isGBufferAvailable)
+            {
                 material.EnableKeyword("SOURCE_GBUFFER");
+            }
 
             switch (settings.mode)
             {
                 case Mode.Depth:
-                    DepthPass(cb);
+                    this.DepthPass(cb);
                     break;
                 case Mode.Normals:
-                    DepthNormalsPass(cb);
+                    this.DepthNormalsPass(cb);
                     break;
                 case Mode.MotionVectors:
-                    MotionVectorsPass(cb);
+                    this.MotionVectorsPass(cb);
                     break;
             }
 
-            context.Interrupt();
+            this.context.Interrupt();
         }
 
-        void DepthPass(CommandBuffer cb)
+        private void DepthPass(CommandBuffer cb)
         {
-            var material = context.materialFactory.Get(k_ShaderString);
-            var settings = model.settings.depth;
+            Material material = this.context.materialFactory.Get(k_ShaderString);
+            BuiltinDebugViewsModel.DepthSettings settings = this.model.settings.depth;
 
             cb.SetGlobalFloat(Uniforms._DepthScale, 1f / settings.scale);
-            cb.Blit((Texture)null, BuiltinRenderTextureType.CameraTarget, material, (int)Pass.Depth);
+            cb.Blit(null, BuiltinRenderTextureType.CameraTarget, material, (int)Pass.Depth);
         }
 
-        void DepthNormalsPass(CommandBuffer cb)
+        private void DepthNormalsPass(CommandBuffer cb)
         {
-            var material = context.materialFactory.Get(k_ShaderString);
-            cb.Blit((Texture)null, BuiltinRenderTextureType.CameraTarget, material, (int)Pass.Normals);
+            Material material = this.context.materialFactory.Get(k_ShaderString);
+            cb.Blit(null, BuiltinRenderTextureType.CameraTarget, material, (int)Pass.Normals);
         }
 
-        void MotionVectorsPass(CommandBuffer cb)
+        private void MotionVectorsPass(CommandBuffer cb)
         {
 #if UNITY_EDITOR
             // Don't render motion vectors preview when the editor is not playing as it can in some
             // cases results in ugly artifacts (i.e. when resizing the game view).
             if (!Application.isPlaying)
+            {
                 return;
+            }
 #endif
 
-            var material = context.materialFactory.Get(k_ShaderString);
-            var settings = model.settings.motionVectors;
+            Material material = this.context.materialFactory.Get(k_ShaderString);
+            BuiltinDebugViewsModel.MotionVectorsSettings settings = this.model.settings.motionVectors;
 
             // Blit the original source image
             int tempRT = Uniforms._TempRT;
-            cb.GetTemporaryRT(tempRT, context.width, context.height, 0, FilterMode.Bilinear);
+            cb.GetTemporaryRT(tempRT, this.context.width, this.context.height, 0, FilterMode.Bilinear);
             cb.SetGlobalFloat(Uniforms._Opacity, settings.sourceOpacity);
             cb.SetGlobalTexture(Uniforms._MainTex, BuiltinRenderTextureType.CameraTarget);
             cb.Blit(BuiltinRenderTextureType.CameraTarget, tempRT, material, (int)Pass.MovecOpacity);
@@ -204,7 +204,7 @@ namespace UnityEngine.PostProcessing
             if (settings.motionImageOpacity > 0f && settings.motionImageAmplitude > 0f)
             {
                 int tempRT2 = Uniforms._TempRT2;
-                cb.GetTemporaryRT(tempRT2, context.width, context.height, 0, FilterMode.Bilinear);
+                cb.GetTemporaryRT(tempRT2, this.context.width, this.context.height, 0, FilterMode.Bilinear);
                 cb.SetGlobalFloat(Uniforms._Opacity, settings.motionImageOpacity);
                 cb.SetGlobalFloat(Uniforms._Amplitude, settings.motionImageAmplitude);
                 cb.SetGlobalTexture(Uniforms._MainTex, tempRT);
@@ -216,15 +216,15 @@ namespace UnityEngine.PostProcessing
             // Motion vectors (arrows)
             if (settings.motionVectorsOpacity > 0f && settings.motionVectorsAmplitude > 0f)
             {
-                PrepareArrows();
+                this.PrepareArrows();
 
                 float sy = 1f / settings.motionVectorsResolution;
-                float sx = sy * context.height / context.width;
+                float sx = sy * this.context.height / this.context.width;
 
                 cb.SetGlobalVector(Uniforms._Scale, new Vector2(sx, sy));
                 cb.SetGlobalFloat(Uniforms._Opacity, settings.motionVectorsOpacity);
                 cb.SetGlobalFloat(Uniforms._Amplitude, settings.motionVectorsAmplitude);
-                cb.DrawMesh(m_Arrows.mesh, Matrix4x4.identity, material, 0, (int)Pass.MovecArrows);
+                cb.DrawMesh(this.m_Arrows.mesh, Matrix4x4.identity, material, 0, (int)Pass.MovecArrows);
             }
 
             cb.SetGlobalTexture(Uniforms._MainTex, tempRT);
@@ -232,27 +232,31 @@ namespace UnityEngine.PostProcessing
             cb.ReleaseTemporaryRT(tempRT);
         }
 
-        void PrepareArrows()
+        private void PrepareArrows()
         {
-            int row = model.settings.motionVectors.motionVectorsResolution;
+            int row = this.model.settings.motionVectors.motionVectorsResolution;
             int col = row * Screen.width / Screen.height;
 
-            if (m_Arrows == null)
-                m_Arrows = new ArrowArray();
-
-            if (m_Arrows.columnCount != col || m_Arrows.rowCount != row)
+            if (this.m_Arrows == null)
             {
-                m_Arrows.Release();
-                m_Arrows.BuildMesh(col, row);
+                this.m_Arrows = new ArrowArray();
+            }
+
+            if (this.m_Arrows.columnCount != col || this.m_Arrows.rowCount != row)
+            {
+                this.m_Arrows.Release();
+                this.m_Arrows.BuildMesh(col, row);
             }
         }
 
         public override void OnDisable()
         {
-            if (m_Arrows != null)
-                m_Arrows.Release();
+            if (this.m_Arrows != null)
+            {
+                this.m_Arrows.Release();
+            }
 
-            m_Arrows = null;
+            this.m_Arrows = null;
         }
     }
 }

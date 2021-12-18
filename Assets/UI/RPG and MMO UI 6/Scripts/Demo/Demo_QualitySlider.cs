@@ -5,9 +5,9 @@ namespace DuloGames.UI
 {
     public class Demo_QualitySlider : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UISliderExtended m_Slider;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private void Start()
         {

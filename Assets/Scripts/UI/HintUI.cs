@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class HintUI : MonoBehaviour
@@ -12,7 +10,7 @@ public class HintUI : MonoBehaviour
 
     public void UpdateHint(string title, string hint)
     {
-        header.text = title;
-        content.text = hint;
+        this.header.text = title;
+        this.content.text = hint;
     }
 }

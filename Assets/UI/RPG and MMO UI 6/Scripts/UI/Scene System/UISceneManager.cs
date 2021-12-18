@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DuloGames.UI
 {
@@ -11,20 +11,14 @@ namespace DuloGames.UI
         /// <summary>
         /// Get the scene manager if any exists.
         /// </summary>
-        public static UISceneManager instance
-        {
-            get { return m_Instance; }
-        }
+        public static UISceneManager instance => m_Instance;
 
         private List<UIScene> m_Scenes;
 
         /// <summary>
         /// Get all the registered scenes.
         /// </summary>
-        public UIScene[] scenes
-        {
-            get { return this.m_Scenes.ToArray(); }
-        }
+        public UIScene[] scenes => this.m_Scenes.ToArray();
 
         protected void Awake()
         {

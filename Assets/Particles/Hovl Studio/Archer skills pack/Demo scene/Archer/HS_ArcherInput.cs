@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,282 +73,291 @@ public class HS_ArcherInput : MonoBehaviour
     [Header("Camera Shaker script")]
     public HS_CameraShaker cameraShaker;
 
-    void Start()
+    private void Start()
     {
-        anim = this.GetComponent<Animator>();
-        cam = Camera.main;
-        controller = this.GetComponent<CharacterController>();
-        target = screenTargets[targetIndex()];
+        this.anim = this.GetComponent<Animator>();
+        this.cam = Camera.main;
+        this.controller = this.GetComponent<CharacterController>();
+        this.target = this.screenTargets[this.targetIndex()];
     }
 
-    void Update()
+    private void Update()
     {
-        UserInterface();
+        this.UserInterface();
         //Disable moving and skills if alrerady using one
-        if (aimTimer > 0)
+        if (this.aimTimer > 0)
         {
-            aimTimer -= Time.deltaTime;
-            aimMoving = true;
+            this.aimTimer -= Time.deltaTime;
+            this.aimMoving = true;
         }
         else
         {
-            if (aimMoving) InputMagnitude();
-            aimMoving = false;
+            if (this.aimMoving)
+            {
+                this.InputMagnitude();
+            }
+
+            this.aimMoving = false;
         }
 
         //Need second layer in the Animator
-        if (anim.layerCount > 1) { anim.SetLayerWeight(1, secondLayerWeight); }
+        if (this.anim.layerCount > 1) { this.anim.SetLayerWeight(1, this.secondLayerWeight); }
 
-        if (!canMove)
-            return;
-
-        target = screenTargets[targetIndex()];
-
-        if (Input.GetMouseButton(0) && aim.enabled == true)
+        if (!this.canMove)
         {
-            aimTimer = 2;
-            if (activeTarger)
+            return;
+        }
+
+        this.target = this.screenTargets[this.targetIndex()];
+
+        if (Input.GetMouseButton(0) && this.aim.enabled == true)
+        {
+            this.aimTimer = 2;
+            if (this.activeTarger)
             {
-                if (fireCountdown <= 0f)
+                if (this.fireCountdown <= 0f)
                 {
-                    if (rotateState == false)
+                    if (this.rotateState == false)
                     {
-                        StartCoroutine(RotateToTarget(fireRate, target.position));
+                        this.StartCoroutine(this.RotateToTarget(this.fireRate, this.target.position));
                         //enable turn animation if the turn deviation to the target is more than 20 degrees
-                        var lookPos = target.position - transform.position;
+                        Vector3 lookPos = this.target.position - this.transform.position;
                         lookPos.y = 0;
-                        var rotation = Quaternion.LookRotation(lookPos);
-                        var angle = Quaternion.Angle(transform.rotation, rotation);
+                        Quaternion rotation = Quaternion.LookRotation(lookPos);
+                        float angle = Quaternion.Angle(this.transform.rotation, rotation);
                         if (angle > 20)
                         {
                             //turn animation
-                            anim.SetFloat("InputX", 0.3f);
+                            this.anim.SetFloat("InputX", 0.3f);
                         }
                     }
 
-                    anim.SetTrigger("MaskAttack1");
-                    secondLayerWeight = Mathf.Lerp(secondLayerWeight, 0.5f, Time.deltaTime * 60);
-                    PrefabsCast[8].GetComponent<ParticleSystem>().Play();
-                    GameObject projectile = Instantiate(Prefabs[5], FirePoint.position, FirePoint.rotation);
-                    projectile.GetComponent<TargetProjectile>().UpdateTarget(target, (Vector3)uiOffset);
-                    StartCoroutine(cameraShaker.Shake(0.1f, 2, 0.2f, 0));
-                    fireCountdown = 0;
-                    fireCountdown += fireRate;
+                    this.anim.SetTrigger("MaskAttack1");
+                    this.secondLayerWeight = Mathf.Lerp(this.secondLayerWeight, 0.5f, Time.deltaTime * 60);
+                    this.PrefabsCast[8].GetComponent<ParticleSystem>().Play();
+                    GameObject projectile = Instantiate(this.Prefabs[5], this.FirePoint.position, this.FirePoint.rotation);
+                    projectile.GetComponent<TargetProjectile>().UpdateTarget(this.target, this.uiOffset);
+                    this.StartCoroutine(this.cameraShaker.Shake(0.1f, 2, 0.2f, 0));
+                    this.fireCountdown = 0;
+                    this.fireCountdown += this.fireRate;
                 }
             }
         }
-        else if (aimTimer < 1)
+        else if (this.aimTimer < 1)
         {
-            secondLayerWeight = Mathf.Lerp(secondLayerWeight, 0, Time.deltaTime * 2);
+            this.secondLayerWeight = Mathf.Lerp(this.secondLayerWeight, 0, Time.deltaTime * 2);
         }
-        fireCountdown -= Time.deltaTime;
+        this.fireCountdown -= Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(1) && aim.enabled == true && activeTarger)
+        if (Input.GetMouseButtonDown(1) && this.aim.enabled == true && this.activeTarger)
         {
-            if (rotateState == false)
+            if (this.rotateState == false)
             {
-                StartCoroutine(RotateToTarget(fireRate, target.position));
+                this.StartCoroutine(this.RotateToTarget(this.fireRate, this.target.position));
             }
-            PrefabsCast[7].GetComponent<ParticleSystem>().Play();
-            StartCoroutine(Attack(4));
-            if (PrefabsCast[7].GetComponent<AudioSource>())
+            this.PrefabsCast[7].GetComponent<ParticleSystem>().Play();
+            this.StartCoroutine(this.Attack(4));
+            if (this.PrefabsCast[7].GetComponent<AudioSource>())
             {
-                soundComponentCast = PrefabsCast[7].GetComponent<AudioSource>();
-                clip = soundComponentCast.clip;
-                soundComponentCast.PlayOneShot(clip);
+                this.soundComponentCast = this.PrefabsCast[7].GetComponent<AudioSource>();
+                this.clip = this.soundComponentCast.clip;
+                this.soundComponentCast.PlayOneShot(this.clip);
             }
         }
 
-        if (Input.GetKeyDown("1") && aim.enabled == true && activeTarger)
+        if (Input.GetKeyDown("1") && this.aim.enabled == true && this.activeTarger)
         {
-            if (rotateState == false)
+            if (this.rotateState == false)
             {
-                StartCoroutine(RotateToTarget(fireRate, target.position));
+                this.StartCoroutine(this.RotateToTarget(this.fireRate, this.target.position));
             }
             for (int i = 0; i < 3; i++)
             {
-                PrefabsCast[i].GetComponent<ParticleSystem>().Play();
+                this.PrefabsCast[i].GetComponent<ParticleSystem>().Play();
             }
-            if (PrefabsCast[0].GetComponent<AudioSource>())
+            if (this.PrefabsCast[0].GetComponent<AudioSource>())
             {
-                soundComponentCast = PrefabsCast[0].GetComponent<AudioSource>();
-                clip = soundComponentCast.clip;
-                soundComponentCast.PlayOneShot(clip);
+                this.soundComponentCast = this.PrefabsCast[0].GetComponent<AudioSource>();
+                this.clip = this.soundComponentCast.clip;
+                this.soundComponentCast.PlayOneShot(this.clip);
             }
-            StartCoroutine(Attack(0));
+            this.StartCoroutine(this.Attack(0));
         }
 
-        if (Input.GetMouseButtonDown(1) && casting == true)
+        if (Input.GetMouseButtonDown(1) && this.casting == true)
         {
-            casting = false;
+            this.casting = false;
         }
 
         if (Input.GetKeyDown("2"))
         {
-            StartCoroutine(Attack(1));
-            PrefabsCast[3].GetComponent<ParticleSystem>().Play();
-            if (PrefabsCast[3].GetComponent<AudioSource>())
+            this.StartCoroutine(this.Attack(1));
+            this.PrefabsCast[3].GetComponent<ParticleSystem>().Play();
+            if (this.PrefabsCast[3].GetComponent<AudioSource>())
             {
-                soundComponentCast = PrefabsCast[3].GetComponent<AudioSource>();
-                clip = soundComponentCast.clip;
-                soundComponentCast.PlayOneShot(clip);
+                this.soundComponentCast = this.PrefabsCast[3].GetComponent<AudioSource>();
+                this.clip = this.soundComponentCast.clip;
+                this.soundComponentCast.PlayOneShot(this.clip);
             }
         }
 
         if (Input.GetKeyDown("3"))
         {
-            StartCoroutine(FrontAttack(2));
+            this.StartCoroutine(this.FrontAttack(2));
         }
 
         if (Input.GetKeyDown("4"))
         {
-            StartCoroutine(PreCast(3));
+            this.StartCoroutine(this.PreCast(3));
         }
 
-        if (Input.GetKeyDown("z") && aim.enabled == true)
+        if (Input.GetKeyDown("z") && this.aim.enabled == true)
         {
-            aimTimer = 2;
-            if (activeTarger)
+            this.aimTimer = 2;
+            if (this.activeTarger)
             {
-                if (fireCountdown <= 0f)
+                if (this.fireCountdown <= 0f)
                 {
-                    if (rotateState == false)
+                    if (this.rotateState == false)
                     {
-                        StartCoroutine(RotateToTarget(fireRate, target.position));
+                        this.StartCoroutine(this.RotateToTarget(this.fireRate, this.target.position));
                         //enable turn animation if the turn deviation to the target is more than 20 degrees
-                        var lookPos = target.position - transform.position;
+                        Vector3 lookPos = this.target.position - this.transform.position;
                         lookPos.y = 0;
-                        var rotation = Quaternion.LookRotation(lookPos);
-                        var angle = Quaternion.Angle(transform.rotation, rotation);
+                        Quaternion rotation = Quaternion.LookRotation(lookPos);
+                        float angle = Quaternion.Angle(this.transform.rotation, rotation);
                         if (angle > 20)
                         {
                             //turn animation
-                            anim.SetFloat("InputX", 0.3f);
+                            this.anim.SetFloat("InputX", 0.3f);
                         }
-                    }             
-                    StartCoroutine(cameraShaker.Shake(0.4f, 3, 0.3f, 0.9f));
-                    fireCountdown = 0;
-                    fireCountdown += fireRate;
+                    }
+                    this.StartCoroutine(this.cameraShaker.Shake(0.4f, 3, 0.3f, 0.9f));
+                    this.fireCountdown = 0;
+                    this.fireCountdown += this.fireRate;
                 }
-                PrefabsCast[9].GetComponent<ParticleSystem>().Play();
-                PrefabsCast[10].GetComponent<ParticleSystem>().Play();
-                if (PrefabsCast[10].GetComponent<AudioSource>())
+                this.PrefabsCast[9].GetComponent<ParticleSystem>().Play();
+                this.PrefabsCast[10].GetComponent<ParticleSystem>().Play();
+                if (this.PrefabsCast[10].GetComponent<AudioSource>())
                 {
-                    soundComponentCast = PrefabsCast[10].GetComponent<AudioSource>();
-                    clip = soundComponentCast.clip;
-                    soundComponentCast.PlayOneShot(clip);
+                    this.soundComponentCast = this.PrefabsCast[10].GetComponent<AudioSource>();
+                    this.clip = this.soundComponentCast.clip;
+                    this.soundComponentCast.PlayOneShot(this.clip);
                 }
-                StartCoroutine(Attack(6));
+                this.StartCoroutine(this.Attack(6));
             }
         }
 
-        if (Input.GetKeyDown("x") && aim.enabled == true)
+        if (Input.GetKeyDown("x") && this.aim.enabled == true)
         {
-            StartCoroutine(PreCast(7));
+            this.StartCoroutine(this.PreCast(7));
         }
 
-        if (Input.GetKeyDown("c") && casting == false)
+        if (Input.GetKeyDown("c") && this.casting == false)
         {
-            StartCoroutine(FrontAttack(8));
+            this.StartCoroutine(this.FrontAttack(8));
         }
 
-        if (Input.GetKeyDown("v") && casting == false)
+        if (Input.GetKeyDown("v") && this.casting == false)
         {
-            StartCoroutine(Attack(9));
+            this.StartCoroutine(this.Attack(9));
         }
 
-        InputMagnitude();
+        this.InputMagnitude();
 
         //If you don't need the character grounded then get rid of this part.
-        isGrounded = controller.isGrounded;
-        if (isGrounded)
+        this.isGrounded = this.controller.isGrounded;
+        if (this.isGrounded)
         {
-            verticalVel = 0;
+            this.verticalVel = 0;
         }
         else
         {
-            verticalVel -= 1f * Time.deltaTime;
+            this.verticalVel -= 1f * Time.deltaTime;
         }
-        moveVector = new Vector3(0, verticalVel, 0);
-        controller.Move(moveVector);
+        this.moveVector = new Vector3(0, this.verticalVel, 0);
+        this.controller.Move(this.moveVector);
     }
 
     public IEnumerator Attack(int EffectNumber)
     {
         //Block moving after using the skill
-        if (EffectNumber != 6) canMove = false;
+        if (EffectNumber != 6)
+        {
+            this.canMove = false;
+        }
 
-        SetAnimZero();
+        this.SetAnimZero();
         while (true)
         {
             if (EffectNumber == 0)
             {
-                anim.SetTrigger("Attack1");
-                yield return new WaitForSeconds(castingTime[EffectNumber]);
-                StartCoroutine(cameraShaker.Shake(0.4f, 7, 0.45f, 0));
-                GameObject projectile = Instantiate(Prefabs[0], FirePoint.position, FirePoint.rotation);
-                projectile.GetComponent<TargetProjectile>().UpdateTarget(target, (Vector3)uiOffset);
+                this.anim.SetTrigger("Attack1");
+                yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                this.StartCoroutine(this.cameraShaker.Shake(0.4f, 7, 0.45f, 0));
+                GameObject projectile = Instantiate(this.Prefabs[0], this.FirePoint.position, this.FirePoint.rotation);
+                projectile.GetComponent<TargetProjectile>().UpdateTarget(this.target, this.uiOffset);
                 yield return new WaitForSeconds(0.2f);
             }
             if (EffectNumber == 1)
             {
-                anim.SetTrigger("AoE");
-                yield return new WaitForSeconds(castingTime[EffectNumber]);
-                parentObject = Prefabs[EffectNumber].transform.parent;
-                Prefabs[EffectNumber].transform.parent = null;
-                Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
-                StartCoroutine(cameraShaker.Shake(0.4f, 7, 0.6f, 0));
-                yield return new WaitForSeconds(castingTime[EffectNumber]);
+                this.anim.SetTrigger("AoE");
+                yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                this.parentObject = this.Prefabs[EffectNumber].transform.parent;
+                this.Prefabs[EffectNumber].transform.parent = null;
+                this.Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
+                this.StartCoroutine(this.cameraShaker.Shake(0.4f, 7, 0.6f, 0));
+                yield return new WaitForSeconds(this.castingTime[EffectNumber]);
             }
             if (EffectNumber == 4)
             {
-                anim.SetTrigger("Attack2");
-                if (PrefabsCast[7].GetComponent<AudioSource>())
+                this.anim.SetTrigger("Attack2");
+                if (this.PrefabsCast[7].GetComponent<AudioSource>())
                 {
-                    soundComponentCast = PrefabsCast[7].GetComponent<AudioSource>();
-                    clip = soundComponentCast.clip;
-                    soundComponentCast.PlayOneShot(clip);
+                    this.soundComponentCast = this.PrefabsCast[7].GetComponent<AudioSource>();
+                    this.clip = this.soundComponentCast.clip;
+                    this.soundComponentCast.PlayOneShot(this.clip);
                 }
-                yield return new WaitForSeconds(castingTime[EffectNumber]);
-                StartCoroutine(cameraShaker.Shake(0.4f, 8, 0.45f, 0));
-                GameObject projectile = Instantiate(Prefabs[4], FirePoint.position, FirePoint.rotation);
-                projectile.GetComponent<TargetProjectile>().UpdateTarget(target, (Vector3)uiOffset);
+                yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                this.StartCoroutine(this.cameraShaker.Shake(0.4f, 8, 0.45f, 0));
+                GameObject projectile = Instantiate(this.Prefabs[4], this.FirePoint.position, this.FirePoint.rotation);
+                projectile.GetComponent<TargetProjectile>().UpdateTarget(this.target, this.uiOffset);
                 yield return new WaitForSeconds(0.3f);
             }
             if (EffectNumber == 6)
             {
-                anim.SetTrigger("MaskAttack2");
-                secondLayerWeight = Mathf.Lerp(secondLayerWeight, 1f, Time.deltaTime * 60);
-                yield return new WaitForSeconds(castingTime[EffectNumber]);
-                parentObject = Prefabs[EffectNumber].transform.parent;
-                Prefabs[EffectNumber].transform.parent = null;
-                Prefabs[EffectNumber].transform.position = target.position;
-                Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
-                if (Prefabs[EffectNumber].GetComponent<AudioSource>())
+                this.anim.SetTrigger("MaskAttack2");
+                this.secondLayerWeight = Mathf.Lerp(this.secondLayerWeight, 1f, Time.deltaTime * 60);
+                yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                this.parentObject = this.Prefabs[EffectNumber].transform.parent;
+                this.Prefabs[EffectNumber].transform.parent = null;
+                this.Prefabs[EffectNumber].transform.position = this.target.position;
+                this.Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
+                if (this.Prefabs[EffectNumber].GetComponent<AudioSource>())
                 {
-                    soundComponent = Prefabs[EffectNumber].GetComponent<AudioSource>();
-                    clip = soundComponent.clip;
-                    soundComponent.PlayOneShot(clip);
+                    this.soundComponent = this.Prefabs[EffectNumber].GetComponent<AudioSource>();
+                    this.clip = this.soundComponent.clip;
+                    this.soundComponent.PlayOneShot(this.clip);
                 }
-                StartCoroutine(cameraShaker.Shake(0.3f, 8, 1.1f, 0.2f));
+                this.StartCoroutine(this.cameraShaker.Shake(0.3f, 8, 1.1f, 0.2f));
                 yield return new WaitForSeconds(1.5f);
             }
-            canMove = true;
+            this.canMove = true;
             if (EffectNumber == 1 || EffectNumber == 6)
             {
                 yield return new WaitForSeconds(0.5f);
-                Prefabs[EffectNumber].transform.parent = parentObject;
-                Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
-                Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
+                this.Prefabs[EffectNumber].transform.parent = this.parentObject;
+                this.Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
+                this.Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
             }
             if (EffectNumber == 9)
             {
-                Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
-                if (Prefabs[EffectNumber].GetComponent<AudioSource>())
+                this.Prefabs[EffectNumber].GetComponent<ParticleSystem>().Play();
+                if (this.Prefabs[EffectNumber].GetComponent<AudioSource>())
                 {
-                    soundComponent = Prefabs[EffectNumber].GetComponent<AudioSource>();
-                    clip = soundComponent.clip;
-                    soundComponent.PlayOneShot(clip);
+                    this.soundComponent = this.Prefabs[EffectNumber].GetComponent<AudioSource>();
+                    this.clip = this.soundComponent.clip;
+                    this.soundComponent.PlayOneShot(this.clip);
                 }
             }
             yield break;
@@ -358,89 +366,89 @@ public class HS_ArcherInput : MonoBehaviour
 
     public IEnumerator FrontAttack(int EffectNumber)
     {
-        if (TargetMarker2 && casting == false)
+        if (this.TargetMarker2 && this.casting == false)
         {
-            aim.enabled = false;
-            TargetMarker2.SetActive(true);
+            this.aim.enabled = false;
+            this.TargetMarker2.SetActive(true);
             //Waiting for confirm or deny
             while (true)
             {
-                var forwardCamera = Camera.main.transform.forward;
+                Vector3 forwardCamera = Camera.main.transform.forward;
                 forwardCamera.y = 0.0f;
-                TargetMarker2.transform.rotation = Quaternion.LookRotation(forwardCamera);
-                var vecPos = transform.position + forwardCamera * 4;
+                this.TargetMarker2.transform.rotation = Quaternion.LookRotation(forwardCamera);
+                Vector3 vecPos = this.transform.position + forwardCamera * 4;
 
-                if (Input.GetMouseButtonDown(0) && casting == false)
+                if (Input.GetMouseButtonDown(0) && this.casting == false)
                 {
-                    casting = true;
-                    canMove = false;
-                    SetAnimZero();
-                    TargetMarker2.SetActive(false);
-                    if (rotateState == false)
+                    this.casting = true;
+                    this.canMove = false;
+                    this.SetAnimZero();
+                    this.TargetMarker2.SetActive(false);
+                    if (this.rotateState == false)
                     {
-                        StartCoroutine(RotateToTarget(0.5f, vecPos));
+                        this.StartCoroutine(this.RotateToTarget(0.5f, vecPos));
                     }
-                    anim.SetTrigger("Attack2");
+                    this.anim.SetTrigger("Attack2");
                     if (EffectNumber == 2)
                     {
-                        PrefabsCast[4].GetComponent<ParticleSystem>().Play();
-                        soundComponentCast = PrefabsCast[4].GetComponent<AudioSource>();
-                        clip = soundComponentCast.clip;
-                        soundComponentCast.PlayOneShot(clip);
+                        this.PrefabsCast[4].GetComponent<ParticleSystem>().Play();
+                        this.soundComponentCast = this.PrefabsCast[4].GetComponent<AudioSource>();
+                        this.clip = this.soundComponentCast.clip;
+                        this.soundComponentCast.PlayOneShot(this.clip);
                     }
                     if (EffectNumber == 8)
                     {
-                        if (PrefabsCast[13].GetComponent<AudioSource>())
+                        if (this.PrefabsCast[13].GetComponent<AudioSource>())
                         {
-                            soundComponentCast = PrefabsCast[13].GetComponent<AudioSource>();
-                            clip = soundComponentCast.clip;
-                            soundComponentCast.PlayOneShot(clip);
+                            this.soundComponentCast = this.PrefabsCast[13].GetComponent<AudioSource>();
+                            this.clip = this.soundComponentCast.clip;
+                            this.soundComponentCast.PlayOneShot(this.clip);
                         }
-                        PrefabsCast[13].GetComponent<ParticleSystem>().Play();
-                        yield return new WaitForSeconds(castingTime[EffectNumber]);
+                        this.PrefabsCast[13].GetComponent<ParticleSystem>().Play();
+                        yield return new WaitForSeconds(this.castingTime[EffectNumber]);
                     }
 
                     //Use FrontAttack script if exist (it has own settings)
-                    if (Prefabs[EffectNumber].GetComponent<FrontAttack>() != null)
+                    if (this.Prefabs[EffectNumber].GetComponent<FrontAttack>() != null)
                     {
-                        StartCoroutine(cameraShaker.Shake(0.5f, 6, 1.3f, 0.0f));
-                        parentObject = Prefabs[EffectNumber].transform.parent;
-                        Prefabs[EffectNumber].transform.parent = null;
-                        foreach (var component in Prefabs[EffectNumber].GetComponentsInChildren<FrontAttack>())
+                        this.StartCoroutine(this.cameraShaker.Shake(0.5f, 6, 1.3f, 0.0f));
+                        this.parentObject = this.Prefabs[EffectNumber].transform.parent;
+                        this.Prefabs[EffectNumber].transform.parent = null;
+                        foreach (FrontAttack component in this.Prefabs[EffectNumber].GetComponentsInChildren<FrontAttack>())
                         {
                             component.playMeshEffect = true;
                         }
                         yield return new WaitForSeconds(0.2f);
-                        aim.enabled = true;
-                        canMove = true;
+                        this.aim.enabled = true;
+                        this.canMove = true;
                         yield return new WaitForSeconds(0.8f);
-                        Prefabs[EffectNumber].transform.parent = parentObject;
-                        Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
-                        Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
+                        this.Prefabs[EffectNumber].transform.parent = this.parentObject;
+                        this.Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
+                        this.Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
                     }
                     else
                     {
-                        parentObject = Prefabs[EffectNumber].transform.parent;
-                        Prefabs[EffectNumber].transform.parent = null;
-                        Prefabs[EffectNumber].transform.rotation = Quaternion.LookRotation(forwardCamera);
-                        var effect = Prefabs[EffectNumber].GetComponent<ParticleSystem>();
+                        this.parentObject = this.Prefabs[EffectNumber].transform.parent;
+                        this.Prefabs[EffectNumber].transform.parent = null;
+                        this.Prefabs[EffectNumber].transform.rotation = Quaternion.LookRotation(forwardCamera);
+                        ParticleSystem effect = this.Prefabs[EffectNumber].GetComponent<ParticleSystem>();
                         effect.Play();
-                        StartCoroutine(cameraShaker.Shake(0.5f, 7, 0.6f, 0.26f));
-                        yield return new WaitForSeconds(castingTime[EffectNumber]);
-                        aim.enabled = true;
-                        canMove = true;
+                        this.StartCoroutine(this.cameraShaker.Shake(0.5f, 7, 0.6f, 0.26f));
+                        yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                        this.aim.enabled = true;
+                        this.canMove = true;
                         yield return new WaitForSeconds(0.5f);
-                        Prefabs[EffectNumber].transform.parent = parentObject;
-                        Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 1, 0);
-                        Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
+                        this.Prefabs[EffectNumber].transform.parent = this.parentObject;
+                        this.Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 1, 0);
+                        this.Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
                     }
-                    casting = false;
+                    this.casting = false;
                     yield break;
                 }
                 else if (Input.GetMouseButtonDown(1))
                 {
-                    TargetMarker2.SetActive(false);
-                    aim.enabled = true;
+                    this.TargetMarker2.SetActive(false);
+                    this.aim.enabled = true;
                     yield break;
                 }
                 yield return null;
@@ -450,111 +458,111 @@ public class HS_ArcherInput : MonoBehaviour
 
     public IEnumerator PreCast(int EffectNumber)
     {
-        if (PrefabsCast[EffectNumber] && TargetMarker && casting == false)
+        if (this.PrefabsCast[EffectNumber] && this.TargetMarker && this.casting == false)
         {
-            aim.enabled = false;
-            TargetMarker.SetActive(true);
+            this.aim.enabled = false;
+            this.TargetMarker.SetActive(true);
             //Waiting for confirm or deny
             while (true)
             {
-                var forwardCamera = Camera.main.transform.forward;
+                Vector3 forwardCamera = Camera.main.transform.forward;
                 forwardCamera.y = 0.0f;
                 RaycastHit hit;
                 Ray ray = new Ray(Camera.main.transform.position + new Vector3(0, 2, 0), Camera.main.transform.forward);
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, collidingLayer))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, this.collidingLayer))
                 {
-                    TargetMarker.transform.position = hit.point;
-                    TargetMarker.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.LookRotation(forwardCamera);
+                    this.TargetMarker.transform.position = hit.point;
+                    this.TargetMarker.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.LookRotation(forwardCamera);
                 }
                 else
                 {
-                    aim.enabled = true;
-                    TargetMarker.SetActive(false);
+                    this.aim.enabled = true;
+                    this.TargetMarker.SetActive(false);
                 }
 
-                if (Input.GetMouseButtonDown(0) && casting == false)
+                if (Input.GetMouseButtonDown(0) && this.casting == false)
                 {
-                    canMove = false;
-                    casting = true;
-                    aim.enabled = true;
-                    TargetMarker.SetActive(false);
-                    if (rotateState == false)
+                    this.canMove = false;
+                    this.casting = true;
+                    this.aim.enabled = true;
+                    this.TargetMarker.SetActive(false);
+                    if (this.rotateState == false)
                     {
-                        StartCoroutine(RotateToTarget(0.5f, hit.point));
+                        this.StartCoroutine(this.RotateToTarget(0.5f, hit.point));
                     }
 
                     if (EffectNumber == 3)
                     {
-                        anim.SetTrigger("UpAttack");
-                        if (PrefabsCast[5].GetComponent<AudioSource>())
+                        this.anim.SetTrigger("UpAttack");
+                        if (this.PrefabsCast[5].GetComponent<AudioSource>())
                         {
-                            soundComponentCast = PrefabsCast[5].GetComponent<AudioSource>();
-                            clip = soundComponentCast.clip;
-                            soundComponentCast.PlayOneShot(clip);
+                            this.soundComponentCast = this.PrefabsCast[5].GetComponent<AudioSource>();
+                            this.clip = this.soundComponentCast.clip;
+                            this.soundComponentCast.PlayOneShot(this.clip);
                         }
-                        StartCoroutine(cameraShaker.Shake(0.4f, 9, 0.4f, 0.2f));
+                        this.StartCoroutine(this.cameraShaker.Shake(0.4f, 9, 0.4f, 0.2f));
                         for (int i = 5; i <= 6; i++)
                         {
-                            PrefabsCast[i].GetComponent<ParticleSystem>().Play();
+                            this.PrefabsCast[i].GetComponent<ParticleSystem>().Play();
                         }
-                        yield return new WaitForSeconds(castingTime[EffectNumber]);
-                        StartCoroutine(cameraShaker.Shake(0.5f, 7, 1.4f, 0));
-                        parentObject = Prefabs[3].transform.parent;
-                        Prefabs[3].transform.position = hit.point;
-                        Prefabs[3].transform.rotation = Quaternion.LookRotation(forwardCamera);
-                        Prefabs[3].transform.parent = null;
-                        Prefabs[3].GetComponent<ParticleSystem>().Play();
-                        if (PrefabsCast[3].GetComponent<AudioSource>())
+                        yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                        this.StartCoroutine(this.cameraShaker.Shake(0.5f, 7, 1.4f, 0));
+                        this.parentObject = this.Prefabs[3].transform.parent;
+                        this.Prefabs[3].transform.position = hit.point;
+                        this.Prefabs[3].transform.rotation = Quaternion.LookRotation(forwardCamera);
+                        this.Prefabs[3].transform.parent = null;
+                        this.Prefabs[3].GetComponent<ParticleSystem>().Play();
+                        if (this.PrefabsCast[3].GetComponent<AudioSource>())
                         {
-                            soundComponent = Prefabs[3].GetComponent<AudioSource>();
-                            clip = soundComponent.clip;
-                            soundComponent.PlayOneShot(clip);
+                            this.soundComponent = this.Prefabs[3].GetComponent<AudioSource>();
+                            this.clip = this.soundComponent.clip;
+                            this.soundComponent.PlayOneShot(this.clip);
                         }
                     }
 
                     if (EffectNumber == 7)
                     {
-                        anim.SetTrigger("UpAttack2");
-                        StartCoroutine(cameraShaker.Shake(0.4f, 8, 0.4f, 0.2f));
-                        PrefabsCast[11].GetComponent<ParticleSystem>().Play();
-                        if (PrefabsCast[11].GetComponent<AudioSource>())
+                        this.anim.SetTrigger("UpAttack2");
+                        this.StartCoroutine(this.cameraShaker.Shake(0.4f, 8, 0.4f, 0.2f));
+                        this.PrefabsCast[11].GetComponent<ParticleSystem>().Play();
+                        if (this.PrefabsCast[11].GetComponent<AudioSource>())
                         {
-                            soundComponentCast = PrefabsCast[11].GetComponent<AudioSource>();
-                            clip = soundComponentCast.clip;
-                            soundComponentCast.PlayOneShot(clip);
+                            this.soundComponentCast = this.PrefabsCast[11].GetComponent<AudioSource>();
+                            this.clip = this.soundComponentCast.clip;
+                            this.soundComponentCast.PlayOneShot(this.clip);
                         }
-                        PrefabsCast[12].GetComponent<ParticleSystem>().Play();
-                        yield return new WaitForSeconds(castingTime[EffectNumber]);
-                        StartCoroutine(cameraShaker.Shake(0.3f, 7, 0.4f, 0));
-                        parentObject = Prefabs[7].transform.parent;
-                        Prefabs[7].transform.position = hit.point;
-                        Prefabs[7].transform.rotation = Quaternion.LookRotation(forwardCamera);
-                        Prefabs[7].transform.parent = null;
-                        Prefabs[7].GetComponent<ParticleSystem>().Play();
-                        if (Prefabs[7].GetComponent<AudioSource>())
+                        this.PrefabsCast[12].GetComponent<ParticleSystem>().Play();
+                        yield return new WaitForSeconds(this.castingTime[EffectNumber]);
+                        this.StartCoroutine(this.cameraShaker.Shake(0.3f, 7, 0.4f, 0));
+                        this.parentObject = this.Prefabs[7].transform.parent;
+                        this.Prefabs[7].transform.position = hit.point;
+                        this.Prefabs[7].transform.rotation = Quaternion.LookRotation(forwardCamera);
+                        this.Prefabs[7].transform.parent = null;
+                        this.Prefabs[7].GetComponent<ParticleSystem>().Play();
+                        if (this.Prefabs[7].GetComponent<AudioSource>())
                         {
-                            soundComponent = Prefabs[7].GetComponent<AudioSource>();
-                            clip = soundComponent.clip;
-                            soundComponent.PlayOneShot(clip);
+                            this.soundComponent = this.Prefabs[7].GetComponent<AudioSource>();
+                            this.clip = this.soundComponent.clip;
+                            this.soundComponent.PlayOneShot(this.clip);
                         }
                     }
 
-                    canMove = true;
-                    if(EffectNumber == 3 && EffectNumber == 7)
+                    this.canMove = true;
+                    if (EffectNumber == 3 && EffectNumber == 7)
                     {
                         yield return new WaitForSeconds(2);
-                        Prefabs[EffectNumber].transform.parent = parentObject;
-                        Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 1, 0);
-                        Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
+                        this.Prefabs[EffectNumber].transform.parent = this.parentObject;
+                        this.Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 1, 0);
+                        this.Prefabs[EffectNumber].transform.localRotation = Quaternion.identity;
                     }
-                    casting = false;
+                    this.casting = false;
 
                     yield break;
                 }
                 else if (Input.GetMouseButtonDown(1))
                 {
-                    TargetMarker.SetActive(false);
-                    aim.enabled = true;
+                    this.TargetMarker.SetActive(false);
+                    this.aim.enabled = true;
                     yield break;
                 }
                 yield return null;
@@ -564,51 +572,51 @@ public class HS_ArcherInput : MonoBehaviour
 
     public void StopCasting(int EffectNumber)
     {
-        Prefabs[EffectNumber].transform.parent = parentObject;
-        Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
+        this.Prefabs[EffectNumber].transform.parent = this.parentObject;
+        this.Prefabs[EffectNumber].transform.localPosition = new Vector3(0, 0, 0);
         /*if (EffectNumber == 2)
             anim.Play("Blend Tree");*/
-        casting = false;
-        canMove = true;
+        this.casting = false;
+        this.canMove = true;
     }
 
     //For standing after skill animation
     private void SetAnimZero()
     {
-        anim.SetFloat("InputMagnitude", 0);
-        anim.SetFloat("InputZ", 0);
-        anim.SetFloat("InputX", 0);
+        this.anim.SetFloat("InputMagnitude", 0);
+        this.anim.SetFloat("InputZ", 0);
+        this.anim.SetFloat("InputX", 0);
     }
 
     //Rotate player to target when attack
     public IEnumerator RotateToTarget(float rotatingTime, Vector3 targetPoint)
     {
-        rotateState = true;
+        this.rotateState = true;
         float delay = rotatingTime;
-        var lookPos = targetPoint - transform.position;
+        Vector3 lookPos = targetPoint - this.transform.position;
         lookPos.y = 0;
-        var rotation = Quaternion.LookRotation(lookPos);
+        Quaternion rotation = Quaternion.LookRotation(lookPos);
         while (true)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 20);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, rotation, Time.deltaTime * 20);
             delay -= Time.deltaTime;
-            if (delay <= 0 || transform.rotation == rotation)
+            if (delay <= 0 || this.transform.rotation == rotation)
             {
-                rotateState = false;
+                this.rotateState = false;
                 yield break;
             }
             yield return null;
         }
     }
 
-    void PlayerMoveAndRotation()
+    private void PlayerMoveAndRotation()
     {
-        InputX = Input.GetAxis("Horizontal");
-        InputZ = Input.GetAxis("Vertical");
+        this.InputX = Input.GetAxis("Horizontal");
+        this.InputZ = Input.GetAxis("Vertical");
 
-        var camera = Camera.main;
-        var forward = cam.transform.forward;
-        var right = cam.transform.right;
+        Camera camera = Camera.main;
+        Vector3 forward = this.cam.transform.forward;
+        Vector3 right = this.cam.transform.right;
 
         forward.y = 0f;
         right.y = 0f;
@@ -617,88 +625,98 @@ public class HS_ArcherInput : MonoBehaviour
         right.Normalize();
 
         //Movement vector
-        desiredMoveDirection = forward * InputZ + right * InputX;
+        this.desiredMoveDirection = forward * this.InputZ + right * this.InputX;
 
         //Character diagonal movement faster fix
-        desiredMoveDirection.Normalize();
+        this.desiredMoveDirection.Normalize();
 
-        if (blockRotationPlayer == false)
+        if (this.blockRotationPlayer == false)
         {
-            if (aimMoving)
+            if (this.aimMoving)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward), desiredRotationSpeed);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(forward), this.desiredRotationSpeed);
                 //Limit back speed
-                if (InputZ < -0.3)
-                    controller.Move(desiredMoveDirection * Time.deltaTime * (velocity / 2.4f));
-                else if (InputX < -0.1 || InputX > 0.1)
-                    controller.Move(desiredMoveDirection * Time.deltaTime * (velocity / 2.2f));
+                if (this.InputZ < -0.3)
+                {
+                    this.controller.Move(this.desiredMoveDirection * Time.deltaTime * (this.velocity / 2.4f));
+                }
+                else if (this.InputX < -0.1 || this.InputX > 0.1)
+                {
+                    this.controller.Move(this.desiredMoveDirection * Time.deltaTime * (this.velocity / 2.2f));
+                }
                 else
-                    controller.Move(desiredMoveDirection * Time.deltaTime * velocity / 1.8f);
+                {
+                    this.controller.Move(this.desiredMoveDirection * Time.deltaTime * this.velocity / 1.8f);
+                }
             }
             else
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirection), desiredRotationSpeed);
-                controller.Move(desiredMoveDirection * Time.deltaTime * velocity);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(this.desiredMoveDirection), this.desiredRotationSpeed);
+                this.controller.Move(this.desiredMoveDirection * Time.deltaTime * this.velocity);
             }
         }
     }
 
-    void InputMagnitude()
+    private void InputMagnitude()
     {
         //Calculate Input Vectors
-        InputX = Input.GetAxis("Horizontal");
-        InputZ = Input.GetAxis("Vertical");
+        this.InputX = Input.GetAxis("Horizontal");
+        this.InputZ = Input.GetAxis("Vertical");
 
-        anim.SetFloat("InputZ", InputZ, VerticalAnimTime, Time.deltaTime * 2f);
-        anim.SetFloat("InputX", InputX, HorizontalAnimSmoothTime, Time.deltaTime * 2f);
+        this.anim.SetFloat("InputZ", this.InputZ, this.VerticalAnimTime, Time.deltaTime * 2f);
+        this.anim.SetFloat("InputX", this.InputX, this.HorizontalAnimSmoothTime, Time.deltaTime * 2f);
 
         //Calculate the Input Magnitude
-        Speed = new Vector2(InputX, InputZ).sqrMagnitude;
+        this.Speed = new Vector2(this.InputX, this.InputZ).sqrMagnitude;
 
         //Change blend trees moving animation
-        anim.SetBool("AimMoving", aimMoving);
+        this.anim.SetBool("AimMoving", this.aimMoving);
 
         //Physically move player
-        if (Speed > allowPlayerRotation)
+        if (this.Speed > this.allowPlayerRotation)
         {
-            anim.SetFloat("InputMagnitude", Speed, StartAnimTime, Time.deltaTime);
-            PlayerMoveAndRotation();
+            this.anim.SetFloat("InputMagnitude", this.Speed, this.StartAnimTime, Time.deltaTime);
+            this.PlayerMoveAndRotation();
         }
-        else if (Speed < allowPlayerRotation)
+        else if (this.Speed < this.allowPlayerRotation)
         {
-            anim.SetFloat("InputMagnitude", Speed, StopAnimTime, Time.deltaTime);
+            this.anim.SetFloat("InputMagnitude", this.Speed, this.StopAnimTime, Time.deltaTime);
         }
     }
 
     private void UserInterface()
     {
         Vector3 screenCenter = new Vector3(Screen.width, Screen.height, 0) / 2;
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(target.position + (Vector3)uiOffset);
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(this.target.position + (Vector3)this.uiOffset);
         Vector3 CornerDistance = screenPos - screenCenter;
         Vector3 absCornerDistance = new Vector3(Mathf.Abs(CornerDistance.x), Mathf.Abs(CornerDistance.y), Mathf.Abs(CornerDistance.z));
 
         if (absCornerDistance.x < screenCenter.x / 3 && absCornerDistance.y < screenCenter.y / 3 && screenPos.x > 0 && screenPos.y > 0 && screenPos.z > 0 //If target is in the middle of the screen
-            && !Physics.Linecast(transform.position + (Vector3)uiOffset, target.position + (Vector3)uiOffset * 2, collidingLayer)) //If player can see the target
+            && !Physics.Linecast(this.transform.position + (Vector3)this.uiOffset, this.target.position + (Vector3)this.uiOffset * 2, this.collidingLayer)) //If player can see the target
         {
-            aim.transform.position = Vector3.MoveTowards(aim.transform.position, screenPos, Time.deltaTime * 3000);
-            if (!activeTarger)
-                activeTarger = true;
+            this.aim.transform.position = Vector3.MoveTowards(this.aim.transform.position, screenPos, Time.deltaTime * 3000);
+            if (!this.activeTarger)
+            {
+                this.activeTarger = true;
+            }
         }
         else
         {
-            aim.transform.position = Vector3.MoveTowards(aim.transform.position, screenCenter, Time.deltaTime * 3000);
-            if (activeTarger)
-                activeTarger = false;
+            this.aim.transform.position = Vector3.MoveTowards(this.aim.transform.position, screenCenter, Time.deltaTime * 3000);
+            if (this.activeTarger)
+            {
+                this.activeTarger = false;
+            }
         }
     }
 
     public int targetIndex()
     {
-        float[] distances = new float[screenTargets.Count];
+        float[] distances = new float[this.screenTargets.Count];
 
-        for (int i = 0; i < screenTargets.Count; i++)
+        for (int i = 0; i < this.screenTargets.Count; i++)
         {
-            distances[i] = Vector2.Distance(Camera.main.WorldToScreenPoint(screenTargets[i].position), new Vector2(Screen.width / 2, Screen.height / 2));
+            distances[i] = Vector2.Distance(Camera.main.WorldToScreenPoint(this.screenTargets[i].position), new Vector2(Screen.width / 2, Screen.height / 2));
         }
 
         float minDistance = Mathf.Min(distances);
@@ -707,7 +725,9 @@ public class HS_ArcherInput : MonoBehaviour
         for (int i = 0; i < distances.Length; i++)
         {
             if (minDistance == distances[i])
+            {
                 index = i;
+            }
         }
         return index;
     }
