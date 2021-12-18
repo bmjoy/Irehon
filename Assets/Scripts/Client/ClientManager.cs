@@ -1,5 +1,6 @@
 ﻿using Client;
 using DuloGames.UI;
+using Irehon.UI;
 using Irehon.Utils;
 using Mirror;
 using System;
@@ -96,7 +97,7 @@ namespace Irehon.Client
             }
 
             this.isRedirected = false;
-            CameraController.EnableCursor();
+            Mouse.EnableCursor();
         }
 
         private async void RedirectToAnotherServer(ServerMessage msg)

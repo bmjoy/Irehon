@@ -1,6 +1,7 @@
 using Irehon;
 using Irehon.Client;
 using Irehon.Entitys;
+using Irehon.UI;
 using Mirror;
 using Steamworks;
 using System.Collections.Generic;
@@ -78,13 +79,13 @@ public class Player : Entity
     {
         OnPlayerIntializeEvent?.Invoke(this);
 
-        OnDoDamageEvent += x => UIController.i.ShowHitMarker();
+        OnDoDamageEvent += x => Hitmarker.Instance.ShowHitMarker();
 
         this.gameObject.layer = 1 << 1;
 
-        OnHealthChangeEvent += (oldHealth, newHealth) => UIController.i.SetHealthBarValue(1f * newHealth / this.maxHealth);
+        OnHealthChangeEvent += (oldHealth, newHealth) => PlayerHealthbar.Instance.SetHealthBarValue(1f * newHealth / this.maxHealth);
 
-        OnTakeDamageEvent += x => CameraController.CreateShake(5f, .3f);
+        OnTakeDamageEvent += x => CameraShake.Instance.CreateShake(5f, .3f);
 
         if (this.fraction == Fraction.North)
         {

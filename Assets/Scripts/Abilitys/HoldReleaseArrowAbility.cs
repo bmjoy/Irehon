@@ -62,7 +62,7 @@ namespace Irehon.Abilitys
 
             if (this.holdingTime > MIN_HOLDING_TIME && this.isLocalPlayer)
             {
-                UIController.i.ChangeTriangleAimSize(this.GetHoldingPowerPercent());
+                Crosshair.Instance.ChangeTriangleAimSize(this.GetHoldingPowerPercent());
             }
 
             if (this.aiming || this.additionalyChestOffsetTime > 0)
@@ -89,9 +89,9 @@ namespace Irehon.Abilitys
 
             if (this.isLocalPlayer)
             {
-                UIController.i.EnableTriangleCrosshair();
-                CameraController.EnableAimCamera();
-                UIController.i.ChangeTriangleAimSize(this.holdingTime / MAX_HOLDING_TIME);
+                Crosshair.Instance.EnableTriangleCrosshair();
+                PlayerCameraSwitcher.Instance.EnableAimCamera();
+                Crosshair.Instance.ChangeTriangleAimSize(this.holdingTime / MAX_HOLDING_TIME);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Irehon.Abilitys
 
             if (this.isLocalPlayer)
             {
-                CameraController.CreateShake(5, .1f);
+                CameraShake.Instance.CreateShake(5, .1f);
             }
         }
 
@@ -153,8 +153,8 @@ namespace Irehon.Abilitys
             this.AbilityEnd();
             if (this.isLocalPlayer)
             {
-                CameraController.DisableAimCamera();
-                UIController.i.EnableDefaultCrosshair();
+                PlayerCameraSwitcher.Instance.DisableAimCamera();
+                Crosshair.Instance.EnableDefaultCrosshair();
             }
         }
 
@@ -162,8 +162,8 @@ namespace Irehon.Abilitys
         {
             if (this.isLocalPlayer)
             {
-                CameraController.DisableAimCamera();
-                UIController.i.EnableDefaultCrosshair();
+                PlayerCameraSwitcher.Instance.DisableAimCamera();
+                Crosshair.Instance.EnableDefaultCrosshair();
             }
             this.ArrowInHand.SetActive(false);
 

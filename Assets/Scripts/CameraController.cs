@@ -1,204 +1,63 @@
 ﻿using Irehon.Entitys;
+using Irehon.UI;
 using UnityEngine;
 
 namespace Irehon
 {
     public class CameraController : MonoBehaviour
     {
+        public static CameraController Instance;
+        
         public delegate void ChangeLookingTargetEventHandler(Vector3 target);
         public delegate void TargetingOnEntityEventHandler(Entity entity, Player player);
         public delegate void ChangeCursorStateEventHandler(bool state);
-        public static CameraController i;
-        public static bool IsCursosLocked => i.cursorAiming;
-        public TargetingOnEntityEventHandler OnLookingOnEntityEvent;
-        public static event ChangeCursorStateEventHandler OnChangeCursorStateEvent;
-        public static GameObject interactableTarget;
-
-        public Camera cameraComponent { get; private set; }
+        
+        public GameObject InteractTarget { get; private set; }
 
         private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
         private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
-        [SerializeField]
-        private Transform targetTransform;
 
-        [SerializeField]
-        private Cinemachine.CinemachineVirtualCamera aimCamera;
-        [SerializeField]
-        private Cinemachine.CinemachineVirtualCamera mainCamera;
+        public event TargetingOnEntityEventHandler OnLookingOnEntityEvent;
 
-        private Cinemachine.CinemachineBasicMultiChannelPerlin currentShakeHandler;
-        private float shakeTimer;
-        private float shakeTimerTotal;
-        private float currentIntensity;
+
         private Player player;
         private PlayerStateMachine playerStateMachine;
         private PlayerInteracter interacter;
-        private Transform playerTransform;
-        private Transform shoulderTransform;
-        private CharacterController characterController;
-        private bool cursorAiming;
-        private float xRotation = 0f;
+
+        private bool isPlayerIntialized = false;
+
 
         private void Awake()
         {
-            if (i != null && i != this)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                i = this;
-            }
+            Instance = this;
 
-            this.cameraComponent = this.GetComponent<Camera>();
             Player.OnPlayerIntializeEvent += this.Intialize;
         }
 
         private void Start()
         {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            this.cursorAiming = true;
-            this.currentShakeHandler = this.mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
             this.OnLookingOnEntityEvent += (entity, player) => entity?.InvokePlayerLookingEvent();
-        }
-
-        public static void CreateShake(float power, float time)
-        {
-            i.shakeTimer = time;
-            i.shakeTimerTotal = time;
-            i.currentIntensity = power;
-            i.currentShakeHandler.m_AmplitudeGain = i.currentIntensity;
-        }
-        public static Vector2 GetRotation()
-        {
-            return new Vector2(i.xRotation, i.playerTransform.rotation.eulerAngles.y);
-        }
-
-        public static Vector2 GetCurrentRotation()
-        {
-            Vector2 rotation = Vector2.zero;
-            rotation.x = i.shoulderTransform.rotation.eulerAngles.x;
-            rotation.y = i.playerTransform.eulerAngles.y;
-            return rotation;
-        }
-
-        public static Vector3 GetLookingTargetPosition()
-        {
-            return i.targetTransform.position;
-        }
-
-        public static float GetPlayerYAxis()
-        {
-            float angle = i.shoulderTransform.eulerAngles.x;
-            angle = angle > 180 ? angle - 360 : angle;
-            return angle;
-        }
-
-        public static void EnableAimCamera()
-        {
-            i.mainCamera.gameObject.SetActive(false);
-            i.aimCamera.gameObject.SetActive(true);
-            float currentAmplitude = i.currentShakeHandler.m_AmplitudeGain;
-            i.currentShakeHandler = i.aimCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-            i.currentShakeHandler.m_AmplitudeGain = currentAmplitude;
-        }
-
-        public static void DisableAimCamera()
-        {
-            i.mainCamera.gameObject.SetActive(true);
-            i.aimCamera.gameObject.SetActive(false);
-            float currentAmplitude = i.currentShakeHandler.m_AmplitudeGain;
-            i.currentShakeHandler = i.mainCamera.GetCinemachineComponent<Cinemachine.CinemachineBasicMultiChannelPerlin>();
-            i.currentShakeHandler.m_AmplitudeGain = currentAmplitude;
         }
 
         public void Intialize(Player player)
         {
-            PlayerBonesLinks links = player.GetComponent<PlayerBonesLinks>();
-            this.shoulderTransform = links.Shoulder;
-            this.characterController = player.GetComponent<CharacterController>();
-            this.playerTransform = player.transform;
-            this.mainCamera.Follow = links.Shoulder;
-            this.aimCamera.Follow = links.Shoulder;
             this.player = player;
             this.interacter = player.GetComponent<PlayerInteracter>();
             this.playerStateMachine = player.GetComponent<PlayerStateMachine>();
+            this.isPlayerIntialized = true;
         }
 
-        private void UpdateLookingPoint()
-        {
-            RaycastHit hit;
-            Vector3 oldPosition = this.targetTransform.localPosition;
-
-            if (Physics.Raycast(this.transform.position, this.transform.TransformDirection(Vector3.forward), out hit, 20, 1 << 11 | 1 << 10 | 1 << 13))
-            {
-                oldPosition.z = hit.distance;
-            }
-            else
-            {
-                oldPosition.z = 20;
-            }
-            this.targetTransform.localPosition = oldPosition;
-        }
-
-        private void RotateCamera()
-        {
-            float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
-            float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
-
-            this.xRotation -= yMouse;
-            this.xRotation = Mathf.Clamp(this.xRotation, -85f, 85f);
-
-            this.shoulderTransform.localRotation = Quaternion.Euler(this.xRotation, 0, 0f);
-
-            this.characterController.Rotate(Vector3.up * xMouse);
-        }
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                if (this.cursorAiming)
-                {
-                    EnableCursor();
-                }
-                else
-                {
-                    DisableCursor();
-                }
-            }
-
-            if (!this.cursorAiming || this.playerStateMachine == null || !this.playerStateMachine.CurrentState.CanRotateCamera)
+            if (Mouse.IsCursorEnabled || this.playerStateMachine == null || !this.playerStateMachine.CurrentState.CanRotateCamera)
             {
                 return;
             }
 
-            this.RotateCamera();
-        }
-
-        //TODO: перевести в UI controller
-        public static void EnableCursor()
-        {
-            if (i != null)
-            {
-                i.cursorAiming = false;
-                UIController.i.HideHint();
-                UIController.i.DisableDefaultCrosshair();
-                OnChangeCursorStateEvent.Invoke(true);
-            }
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-
-        public static void DisableCursor()
-        {
-            OnChangeCursorStateEvent.Invoke(false);
-            i.cursorAiming = true;
-            Cursor.visible = false;
-            UIController.i.EnableDefaultCrosshair();
-            Cursor.lockState = CursorLockMode.Locked;
-            TooltipWindowController.HideTooltip();
+            float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
+            float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
+            PlayerCamera.Instance.RotateCamera(new Vector2(xMouse, yMouse));
         }
 
         private void InvokeEntityTargetLookEvent()
@@ -215,27 +74,17 @@ namespace Irehon
 
         private void FixedUpdate()
         {
-            if (this.playerTransform == null)
+            if (!this.isPlayerIntialized)
             {
                 return;
             }
 
-            if (this.shakeTimer >= 0)
-            {
-                this.shakeTimer -= Time.fixedDeltaTime;
-                this.currentShakeHandler.m_AmplitudeGain = Mathf.Lerp(this.currentIntensity, 0, 1 - this.shakeTimer / this.shakeTimerTotal);
-            }
-            else
-            {
-                this.currentShakeHandler.m_AmplitudeGain = 0;
-            }
-
             if (this.interacter.isInteracting)
             {
-                UIController.i.HideHint();
+                Hint.Instance.HideHint();
             }
 
-            if (!this.cursorAiming || !this.playerStateMachine.CurrentState.CanRotateCamera)
+            if (Mouse.IsCursorEnabled || !this.playerStateMachine.CurrentState.CanRotateCamera)
             {
                 this.OnLookingOnEntityEvent.Invoke(null, this.player);
                 return;
@@ -244,23 +93,22 @@ namespace Irehon
             RaycastHit hit;
             if (Physics.Raycast(this.transform.position, this.transform.TransformDirection(Vector3.forward), out hit, 7, 1 << 12))
             {
-                interactableTarget = hit.collider.gameObject;
+                InteractTarget = hit.collider.gameObject;
             }
             else
             {
-                interactableTarget = null;
+                InteractTarget = null;
             }
 
-            if (!this.interacter.isInteracting && interactableTarget != null)
+            if (!this.interacter.isInteracting && InteractTarget != null)
             {
-                UIController.i.ShowHint("Interact", "Press E to interract with this object");
+                Hint.Instance.ShowHint("Interact", "Press E to interract with this object");
             }
             else
             {
-                UIController.i.HideHint();
+                Hint.Instance.HideHint();
             }
 
-            this.UpdateLookingPoint();
             this.InvokeEntityTargetLookEvent();
         }
     }

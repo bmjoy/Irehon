@@ -1,4 +1,5 @@
 ﻿using Irehon;
+using Irehon.UI;
 using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,13 +64,13 @@ public class PlayerInput : NetworkBehaviour
 
     private void FillCameraInput(ref InputInfo input)
     {
-        input.TargetPoint = CameraController.GetLookingTargetPosition();
-        input.CameraRotation = CameraController.GetCurrentRotation();
+        input.TargetPoint = PlayerCamera.Instance.GetLookPosition();
+        input.CameraRotation = PlayerCamera.Instance.GetRotation();
     }
 
     private void CheckInputKey(KeyCode key, ref InputInfo input)
     {
-        if ((key == KeyCode.Mouse1 || key == KeyCode.Mouse0) && !CameraController.IsCursosLocked)
+        if ((key == KeyCode.Mouse1 || key == KeyCode.Mouse0) && Mouse.IsCursorEnabled)
         {
             return;
         }
@@ -107,9 +108,9 @@ public class PlayerInput : NetworkBehaviour
     private void CheckInteractionAttemp(ref InputInfo input)
     {
         KeyCode key = KeyCode.E;
-        if (this.IsKeySinglePressed(key) && CameraController.interactableTarget != null)
+        if (this.IsKeySinglePressed(key) && CameraController.Instance.InteractTarget != null)
         {
-            NetworkIdentity identity = CameraController.interactableTarget.GetComponent<NetworkIdentity>();
+            NetworkIdentity identity = CameraController.Instance.InteractTarget.GetComponent<NetworkIdentity>();
             if (identity != null)
             {
                 input.interactionTarget = identity;

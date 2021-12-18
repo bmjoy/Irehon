@@ -42,7 +42,7 @@ namespace Irehon.Abilitys
         {
             if (this.isLocalPlayer)
             {
-                CameraController.CreateShake(1, .3f);
+                CameraShake.Instance.CreateShake(1, .3f);
             }
 
             if (this.leftHandCollider.GetCollectedInZoneEntities().Count != 0)

@@ -88,13 +88,13 @@ public class EntityHealthbar : MonoBehaviour
 
     private IEnumerator WaitCameraControllerIntialize()
     {
-        while (CameraController.i == null)
+        while (CameraController.Instance == null)
         {
             yield return null;
         }
 
-        this.cameraTransform = CameraController.i.transform;
-        this.canvas.worldCamera = CameraController.i.cameraComponent;
+        this.cameraTransform = CameraController.Instance.transform;
+        this.canvas.worldCamera = PlayerCamera.Instance.Camera;
     }
 
     private void ChangeHealthOnBar(int maxHealth, int health)

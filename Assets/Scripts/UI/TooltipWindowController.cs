@@ -97,6 +97,8 @@ public class TooltipWindowController : MonoBehaviour
 
     public static void HideTooltip()
     {
+        if (i == null)
+            return;
         i.isCursorFollowing = false;
         i.customTextWindow.gameObject.SetActive(false);
     }

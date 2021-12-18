@@ -1,4 +1,6 @@
-﻿public class PlayerDeathState : PlayerState
+﻿using Irehon.UI;
+
+public class PlayerDeathState : PlayerState
 {
     public PlayerDeathState(Player player) : base(player)
     {
@@ -23,7 +25,7 @@
         }
 
         this.abilitySystem.AbilityInterrupt();
-        UIController.i.HideStatusCanvas();
+        Canvases.Instance.HideStatusCanvas();
         this.playerInteracter.StopInterracting();
         if (this.player.isServer)
         {
@@ -43,7 +45,7 @@
             this.player.ShowModel();
         }
 
-        UIController.i.ShowStatusCanvas();
+        Canvases.Instance.ShowStatusCanvas();
     }
 
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)

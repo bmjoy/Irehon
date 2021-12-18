@@ -1,4 +1,4 @@
-﻿using Irehon;
+﻿using Irehon.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -38,7 +38,7 @@ public class UIWindow : SerializedMonoBehaviour
         this.isEnabled = true;
         this.windowObject.SetActive(true);
         this.OnOpenWindow?.Invoke();
-        CameraController.EnableCursor();
+        Mouse.EnableCursor();
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)this.windowObject.transform);
     }
 
@@ -51,7 +51,7 @@ public class UIWindow : SerializedMonoBehaviour
 
         if (openedWindowsCount == 0)
         {
-            CameraController.DisableCursor();
+            Mouse.DisableCursor();
         }
 
         this.isEnabled = false;

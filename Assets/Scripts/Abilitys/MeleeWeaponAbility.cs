@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using Irehon.Entitys;
-using Irehon.Entitys;
 
 namespace Irehon.Abilitys
 {
@@ -55,7 +54,7 @@ namespace Irehon.Abilitys
         {
             if (this.isLocalPlayer)
             {
-                CameraController.CreateShake(1, .3f);
+                CameraShake.Instance.CreateShake(1, .3f);
             }
 
             if (!this.isServer)
