@@ -1,29 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponPrefabs : MonoBehaviour
+public static class WeaponPrefabs
 {
-    [SerializeField]
-    private GameObject[] weaponPrefabs;
-
-    private static WeaponPrefabs i;
-
-    private void Awake()
+    static WeaponPrefabs()
     {
-        if (i != null && i != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            i = this;
-        }
-
-        this.weaponPrefabs = Resources.LoadAll<GameObject>("Weapons");
+        weapons = Resources.LoadAll<GameObject>("Weapons");
     }
+
+    private static GameObject[] weapons;
 
     public static GameObject GetWeaponPrefab(string slug)
     {
-        return Array.Find(i.weaponPrefabs, x => x.name == slug);
+        return Array.Find(weapons, x => x.name == slug);
     }
 }

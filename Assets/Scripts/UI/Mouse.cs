@@ -52,5 +52,10 @@ namespace Irehon.UI
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
+
+        private void OnDestroy()
+        {
+            EnableCursor();
+        }
     }
 }

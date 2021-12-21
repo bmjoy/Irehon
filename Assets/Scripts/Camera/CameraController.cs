@@ -7,15 +7,13 @@ namespace Irehon.Camera
     public class CameraController : MonoBehaviour
     {
         public static CameraController Instance;
-
-        public delegate void ChangeLookingTargetEventHandler(Vector3 target);
-        public delegate void TargetingOnEntityEventHandler(Entity entity, Player player);
-        public delegate void ChangeCursorStateEventHandler(bool state);
-
         public GameObject InteractTarget { get; private set; }
 
-        private const float MOUSE_SENSITIVITY_HORIZONTAL = 100f;
-        private const float MOUSE_SENSITIVITY_VERTICAL = 70f;
+        public delegate void TargetingOnEntityEventHandler(Entity entity, Player player);
+
+
+        private const float MouseHorizontalSensivity = 100f;
+        private const float MouseVerticalSensivity = 70f;
 
         public event TargetingOnEntityEventHandler OnLookingOnEntityEvent;
 
@@ -23,8 +21,6 @@ namespace Irehon.Camera
         private Player player;
         private PlayerStateMachine playerStateMachine;
         private PlayerInteracter interacter;
-
-        private bool isPlayerIntialized = false;
 
 
         private void Awake()
@@ -44,7 +40,6 @@ namespace Irehon.Camera
             this.player = player;
             this.interacter = player.GetComponent<PlayerInteracter>();
             this.playerStateMachine = player.GetComponent<PlayerStateMachine>();
-            this.isPlayerIntialized = true;
         }
 
 
@@ -55,8 +50,8 @@ namespace Irehon.Camera
                 return;
             }
 
-            float xMouse = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_HORIZONTAL * Time.deltaTime;
-            float yMouse = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_VERTICAL * Time.deltaTime;
+            float xMouse = Input.GetAxis("Mouse X") * MouseHorizontalSensivity * Time.deltaTime;
+            float yMouse = Input.GetAxis("Mouse Y") * MouseVerticalSensivity * Time.deltaTime;
             PlayerCamera.Instance.RotateCamera(new Vector2(xMouse, yMouse));
         }
 
@@ -74,7 +69,7 @@ namespace Irehon.Camera
 
         private void FixedUpdate()
         {
-            if (!this.isPlayerIntialized)
+            if (this.interacter == null)
             {
                 return;
             }
@@ -93,14 +88,14 @@ namespace Irehon.Camera
             RaycastHit hit;
             if (Physics.Raycast(this.transform.position, this.transform.TransformDirection(Vector3.forward), out hit, 7, 1 << 12))
             {
-                InteractTarget = hit.collider.gameObject;
+                this.InteractTarget = hit.collider.gameObject;
             }
             else
             {
-                InteractTarget = null;
+                this.InteractTarget = null;
             }
 
-            if (!this.interacter.isInteracting && InteractTarget != null)
+            if (!this.interacter.isInteracting && this.InteractTarget != null)
             {
                 Hint.Instance.ShowHint("Interact", "Press E to interract with this object");
             }

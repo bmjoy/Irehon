@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Irehon
+namespace Irehon.UI
 {
     public class Hitmarker : MonoBehaviour
     {

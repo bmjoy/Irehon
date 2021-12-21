@@ -7,6 +7,7 @@ namespace Irehon.Camera
     public class CameraShake : MonoBehaviour
     {
         public static CameraShake Instance { get; private set; }
+        [HideInInspector]
         public CinemachineBasicMultiChannelPerlin ShakeHandler;
 
         private float shakeTimer;

@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Irehon.Entitys;
+using Irehon;
 
 namespace Server
 {

@@ -1,60 +1,63 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
 
-public class PersonalChestInfo
+namespace Irehon
 {
-    public string ChestName;
-    public int ContainerId;
-
-    public PersonalChestInfo()
+    public class PersonalChestInfo
     {
+        public string ChestName;
+        public int ContainerId;
 
-    }
-
-    public PersonalChestInfo(JSONObject json)
-    {
-        this.ChestName = json["name"];
-        this.ContainerId = json["container_id"].AsInt;
-    }
-
-    public PersonalChestInfo(string name)
-    {
-        this.ChestName = name;
-    }
-
-    private JSONObject AsJson()
-    {
-        JSONObject json = new JSONObject();
-        json["name"] = this.ChestName;
-        json["container_id"] = this.ContainerId;
-
-        return json;
-    }
-
-    public static List<PersonalChestInfo> GetChests(JSONNode json)
-    {
-        List<PersonalChestInfo> personalChests = new List<PersonalChestInfo>();
-        json = json["personal_chests"];
-
-        if (json != null)
+        public PersonalChestInfo()
         {
-            foreach (JSONObject chest in json)
+
+        }
+
+        public PersonalChestInfo(JSONObject json)
+        {
+            this.ChestName = json["name"];
+            this.ContainerId = json["container_id"].AsInt;
+        }
+
+        public PersonalChestInfo(string name)
+        {
+            this.ChestName = name;
+        }
+
+        private JSONObject AsJson()
+        {
+            JSONObject json = new JSONObject();
+            json["name"] = this.ChestName;
+            json["container_id"] = this.ContainerId;
+
+            return json;
+        }
+
+        public static List<PersonalChestInfo> GetChests(JSONNode json)
+        {
+            List<PersonalChestInfo> personalChests = new List<PersonalChestInfo>();
+            json = json["personal_chests"];
+
+            if (json != null)
             {
-                personalChests.Add(new PersonalChestInfo(chest));
+                foreach (JSONObject chest in json)
+                {
+                    personalChests.Add(new PersonalChestInfo(chest));
+                }
             }
+
+            return personalChests;
         }
 
-        return personalChests;
-    }
-
-    public static string ToJson(List<PersonalChestInfo> chests)
-    {
-        JSONArray jsonArray = new JSONArray();
-        foreach (PersonalChestInfo chest in chests)
+        public static string ToJson(List<PersonalChestInfo> chests)
         {
-            jsonArray.Add(chest.AsJson());
-        }
+            JSONArray jsonArray = new JSONArray();
+            foreach (PersonalChestInfo chest in chests)
+            {
+                jsonArray.Add(chest.AsJson());
+            }
 
-        return jsonArray.ToString();
+            return jsonArray.ToString();
+        }
     }
 }

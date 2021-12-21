@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mirror;
+using System;
 using UnityEngine;
 
 namespace Irehon.Utils

@@ -1,4 +1,5 @@
-﻿using Server;
+﻿using Irehon;
+using Server;
 using UnityEngine;
 
 public class SceneChanger : MonoBehaviour

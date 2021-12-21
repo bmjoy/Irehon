@@ -1,8 +1,11 @@
 ﻿using Mirror;
 
-public struct AuthRequestMessage : NetworkMessage
+namespace Irehon
 {
-    public ulong Id;
-    public byte[] AuthData;
-    public RegisterInfo registerInfo;
+    public struct AuthRequestMessage : NetworkMessage
+    {
+        public ulong Id;
+        public byte[] AuthData;
+        public RegisterInfo registerInfo;
+    }
 }

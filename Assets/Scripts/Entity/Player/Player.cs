@@ -194,6 +194,7 @@ public class Player : Entity
     [ClientRpc]
     public void HideModel()
     {
+        UnityEngine.CharacterInfo
         this.PlayerBonesLinks.Model.gameObject.SetActive(false);
     }
 
