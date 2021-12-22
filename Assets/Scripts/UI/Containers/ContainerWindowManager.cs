@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Irehon;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,15 +7,8 @@ public enum ContainerType { Inventory, Equipment, Chest, None }
 
 public class ContainerWindowManager : MonoBehaviour
 {
-    [SerializeField]
-    private UIWindow chestWindow;
 
-    [Header("Spawn slots transform")]
-    [SerializeField]
-    private RectTransform inventorySpawnSlotsTransform;
-    [SerializeField]
-    private RectTransform chestSpawnSlotsTransform;
-
+    
     [SerializeField]
     private GameObject inventorySlotPrefab;
 
@@ -24,13 +18,7 @@ public class ContainerWindowManager : MonoBehaviour
     private Image draggerImage;
 
     [SerializeField]
-    private List<InventorySlotUI> equipmentSlots = new List<InventorySlotUI>();
-
-    private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
-
-    [SerializeField]
     private Canvas canvas;
-    private PlayerContainerController playerContainerController;
     public static ContainerWindowManager i;
 
     private void Awake()
@@ -44,7 +32,7 @@ public class ContainerWindowManager : MonoBehaviour
             i = this;
         }
 
-        Player.OnPlayerIntializeEvent += this.PlayerIntialize;
+        Player.LocalPlayerIntialized += this.PlayerIntialize;
     }
 
     private ContainerSlot GetContainerAttachedSlot(InventorySlotUI slot)
@@ -60,9 +48,8 @@ public class ContainerWindowManager : MonoBehaviour
     }
     public void PlayerIntialize(Player player)
     {
-        this.playerContainerController = player.GetComponent<PlayerContainerController>();
-        this.playerContainerController.OnInventoryUpdate += this.UpdateInventory;
-        this.playerContainerController.OnEquipmentUpdate += this.UpdateEquipment;
+        Player.LocalInventorUpdated += UpdateInventory;
+        Player.LocalEquipmentUpdated += UpdateEquipment;
     }
 
     public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
@@ -70,28 +57,6 @@ public class ContainerWindowManager : MonoBehaviour
         this.playerContainerController.MoveItem(from.type, from.slotId, to.type, to.slotId);
     }
 
-    public void UseItemSlot(InventorySlotUI slot)
-    {
-        ContainerSlot containerSlot = this.GetContainerAttachedSlot(slot);
-
-        Item item = ItemDatabase.GetItemById(containerSlot.itemId);
-
-        if (item.type == ItemType.Weapon || item.type == ItemType.Armor)
-        {
-            if (slot.type != ContainerType.Equipment)
-            {
-                this.playerContainerController.MoveItem(slot.type, slot.slotId, ContainerType.Equipment, (int)item.equipmentSlot);
-            }
-            else
-            {
-                ContainerSlot emptySlot = this.playerContainerController.Containers[ContainerType.Inventory].GetEmptySlot();
-                if (emptySlot != null)
-                {
-                    this.playerContainerController.MoveItem(slot.type, slot.slotId, ContainerType.Inventory, emptySlot.slotIndex);
-                }
-            }
-        }
-    }
 
     public void FastMoveSlot(InventorySlotUI from)
     {
@@ -117,22 +82,6 @@ public class ContainerWindowManager : MonoBehaviour
         }
     }
 
-    public void OpenChest(Container container)
-    {
-        this.FillChestWindow(container);
-        this.chestWindow.Open();
-    }
-
-    public void CloseChest()
-    {
-        this.chestWindow.Close();
-    }
-
-    public void StopInterractOnServer()
-    {
-        this.playerContainerController?.GetComponent<PlayerInteracter>().StopInterractRpc();
-    }
-
     public RectTransform GetDragger()
     {
         return this.dragger;
@@ -141,45 +90,5 @@ public class ContainerWindowManager : MonoBehaviour
     public Image GetDraggerImage()
     {
         return this.draggerImage;
-    }
-
-    public void UpdateEquipment(Container container)
-    {
-        for (int i = 0; i < this.equipmentSlots.Count; i++)
-        {
-            this.equipmentSlots[i].Intialize(container[i], this.canvas, ContainerType.Equipment);
-        }
-    }
-
-    public void UpdateInventory(Container container)
-    {
-        if (container.slots.Length > this.inventorySlots.Count)
-        {
-
-            int diff = container.slots.Length - this.inventorySlots.Count;
-            for (int i = 0; i < diff; i++)
-            {
-                GameObject slot = Instantiate(this.inventorySlotPrefab, this.inventorySpawnSlotsTransform);
-                this.inventorySlots.Add(slot.GetComponent<InventorySlotUI>());
-            }
-        }
-        for (int i = 0; i < container.slots.Length; i++)
-        {
-            this.inventorySlots[i].Intialize(container[i], this.canvas, ContainerType.Inventory);
-        }
-    }
-
-    private void FillChestWindow(Container container)
-    {
-        foreach (Transform previousContainerSlot in this.chestSpawnSlotsTransform)
-        {
-            Destroy(previousContainerSlot.gameObject);
-        }
-
-        foreach (ContainerSlot containerSlot in container.slots)
-        {
-            GameObject slot = Instantiate(this.inventorySlotPrefab, this.chestSpawnSlotsTransform);
-            slot.GetComponent<InventorySlotUI>().Intialize(containerSlot, this.canvas, ContainerType.Chest);
-        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Irehon;
-using Server;
+using Irehon;
 using UnityEngine;
 
 public class SceneChanger : MonoBehaviour
@@ -27,7 +27,7 @@ public class SceneChanger : MonoBehaviour
 
     public static void ChangeCharacterScene(Player player, string newScene, Vector3 newPosition)
     {
-        PlayerConnectionInfo data = (PlayerConnectionInfo)player.connectionToClient.authenticationData;
+        Irehon.PlayerSession data = (Irehon.PlayerSession)player.connectionToClient.authenticationData;
 
         if (data.character.sceneChangeInfo != null)
         {
@@ -41,8 +41,8 @@ public class SceneChanger : MonoBehaviour
         };
 
         ServerManager.Log(data.steamId, $"Sended self reconnect to change scene on {newScene}");
-        Server.ServerManager.SendReconnectToThisServer(player.connectionToClient);
+        Irehon.ServerManager.SendReconnectToThisServer(player.connectionToClient);
         player.connectionToClient.authenticationData = data;
-        Server.ServerManager.WaitBeforeDisconnect(player.connectionToClient);
+        Irehon.ServerManager.WaitBeforeDisconnect(player.connectionToClient);
     }
 }

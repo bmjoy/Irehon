@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Irehon
 {
-    public struct PlayerConnectionInfo : NetworkMessage
+    public struct PlayerSession : NetworkMessage
     {
         public ulong steamId;
         public bool isAuthorized;
 
-        public AuthRequestMessage authInfo;
+        public AuthInfo authInfo;
 
         public CharacterInfo character;
 
@@ -17,7 +17,7 @@ namespace Irehon
 
         public Transform playerPrefab;
 
-        public PlayerConnectionInfo(AuthRequestMessage authInfo)
+        public PlayerSession(AuthInfo authInfo)
         {
             this.steamId = authInfo.Id;
             this.isAuthorized = false;

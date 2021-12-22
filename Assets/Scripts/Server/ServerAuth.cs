@@ -1,7 +1,7 @@
 ﻿using Irehon;
 using Irehon.Client;
 using Mirror;
-using Server;
+using Irehon;
 using Steamworks;
 using System;
 using System.Collections;
@@ -12,7 +12,7 @@ public class ServerAuth : NetworkAuthenticator
     public override void OnStartServer()
     {
         SteamServer.OnValidateAuthTicketResponse += OnAuthTicketResponse;
-        NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
+        NetworkServer.RegisterHandler<AuthInfo>(OnAuthRequestMessage, false);
     }
 
     private void SendAuthResult(NetworkConnection con, bool isAuthenticated, string message)
@@ -20,7 +20,7 @@ public class ServerAuth : NetworkAuthenticator
         if (isAuthenticated)
         {
             ServerManager.SendMessage(con, message, MessageType.AuthAccept);
-            var oldData = (PlayerConnectionInfo)con.authenticationData;
+            var oldData = (Irehon.PlayerSession)con.authenticationData;
             oldData.isAuthorized = true;
             con.authenticationData = oldData;
             ServerAccept(con);
@@ -37,7 +37,7 @@ public class ServerAuth : NetworkAuthenticator
         }
     }
 
-    public void OnAuthRequestMessage(NetworkConnection con, AuthRequestMessage msg)
+    public void OnAuthRequestMessage(NetworkConnection con, AuthInfo msg)
     {
         Debug.Log($"{DateTime.Now} [[{msg.Id} {con.address}]] connection request");
 #if UNITY_EDITOR
@@ -58,7 +58,7 @@ public class ServerAuth : NetworkAuthenticator
 
         ServerManager.i.AddConection(msg.Id, con);
 #if UNITY_EDITOR
-        con.authenticationData = new PlayerConnectionInfo(msg);
+        con.authenticationData = new Irehon.PlayerSession(msg);
         SendAuthResult(con, true, "authorized");
 #else
         SteamServer.BeginAuthSession(msg.AuthData, msg.Id);

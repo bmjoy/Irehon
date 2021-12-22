@@ -6,7 +6,6 @@ public class PlayerCraftController : NetworkBehaviour
 {
     private CraftRecipe[] openedRecipes;
     private Player player;
-    private PlayerContainerController containerController;
 
     private CharacterInfo characterData => this.player.GetCharacterInfo();
 
@@ -15,7 +14,6 @@ public class PlayerCraftController : NetworkBehaviour
         this.SendRecipesListToClient(recipes);
         this.openedRecipes = recipes;
         this.player = this.GetComponent<Player>();
-        this.containerController = this.GetComponent<PlayerContainerController>();
     }
 
     public void CloseCrafts()
@@ -63,9 +61,9 @@ public class PlayerCraftController : NetworkBehaviour
 
         foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
         {
-            this.containerController.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
+            this.player.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
         }
 
-        this.containerController.inventory.GiveContainerItem(recipe.itemId, recipe.itemQuantity);
+        this.player.inventory.GiveContainerItem(recipe.itemId, recipe.itemQuantity);
     }
 }

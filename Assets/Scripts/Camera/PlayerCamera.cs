@@ -23,7 +23,7 @@ namespace Irehon.Camera
             Instance = this;
 
             this.Camera = this.GetComponent<UnityEngine.Camera>();
-            Player.OnPlayerIntializeEvent += this.Intialize;
+            Player.LocalPlayerIntialized += this.Intialize;
         }
 
         private void Update()

@@ -19,7 +19,7 @@ public class SpawnPointSetter : MonoBehaviour
             return;
         }
 
-        PlayerConnectionInfo data = (PlayerConnectionInfo)player.connectionToClient.authenticationData;
+        Irehon.PlayerSession data = (Irehon.PlayerSession)player.connectionToClient.authenticationData;
 
         data.character.spawnPoint = this.newSpawnPoint;
         data.character.spawnSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;

@@ -7,7 +7,7 @@ namespace Irehon.Entitys
     public class Entity : NetworkBehaviour
     {
         public delegate void EntityVoidEventHandler();
-        public delegate void EntityEventHandler(object sender);
+        public delegate void EntityEventHandler(Entity sender);
         public delegate void EntityIntEventHandler(int value);
         public delegate void EntityStateIntEventHandler(int old, int current);
         public string NickName => this.name;

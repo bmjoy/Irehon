@@ -25,7 +25,7 @@ namespace Irehon.Interactable
                 personalChest.ContainerId = Api.GetResult(www)["id"].AsInt;
                 await ContainerData.LoadContainer(personalChest.ContainerId);
 
-                PlayerConnectionInfo playerInfo = (PlayerConnectionInfo)player.connectionToClient.authenticationData;
+                PlayerSession playerInfo = (PlayerSession)player.connectionToClient.authenticationData;
                 playerInfo.character.personalChests.Add(personalChest);
                 player.connectionToClient.authenticationData = playerInfo;
             }

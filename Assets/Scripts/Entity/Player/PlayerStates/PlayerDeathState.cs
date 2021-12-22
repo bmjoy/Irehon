@@ -1,4 +1,5 @@
-﻿using Irehon.UI;
+﻿using Irehon;
+using Irehon.UI;
 
 public class PlayerDeathState : PlayerState
 {

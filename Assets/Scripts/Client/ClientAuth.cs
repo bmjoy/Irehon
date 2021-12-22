@@ -9,7 +9,7 @@ namespace Irehon.Client
 {
     public class ClientAuth : NetworkAuthenticator
     {
-        private AuthRequestMessage currentRequest = new AuthRequestMessage();
+        private AuthInfo currentRequest = new AuthInfo();
         private void Start()
         {
 
@@ -17,7 +17,7 @@ namespace Irehon.Client
         public override void OnClientAuthenticate()
         {
             print("Client authenticate request");
-            this.currentRequest = new AuthRequestMessage()
+            this.currentRequest = new AuthInfo()
             {
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data

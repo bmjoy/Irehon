@@ -1,4 +1,5 @@
-﻿using Irehon.Interactable;
+﻿using Irehon;
+using Irehon.Interactable;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,7 +51,7 @@ public class CraftWindowManager : MonoBehaviour
             i = this;
         }
 
-        Player.OnPlayerIntializeEvent += Intialize;
+        Player.LocalPlayerIntialized += Intialize;
     }
 
     public static void Intialize(Player player)

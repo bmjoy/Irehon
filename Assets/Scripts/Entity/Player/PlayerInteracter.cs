@@ -1,4 +1,5 @@
-﻿using Irehon.Interactable;
+﻿using Irehon;
+using Irehon.Interactable;
 using Mirror;
 using UnityEngine;
 

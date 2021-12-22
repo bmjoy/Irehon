@@ -27,7 +27,7 @@ namespace Irehon.Camera
         {
             Instance = this;
 
-            Player.OnPlayerIntializeEvent += this.Intialize;
+            Player.LocalPlayerIntialized += this.Intialize;
         }
 
         private void Start()

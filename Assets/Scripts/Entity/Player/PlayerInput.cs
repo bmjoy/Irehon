@@ -1,4 +1,5 @@
-﻿using Irehon.Camera;
+﻿using Irehon;
+using Irehon.Camera;
 using Irehon.UI;
 using Mirror;
 using System.Collections.Generic;

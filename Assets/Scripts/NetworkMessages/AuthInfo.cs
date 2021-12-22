@@ -2,7 +2,7 @@
 
 namespace Irehon
 {
-    public struct AuthRequestMessage : NetworkMessage
+    public struct AuthInfo : NetworkMessage
     {
         public ulong Id;
         public byte[] AuthData;

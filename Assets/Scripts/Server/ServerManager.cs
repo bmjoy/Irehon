@@ -14,7 +14,7 @@ using UnityEngine.SceneManagement;
 using Irehon.Entitys;
 using Irehon;
 
-namespace Server
+namespace Irehon
 {
     public class ServerManager : NetworkManager
     {
@@ -109,7 +109,7 @@ namespace Server
         //Insert data in tables and send it to player
         private async Task<bool> PlayerCharacterCreateRequest(NetworkConnection con)
         {
-            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            Irehon.PlayerSession data = (Irehon.PlayerSession)con.authenticationData;
 
             if (data.authInfo.registerInfo.fraction != Fraction.None)
             {
@@ -132,7 +132,7 @@ namespace Server
         //Spawn character on player selected slot 
         private async void PlayerPlayRequest(NetworkConnection con, CharacterInfo characterInfo)
         {
-            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            Irehon.PlayerSession data = (Irehon.PlayerSession)con.authenticationData;
 
             if (characterInfo.isOnlineOnAnotherServer)
             {
@@ -210,7 +210,7 @@ namespace Server
         //Send characters and make him to choose one of them
         public override async void OnServerConnect(NetworkConnection con)
         {
-            PlayerConnectionInfo data = (PlayerConnectionInfo)con.authenticationData;
+            Irehon.PlayerSession data = (Irehon.PlayerSession)con.authenticationData;
 
             Log(data.steamId, $"Connected from {con.address}");
 
@@ -300,13 +300,13 @@ namespace Server
             }
         }
 
-        private async Task UpdateCharacterData(PlayerConnectionInfo info)
+        private async Task UpdateCharacterData(Irehon.PlayerSession info)
         {
             await UpdateCharacterPositions(info.character, info.playerPrefab);
             await UnloadPlayerContainers(info);
         }
 
-        private async Task LoadPlayerContainers(PlayerConnectionInfo info)
+        private async Task LoadPlayerContainers(Irehon.PlayerSession info)
         {
             await ContainerData.LoadContainerAsync(info.character.inventoryId);
             await ContainerData.LoadContainerAsync(info.character.equipmentId);
@@ -317,7 +317,7 @@ namespace Server
             Log(info.steamId, $"Containers loaded");
         }
 
-        private async Task UnloadPlayerContainers(PlayerConnectionInfo info)
+        private async Task UnloadPlayerContainers(Irehon.PlayerSession info)
         {
             await ContainerData.UpdateLoadedContainer(info.character.inventoryId);
             await ContainerData.UpdateLoadedContainer(info.character.equipmentId);
@@ -345,7 +345,7 @@ namespace Server
                 return;
             }
 
-            PlayerConnectionInfo data = (PlayerConnectionInfo)conn.authenticationData;
+            Irehon.PlayerSession data = (Irehon.PlayerSession)conn.authenticationData;
 
             if (!data.isAuthorized)
             {
