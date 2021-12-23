@@ -21,14 +21,14 @@ public class Mob : LootableEntity
     protected override void Start()
     {
         this.stateMachine = this.GetComponent<MobStateMachine>();
-        OnDeathEvent += () =>
+        Dead += () =>
         {
             foreach (Renderer model in this.ModelParts)
             {
                 model.enabled = false;
             }
         };
-        OnRespawnEvent += () =>
+        Respawned += () =>
         {
             foreach (Renderer model in this.ModelParts)
             {
@@ -37,8 +37,8 @@ public class Mob : LootableEntity
         };
         if (this.isServer)
         {
-            OnDeathEvent += () => this.stateMachine.SetNewState(new MobDeathState(this));
-            OnRespawnEvent += () => this.stateMachine.SetNewState(new MobIdleState(this));
+            Dead += () => this.stateMachine.SetNewState(new MobDeathState(this));
+            Respawned += () => this.stateMachine.SetNewState(new MobIdleState(this));
         }
         base.Start();
     }

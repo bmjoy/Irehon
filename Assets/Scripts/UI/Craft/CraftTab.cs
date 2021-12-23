@@ -21,7 +21,7 @@ public class CraftTab : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        CraftWindowManager.SelectRecipe(this.currentRecipe, this.index);
+        CraftWindowManager.Instance.SelectRecipe(this.currentRecipe, this.index);
     }
 
     public void Intialize(CraftRecipe recipe, ToggleGroup group, int tabIndex)

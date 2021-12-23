@@ -38,7 +38,7 @@ namespace Irehon.Chat
                 return;
             }
 
-            UIChatEventHolder.instance.PlayerChatInputEvent.Invoke(this.chatInputField.text);
+            UIChatEventHolder.Instance.SendNewMessage(chatInputField.text);
             this.chatInputField.text = "";
         }
     }

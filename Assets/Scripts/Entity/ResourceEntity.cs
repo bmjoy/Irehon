@@ -12,7 +12,7 @@ public class ResourceEntity : LootableEntity
     protected override void Start()
     {
         base.Start();
-        OnDeathEvent += (() =>
+        Dead += (() =>
         {
             foreach (Renderer model in this.modelParts)
             {
@@ -24,7 +24,7 @@ public class ResourceEntity : LootableEntity
                 this.isModelShown = false;
             }
         });
-        OnRespawnEvent += (() =>
+        Respawned += (() =>
         {
             foreach (Renderer model in this.modelParts)
             {

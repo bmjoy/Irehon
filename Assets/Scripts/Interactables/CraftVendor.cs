@@ -33,12 +33,63 @@ namespace Irehon.Interactable
         }
         public void Interact(Player player)
         {
-            player.GetComponent<PlayerCraftController>().SendRecipeList(this.recipes);
+            TargetSendRecipes(player.netIdentity, recipes);
         }
 
         public void StopInterract(Player player)
         {
-            player.GetComponent<PlayerCraftController>().CloseCrafts();
+            TargetCloseCraftWindow(player.netIdentity);
+        }
+
+
+        [TargetRpc]
+        private void TargetCloseCraftWindow(NetworkIdentity target)
+        {
+            CraftWindowManager.Instance.CloseCraftWindow();
+        }
+
+        [TargetRpc]
+        private void TargetSendRecipes(NetworkIdentity target, CraftRecipe[] recipes)
+        {
+            CraftWindowManager.Instance.ShowRecipes(recipes);
+        }
+
+        [Command(requiresAuthority = false)]
+        public void Craft(int index, NetworkConnectionToClient sender = null)
+        {
+            Player player = sender.identity.gameObject.GetComponent<Player>();
+
+            if (player.GetComponent<PlayerInteracter>().currentInteractable != this)
+                return;
+
+            if (index < 0 || index >= recipes.Length)
+            {
+                return;
+            }
+
+            CraftRecipe recipe = recipes[index];
+
+            Container inventory = player.inventory;
+
+            if (!inventory.IsEnoughSpaceForItem(recipe.itemId, recipe.itemQuantity))
+            {
+                return;
+            }
+
+            foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
+            {
+                if (inventory.GetItemCount(requirment.itemId) < requirment.itemQuantity)
+                {
+                    return;
+                }
+            }
+
+            foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
+            {
+                player.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
+            }
+
+            player.inventory.GiveContainerItem(recipe.itemId, recipe.itemQuantity);
         }
     }
 }

@@ -44,13 +44,13 @@ namespace Irehon.UI
                 return;
             }
 
-            this.entity.OnDeathEvent += () => this.SetActive(false);
-            this.entity.OnRespawnEvent += () => this.SetActive(true);
+            this.entity.Dead += () => this.SetActive(false);
+            this.entity.Respawned += () => this.SetActive(true);
 
             this.StartCoroutine(this.WaitCameraControllerIntialize());
             this.nickname.text = this.entity.NickName;
-            this.entity.OnHealthChangeEvent += this.ChangeHealthOnBar;
-            this.entity.OnPlayerLookingEvent += () => this.EnableForTime(5f);
+            this.entity.HealthChanged += this.ChangeHealthOnBar;
+            this.entity.PlayerLooked += () => this.EnableForTime(5f);
         }
 
         private void Update()

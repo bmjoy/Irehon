@@ -1,4 +1,5 @@
-﻿using Irehon.UI;
+﻿using Irehon;
+using Irehon.UI;
 using UnityEngine;
 using UnityEngine.UI;
 public class EquipmentSlotUI : InventorySlotUI
@@ -40,7 +41,7 @@ public class EquipmentSlotUI : InventorySlotUI
 
             if (this.isDragging)
             {
-                ContainerWindowManager.i.GetDragger().gameObject.SetActive(false);
+                ItemDragger.Instance.GetDragger().gameObject.SetActive(false);
             }
 
             return;
@@ -62,7 +63,7 @@ public class EquipmentSlotUI : InventorySlotUI
 
             if (this.isDragging)
             {
-                ContainerWindowManager.i.GetDraggerImage().sprite = this.itemSprite.sprite;
+                ItemDragger.Instance.GetDraggerImage().sprite = this.itemSprite.sprite;
             }
         }
     }

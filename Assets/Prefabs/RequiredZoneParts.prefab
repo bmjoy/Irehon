@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1480492423655162557}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &119010572625877933
 MonoBehaviour:
@@ -427,6 +427,7 @@ GameObject:
   - component: {fileID: 6090234432492761462}
   - component: {fileID: 5410661690020356078}
   - component: {fileID: 5416458835454445328}
+  - component: {fileID: 7389590888934578212}
   m_Layer: 5
   m_Name: InventoryWindow
   m_TagString: Untagged
@@ -495,6 +496,21 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &7389590888934578212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651217448449728805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85505532db0c01948a1db99a8c5163ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventorySpawnSlotsTransform: {fileID: 1480492423535868670}
+  inventorySlotPrefab: {fileID: 6503387125378953986, guid: 12300ac08279c4985bf44f32f01cd783,
+    type: 3}
 --- !u!1 &651217448646589335
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +522,7 @@ GameObject:
   - component: {fileID: 6090234432833792964}
   - component: {fileID: 5410661690348275036}
   - component: {fileID: 5416458835251797410}
+  - component: {fileID: 3081215010343585180}
   m_Layer: 5
   m_Name: CraftWindow
   m_TagString: Untagged
@@ -574,6 +591,30 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &3081215010343585180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651217448646589335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae32bc3cff60c9549b4e0a7a214616fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  craftTabPrefab: {fileID: 3645050355269663563, guid: 55be408496cd0834a95eac1c34aaff40,
+    type: 3}
+  craftRequrimentTabPrefab: {fileID: 6083371222888679559, guid: 6606b991012cacc4fb7ba8c86eef3da2,
+    type: 3}
+  craftTabTransform: {fileID: 1480492422828780957}
+  craftRequirmentTabTransform: {fileID: 1480492422186812993}
+  craftWindow: {fileID: 5410661690348275036}
+  toggleGroup: {fileID: 1480492422828780929}
+  craftingItemName: {fileID: 1480492423083733186}
+  craftingItemIcon: {fileID: 1480492423195788196}
+  craftingItemAmount: {fileID: 1480492423118005634}
+  requiredGold: {fileID: 2917372847182369915}
 --- !u!1 &651217449135608361
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +626,7 @@ GameObject:
   - component: {fileID: 6090234431001789050}
   - component: {fileID: 5410661688793378018}
   - component: {fileID: 5416458833426625564}
+  - component: {fileID: 3624851307196324764}
   m_Layer: 5
   m_Name: EquipmentContainerWindow
   m_TagString: Untagged
@@ -653,6 +695,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &3624851307196324764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651217449135608361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a166e4b19aa4554bbe3f34febf6ab95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equipmentSlots:
+  - {fileID: 180706657720409884}
+  - {fileID: 180706656033072258}
+  - {fileID: 180706657158585531}
+  - {fileID: 180706656424969917}
+  - {fileID: 180706657730804735}
+  - {fileID: 180706657939032766}
 --- !u!1 &651217449146031489
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,6 +725,7 @@ GameObject:
   - component: {fileID: 6090234430991240658}
   - component: {fileID: 5410661688803926858}
   - component: {fileID: 5416458833416076212}
+  - component: {fileID: 4134275823095347252}
   m_Layer: 5
   m_Name: ChestContainerWindow
   m_TagString: Untagged
@@ -732,6 +794,22 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &4134275823095347252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651217449146031489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81b08c215494a37489f69c3eea80e18c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chestWindow: {fileID: 5410661688803926858}
+  chestSpawnSlotsTransform: {fileID: 1480492423503044621}
+  inventorySlotPrefab: {fileID: 6503387125378953986, guid: 12300ac08279c4985bf44f32f01cd783,
+    type: 3}
 --- !u!114 &3955364713181306917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1891,61 +1969,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &1480492422019022358
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1480492422019022352}
-  - component: {fileID: 1480492422019022353}
-  m_Layer: 0
-  m_Name: CraftWindowManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1480492422019022352
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1480492422019022358}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1480492423655162557}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1480492422019022353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1480492422019022358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae32bc3cff60c9549b4e0a7a214616fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  craftTabPrefab: {fileID: 3645050355269663563, guid: 55be408496cd0834a95eac1c34aaff40,
-    type: 3}
-  craftRequrimentTabPrefab: {fileID: 6083371222888679559, guid: 6606b991012cacc4fb7ba8c86eef3da2,
-    type: 3}
-  craftTabTransform: {fileID: 1480492422828780957}
-  craftRequirmentTabTransform: {fileID: 1480492422186812993}
-  craftWindow: {fileID: 5410661690348275036}
-  toggleGroup: {fileID: 1480492422828780929}
-  craftingItemName: {fileID: 1480492423083733186}
-  craftingItemIcon: {fileID: 1480492423195788196}
-  craftingItemAmount: {fileID: 1480492423118005634}
-  requiredGold: {fileID: 2917372847182369915}
 --- !u!1 &1480492422032496834
 GameObject:
   m_ObjectHideFlags: 0
@@ -9263,7 +9286,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1480492422019022353}
+      - m_Target: {fileID: 0}
         m_MethodName: CraftSelectedRecipe
         m_Mode: 1
         m_Arguments:
@@ -9354,20 +9377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ba44dae6e1f34440a113aa984819a01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestWindow: {fileID: 5410661688803926858}
-  inventorySpawnSlotsTransform: {fileID: 1480492423535868670}
-  chestSpawnSlotsTransform: {fileID: 1480492423503044621}
-  inventorySlotPrefab: {fileID: 6503387125378953986, guid: 12300ac08279c4985bf44f32f01cd783,
-    type: 3}
   dragger: {fileID: 1480492422145899088}
   draggerImage: {fileID: 1480492423399041650}
-  equipmentSlots:
-  - {fileID: 180706657720409884}
-  - {fileID: 180706656033072258}
-  - {fileID: 180706657158585531}
-  - {fileID: 180706656424969917}
-  - {fileID: 180706657730804735}
-  - {fileID: 180706657939032766}
   canvas: {fileID: 1480492422786216413}
 --- !u!1 &1480492423229138166
 GameObject:
@@ -10031,6 +10042,8 @@ GameObject:
   - component: {fileID: 1679590245843310001}
   - component: {fileID: 5215416362880483916}
   - component: {fileID: 5401107827798941881}
+  - component: {fileID: 5563657715996357042}
+  - component: {fileID: 473701395408086169}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -10121,6 +10134,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statusBarCanvas: {fileID: 1480492423713206635}
+--- !u!114 &5563657715996357042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492423336540618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 470c0d2ce4cdb9f41ac2c0b0df922212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &473701395408086169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492423336540618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57533c6763b6e684b8662b2238a8446b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitMarker: {fileID: 1480492423270080581}
+  hitMarkerSound: {fileID: 1480492423270080586}
 --- !u!1 &1480492423377682896
 GameObject:
   m_ObjectHideFlags: 0
@@ -11254,7 +11293,6 @@ Transform:
   - {fileID: 1480492423113958097}
   - {fileID: 1480492422438559017}
   - {fileID: 1480492423209517431}
-  - {fileID: 1480492422019022352}
   - {fileID: 8831088884283857587}
   m_Father: {fileID: 5863101012538378547}
   m_RootOrder: 2
@@ -17494,7 +17532,7 @@ RectTransform:
   - {fileID: 7073647739571602839}
   - {fileID: 8795167136704237509}
   m_Father: {fileID: 8005769150593231164}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -17938,7 +17976,7 @@ RectTransform:
   - {fileID: 7073647740050636297}
   - {fileID: 8795167135168820315}
   m_Father: {fileID: 8005769150593231164}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -23517,7 +23555,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7135993747209122746}
   m_HandleRect: {fileID: 7135993747209122745}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -23827,7 +23865,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000076293945, y: -281.99905}
+  m_AnchoredPosition: {x: 0.000076293945, y: -282.00006}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &7135993746557273394
@@ -24694,6 +24732,7 @@ GameObject:
   - component: {fileID: 3252856696246393648}
   - component: {fileID: 6392309179153016042}
   - component: {fileID: 8260842524276542700}
+  - component: {fileID: 4547445070032236434}
   m_Layer: 5
   m_Name: Chat
   m_TagString: Untagged
@@ -24775,6 +24814,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 32567
+--- !u!114 &4547445070032236434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135993748170865153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca8682df34336546ab5bf5ff7195526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messagesContentHolder: {fileID: 7135993746557273389}
+  chatTabPrefab: {fileID: 2784144685060831649, guid: d012045365a406b43a51491974b5c16c,
+    type: 3}
 --- !u!1 &7269504741316140386
 GameObject:
   m_ObjectHideFlags: 0
@@ -25200,8 +25254,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4952341832480088611}
   - {fileID: 4952341830945937853}
+  - {fileID: 4952341832480088611}
   - {fileID: 4952341831457331738}
   - {fileID: 4952341832071397404}
   - {fileID: 4952341830893682014}
@@ -27373,15 +27427,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32edb202151b7ae49a0ee9c57855578f, type: 3}
---- !u!1 &2133185131028009308 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4975330831623666245, guid: 32edb202151b7ae49a0ee9c57855578f,
-    type: 3}
-  m_PrefabInstance: {fileID: 6382011429736409881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &2133185131028009311 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4975330831623666246, guid: 32edb202151b7ae49a0ee9c57855578f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6382011429736409881}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2133185131028009308 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4975330831623666245, guid: 32edb202151b7ae49a0ee9c57855578f,
     type: 3}
   m_PrefabInstance: {fileID: 6382011429736409881}
   m_PrefabAsset: {fileID: 0}

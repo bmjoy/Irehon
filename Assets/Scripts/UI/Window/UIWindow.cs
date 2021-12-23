@@ -1,4 +1,5 @@
-﻿using Irehon.UI;
+﻿using Irehon;
+using Irehon.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -59,7 +60,7 @@ public class UIWindow : SerializedMonoBehaviour
         this.OnCloseWindow?.Invoke();
         if (this.isClosingStoppingInterract)
         {
-            ContainerWindowManager.i.StopInterractOnServer();
+            Player.LocalPlayer.GetComponent<PlayerInteracter>().StopInterractCommand();
         }
     }
 

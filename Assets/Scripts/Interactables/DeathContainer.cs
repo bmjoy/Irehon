@@ -10,7 +10,7 @@ public class DeathContainer : Chest
     {
         if (this.isServer)
         {
-            this.Container.OnContainerUpdate += this.CheckIsContainerEmpty;
+            this.Container.ContainerSlotsChanged += this.CheckIsContainerEmpty;
             this.StartCoroutine(this.SelfDestroyOnTime(240f));
         }
     }
@@ -38,13 +38,14 @@ public class DeathContainer : Chest
 
     protected override void OnContainerSet()
     {
-        this.Container.OnContainerUpdate += this.CheckIsContainerEmpty;
+        this.Container.ContainerSlotsChanged += SendContainerInteractingPlayer;
+        this.Container.ContainerSlotsChanged += this.CheckIsContainerEmpty;
         this.CheckIsContainerEmpty(this.Container);
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        this.Container.OnContainerUpdate -= this.CheckIsContainerEmpty;
+        this.Container.ContainerSlotsChanged -= this.CheckIsContainerEmpty;
     }
 }

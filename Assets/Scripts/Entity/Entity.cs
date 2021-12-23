@@ -12,24 +12,24 @@ namespace Irehon.Entitys
         public delegate void EntityStateIntEventHandler(int old, int current);
         public string NickName => this.name;
         public int Health => this.health;
-        public FractionBehaviourData FractionBehaviourData;
+
+        [SyncVar(hook = nameof(IsAlivHook))]
+        public bool isAlive;
         [SyncVar]
         public Fraction fraction;
 
+        public FractionBehaviourData FractionBehaviourData;
         public float respawnTime;
-
         public new string name = "Entity";
 
         public Vector3 startPosition { get; protected set; }
 
-        [SyncVar(hook = nameof(OnChangeHealth))]
+        [SyncVar(hook = nameof(ChangeHealthHook))]
         protected int health;
 
         public int maxHealth = 100;
 
         public List<Collider> HitboxColliders = new List<Collider>();
-        [SyncVar]
-        public bool isAlive;
         /// <summary>
         /// Invoked only on server, pass entity that been killed by this entity
         /// </summary>
@@ -37,13 +37,13 @@ namespace Irehon.Entitys
         /// <summary>
         /// Invoked only on server, pass entity that killed this entity
         /// </summary>
-        public event EntityEventHandler OnGetKilledEvent;
-        public event EntityIntEventHandler OnDoDamageEvent;
-        public event EntityIntEventHandler OnTakeDamageEvent;
-        public event EntityStateIntEventHandler OnHealthChangeEvent;
-        public event EntityVoidEventHandler OnDeathEvent;
-        public event EntityVoidEventHandler OnRespawnEvent;
-        public event EntityVoidEventHandler OnPlayerLookingEvent;
+        public event EntityEventHandler KilledByEntity;
+        public event EntityIntEventHandler DidDamage;
+        public event EntityIntEventHandler GotDamage;
+        public event EntityStateIntEventHandler HealthChanged;
+        public event EntityVoidEventHandler Dead;
+        public event EntityVoidEventHandler Respawned;
+        public event EntityVoidEventHandler PlayerLooked;
 
         protected virtual void Awake()
         {
@@ -54,21 +54,21 @@ namespace Irehon.Entitys
         protected virtual void Start()
         {
             this.startPosition = this.transform.position;
-            OnRespawnEvent += this.SetDefaultState;
+            Respawned += this.SetDefaultState;
 
             if (this.respawnTime == 0)
             {
-                OnDeathEvent += this.SelfDestroy;
+                Dead += this.SelfDestroy;
             }
             else
             {
-                OnDeathEvent += this.InitiateRespawn;
+                Dead += this.InitiateRespawn;
             }
 
             if (this.isServer)
             {
-                OnDoDamageEvent += this.OnDoDamageRpc;
-                OnTakeDamageEvent += this.OnTakeDamageRpc;
+                DidDamage += this.OnDoDamageRpc;
+                GotDamage += this.OnTakeDamageRpc;
             }
             this.SetDefaultState();
         }
@@ -87,9 +87,9 @@ namespace Irehon.Entitys
             }
         }
 
-        protected void OnChangeHealth(int oldValue, int newValue)
+        protected void ChangeHealthHook(int oldValue, int newValue)
         {
-            OnHealthChangeEvent?.Invoke(this.maxHealth, newValue);
+            HealthChanged?.Invoke(this.maxHealth, newValue);
         }
 
         public void SetName(string name)
@@ -123,7 +123,7 @@ namespace Irehon.Entitys
 
             this.isAlive = false;
 
-            OnDeathEvent?.Invoke();
+            Dead?.Invoke();
 
             if (this.isServer)
             {
@@ -140,7 +140,7 @@ namespace Irehon.Entitys
 
             this.isAlive = true;
 
-            OnRespawnEvent?.Invoke();
+            Respawned?.Invoke();
 
             if (this.isServer)
             {
@@ -163,13 +163,13 @@ namespace Irehon.Entitys
         [ClientRpc]
         protected void OnDoDamageRpc(int damage)
         {
-            OnDoDamageEvent?.Invoke(damage);
+            DidDamage?.Invoke(damage);
         }
 
         [ClientRpc]
         protected void OnTakeDamageRpc(int damage)
         {
-            OnTakeDamageEvent?.Invoke(damage);
+            GotDamage?.Invoke(damage);
         }
 
         [Server]
@@ -188,7 +188,7 @@ namespace Irehon.Entitys
                 this.Death();
             }
 
-            OnHealthChangeEvent?.Invoke(this.maxHealth, this.health);
+            HealthChanged?.Invoke(this.maxHealth, this.health);
         }
 
         [Server]
@@ -203,18 +203,18 @@ namespace Irehon.Entitys
 
             if (this.health <= 0)
             {
-                OnGetKilledEvent?.Invoke(damageMessage.source);
+                KilledByEntity?.Invoke(damageMessage.source);
                 damageMessage.source.OnKillEvent?.Invoke(this);
                 this.Death();
                 this.health = 0;
             }
 
-            OnHealthChangeEvent?.Invoke(this.maxHealth, this.health);
-            OnTakeDamageEvent?.Invoke(damageMessage.damage);
+            HealthChanged?.Invoke(this.maxHealth, this.health);
+            GotDamage?.Invoke(damageMessage.damage);
 
             if (damageMessage.source != this)
             {
-                damageMessage.source?.OnDoDamageEvent?.Invoke(damageMessage.damage);
+                damageMessage.source?.DidDamage?.Invoke(damageMessage.damage);
             }
         }
 
@@ -239,7 +239,12 @@ namespace Irehon.Entitys
 
         public void InvokePlayerLookingEvent()
         {
-            OnPlayerLookingEvent?.Invoke();
+            PlayerLooked?.Invoke();
+        }
+
+        protected virtual void IsAlivHook(bool oldValue, bool newValue)
+        {
+
         }
     }
 }

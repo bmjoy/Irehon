@@ -27,7 +27,7 @@ namespace Irehon.Abilitys
 
             this.currentAnimationEvent = this.DamageEntitiesInArea;
 
-            abilitySystem.player.OnDoDamageEvent += this.ImpactSound;
+            abilitySystem.player.DidDamage += this.ImpactSound;
 
             this.meleeCollider.OnNewCollectedEntityEvent.AddListener(this.DamageEntity);
         }

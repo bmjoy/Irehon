@@ -19,6 +19,7 @@ namespace Irehon
         public static event PlayerEventHandler LocalPlayerIntialized;
         public static event PlayerContainerEventHandler LocalInventorUpdated;
         public static event PlayerContainerEventHandler LocalEquipmentUpdated;
+        public static Player LocalPlayer { get; private set; }
 
         public static Container LocalInventory { get; private set; }
         public static Container LocalEquipment { get; private set; }
@@ -34,6 +35,7 @@ namespace Irehon
         [SyncVar]
         public Container equipment;
         public Container inventory;
+        public Container interactContainer;
 
         [SerializeField]
         private FractionBehaviourData northData;
@@ -89,15 +91,16 @@ namespace Irehon
 
         private void LocalPlayerIntialize()
         {
+            LocalPlayer = this;
             LocalPlayerIntialized?.Invoke(this);
 
-            OnDoDamageEvent += x => Hitmarker.Instance.ShowHitMarker();
+            DidDamage += x => Hitmarker.Instance.ShowHitMarker();
 
             this.gameObject.layer = 1 << 1;
 
-            OnHealthChangeEvent += (oldHealth, newHealth) => PlayerHealthbar.Instance.SetHealthBarValue(1f * newHealth / maxHealth);
+            HealthChanged += (oldHealth, newHealth) => PlayerHealthbar.Instance.SetHealthBarValue(1f * newHealth / maxHealth);
 
-            OnTakeDamageEvent += x => CameraShake.Instance.CreateShake(5f, .3f);
+            GotDamage += x => CameraShake.Instance.CreateShake(5f, .3f);
 
             if (fraction == Fraction.North)
             {
@@ -112,23 +115,24 @@ namespace Irehon
         [Server]
         private void IntializeServerEvents()
         {
-            OnDoDamageEvent += OnDoDamageRpc;
-            OnTakeDamageEvent += OnTakeDamageRpc;
+            DidDamage += OnDoDamageRpc;
+            GotDamage += OnTakeDamageRpc;
 
-            OnDeathEvent += () => stateMachine.ChangePlayerState(PlayerStateType.Death);
-            OnDeathEvent += () => SpawnDeathContainer();
-            OnDeathEvent += InitiateRespawn;
+            Dead += () => stateMachine.ChangePlayerState(PlayerStateType.Death);
+            Dead += () => SpawnDeathContainer();
+            Dead += InitiateRespawn;
 
-            OnRespawnEvent += TeleportToSpawnPoint;
-            OnRespawnEvent += SetDefaultState;
+            Respawned += TeleportToSpawnPoint;
+            Respawned += SetDefaultState;
 
-            OnGetKilledEvent += SendAllKillMesagge;
+            KilledByEntity += SendAllKillMesagge;
 
             ShareEquipmentUpdated += UpdateArmorModifiers;
 
-            inventory.OnContainerUpdate += SendInventoryTargetRPC;
-            equipment.OnContainerUpdate += SendEquipmentClientRPC;
-            equipment.OnContainerUpdate += container => ShareEquipmentUpdated?.Invoke(container);
+            inventory.ContainerSlotsChanged += SendInventoryTargetRPC;
+            equipment.ContainerSlotsChanged += SendEquipmentClientRPC;
+            equipment.ContainerSlotsChanged += container => ShareEquipmentUpdated?.Invoke(container);
+            ShareEquipmentUpdated?.Invoke(equipment);
         }
 
         private void SendAllKillMesagge(Entity murder)
@@ -281,6 +285,57 @@ namespace Irehon
             deadBody.transform.rotation = this.transform.rotation;
 
             deadBody.GetComponent<DeathContainer>().AttachMultipleContainers(new List<Container> { inventory, equipment });
+        }
+
+        public Container GetContainer(ContainerType type)
+        {
+            if (type == ContainerType.Inventory)
+                return inventory;
+            if (type == ContainerType.Equipment)
+                return equipment;
+            if (type == ContainerType.Interact)
+                return interactContainer;
+            return null;
+        }
+
+
+        [Command]
+        public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
+        {
+            Container firstContainer = GetContainer(firstType);
+            if (firstContainer == null)
+                return;
+
+            Container secondContainer = GetContainer(secondType);
+            if (secondContainer == null)
+                return;
+
+            if (secondType == ContainerType.Equipment)
+            {
+                Equip(secondSlot, firstSlot);
+            }
+            else
+            {
+                Container.MoveSlotData(firstContainer, firstSlot, secondContainer, secondSlot);
+            }
+        }
+
+        [Server]
+        private void Equip(int equipmentSlot, int inventorySlot)
+        {
+            Item equipableItem = this.inventory[inventorySlot].GetItem();
+
+            if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
+            {
+                return;
+            }
+
+            if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
+            {
+                return;
+            }
+
+            Container.MoveSlotData(this.inventory, inventorySlot, this.equipment, equipmentSlot);
         }
     }
 }

@@ -14,9 +14,20 @@ namespace Irehon.Camera
         private CinemachineVirtualCamera mainCamera;
 
 
-        private void Awake() => Instance = this;
+        private void Awake()
+        {
+            Instance = this;
+            Player.LocalPlayerIntialized += Intialize;
+        }
 
-        private void Start()
+        private void Intialize(Player player)
+        {
+            PlayerBonesLinks links = player.GetComponent<PlayerBonesLinks>();
+            aimCamera.Follow = links.Shoulder;
+            mainCamera.Follow = links.Shoulder;
+        }
+
+            private void Start()
         {
             CameraShake.Instance.ShakeHandler = this.mainCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         }

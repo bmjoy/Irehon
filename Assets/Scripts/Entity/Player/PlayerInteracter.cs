@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class PlayerInteracter : NetworkBehaviour
 {
+    public static GameObject LocalInteractObject;
+    public static PlayerInteracter LocalInstance { get; private set; }
+    public IInteractable currentInteractable { get; private set; }
+
     [SyncVar, HideInInspector]
     public bool isInteracting;
 
-    private IInteractable currentInteractable;
     private Vector3 interractPosition;
 
     private Player player;
@@ -18,6 +21,9 @@ public class PlayerInteracter : NetworkBehaviour
     {
         this.player = this.GetComponent<Player>();
         this.model = this.player.PlayerBonesLinks.Model;
+
+        if (isLocalPlayer)
+            LocalInstance = this;
     }
 
     private void FixedUpdate()
@@ -29,19 +35,19 @@ public class PlayerInteracter : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void InterractAttemp(NetworkIdentity interractObjectIdentity)
+    public void InterractAttemp(NetworkIdentity interactObjectIdentity)
     {
         if (this.currentInteractable != null)
         {
             return;
         }
 
-        if (Vector3.Distance(interractObjectIdentity.transform.position, this.model.position) > 10f)
+        if (Vector3.Distance(interactObjectIdentity.transform.position, this.model.position) > 10f)
         {
             return;
         }
 
-        this.currentInteractable = interractObjectIdentity.GetComponent<IInteractable>();
+        this.currentInteractable = interactObjectIdentity.GetComponent<IInteractable>();
 
         if (this.currentInteractable == null)
         {
@@ -49,8 +55,9 @@ public class PlayerInteracter : NetworkBehaviour
         }
 
         this.isInteracting = true;
-        this.interractPosition = interractObjectIdentity.transform.position;
+        this.interractPosition = interactObjectIdentity.transform.position;
         this.currentInteractable.Interact(this.player);
+        TargetSetInteractObject(interactObjectIdentity.gameObject);
     }
 
     [ServerCallback]
@@ -63,10 +70,17 @@ public class PlayerInteracter : NetworkBehaviour
 
         this.currentInteractable = null;
         this.isInteracting = false;
+        TargetSetInteractObject(null);
+    }
+
+    [TargetRpc]
+    private void TargetSetInteractObject(GameObject interact)
+    {
+        LocalInteractObject = interact;
     }
 
     [Command]
-    public void StopInterractRpc()
+    public void StopInterractCommand()
     {
         this.StopInterracting();
     }

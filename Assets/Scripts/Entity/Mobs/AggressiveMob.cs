@@ -24,7 +24,7 @@ public class AggressiveMob : Mob
         this.OnAgroEvent.AddListener(x => this.stateMachine.SetNewState(new MobAgressiveWanderState(this)));
         this.OnAgroEvent.AddListener(entity =>
         {
-            entity.OnDeathEvent += this.UnAgro;
+            entity.Dead += this.UnAgro;
         });
 
         SphereCollider collider = this.GetComponent<SphereCollider>();
@@ -41,7 +41,7 @@ public class AggressiveMob : Mob
     {
         if (this.target != null)
         {
-            this.target.OnDeathEvent -= this.UnAgro;
+            this.target.Dead -= this.UnAgro;
         }
 
         this.target = null;

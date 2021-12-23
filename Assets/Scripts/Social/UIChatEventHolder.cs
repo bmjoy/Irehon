@@ -5,10 +5,10 @@ namespace Irehon.Chat
 {
     public class UIChatEventHolder : MonoBehaviour
     {
-        public class PlayerChatInputEventHandler : UnityEvent<string> { }
-        public static UIChatEventHolder instance;
+        public delegate void NewMessageEventHandler(string message);
+        public static UIChatEventHolder Instance;
 
-        public PlayerChatInputEventHandler PlayerChatInputEvent { get; private set; } = new PlayerChatInputEventHandler();
+        public event NewMessageEventHandler NewMessageSended;
 
         [SerializeField]
         private GameObject messagesContentHolder;
@@ -17,15 +17,18 @@ namespace Irehon.Chat
 
         private void Awake()
         {
-            if (instance != null && instance != this)
+            if (Instance != null && Instance != this)
             {
                 Destroy(this.gameObject);
             }
             else
             {
-                instance = this;
+                Instance = this;
             }
         }
+
+        public void SendNewMessage(string message) => NewMessageSended.Invoke(message);
+
 
         public void ShowMessage(ulong steamId, string message)
         {

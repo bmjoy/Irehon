@@ -5,7 +5,7 @@
         base.Start();
         if (this.isServer)
         {
-            OnTakeDamageEvent += (dmg =>
+            GotDamage += (dmg =>
             {
                 if (this.isAlive)
                 {

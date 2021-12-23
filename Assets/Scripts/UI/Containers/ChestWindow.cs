@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Irehon.UI
@@ -13,6 +14,7 @@ namespace Irehon.UI
         [SerializeField]
         private GameObject inventorySlotPrefab;
 
+        private List<InventorySlotUI> spawnedSlots = new List<InventorySlotUI>();
         private Canvas canvas;
         private Player player;
 
@@ -34,15 +36,30 @@ namespace Irehon.UI
 
         private void RecreateInventorySlots(Container container)
         {
-            foreach (Transform previousContainerSlot in this.chestSpawnSlotsTransform)
+            if (container.slots.Length > spawnedSlots.Count)
             {
-                Destroy(previousContainerSlot.gameObject);
+                int diff = container.slots.Length - spawnedSlots.Count;
+                for (int i = 0; i < diff; i++)
+                {
+                    GameObject slot = Instantiate(this.inventorySlotPrefab, chestSpawnSlotsTransform);
+                    spawnedSlots.Add(slot.GetComponent<InventorySlotUI>());
+                }
+            }
+            else if (container.slots.Length < spawnedSlots.Count)
+            {
+                int diff = spawnedSlots.Count - container.slots.Length;
+                for (int i = 0; i < diff; i++)
+                {
+                    GameObject slot = spawnedSlots[0].gameObject;
+                    spawnedSlots.RemoveAt(0);
+                    Destroy(slot);
+                }
             }
 
-            foreach (ContainerSlot containerSlot in container.slots)
+            for (int i = 0; i < container.slots.Length; i++)
             {
-                GameObject slot = Instantiate(this.inventorySlotPrefab, this.chestSpawnSlotsTransform);
-                slot.GetComponent<InventorySlotUI>().Intialize(containerSlot, this.canvas, ContainerType.Chest);
+                var slot = spawnedSlots[i];
+                slot.Intialize(container[i], this.canvas, ContainerType.Interact);
             }
         }
 
@@ -53,7 +70,7 @@ namespace Irehon.UI
 
         public void StopInterractOnServer()
         {
-            player.GetComponent<PlayerInteracter>().StopInterractRpc();
+            player.GetComponent<PlayerInteracter>().StopInterractCommand();
         }
     }
 }

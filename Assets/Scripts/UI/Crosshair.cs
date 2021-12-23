@@ -21,7 +21,11 @@ namespace Irehon
         private float minimumTriangleSize = 80f;
 
 
-        private void Awake() => Instance = this;
+        private void Awake()
+        {
+            Instance = this;
+            currentCrosshair = defaultCrosshairTransform;
+        }
 
         private void Start()
         {

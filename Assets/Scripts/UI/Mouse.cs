@@ -19,7 +19,7 @@ namespace Irehon.UI
         {
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
-                if (IsCursorEnabled)
+                if (!IsCursorEnabled)
                 {
                     EnableCursor();
                 }
@@ -36,7 +36,7 @@ namespace Irehon.UI
 
             Crosshair.Instance?.DisableCrosshair();
 
-            CursorChanged.Invoke(true);
+            CursorChanged?.Invoke(true);
             IsCursorEnabled = true;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
@@ -47,7 +47,7 @@ namespace Irehon.UI
             Crosshair.Instance?.EnableDefaultCrosshair();
             TooltipWindow.HideTooltip();
 
-            CursorChanged.Invoke(false);
+            CursorChanged?.Invoke(false);
             IsCursorEnabled = false;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;

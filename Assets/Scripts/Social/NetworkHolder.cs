@@ -12,7 +12,7 @@ namespace Irehon.Chat
         {
             if (this.isLocalPlayer)
             {
-                UIChatEventHolder.instance.PlayerChatInputEvent.AddListener(this.SendMessageToServer);
+                UIChatEventHolder.Instance.NewMessageSended += SendMessageToServer;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Irehon.Chat
 
         private void SendMessageToServer(string message)
         {
-            this.SendChatMessage(message);
+            SendChatMessage(message);
         }
 
         [Command]
@@ -45,7 +45,7 @@ namespace Irehon.Chat
         [ClientRpc]
         private void RecieveChatMessageRpc(string message)
         {
-            UIChatEventHolder.instance.ShowMessage(this.GetComponent<Player>().Id, message);
+            UIChatEventHolder.Instance.ShowMessage(this.GetComponent<Player>().Id, message);
         }
     }
 }

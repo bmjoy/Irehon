@@ -1,5 +1,7 @@
 ﻿using Irehon.CloudAPI;
 using Irehon.Utils;
+using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Irehon.Interactable
@@ -11,6 +13,8 @@ namespace Irehon.Interactable
 
         [SerializeField]
         private int containerCapacity;
+
+        private Dictionary<Container, Player> containerBinds = new Dictionary<Container, Player>();
 
         public override async void Interact(Player player)
         {
@@ -29,11 +33,36 @@ namespace Irehon.Interactable
                 playerInfo.character.personalChests.Add(personalChest);
                 player.connectionToClient.authenticationData = playerInfo;
             }
-            player.GetComponent<PlayerContainerController>().OpenChest(this, ContainerData.LoadedContainers[personalChest.ContainerId]);
+
+            Container personalContainer = ContainerData.LoadedContainers[personalChest.ContainerId];
+
+            TargetOpenChest(player.connectionToClient, personalContainer);
+            
+            player.interactContainer = personalContainer;
+            
+            personalContainer.ContainerSlotsChanged += SendPersonalChest;
+
+            containerBinds.Add(personalContainer, player);
+        }
+
+        private void SendPersonalChest(Container container)
+        {
+            if (!containerBinds.ContainsKey(container))
+                return;
+            Player player = containerBinds[container];
+
+            TargetOpenChest(player.connectionToClient, container);
         }
 
         public override void StopInterract(Player player)
         {
+            PersonalChestInfo personalChest = player.GetCharacterInfo().personalChests.Find(x => x.ChestName == this.chestName);
+
+            Container personalContainer = ContainerData.LoadedContainers[personalChest.ContainerId];
+
+            ContainerData.LoadedContainers[personalChest.ContainerId].ContainerSlotsChanged -= SendPersonalChest;
+            containerBinds.Remove(personalContainer);
+
             base.StopInterract(player);
         }
     }

@@ -12,7 +12,7 @@ public class Container : IEquatable<Container>
 {
     public ContainerSlot[] slots;
     public delegate void ContainerEventHandler(Container container);
-    public event ContainerEventHandler OnContainerUpdate;
+    public event ContainerEventHandler ContainerSlotsChanged;
 
     public Container(JSONNode node)
     {
@@ -109,7 +109,7 @@ public class Container : IEquatable<Container>
             slot.itemQuantity = 0;
         }
 
-        OnContainerUpdate.Invoke(this);
+        ContainerSlotsChanged.Invoke(this);
     }
 
     public ContainerSlot FindItem(int itemId)
@@ -169,7 +169,11 @@ public class Container : IEquatable<Container>
             return;
         }
 
-        Debug.Log($"{oldContainerSlot.itemId} {containerSlot.itemId}");
+        if (containerSlot.itemId == 0 && oldContainerSlot.itemId == 0)
+        {
+            Debug.LogError("Empty slots error");
+            return;
+        }
         if (oldContainerSlot.itemId != containerSlot.itemId)
         {
             SwapSlotData(oldContainerSlot, containerSlot);
@@ -199,8 +203,8 @@ public class Container : IEquatable<Container>
             }
         }
 
-        container.OnContainerUpdate?.Invoke(container);
-        oldContainer.OnContainerUpdate?.Invoke(oldContainer);
+        container.ContainerSlotsChanged?.Invoke(container);
+        oldContainer.ContainerSlotsChanged?.Invoke(oldContainer);
     }
 
     private static void SwapSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
@@ -275,7 +279,7 @@ public class Container : IEquatable<Container>
                     if (containerSlot.itemQuantity + countItems <= item.maxInStack)
                     {
                         containerSlot.itemQuantity += countItems;
-                        OnContainerUpdate.Invoke(this);
+                        ContainerSlotsChanged.Invoke(this);
                         return;
                     }
                     else
@@ -290,7 +294,7 @@ public class Container : IEquatable<Container>
                         {
                             containerSlot.itemQuantity += countItems;
                             countItems = 0;
-                            OnContainerUpdate.Invoke(this);
+                            ContainerSlotsChanged.Invoke(this);
                             return;
                         }
                     }
@@ -306,13 +310,13 @@ public class Container : IEquatable<Container>
             this.CreateItemInEmptySlot(itemId, count);
         }
 
-        OnContainerUpdate.Invoke(this);
+        ContainerSlotsChanged.Invoke(this);
     }
 
     public void Sort()
     {
         this.slots.OrderByDescending(slot => slot.itemId);
-        OnContainerUpdate.Invoke(this);
+        ContainerSlotsChanged.Invoke(this);
     }
 
     public void RemoveItemFromInventory(int itemId, int count)
@@ -329,7 +333,7 @@ public class Container : IEquatable<Container>
                     {
                         slot.itemId = 0;
                     }
-                    OnContainerUpdate.Invoke(this);
+                    ContainerSlotsChanged.Invoke(this);
 
                     return;
                 }
@@ -344,7 +348,7 @@ public class Container : IEquatable<Container>
                 }
             }
         }
-        OnContainerUpdate.Invoke(this);
+        ContainerSlotsChanged.Invoke(this);
     }
 
     private void CreateItemInEmptySlot(int itemId, int count)
