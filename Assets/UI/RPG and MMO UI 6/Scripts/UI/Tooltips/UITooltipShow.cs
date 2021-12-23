@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -19,7 +19,7 @@ namespace DuloGames.UI
             Default,
             Preferred
         }
-        
+
         [SerializeField] private Position m_Position = Position.Floating;
         [SerializeField] private WidthMode m_WidthMode = WidthMode.Default;
         [SerializeField] private bool m_OverrideOffset = false;
@@ -27,9 +27,9 @@ namespace DuloGames.UI
 
         [SerializeField, Tooltip("How long of a delay to expect before showing the tooltip."), Range(0f, 10f)]
         private float m_Delay = 1f;
-        
+
         [SerializeField] private UITooltipLineContent[] m_ContentLines = new UITooltipLineContent[0];
-        
+
         private bool m_IsTooltipShown = false;
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace DuloGames.UI
         /// </summary>
         public UITooltipLineContent[] contentLines
         {
-            get { return this.m_ContentLines; }
-            set { this.m_ContentLines = value; }
+            get => this.m_ContentLines;
+            set => this.m_ContentLines = value;
         }
 
         /// <summary>
@@ -48,8 +48,10 @@ namespace DuloGames.UI
         public virtual void OnTooltip(bool show)
         {
             if (!this.enabled || !this.IsActive())
+            {
                 return;
-            
+            }
+
             // If we are showing the tooltip
             if (show)
             {
@@ -75,13 +77,17 @@ namespace DuloGames.UI
                         }
                     }
                 }
-                
+
                 if (this.m_WidthMode == WidthMode.Preferred)
+                {
                     UITooltip.SetHorizontalFitMode(ContentSizeFitter.FitMode.PreferredSize);
+                }
 
                 // Anchor to this slot
                 if (this.m_Position == Position.Anchored)
+                {
                     UITooltip.AnchorToRect(this.transform as RectTransform);
+                }
 
                 // Handle offset override
                 if (this.m_OverrideOffset)
@@ -133,7 +139,7 @@ namespace DuloGames.UI
         {
             this.InternalHideTooltip();
         }
-        
+
         /// <summary>
         /// Raises the pointer down event.
         /// </summary>

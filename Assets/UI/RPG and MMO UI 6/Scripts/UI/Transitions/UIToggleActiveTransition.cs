@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using DuloGames.UI.Tweens;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -24,7 +24,7 @@ namespace DuloGames.UI
             CanvasGroup
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private Transition m_Transition = Transition.None;
 
         [SerializeField] private Color m_NormalColor = new Color(1f, 1f, 1f, 0f);
@@ -32,14 +32,14 @@ namespace DuloGames.UI
         [SerializeField] private float m_Duration = 0.1f;
 
         [SerializeField, Range(1f, 6f)] private float m_ColorMultiplier = 1f;
-        
+
         [SerializeField] private Sprite m_ActiveSprite;
 
         [SerializeField] private string m_NormalTrigger = "Normal";
         [SerializeField] private string m_ActiveBool = "Active";
 
-        [SerializeField][Range(0f, 1f)] private float m_NormalAlpha = 0f;
-        [SerializeField][Range(0f, 1f)] private float m_ActiveAlpha = 1f;
+        [SerializeField] [Range(0f, 1f)] private float m_NormalAlpha = 0f;
+        [SerializeField] [Range(0f, 1f)] private float m_ActiveAlpha = 1f;
 
         [SerializeField, Tooltip("Graphic that will have the selected transtion applied.")]
         private Graphic m_TargetGraphic;
@@ -49,26 +49,20 @@ namespace DuloGames.UI
 
         [SerializeField, Tooltip("CanvasGroup that will have the selected transtion applied.")]
         private CanvasGroup m_TargetCanvasGroup;
-        
+
         [SerializeField] private Toggle m_TargetToggle;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private bool m_Active = false;
-        
+
         /// <summary>
         /// Gets or sets the transition type.
         /// </summary>
         /// <value>The transition.</value>
         public Transition transition
         {
-            get
-            {
-                return this.m_Transition;
-            }
-            set
-            {
-                this.m_Transition = value;
-            }
+            get => this.m_Transition;
+            set => this.m_Transition = value;
         }
 
         /// <summary>
@@ -77,14 +71,8 @@ namespace DuloGames.UI
         /// <value>The target graphic.</value>
         public Graphic targetGraphic
         {
-            get
-            {
-                return this.m_TargetGraphic;
-            }
-            set
-            {
-                this.m_TargetGraphic = value;
-            }
+            get => this.m_TargetGraphic;
+            set => this.m_TargetGraphic = value;
         }
 
         /// <summary>
@@ -93,14 +81,8 @@ namespace DuloGames.UI
         /// <value>The target game object.</value>
         public GameObject targetGameObject
         {
-            get
-            {
-                return this.m_TargetGameObject;
-            }
-            set
-            {
-                this.m_TargetGameObject = value;
-            }
+            get => this.m_TargetGameObject;
+            set => this.m_TargetGameObject = value;
         }
 
         /// <summary>
@@ -109,14 +91,8 @@ namespace DuloGames.UI
         /// <value>The target canvas group.</value>
         public CanvasGroup targetCanvasGroup
         {
-            get
-            {
-                return this.m_TargetCanvasGroup;
-            }
-            set
-            {
-                this.m_TargetCanvasGroup = value;
-            }
+            get => this.m_TargetCanvasGroup;
+            set => this.m_TargetCanvasGroup = value;
         }
 
         /// <summary>
@@ -128,7 +104,9 @@ namespace DuloGames.UI
             get
             {
                 if (this.m_TargetGameObject != null)
+                {
                     return this.m_TargetGameObject.GetComponent<Animator>();
+                }
 
                 // Default
                 return null;
@@ -146,10 +124,14 @@ namespace DuloGames.UI
         protected UIToggleActiveTransition()
         {
             if (this.m_ColorTweenRunner == null)
+            {
                 this.m_ColorTweenRunner = new TweenRunner<ColorTween>();
+            }
 
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_ColorTweenRunner.Init(this);
             this.m_FloatTweenRunner.Init(this);
@@ -158,16 +140,22 @@ namespace DuloGames.UI
         protected void Awake()
         {
             if (this.m_TargetToggle == null)
+            {
                 this.m_TargetToggle = this.gameObject.GetComponent<Toggle>();
+            }
 
             if (this.m_TargetToggle != null)
+            {
                 this.m_Active = this.m_TargetToggle.isOn;
+            }
         }
 
         protected void OnEnable()
         {
             if (this.m_TargetToggle != null)
-                this.m_TargetToggle.onValueChanged.AddListener(OnToggleValueChange);
+            {
+                this.m_TargetToggle.onValueChanged.AddListener(this.OnToggleValueChange);
+            }
 
             this.InternalEvaluateAndTransitionToNormalState(true);
         }
@@ -175,7 +163,9 @@ namespace DuloGames.UI
         protected void OnDisable()
         {
             if (this.m_TargetToggle != null)
-                this.m_TargetToggle.onValueChanged.RemoveListener(OnToggleValueChange);
+            {
+                this.m_TargetToggle.onValueChanged.RemoveListener(this.OnToggleValueChange);
+            }
 
             this.InstantClearState();
         }
@@ -199,22 +189,28 @@ namespace DuloGames.UI
                 this.DoSpriteSwap(null);
 
                 if (this.m_Transition != Transition.CanvasGroup)
+                {
                     this.InternalEvaluateAndTransitionToNormalState(true);
+                }
             }
         }
 #endif
-        
+
         protected void OnToggleValueChange(bool value)
         {
             if (this.m_TargetToggle == null)
+            {
                 return;
+            }
 
             this.m_Active = this.m_TargetToggle.isOn;
 
             if (this.m_Transition == Transition.Animation)
             {
                 if (this.targetGameObject == null || this.animator == null || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || string.IsNullOrEmpty(this.m_ActiveBool))
+                {
                     return;
+                }
 
                 this.animator.SetBool(this.m_ActiveBool, this.m_Active);
             }
@@ -243,7 +239,7 @@ namespace DuloGames.UI
                     break;
             }
         }
-        
+
         /// <summary>
         /// Does the state transition.
         /// </summary>
@@ -253,8 +249,10 @@ namespace DuloGames.UI
         {
             // Check if active in the scene
             if (!this.gameObject.activeInHierarchy)
+            {
                 return;
-            
+            }
+
             Color color = this.m_NormalColor;
             Sprite newSprite = null;
             string triggername = this.m_NormalTrigger;
@@ -306,7 +304,9 @@ namespace DuloGames.UI
         private void StartColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -323,7 +323,9 @@ namespace DuloGames.UI
             Image image = this.m_TargetGraphic as Image;
 
             if (image == null)
+            {
                 return;
+            }
 
             image.overrideSprite = newSprite;
         }
@@ -331,7 +333,9 @@ namespace DuloGames.UI
         private void TriggerAnimation(string triggername)
         {
             if (this.targetGameObject == null || this.animator == null || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
+            {
                 return;
+            }
 
             this.animator.ResetTrigger(this.m_NormalTrigger);
             this.animator.SetTrigger(triggername);
@@ -340,10 +344,14 @@ namespace DuloGames.UI
         private void StartTextColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if ((this.m_TargetGraphic is Text) == false)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -351,8 +359,8 @@ namespace DuloGames.UI
             }
             else
             {
-                var colorTween = new ColorTween { duration = this.m_Duration, startColor = (this.m_TargetGraphic as Text).color, targetColor = targetColor };
-                colorTween.AddOnChangedCallback(SetTextColor);
+                ColorTween colorTween = new ColorTween { duration = this.m_Duration, startColor = (this.m_TargetGraphic as Text).color, targetColor = targetColor };
+                colorTween.AddOnChangedCallback(this.SetTextColor);
                 colorTween.ignoreTimeScale = true;
 
                 this.m_ColorTweenRunner.StartTween(colorTween);
@@ -366,7 +374,9 @@ namespace DuloGames.UI
 		private void SetTextColor(Color targetColor)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if (this.m_TargetGraphic is Text)
             {
@@ -382,7 +392,9 @@ namespace DuloGames.UI
 		private void StartCanvasGroupTween(float targetAlpha, bool instant)
         {
             if (this.m_TargetCanvasGroup == null)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -390,8 +402,8 @@ namespace DuloGames.UI
             }
             else
             {
-                var floatTween = new FloatTween { duration = this.m_Duration, startFloat = this.m_TargetCanvasGroup.alpha, targetFloat = targetAlpha };
-                floatTween.AddOnChangedCallback(SetCanvasGroupAlpha);
+                FloatTween floatTween = new FloatTween { duration = this.m_Duration, startFloat = this.m_TargetCanvasGroup.alpha, targetFloat = targetAlpha };
+                floatTween.AddOnChangedCallback(this.SetCanvasGroupAlpha);
                 floatTween.ignoreTimeScale = true;
 
                 this.m_FloatTweenRunner.StartTween(floatTween);
@@ -405,7 +417,9 @@ namespace DuloGames.UI
         private void SetCanvasGroupAlpha(float alpha)
         {
             if (this.m_TargetCanvasGroup == null)
+            {
                 return;
+            }
 
             this.m_TargetCanvasGroup.alpha = alpha;
         }

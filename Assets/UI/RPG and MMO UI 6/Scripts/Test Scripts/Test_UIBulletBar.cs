@@ -1,7 +1,7 @@
+using DuloGames.UI.Tweens;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using DuloGames.UI.Tweens;
 
 namespace DuloGames.UI
 {
@@ -31,7 +31,9 @@ namespace DuloGames.UI
         protected Test_UIBulletBar()
         {
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_FloatTweenRunner.Init(this);
         }
@@ -39,7 +41,9 @@ namespace DuloGames.UI
         protected void OnEnable()
         {
             if (this.bar == null)
+            {
                 return;
+            }
 
             this.StartTween(0f, (this.bar.fillAmount * this.Duration));
         }
@@ -47,7 +51,9 @@ namespace DuloGames.UI
         protected void SetFillAmount(float amount)
         {
             if (this.bar == null)
+            {
                 return;
+            }
 
             this.bar.fillAmount = amount;
 
@@ -59,11 +65,11 @@ namespace DuloGames.UI
                 }
                 else if (this.m_TextVariant == TextVariant.Value)
                 {
-                    this.m_Text.text = Mathf.RoundToInt((float)this.m_TextValue * amount).ToString();
+                    this.m_Text.text = Mathf.RoundToInt(this.m_TextValue * amount).ToString();
                 }
                 else if (this.m_TextVariant == TextVariant.ValueMax)
                 {
-                    this.m_Text.text = Mathf.RoundToInt((float)this.m_TextValue * amount).ToString() + "/" + this.m_TextValue;
+                    this.m_Text.text = Mathf.RoundToInt(this.m_TextValue * amount).ToString() + "/" + this.m_TextValue;
                 }
             }
         }
@@ -71,7 +77,9 @@ namespace DuloGames.UI
         protected void OnTweenFinished()
         {
             if (this.bar == null)
+            {
                 return;
+            }
 
             this.StartTween((this.bar.fillAmount == 0f ? 1f : 0f), this.Duration);
         }
@@ -79,11 +87,13 @@ namespace DuloGames.UI
         protected void StartTween(float targetFloat, float duration)
         {
             if (this.bar == null)
+            {
                 return;
+            }
 
-            var floatTween = new FloatTween { duration = duration, startFloat = this.bar.fillAmount, targetFloat = targetFloat };
-            floatTween.AddOnChangedCallback(SetFillAmount);
-            floatTween.AddOnFinishCallback(OnTweenFinished);
+            FloatTween floatTween = new FloatTween { duration = duration, startFloat = this.bar.fillAmount, targetFloat = targetFloat };
+            floatTween.AddOnChangedCallback(this.SetFillAmount);
+            floatTween.AddOnFinishCallback(this.OnTweenFinished);
             floatTween.ignoreTimeScale = true;
             floatTween.easing = this.Easing;
             this.m_FloatTweenRunner.StartTween(floatTween);

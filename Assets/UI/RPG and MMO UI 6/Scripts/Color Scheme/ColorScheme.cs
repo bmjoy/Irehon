@@ -14,12 +14,12 @@ namespace DuloGames.UI
         [SerializeField] private Color m_ImageLight = Color.white;
         [SerializeField] private Color m_ImageDark = Color.white;
         [SerializeField] private Color m_ImageEffect = Color.white;
-        [HideInInspector][SerializeField] private Color m_ImageBordersPrimary = Color.white;
-        [HideInInspector][SerializeField] private Color m_ImageBordersSecondary = Color.white;
+        [HideInInspector] [SerializeField] private Color m_ImageBordersPrimary = Color.white;
+        [HideInInspector] [SerializeField] private Color m_ImageBordersSecondary = Color.white;
 
         [Header("Button Colors")]
         [SerializeField] private Color m_ButtonForeground = Color.white;
-        [HideInInspector][SerializeField] private Color m_ButtonEffect = Color.white;
+        [HideInInspector] [SerializeField] private Color m_ButtonEffect = Color.white;
 
         [Header("Window Colors")]
         [SerializeField] private Color m_WindowHeader = Color.white;
@@ -30,8 +30,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color logoPrimary
         {
-            get { return this.m_LogoPrimary; }
-            set { this.m_LogoPrimary = value; }
+            get => this.m_LogoPrimary;
+            set => this.m_LogoPrimary = value;
         }
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color logoEffect
         {
-            get { return this.m_LogoEffect; }
-            set { this.m_LogoEffect = value; }
+            get => this.m_LogoEffect;
+            set => this.m_LogoEffect = value;
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color imagePrimary
         {
-            get { return this.m_ImagePrimary; }
-            set { this.m_ImagePrimary = value; }
+            get => this.m_ImagePrimary;
+            set => this.m_ImagePrimary = value;
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color imageSecondary
         {
-            get { return this.m_ImageSecondary; }
-            set { this.m_ImageSecondary = value; }
+            get => this.m_ImageSecondary;
+            set => this.m_ImageSecondary = value;
         }
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color imageLight
         {
-            get { return this.m_ImageLight; }
-            set { this.m_ImageLight = value; }
+            get => this.m_ImageLight;
+            set => this.m_ImageLight = value;
         }
 
         /// <summary>
@@ -75,17 +75,17 @@ namespace DuloGames.UI
         /// </summary>
         public Color imageDark
         {
-            get { return this.m_ImageDark; }
-            set { this.m_ImageDark = value; }
+            get => this.m_ImageDark;
+            set => this.m_ImageDark = value;
         }
-        
+
         /// <summary>
         /// Gets or sets the Effect image color shade.
         /// </summary>
         public Color imageEffect
         {
-            get { return this.m_ImageEffect; }
-            set { this.m_ImageEffect = value; }
+            get => this.m_ImageEffect;
+            set => this.m_ImageEffect = value;
         }
 
         /// <summary>
@@ -93,8 +93,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color imageBordersPrimary
         {
-            get { return this.m_ImageBordersPrimary; }
-            set { this.m_ImageBordersPrimary = value; }
+            get => this.m_ImageBordersPrimary;
+            set => this.m_ImageBordersPrimary = value;
         }
 
         /// <summary>
@@ -102,8 +102,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color imageBordersSecondary
         {
-            get { return this.m_ImageBordersSecondary; }
-            set { this.m_ImageBordersSecondary = value; }
+            get => this.m_ImageBordersSecondary;
+            set => this.m_ImageBordersSecondary = value;
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color buttonForeground
         {
-            get { return this.m_ButtonForeground; }
-            set { this.m_ButtonForeground = value; }
+            get => this.m_ButtonForeground;
+            set => this.m_ButtonForeground = value;
         }
 
         /// <summary>
@@ -120,8 +120,8 @@ namespace DuloGames.UI
         /// </summary>
         public Color buttonEffect
         {
-            get { return this.m_ButtonEffect; }
-            set { this.m_ButtonEffect = value; }
+            get => this.m_ButtonEffect;
+            set => this.m_ButtonEffect = value;
         }
 
         /// <summary>
@@ -129,17 +129,17 @@ namespace DuloGames.UI
         /// </summary>
         public Color windowHeader
         {
-            get { return this.m_WindowHeader; }
-            set { this.m_WindowHeader = value; }
+            get => this.m_WindowHeader;
+            set => this.m_WindowHeader = value;
         }
-        
+
         /// <summary>
         /// Gets or sets the window header effect color.
         /// </summary>
         public Color windowHeaderEffect
         {
-            get { return this.m_WindowHeaderEffect; }
-            set { this.m_WindowHeaderEffect = value; }
+            get => this.m_WindowHeaderEffect;
+            set => this.m_WindowHeaderEffect = value;
         }
 
         /// <summary>
@@ -164,9 +164,11 @@ namespace DuloGames.UI
 
             // Set the color scheme as active
             if (ColorSchemeManager.Instance != null)
+            {
                 ColorSchemeManager.Instance.activeColorScheme = this;
+            }
         }
-        
+
         /// <summary>
         /// Gets a color shade.
         /// </summary>
@@ -230,8 +232,10 @@ namespace DuloGames.UI
         public void ApplyToElement(IColorSchemeElement element)
         {
             if (element == null)
+            {
                 return;
-            
+            }
+
             // Get the color
             Color newColor = this.GetColorShade(element.shade);
 

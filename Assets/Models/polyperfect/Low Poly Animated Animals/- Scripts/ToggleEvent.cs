@@ -1,17 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ToggleEvent : MonoBehaviour {
+public class ToggleEvent : MonoBehaviour
+{
 
     public UnityEngine.Events.UnityEvent toggleOn, toggleOff;
-    UnityEngine.UI.Toggle toggle;
+    private UnityEngine.UI.Toggle toggle;
 
-    void Awake()
+    private void Awake()
     {
-        toggle = GetComponent<UnityEngine.UI.Toggle>();
+        this.toggle = this.GetComponent<UnityEngine.UI.Toggle>();
 
-        toggle.onValueChanged.AddListener((value) => SwapToggle(toggle.isOn));
+        this.toggle.onValueChanged.AddListener((value) => this.SwapToggle(this.toggle.isOn));
     }
 
     public void SwapToggle(bool value)
@@ -19,10 +18,10 @@ public class ToggleEvent : MonoBehaviour {
         switch (value)
         {
             case true:
-                toggleOn.Invoke();
+                this.toggleOn.Invoke();
                 break;
             case false:
-                toggleOff.Invoke();
+                this.toggleOff.Invoke();
                 break;
         }
     }

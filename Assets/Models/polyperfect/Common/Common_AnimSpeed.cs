@@ -1,27 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PolyPerfect
 {
     public class Common_AnimSpeed : MonoBehaviour
     {
-
-        Animator anim;
-
-        float Speed;
+        private Animator anim;
+        private float Speed;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
-            Speed = Random.Range(0.85f, 1.25f);
-            anim = GetComponent<Animator>();
+            this.Speed = Random.Range(0.85f, 1.25f);
+            this.anim = this.GetComponent<Animator>();
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            anim.speed = Speed;
+            this.anim.speed = this.Speed;
         }
     }
 }

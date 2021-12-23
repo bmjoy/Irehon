@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 namespace DuloGames.UI
 {
@@ -26,13 +26,13 @@ namespace DuloGames.UI
             Text
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private List<string> m_Options = new List<string>();
         [SerializeField] private List<GameObject> m_OptionGameObjects = new List<GameObject>();
         [SerializeField] private GameObject m_OptionsContGameObject;
         [SerializeField] private RectTransform m_OptionsContRect;
         [SerializeField] private GridLayoutGroup m_OptionsContGrid;
-        
+
         [SerializeField] private RectOffset m_OptionsPadding = new RectOffset();
         [SerializeField] private Sprite m_OptionSprite;
         [SerializeField] private Font m_OptionTextFont;
@@ -50,7 +50,7 @@ namespace DuloGames.UI
         [SerializeField] private Color m_OptionTransitionColorActive = ColorBlock.defaultColorBlock.highlightedColor;
         [SerializeField, Range(1f, 6f)] private float m_OptionTransitionMultiplier = 1f;
         [SerializeField] private float m_OptionTransitionDuration = 0.1f;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private GameObject m_CurrentOptionGameObject;
 
@@ -60,7 +60,7 @@ namespace DuloGames.UI
         /// <value>The options.</value>
         public List<string> options
         {
-            get { return this.m_Options; }
+            get => this.m_Options;
             set
             {
                 this.m_Options = value;
@@ -73,10 +73,7 @@ namespace DuloGames.UI
         /// Gets the selected option game object.
         /// </summary>
         /// <value>The selected option game object.</value>
-        public GameObject selectedOptionGameObject
-        {
-            get { return this.m_CurrentOptionGameObject; }
-        }
+        public GameObject selectedOptionGameObject => this.m_CurrentOptionGameObject;
 
         /// <summary>
         /// Gets the index of the selected option.
@@ -90,7 +87,9 @@ namespace DuloGames.UI
 
                 // Validate the index
                 if (optionIndex < 0 || optionIndex >= this.m_Options.Count)
+                {
                     return 0;
+                }
 
                 return optionIndex;
             }
@@ -102,8 +101,8 @@ namespace DuloGames.UI
         /// <value>The options padding.</value>
         public RectOffset optionsPadding
         {
-            get { return this.m_OptionsPadding; }
-            set { this.m_OptionsPadding = value; }
+            get => this.m_OptionsPadding;
+            set => this.m_OptionsPadding = value;
         }
 
         /// <summary>
@@ -124,7 +123,7 @@ namespace DuloGames.UI
             this.ValidateOptions();
 
             // Add the listener for the value change
-            this.onValueChanged.AddListener(OnValueChanged);
+            this.onValueChanged.AddListener(this.OnValueChanged);
         }
 
         /// <summary>
@@ -135,7 +134,7 @@ namespace DuloGames.UI
             base.OnDisable();
 
             // Remove the listener for the value change
-            this.onValueChanged.RemoveListener(OnValueChanged);
+            this.onValueChanged.RemoveListener(this.OnValueChanged);
         }
 
 #if UNITY_EDITOR
@@ -148,7 +147,9 @@ namespace DuloGames.UI
             this.ValidateOptions();
 
             if (this.m_OptionTextFont == null)
+            {
                 this.m_OptionTextFont = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+            }
         }
 #endif
 
@@ -160,7 +161,9 @@ namespace DuloGames.UI
             base.OnRectTransformDimensionsChange();
 
             if (!this.IsActive())
+            {
                 return;
+            }
 
             this.UpdateGridProperties();
         }
@@ -172,7 +175,9 @@ namespace DuloGames.UI
         public void OnValueChanged(float value)
         {
             if (!this.IsActive() || !this.HasOptions())
+            {
                 return;
+            }
 
             // Transition
             if (this.m_OptionTransition == OptionTransition.ColorTint)
@@ -180,7 +185,7 @@ namespace DuloGames.UI
                 // Transition out the current selected option
                 Graphic currentTarget =
                     (this.m_OptionTransitionTarget == TransitionTarget.Text) ?
-                        (this.m_CurrentOptionGameObject.GetComponentInChildren<Text>() as Graphic) :
+                        this.m_CurrentOptionGameObject.GetComponentInChildren<Text>() :
                         (this.m_CurrentOptionGameObject.GetComponent<Image>() as Graphic);
 
                 // Transition the current target to normal state
@@ -191,7 +196,9 @@ namespace DuloGames.UI
 
                 // Validate the index
                 if (newOptionIndex < 0 || newOptionIndex >= this.m_Options.Count)
+                {
                     newOptionIndex = 0;
+                }
 
                 // Get the new selected option game object
                 GameObject newOptionGameObject = this.m_OptionGameObjects[newOptionIndex];
@@ -200,7 +207,7 @@ namespace DuloGames.UI
                 {
                     Graphic newTarget =
                         (this.m_OptionTransitionTarget == TransitionTarget.Text) ?
-                            (newOptionGameObject.GetComponentInChildren<Text>() as Graphic) :
+                            newOptionGameObject.GetComponentInChildren<Text>() :
                             (newOptionGameObject.GetComponent<Image>() as Graphic);
 
                     // Transition the new target to active state
@@ -221,7 +228,9 @@ namespace DuloGames.UI
         private void StartColorTween(Graphic target, Color targetColor, float duration)
         {
             if (target == null)
+            {
                 return;
+            }
 
             if (!Application.isPlaying || duration == 0f)
             {
@@ -239,7 +248,9 @@ namespace DuloGames.UI
         protected void ValidateOptions()
         {
             if (!this.IsActive())
+            {
                 return;
+            }
 
             if (!this.HasOptions())
             {
@@ -247,24 +258,32 @@ namespace DuloGames.UI
                 if (this.m_OptionsContGameObject != null)
                 {
                     if (Application.isPlaying)
+                    {
                         Destroy(this.m_OptionsContGameObject);
+                    }
                     else
+                    {
                         DestroyImmediate(this.m_OptionsContGameObject);
+                    }
                 }
                 return;
             }
 
             // Make sure we have the options container
             if (this.m_OptionsContGameObject == null)
+            {
                 this.CreateOptionsContainer();
+            }
 
             // Make sure we use whole numbers when using options
             if (!this.wholeNumbers)
+            {
                 this.wholeNumbers = true;
+            }
 
             // Make sure the max value is the options count, when using options
             this.minValue = 0f;
-            this.maxValue = ((float)this.m_Options.Count - 1f);
+            this.maxValue = (this.m_Options.Count - 1f);
 
             // Update the grid properties
             this.UpdateGridProperties();
@@ -279,23 +298,31 @@ namespace DuloGames.UI
         public void UpdateGridProperties()
         {
             if (this.m_OptionsContGrid == null)
+            {
                 return;
+            }
 
             // Grid Padding
             if (!this.m_OptionsContGrid.padding.Equals(this.m_OptionsPadding))
+            {
                 this.m_OptionsContGrid.padding = this.m_OptionsPadding;
+            }
 
             // Grid Cell Size
             Vector2 cellSize = (this.m_OptionSprite != null) ? new Vector2(this.m_OptionSprite.rect.width, this.m_OptionSprite.rect.height) : Vector2.zero;
 
             if (!this.m_OptionsContGrid.cellSize.Equals(cellSize))
+            {
                 this.m_OptionsContGrid.cellSize = cellSize;
+            }
 
             // Grid spacing
-            float spacingX = (this.m_OptionsContRect.rect.width - ((float)this.m_OptionsPadding.left + (float)this.m_OptionsPadding.right) - ((float)this.m_Options.Count * cellSize.x)) / ((float)this.m_Options.Count - 1f);
+            float spacingX = (this.m_OptionsContRect.rect.width - (this.m_OptionsPadding.left + (float)this.m_OptionsPadding.right) - (this.m_Options.Count * cellSize.x)) / (this.m_Options.Count - 1f);
 
             if (this.m_OptionsContGrid.spacing.x != spacingX)
+            {
                 this.m_OptionsContGrid.spacing = new Vector2(spacingX, 0f);
+            }
         }
 
         /// <summary>
@@ -304,7 +331,9 @@ namespace DuloGames.UI
         public void UpdateOptionsProperties()
         {
             if (!this.HasOptions())
+            {
                 return;
+            }
 
             // Loop through the options
             int i = 0;
@@ -314,7 +343,9 @@ namespace DuloGames.UI
 
                 // Save as current
                 if (selected)
+                {
                     this.m_CurrentOptionGameObject = optionObject;
+                }
 
                 // Image
                 Image image = optionObject.GetComponent<Image>();
@@ -324,9 +355,13 @@ namespace DuloGames.UI
                     image.rectTransform.pivot = new Vector2(0f, 1f);
 
                     if (this.m_OptionTransition == OptionTransition.ColorTint && this.m_OptionTransitionTarget == TransitionTarget.Image)
+                    {
                         image.canvasRenderer.SetColor((selected) ? this.m_OptionTransitionColorActive : this.m_OptionTransitionColorNormal);
+                    }
                     else
+                    {
                         image.canvasRenderer.SetColor(Color.white);
+                    }
                 }
 
                 // Text
@@ -340,9 +375,13 @@ namespace DuloGames.UI
                     text.color = this.m_OptionTextColor;
 
                     if (this.m_OptionTransition == OptionTransition.ColorTint && this.m_OptionTransitionTarget == TransitionTarget.Text)
+                    {
                         text.canvasRenderer.SetColor((selected) ? this.m_OptionTransitionColorActive : this.m_OptionTransitionColorNormal);
+                    }
                     else
+                    {
                         text.canvasRenderer.SetColor(Color.white);
+                    }
 
                     // Update the text offset
                     (text.transform as RectTransform).anchoredPosition = this.m_OptionTextOffset;
@@ -362,11 +401,15 @@ namespace DuloGames.UI
         protected void RebuildOptions()
         {
             if (!this.HasOptions())
+            {
                 return;
+            }
 
             // Make sure we have the options container
             if (this.m_OptionsContGameObject == null)
+            {
                 this.CreateOptionsContainer();
+            }
 
             // Clear out the current options
             this.DestroyOptions();
@@ -441,7 +484,11 @@ namespace DuloGames.UI
             if (this.m_OptionTextEffect == TextEffectType.Shadow)
             {
                 Shadow s = gObject.GetComponent<Shadow>();
-                if (s == null) s = gObject.AddComponent<Shadow>();
+                if (s == null)
+                {
+                    s = gObject.AddComponent<Shadow>();
+                }
+
                 s.effectColor = this.m_OptionTextEffectColor;
                 s.effectDistance = this.m_OptionTextEffectDistance;
                 s.useGraphicAlpha = this.m_OptionTextEffectUseGraphicAlpha;
@@ -449,7 +496,11 @@ namespace DuloGames.UI
             else if (this.m_OptionTextEffect == TextEffectType.Outline)
             {
                 Outline o = gObject.GetComponent<Outline>();
-                if (o == null) o = gObject.AddComponent<Outline>();
+                if (o == null)
+                {
+                    o = gObject.AddComponent<Outline>();
+                }
+
                 o.effectColor = this.m_OptionTextEffectColor;
                 o.effectDistance = this.m_OptionTextEffectDistance;
                 o.useGraphicAlpha = this.m_OptionTextEffectUseGraphicAlpha;
@@ -474,13 +525,27 @@ namespace DuloGames.UI
                     // Destroy any effect we find
                     if (Application.isPlaying)
                     {
-                        if (s != null) Destroy(s);
-                        if (o != null) Destroy(o);
+                        if (s != null)
+                        {
+                            Destroy(s);
+                        }
+
+                        if (o != null)
+                        {
+                            Destroy(o);
+                        }
                     }
                     else
                     {
-                        if (s != null) DestroyImmediate(s);
-                        if (o != null) DestroyImmediate(o);
+                        if (s != null)
+                        {
+                            DestroyImmediate(s);
+                        }
+
+                        if (o != null)
+                        {
+                            DestroyImmediate(o);
+                        }
                     }
 
                     // Re-add the effect
@@ -497,8 +562,14 @@ namespace DuloGames.UI
             // Clear out the optins
             foreach (GameObject g in this.m_OptionGameObjects)
             {
-                if (Application.isPlaying) Destroy(g);
-                else DestroyImmediate(g);
+                if (Application.isPlaying)
+                {
+                    Destroy(g);
+                }
+                else
+                {
+                    DestroyImmediate(g);
+                }
             }
 
             // Clear the list

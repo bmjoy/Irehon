@@ -1,17 +1,18 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class Demo_FixScrollRects : MonoBehaviour {
+public class Demo_FixScrollRects : MonoBehaviour
+{
 
     protected void OnEnable()
     {
-        SceneManager.sceneLoaded += OnLoaded;
+        SceneManager.sceneLoaded += this.OnLoaded;
     }
 
     protected void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnLoaded;
+        SceneManager.sceneLoaded -= this.OnLoaded;
     }
 
     private void OnLoaded(Scene scene, LoadSceneMode mode)

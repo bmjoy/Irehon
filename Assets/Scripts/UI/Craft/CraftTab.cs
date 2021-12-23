@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon.Interactable;
 using UnityEngine;
-using Mirror;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -23,18 +21,18 @@ public class CraftTab : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        CraftWindowManager.SelectRecipe(currentRecipe, index);
+        CraftWindowManager.Instance.SelectRecipe(this.currentRecipe, this.index);
     }
 
     public void Intialize(CraftRecipe recipe, ToggleGroup group, int tabIndex)
     {
-        index = tabIndex;
-        currentRecipe = recipe;
-        craftingItem = ItemDatabase.GetItemById(recipe.itemId);
-        recipeName.text = craftingItem.name;
-        quantity.text = recipe.itemQuantity > 0 ? recipe.itemQuantity.ToString() : "";
-        recipeIcon.sprite = craftingItem.sprite;
+        this.index = tabIndex;
+        this.currentRecipe = recipe;
+        this.craftingItem = ItemDatabase.GetItemById(recipe.itemId);
+        this.recipeName.text = this.craftingItem.name;
+        this.quantity.text = recipe.itemQuantity > 0 ? recipe.itemQuantity.ToString() : "";
+        this.recipeIcon.sprite = this.craftingItem.sprite;
 
-        GetComponent<Toggle>().group = group;
+        this.GetComponent<Toggle>().group = group;
     }
 }

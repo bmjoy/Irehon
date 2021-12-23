@@ -35,89 +35,89 @@ namespace UnityEngine.UI.Extensions
         private ParticleSystem.MainModule mainModule;
 #endif
 
-        public override Texture mainTexture
-        {
-            get
-            {
-                return currentTexture;
-            }
-        }
+        public override Texture mainTexture => this.currentTexture;
 
         protected bool Initialize()
         {
             // initialize members
-            if (_transform == null)
+            if (this._transform == null)
             {
-                _transform = transform;
+                this._transform = this.transform;
             }
-            if (pSystem == null)
+            if (this.pSystem == null)
             {
-                pSystem = GetComponent<ParticleSystem>();
+                this.pSystem = this.GetComponent<ParticleSystem>();
 
-                if (pSystem == null)
+                if (this.pSystem == null)
                 {
                     return false;
                 }
 
 #if UNITY_5_5_OR_NEWER
-                mainModule = pSystem.main;
-                if (pSystem.main.maxParticles > 14000)
+                this.mainModule = this.pSystem.main;
+                if (this.pSystem.main.maxParticles > 14000)
                 {
-                    mainModule.maxParticles = 14000;
+                    this.mainModule.maxParticles = 14000;
                 }
 #else
                     if (pSystem.maxParticles > 14000)
                         pSystem.maxParticles = 14000;
 #endif
 
-                pRenderer = pSystem.GetComponent<ParticleSystemRenderer>();
-                if (pRenderer != null)
-                    pRenderer.enabled = false;
-
-                if (material == null)
+                this.pRenderer = this.pSystem.GetComponent<ParticleSystemRenderer>();
+                if (this.pRenderer != null)
                 {
-                    var foundShader = Shader.Find("UI Extensions/Particles/Additive");
+                    this.pRenderer.enabled = false;
+                }
+
+                if (this.material == null)
+                {
+                    Shader foundShader = Shader.Find("UI Extensions/Particles/Additive");
                     if (foundShader)
                     {
-                        material = new Material(foundShader);
+                        this.material = new Material(foundShader);
                     }
                 }
 
-                currentMaterial = material;
-                if (currentMaterial && currentMaterial.HasProperty("_MainTex"))
+                this.currentMaterial = this.material;
+                if (this.currentMaterial && this.currentMaterial.HasProperty("_MainTex"))
                 {
-                    currentTexture = currentMaterial.mainTexture;
-                    if (currentTexture == null)
-                        currentTexture = Texture2D.whiteTexture;
+                    this.currentTexture = this.currentMaterial.mainTexture;
+                    if (this.currentTexture == null)
+                    {
+                        this.currentTexture = Texture2D.whiteTexture;
+                    }
                 }
-                material = currentMaterial;
+                this.material = this.currentMaterial;
                 // automatically set scaling
 #if UNITY_5_5_OR_NEWER
-                mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                this.mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
 #else
                     pSystem.scalingMode = ParticleSystemScalingMode.Hierarchy;
 #endif
 
-                particles = null;
+                this.particles = null;
             }
 #if UNITY_5_5_OR_NEWER
-            if (particles == null)
-                particles = new ParticleSystem.Particle[pSystem.main.maxParticles];
+            if (this.particles == null)
+            {
+                this.particles = new ParticleSystem.Particle[this.pSystem.main.maxParticles];
+            }
 #else
                 if (particles == null)
                     particles = new ParticleSystem.Particle[pSystem.maxParticles];
 #endif
 
-            imageUV = new Vector4(0, 0, 1, 1);
+            this.imageUV = new Vector4(0, 0, 1, 1);
 
             // prepare texture sheet animation
-            textureSheetAnimation = pSystem.textureSheetAnimation;
-            textureSheetAnimationFrames = 0;
-            textureSheetAnimationFrameSize = Vector2.zero;
-            if (textureSheetAnimation.enabled)
+            this.textureSheetAnimation = this.pSystem.textureSheetAnimation;
+            this.textureSheetAnimationFrames = 0;
+            this.textureSheetAnimationFrameSize = Vector2.zero;
+            if (this.textureSheetAnimation.enabled)
             {
-                textureSheetAnimationFrames = textureSheetAnimation.numTilesX * textureSheetAnimation.numTilesY;
-                textureSheetAnimationFrameSize = new Vector2(1f / textureSheetAnimation.numTilesX, 1f / textureSheetAnimation.numTilesY);
+                this.textureSheetAnimationFrames = this.textureSheetAnimation.numTilesX * this.textureSheetAnimation.numTilesY;
+                this.textureSheetAnimationFrameSize = new Vector2(1f / this.textureSheetAnimation.numTilesX, 1f / this.textureSheetAnimation.numTilesY);
             }
 
             return true;
@@ -126,8 +126,10 @@ namespace UnityEngine.UI.Extensions
         protected override void Awake()
         {
             base.Awake();
-            if (!Initialize())
-                enabled = false;
+            if (!this.Initialize())
+            {
+                this.enabled = false;
+            }
         }
 
 
@@ -136,7 +138,7 @@ namespace UnityEngine.UI.Extensions
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                if (!Initialize())
+                if (!this.Initialize())
                 {
                     return;
                 }
@@ -145,124 +147,126 @@ namespace UnityEngine.UI.Extensions
             // prepare vertices
             vh.Clear();
 
-            if (!gameObject.activeInHierarchy)
+            if (!this.gameObject.activeInHierarchy)
             {
                 return;
             }
 
-            if (!isInitialised && !pSystem.main.playOnAwake)
+            if (!this.isInitialised && !this.pSystem.main.playOnAwake)
             {
-                pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
-                isInitialised = true;
+                this.pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                this.isInitialised = true;
             }
 
             Vector2 temp = Vector2.zero;
             Vector2 corner1 = Vector2.zero;
             Vector2 corner2 = Vector2.zero;
             // iterate through current particles
-            int count = pSystem.GetParticles(particles);
+            int count = this.pSystem.GetParticles(this.particles);
 
             for (int i = 0; i < count; ++i)
             {
-                ParticleSystem.Particle particle = particles[i];
+                ParticleSystem.Particle particle = this.particles[i];
 
                 // get particle properties
 #if UNITY_5_5_OR_NEWER
-                Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+                Vector2 position = (this.mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : this._transform.InverseTransformPoint(particle.position));
 #else
                     Vector2 position = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #endif
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 float rotation90 = rotation + Mathf.PI / 2;
-                Color32 color = particle.GetCurrentColor(pSystem);
-                float size = particle.GetCurrentSize(pSystem) * 0.5f;
+                Color32 color = particle.GetCurrentColor(this.pSystem);
+                float size = particle.GetCurrentSize(this.pSystem) * 0.5f;
 
                 // apply scale
 #if UNITY_5_5_OR_NEWER
-                if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
-                    position /= canvas.scaleFactor;
+                if (this.mainModule.scalingMode == ParticleSystemScalingMode.Shape)
+                {
+                    position /= this.canvas.scaleFactor;
+                }
 #else
                     if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
                         position /= canvas.scaleFactor;
 #endif
 
                 // apply texture sheet animation
-                Vector4 particleUV = imageUV;
-                if (textureSheetAnimation.enabled)
+                Vector4 particleUV = this.imageUV;
+                if (this.textureSheetAnimation.enabled)
                 {
 #if UNITY_5_5_OR_NEWER
                     float frameProgress = 1 - (particle.remainingLifetime / particle.startLifetime);
 
-                    if (textureSheetAnimation.frameOverTime.curveMin != null)
+                    if (this.textureSheetAnimation.frameOverTime.curveMin != null)
                     {
-                        frameProgress = textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime));
+                        frameProgress = this.textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime));
                     }
-                    else if (textureSheetAnimation.frameOverTime.curve != null)
+                    else if (this.textureSheetAnimation.frameOverTime.curve != null)
                     {
-                        frameProgress = textureSheetAnimation.frameOverTime.curve.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime));
+                        frameProgress = this.textureSheetAnimation.frameOverTime.curve.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime));
                     }
-                    else if (textureSheetAnimation.frameOverTime.constant > 0)
+                    else if (this.textureSheetAnimation.frameOverTime.constant > 0)
                     {
-                        frameProgress = textureSheetAnimation.frameOverTime.constant - (particle.remainingLifetime / particle.startLifetime);
+                        frameProgress = this.textureSheetAnimation.frameOverTime.constant - (particle.remainingLifetime / particle.startLifetime);
                     }
 #else
                     float frameProgress = 1 - (particle.lifetime / particle.startLifetime);
 #endif
 
-                    frameProgress = Mathf.Repeat(frameProgress * textureSheetAnimation.cycleCount, 1);
+                    frameProgress = Mathf.Repeat(frameProgress * this.textureSheetAnimation.cycleCount, 1);
                     int frame = 0;
 
-                    switch (textureSheetAnimation.animation)
+                    switch (this.textureSheetAnimation.animation)
                     {
 
                         case ParticleSystemAnimationType.WholeSheet:
-                            frame = Mathf.FloorToInt(frameProgress * textureSheetAnimationFrames);
+                            frame = Mathf.FloorToInt(frameProgress * this.textureSheetAnimationFrames);
                             break;
 
                         case ParticleSystemAnimationType.SingleRow:
-                            frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
+                            frame = Mathf.FloorToInt(frameProgress * this.textureSheetAnimation.numTilesX);
 
-                            int row = textureSheetAnimation.rowIndex;
+                            int row = this.textureSheetAnimation.rowIndex;
                             //                    if (textureSheetAnimation.useRandomRow) { // FIXME - is this handled internally by rowIndex?
                             //                        row = Random.Range(0, textureSheetAnimation.numTilesY, using: particle.randomSeed);
                             //                    }
-                            frame += row * textureSheetAnimation.numTilesX;
+                            frame += row * this.textureSheetAnimation.numTilesX;
                             break;
 
                     }
 
-                    frame %= textureSheetAnimationFrames;
+                    frame %= this.textureSheetAnimationFrames;
 
-                    particleUV.x = (frame % textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.x;
-                    particleUV.y = 1.0f - Mathf.FloorToInt(frame / textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.y;
-                    particleUV.z = particleUV.x + textureSheetAnimationFrameSize.x;
-                    particleUV.w = particleUV.y + textureSheetAnimationFrameSize.y;
+                    particleUV.x = (frame % this.textureSheetAnimation.numTilesX) * this.textureSheetAnimationFrameSize.x;
+                    particleUV.y = 1.0f - Mathf.FloorToInt(frame / this.textureSheetAnimation.numTilesX) * this.textureSheetAnimationFrameSize.y;
+                    particleUV.z = particleUV.x + this.textureSheetAnimationFrameSize.x;
+                    particleUV.w = particleUV.y + this.textureSheetAnimationFrameSize.y;
                 }
 
                 temp.x = particleUV.x;
                 temp.y = particleUV.y;
 
-                _quad[0] = UIVertex.simpleVert;
-                _quad[0].color = color;
-                _quad[0].uv0 = temp;
+                this._quad[0] = UIVertex.simpleVert;
+                this._quad[0].color = color;
+                this._quad[0].uv0 = temp;
 
                 temp.x = particleUV.x;
                 temp.y = particleUV.w;
-                _quad[1] = UIVertex.simpleVert;
-                _quad[1].color = color;
-                _quad[1].uv0 = temp;
+                this._quad[1] = UIVertex.simpleVert;
+                this._quad[1].color = color;
+                this._quad[1].uv0 = temp;
 
                 temp.x = particleUV.z;
                 temp.y = particleUV.w;
-                _quad[2] = UIVertex.simpleVert;
-                _quad[2].color = color;
-                _quad[2].uv0 = temp;
+                this._quad[2] = UIVertex.simpleVert;
+                this._quad[2].color = color;
+                this._quad[2].uv0 = temp;
 
                 temp.x = particleUV.z;
                 temp.y = particleUV.y;
-                _quad[3] = UIVertex.simpleVert;
-                _quad[3].color = color;
-                _quad[3].uv0 = temp;
+                this._quad[3] = UIVertex.simpleVert;
+                this._quad[3].color = color;
+                this._quad[3].uv0 = temp;
 
                 if (rotation == 0)
                 {
@@ -274,32 +278,34 @@ namespace UnityEngine.UI.Extensions
 
                     temp.x = corner1.x;
                     temp.y = corner1.y;
-                    _quad[0].position = temp;
+                    this._quad[0].position = temp;
                     temp.x = corner1.x;
                     temp.y = corner2.y;
-                    _quad[1].position = temp;
+                    this._quad[1].position = temp;
                     temp.x = corner2.x;
                     temp.y = corner2.y;
-                    _quad[2].position = temp;
+                    this._quad[2].position = temp;
                     temp.x = corner2.x;
                     temp.y = corner1.y;
-                    _quad[3].position = temp;
+                    this._quad[3].position = temp;
                 }
                 else
                 {
-                    if (use3dRotation)
+                    if (this.use3dRotation)
                     {
                         // get particle properties
 #if UNITY_5_5_OR_NEWER
-                        Vector3 pos3d = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+                        Vector3 pos3d = (this.mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : this._transform.InverseTransformPoint(particle.position));
 #else
                         Vector3 pos3d = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #endif
 
                         // apply scale
 #if UNITY_5_5_OR_NEWER
-                        if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
-                            position /= canvas.scaleFactor;
+                        if (this.mainModule.scalingMode == ParticleSystemScalingMode.Shape)
+                        {
+                            position /= this.canvas.scaleFactor;
+                        }
 #else
                         if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
                             position /= canvas.scaleFactor;
@@ -315,10 +321,10 @@ namespace UnityEngine.UI.Extensions
 
                         Quaternion particleRotation = Quaternion.Euler(particle.rotation3D);
 
-                        _quad[0].position = pos3d + particleRotation * verts[0];
-                        _quad[1].position = pos3d + particleRotation * verts[1];
-                        _quad[2].position = pos3d + particleRotation * verts[2];
-                        _quad[3].position = pos3d + particleRotation * verts[3];
+                        this._quad[0].position = pos3d + particleRotation * verts[0];
+                        this._quad[1].position = pos3d + particleRotation * verts[1];
+                        this._quad[2].position = pos3d + particleRotation * verts[2];
+                        this._quad[3].position = pos3d + particleRotation * verts[3];
                     }
                     else
                     {
@@ -326,29 +332,29 @@ namespace UnityEngine.UI.Extensions
                         Vector2 right = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation)) * size;
                         Vector2 up = new Vector2(Mathf.Cos(rotation90), Mathf.Sin(rotation90)) * size;
 
-                        _quad[0].position = position - right - up;
-                        _quad[1].position = position - right + up;
-                        _quad[2].position = position + right + up;
-                        _quad[3].position = position + right - up;
+                        this._quad[0].position = position - right - up;
+                        this._quad[1].position = position - right + up;
+                        this._quad[2].position = position + right + up;
+                        this._quad[3].position = position + right - up;
                     }
                 }
 
-                vh.AddUIVertexQuad(_quad);
+                vh.AddUIVertexQuad(this._quad);
             }
         }
 
         private void Update()
         {
-            if (!fixedTime && Application.isPlaying)
+            if (!this.fixedTime && Application.isPlaying)
             {
-                pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
-                SetAllDirty();
+                this.pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
+                this.SetAllDirty();
 
-                if ((currentMaterial != null && currentTexture != currentMaterial.mainTexture) ||
-                    (material != null && currentMaterial != null && material.shader != currentMaterial.shader))
+                if ((this.currentMaterial != null && this.currentTexture != this.currentMaterial.mainTexture) ||
+                    (this.material != null && this.currentMaterial != null && this.material.shader != this.currentMaterial.shader))
                 {
-                    pSystem = null;
-                    Initialize();
+                    this.pSystem = null;
+                    this.Initialize();
                 }
             }
         }
@@ -357,47 +363,50 @@ namespace UnityEngine.UI.Extensions
         {
             if (!Application.isPlaying)
             {
-                SetAllDirty();
+                this.SetAllDirty();
             }
             else
             {
-                if (fixedTime)
+                if (this.fixedTime)
                 {
-                    pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
-                    SetAllDirty();
-                    if ((currentMaterial != null && currentTexture != currentMaterial.mainTexture) ||
-                        (material != null && currentMaterial != null && material.shader != currentMaterial.shader))
+                    this.pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
+                    this.SetAllDirty();
+                    if ((this.currentMaterial != null && this.currentTexture != this.currentMaterial.mainTexture) ||
+                        (this.material != null && this.currentMaterial != null && this.material.shader != this.currentMaterial.shader))
                     {
-                        pSystem = null;
-                        Initialize();
+                        this.pSystem = null;
+                        this.Initialize();
                     }
                 }
             }
-            if (material == currentMaterial)
+            if (this.material == this.currentMaterial)
+            {
                 return;
-            pSystem = null;
-            Initialize();
+            }
+
+            this.pSystem = null;
+            this.Initialize();
         }
 
         protected override void OnDestroy()
         {
-            currentMaterial = null;
-            currentTexture = null;
+            this.currentMaterial = null;
+            this.currentTexture = null;
         }
 
         public void StartParticleEmission()
         {
-            pSystem.Play();
+            this.pSystem.Play();
         }
 
         public void StopParticleEmission()
         {
-            pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            this.pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
 
         public void PauseParticleEmission()
         {
-            pSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+            this.pSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
         }
     }
 #endif

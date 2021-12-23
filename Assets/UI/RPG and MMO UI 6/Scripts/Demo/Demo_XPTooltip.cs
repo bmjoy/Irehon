@@ -1,18 +1,18 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     public class Demo_XPTooltip : UIBehaviour, IEventSystemHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private GameObject m_TooltipObject;
         [SerializeField] private UIProgressBar m_ProgressBar;
         [SerializeField] private Text m_PercentText;
         [SerializeField] private float m_OffsetY = 0f;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         [SerializeField, Tooltip("How long of a delay to expect before showing the tooltip."), Range(0f, 10f)]
         private float m_Delay = 1f;
@@ -38,7 +38,9 @@ namespace DuloGames.UI
             base.OnEnable();
 
             if (this.m_ProgressBar != null)
-                this.m_ProgressBar.onChange.AddListener(OnProgressChange);
+            {
+                this.m_ProgressBar.onChange.AddListener(this.OnProgressChange);
+            }
         }
 
         protected override void OnDisable()
@@ -46,7 +48,9 @@ namespace DuloGames.UI
             base.OnDisable();
 
             if (this.m_ProgressBar != null)
-                this.m_ProgressBar.onChange.RemoveListener(OnProgressChange);
+            {
+                this.m_ProgressBar.onChange.RemoveListener(this.OnProgressChange);
+            }
         }
 
         private void OnProgressChange(float value)
@@ -62,8 +66,10 @@ namespace DuloGames.UI
         public virtual void OnTooltip(bool show)
         {
             if (this.m_TooltipObject == null)
+            {
                 return;
-            
+            }
+
             if (show)
             {
                 // Update tooltip position
@@ -148,8 +154,10 @@ namespace DuloGames.UI
         public void UpdatePosition()
         {
             if (this.m_ProgressBar == null || this.m_TooltipObject == null)
+            {
                 return;
-            
+            }
+
             RectTransform tooltipRect = (this.m_TooltipObject.transform as RectTransform);
             RectTransform fillRect = (this.m_ProgressBar.type == UIProgressBar.Type.Filled ? (this.m_ProgressBar.targetImage.transform as RectTransform) : (this.m_ProgressBar.targetTransform.parent as RectTransform));
 
@@ -166,7 +174,9 @@ namespace DuloGames.UI
 
             // Set the percent text
             if (this.m_PercentText != null)
+            {
                 this.m_PercentText.text = (this.m_ProgressBar.fillAmount * 100f).ToString("0") + "%";
-        } 
+            }
+        }
     }
 }

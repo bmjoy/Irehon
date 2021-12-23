@@ -1,24 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SceneAnimatorController : MonoBehaviour
 {
-    Animator animator;
+    private Animator animator;
 
-    void Start()
+    private void Start()
     {
-        animator = GetComponent<Animator>();
+        this.animator = this.GetComponent<Animator>();
     }
 
     public void SetAnimatorString(string value)
     {
-        for (int i = 0; i < animator.parameterCount; i++)
+        for (int i = 0; i < this.animator.parameterCount; i++)
         {
-            animator.SetBool(animator.parameters[i].name, false);
+            this.animator.SetBool(this.animator.parameters[i].name, false);
         }
 
-        if(value != "Idle")
-        animator.SetBool(value, true);
+        if (value != "Idle")
+        {
+            this.animator.SetBool(value, true);
+        }
     }
 }

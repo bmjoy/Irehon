@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
 
 public class DemoAOEskills : MonoBehaviour
 {
@@ -26,45 +23,56 @@ public class DemoAOEskills : MonoBehaviour
     private float HueColor;
     public Texture HueTexture;
 
-    void Start()
+    private void Start()
     {
-        if (Screen.dpi < 1) windowDpi = 1;
-        if (Screen.dpi < 200) windowDpi = 1;
-        else windowDpi = Screen.dpi / 200f;
-        var angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
-        Counter(0);
+        if (Screen.dpi < 1)
+        {
+            this.windowDpi = 1;
+        }
+
+        if (Screen.dpi < 200)
+        {
+            this.windowDpi = 1;
+        }
+        else
+        {
+            this.windowDpi = Screen.dpi / 200f;
+        }
+
+        Vector3 angles = this.transform.eulerAngles;
+        this.x = angles.y;
+        this.y = angles.x;
+        this.Counter(0);
     }
 
     private void OnGUI()
     {
-        if (GUI.Button(new Rect(5 * windowDpi, 5 * windowDpi, 110 * windowDpi, 35 * windowDpi), "Previous effect"))
+        if (GUI.Button(new Rect(5 * this.windowDpi, 5 * this.windowDpi, 110 * this.windowDpi, 35 * this.windowDpi), "Previous effect"))
         {
-            Counter(-1);
+            this.Counter(-1);
         }
-        if (GUI.Button(new Rect(120 * windowDpi, 5 * windowDpi, 110 * windowDpi, 35 * windowDpi), "Play again"))
+        if (GUI.Button(new Rect(120 * this.windowDpi, 5 * this.windowDpi, 110 * this.windowDpi, 35 * this.windowDpi), "Play again"))
         {
-            Counter(0);
+            this.Counter(0);
         }
-        if (GUI.Button(new Rect(235 * windowDpi, 5 * windowDpi, 110 * windowDpi, 35 * windowDpi), "Next effect"))
+        if (GUI.Button(new Rect(235 * this.windowDpi, 5 * this.windowDpi, 110 * this.windowDpi, 35 * this.windowDpi), "Next effect"))
         {
-            Counter(+1);
+            this.Counter(+1);
         }
 
-        StartColor = HueColor;
-        HueColor = GUI.HorizontalSlider(new Rect(5 * windowDpi, 45 * windowDpi, 340 * windowDpi, 35 * windowDpi), HueColor, 0, 1);
-        GUI.DrawTexture(new Rect(5 * windowDpi, 65 * windowDpi, 340 * windowDpi, 15 * windowDpi), HueTexture, ScaleMode.StretchToFill, false, 0);
-        if (HueColor != StartColor)
+        this.StartColor = this.HueColor;
+        this.HueColor = GUI.HorizontalSlider(new Rect(5 * this.windowDpi, 45 * this.windowDpi, 340 * this.windowDpi, 35 * this.windowDpi), this.HueColor, 0, 1);
+        GUI.DrawTexture(new Rect(5 * this.windowDpi, 65 * this.windowDpi, 340 * this.windowDpi, 15 * this.windowDpi), this.HueTexture, ScaleMode.StretchToFill, false, 0);
+        if (this.HueColor != this.StartColor)
         {
             int i = 0;
-            foreach (var ps in particleSystems)
+            foreach (ParticleSystem ps in this.particleSystems)
             {
-                var main = ps.main;
-                Color colorHSV = Color.HSVToRGB(HueColor + H * 0, svList[i].S, svList[i].V);
-                main.startColor = new Color(colorHSV.r, colorHSV.g, colorHSV.b, svList[i].A);
+                ParticleSystem.MainModule main = ps.main;
+                Color colorHSV = Color.HSVToRGB(this.HueColor + this.H * 0, this.svList[i].S, this.svList[i].V);
+                main.startColor = new Color(colorHSV.r, colorHSV.g, colorHSV.b, this.svList[i].A);
                 i++;
-            }           
+            }
         }
     }
 
@@ -79,58 +87,73 @@ public class DemoAOEskills : MonoBehaviour
         public float A;
     }
 
-    void Counter(int count)
+    private void Counter(int count)
     {
-        Prefab += count;
-        if (Prefab > Prefabs.Length - 1)
+        this.Prefab += count;
+        if (this.Prefab > this.Prefabs.Length - 1)
         {
-            Prefab = 0;
+            this.Prefab = 0;
         }
-        else if (Prefab < 0)
+        else if (this.Prefab < 0)
         {
-            Prefab = Prefabs.Length - 1;
+            this.Prefab = this.Prefabs.Length - 1;
         }
-        if (Instance != null)
+        if (this.Instance != null)
         {
-            Destroy(Instance);
+            Destroy(this.Instance);
         }
-        Instance = Instantiate(Prefabs[Prefab]);
-        particleSystems = Instance.GetComponentsInChildren<ParticleSystem>(); //Get color from current instance 
-        svList.Clear();
-        foreach (var ps in particleSystems)
+        this.Instance = Instantiate(this.Prefabs[this.Prefab]);
+        this.particleSystems = this.Instance.GetComponentsInChildren<ParticleSystem>(); //Get color from current instance 
+        this.svList.Clear();
+        foreach (ParticleSystem ps in this.particleSystems)
         {
             Color baseColor = ps.main.startColor.color;
             SVA baseSVA = new SVA();
-            Color.RGBToHSV(baseColor, out H, out baseSVA.S, out baseSVA.V);
+            Color.RGBToHSV(baseColor, out this.H, out baseSVA.S, out baseSVA.V);
             baseSVA.A = baseColor.a;
-            svList.Add(baseSVA);
+            this.svList.Add(baseSVA);
         }
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (currDistance < 2)
+        if (this.currDistance < 2)
         {
-            currDistance = 2;
+            this.currDistance = 2;
         }
-        currDistance -= Input.GetAxis("Mouse ScrollWheel") * 2;
-        if (Holder && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        this.currDistance -= Input.GetAxis("Mouse ScrollWheel") * 2;
+        if (this.Holder && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
-            var pos = Input.mousePosition;
+            Vector3 pos = Input.mousePosition;
             float dpiScale = 1;
-            if (Screen.dpi < 1) dpiScale = 1;
-            if (Screen.dpi < 200) dpiScale = 1;
-            else dpiScale = Screen.dpi / 200f;
-            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
+            if (Screen.dpi < 1)
+            {
+                dpiScale = 1;
+            }
+
+            if (Screen.dpi < 200)
+            {
+                dpiScale = 1;
+            }
+            else
+            {
+                dpiScale = Screen.dpi / 200f;
+            }
+
+            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale)
+            {
+                return;
+            }
+
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            x += (float)(Input.GetAxis("Mouse X") * xRotate * 0.02);
-            y -= (float)(Input.GetAxis("Mouse Y") * yRotate * 0.02);
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0, 0, -currDistance) + Holder.position;
-            transform.rotation = rotation;
-            transform.position = position;
+            this.x += (float)(Input.GetAxis("Mouse X") * this.xRotate * 0.02);
+            this.y -= (float)(Input.GetAxis("Mouse Y") * this.yRotate * 0.02);
+            this.y = ClampAngle(this.y, this.yMinLimit, this.yMaxLimit);
+            Quaternion rotation = Quaternion.Euler(this.y, this.x, 0);
+            Vector3 position = rotation * new Vector3(0, 0, -this.currDistance) + this.Holder.position;
+            this.transform.rotation = rotation;
+            this.transform.position = position;
         }
         else
         {
@@ -138,17 +161,17 @@ public class DemoAOEskills : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (prevDistance != currDistance)
+        if (this.prevDistance != this.currDistance)
         {
-            prevDistance = currDistance;
-            var rot = Quaternion.Euler(y, x, 0);
-            var po = rot * new Vector3(0, 0, -currDistance) + Holder.position;
-            transform.rotation = rot;
-            transform.position = po;
+            this.prevDistance = this.currDistance;
+            Quaternion rot = Quaternion.Euler(this.y, this.x, 0);
+            Vector3 po = rot * new Vector3(0, 0, -this.currDistance) + this.Holder.position;
+            this.transform.rotation = rot;
+            this.transform.position = po;
         }
     }
 
-    static float ClampAngle(float angle, float min, float max)
+    private static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
         {

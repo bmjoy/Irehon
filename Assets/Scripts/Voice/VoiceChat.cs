@@ -3,113 +3,120 @@ using Steamworks;
 using System.IO;
 using UnityEngine;
 
-public class VoiceChat : NetworkBehaviour
+namespace Irehon.Voice
 {
-    [SerializeField]
-    private AudioSource source;
-
-    private MemoryStream output;
-    private MemoryStream stream;
-    private MemoryStream input;
-
-    private int optimalRate;
-    private int clipBufferSize;
-    private float[] clipBuffer;
-
-    private int playbackBuffer;
-    private int dataPosition;
-    private int dataReceived;
-
-    private void Start()
+    public class VoiceChat : NetworkBehaviour
     {
-        optimalRate = 24000;
+        [SerializeField]
+        private AudioSource source;
 
-        clipBufferSize = optimalRate * 5;
-        clipBuffer = new float[clipBufferSize];
+        private MemoryStream output;
+        private MemoryStream stream;
+        private MemoryStream input;
 
-        stream = new MemoryStream();
-        output = new MemoryStream();
-        input = new MemoryStream();
+        private int optimalRate;
+        private int clipBufferSize;
+        private float[] clipBuffer;
 
-        source.clip = AudioClip.Create("VoiceData", (int)256, 1, (int)optimalRate, true, OnAudioRead, null);
-        source.loop = true;
-        source.Play();
-    }
+        private int playbackBuffer;
+        private int dataPosition;
+        private int dataReceived;
 
-    [ClientCallback]
-    private void Update()
-    {
-        if (!isLocalPlayer)
-            return;
-
-        SteamUser.VoiceRecord = Input.GetKey(KeyCode.F);
-
-        if (SteamUser.HasVoiceData)
+        private void Start()
         {
-            int compressedWritten = SteamUser.ReadVoiceData(stream);
-            stream.Position = 0;
+            this.optimalRate = 24000;
 
-            CmdVoice(stream.GetBuffer(), compressedWritten);
+            this.clipBufferSize = this.optimalRate * 5;
+            this.clipBuffer = new float[this.clipBufferSize];
+
+            this.stream = new MemoryStream();
+            this.output = new MemoryStream();
+            this.input = new MemoryStream();
+
+            this.source.clip = AudioClip.Create("VoiceData", 256, 1, this.optimalRate, true, this.OnAudioRead, null);
+            this.source.loop = true;
+            this.source.Play();
         }
-    }
 
-    [Command]
-    public void CmdVoice(byte[] compressed, int bytesWritten)
-    {
-        if (compressed != null)
-            RpcVoiceData(compressed, bytesWritten);
-    }
-
-
-    [ClientRpc (includeOwner = false)]
-    public void RpcVoiceData(byte[] compressed, int bytesWritten)
-    {
-        input.Write(compressed, 0, bytesWritten);
-        input.Position = 0;
-
-        int uncompressedWritten = SteamUser.DecompressVoice(input, bytesWritten, output);
-        input.Position = 0;
-
-        byte[] outputBuffer = output.GetBuffer();
-        WriteToClip(outputBuffer, uncompressedWritten);
-        output.Position = 0;
-    }
-
-    [Client]
-    private void OnAudioRead(float[] data)
-    {
-        for (int i = 0; i < data.Length; ++i)
+        [ClientCallback]
+        private void Update()
         {
-            // start with silence
-            data[i] = 0;
-
-            // do I  have anything to play?
-            if (playbackBuffer > 0)
+            if (!this.isLocalPlayer)
             {
-                // current data position playing
-                dataPosition = (dataPosition + 1) % clipBufferSize;
+                return;
+            }
 
-                data[i] = clipBuffer[dataPosition] * 14;
+            SteamUser.VoiceRecord = Input.GetKey(KeyCode.F);
 
-                playbackBuffer--;
+            if (SteamUser.HasVoiceData)
+            {
+                int compressedWritten = SteamUser.ReadVoiceData(this.stream);
+                this.stream.Position = 0;
+
+                this.CmdVoice(this.stream.GetBuffer(), compressedWritten);
             }
         }
 
-    }
-
-    [Client]
-    private void WriteToClip(byte[] uncompressed, int iSize)
-    {
-        for (int i = 0; i < iSize; i += 2)
+        [Command]
+        public void CmdVoice(byte[] compressed, int bytesWritten)
         {
-            // insert converted float to buffer
-            float converted = (short)(uncompressed[i] | uncompressed[i + 1] << 8) / 32767.0f;
-            clipBuffer[dataReceived] = converted;
+            if (compressed != null)
+            {
+                this.RpcVoiceData(compressed, bytesWritten);
+            }
+        }
 
-            // buffer loop
-            dataReceived = (dataReceived + 1) % clipBufferSize;
 
-            playbackBuffer++;
+        [ClientRpc(includeOwner = false)]
+        public void RpcVoiceData(byte[] compressed, int bytesWritten)
+        {
+            this.input.Write(compressed, 0, bytesWritten);
+            this.input.Position = 0;
+
+            int uncompressedWritten = SteamUser.DecompressVoice(this.input, bytesWritten, this.output);
+            this.input.Position = 0;
+
+            byte[] outputBuffer = this.output.GetBuffer();
+            this.WriteToClip(outputBuffer, uncompressedWritten);
+            this.output.Position = 0;
+        }
+
+        [Client]
+        private void OnAudioRead(float[] data)
+        {
+            for (int i = 0; i < data.Length; ++i)
+            {
+                // start with silence
+                data[i] = 0;
+
+                // do I  have anything to play?
+                if (this.playbackBuffer > 0)
+                {
+                    // current data position playing
+                    this.dataPosition = (this.dataPosition + 1) % this.clipBufferSize;
+
+                    data[i] = this.clipBuffer[this.dataPosition] * 14;
+
+                    this.playbackBuffer--;
+                }
+            }
+
+        }
+
+        [Client]
+        private void WriteToClip(byte[] uncompressed, int iSize)
+        {
+            for (int i = 0; i < iSize; i += 2)
+            {
+                // insert converted float to buffer
+                float converted = (short)(uncompressed[i] | uncompressed[i + 1] << 8) / 32767.0f;
+                this.clipBuffer[this.dataReceived] = converted;
+
+                // buffer loop
+                this.dataReceived = (this.dataReceived + 1) % this.clipBufferSize;
+
+                this.playbackBuffer++;
+            }
         }
     }
 }

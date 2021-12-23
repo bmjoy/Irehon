@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DuloGames.UI
 {
@@ -12,26 +12,25 @@ namespace DuloGames.UI
             get
             {
                 if (m_Instance == null)
+                {
                     m_Instance = Resources.Load("ModalBoxManager") as UIModalBoxManager;
+                }
 
                 return m_Instance;
             }
         }
         #endregion
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private GameObject m_ModalBoxPrefab;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private List<UIModalBox> m_ActiveBoxes = new List<UIModalBox>();
 
         /// <summary>
         /// Gets the modal box prefab.
         /// </summary>
-        public GameObject prefab
-        {
-            get { return this.m_ModalBoxPrefab; }
-        }
+        public GameObject prefab => this.m_ModalBoxPrefab;
 
         /// <summary>
         /// Gets an array of the currently active modal boxes.
@@ -53,7 +52,9 @@ namespace DuloGames.UI
         public UIModalBox Create(GameObject rel)
         {
             if (this.m_ModalBoxPrefab == null || rel == null)
+            {
                 return null;
+            }
 
             Canvas canvas = UIUtility.FindInParents<Canvas>(rel);
 
@@ -74,7 +75,9 @@ namespace DuloGames.UI
         public void RegisterActiveBox(UIModalBox box)
         {
             if (!this.m_ActiveBoxes.Contains(box))
+            {
                 this.m_ActiveBoxes.Add(box);
+            }
         }
 
         /// <summary>
@@ -84,7 +87,9 @@ namespace DuloGames.UI
         public void UnregisterActiveBox(UIModalBox box)
         {
             if (this.m_ActiveBoxes.Contains(box))
+            {
                 this.m_ActiveBoxes.Remove(box);
+            }
         }
     }
 }

@@ -6,13 +6,13 @@ namespace DuloGames.UI
     [AddComponentMenu("UI/UI Scene/Open")]
     public class UISceneOpen : MonoBehaviour
     {
-        enum ActionType
+        private enum ActionType
         {
             SpecificID,
             LastScene,
         }
 
-        enum InputKey
+        private enum InputKey
         {
             None,
             Submit,
@@ -20,23 +20,27 @@ namespace DuloGames.UI
             Jump
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private ActionType m_ActionType = ActionType.SpecificID;
         [SerializeField] private int m_SceneId = 0;
         [SerializeField] private InputKey m_InputKey = InputKey.None;
         [SerializeField] private Button m_HookToButton;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         protected void OnEnable()
         {
             if (this.m_HookToButton != null)
-                this.m_HookToButton.onClick.AddListener(Open);
+            {
+                this.m_HookToButton.onClick.AddListener(this.Open);
+            }
         }
 
         protected void OnDisable()
         {
             if (this.m_HookToButton != null)
-                this.m_HookToButton.onClick.RemoveListener(Open);
+            {
+                this.m_HookToButton.onClick.RemoveListener(this.Open);
+            }
         }
 
         public void Open()
@@ -52,7 +56,7 @@ namespace DuloGames.UI
                     scene = UISceneRegistry.instance.lastScene;
                     break;
             }
-            
+
             if (scene != null)
             {
                 scene.TransitionTo();
@@ -61,19 +65,25 @@ namespace DuloGames.UI
 
         protected void Update()
         {
-            if (!this.isActiveAndEnabled ||!this.gameObject.activeInHierarchy || this.m_InputKey == InputKey.None)
+            if (!this.isActiveAndEnabled || !this.gameObject.activeInHierarchy || this.m_InputKey == InputKey.None)
+            {
                 return;
+            }
 
             // Check if we are using the escape input for this and if the escape key was used in the window manager
             if (this.m_InputKey == InputKey.Cancel)
             {
                 if (UIWindowManager.Instance != null && UIWindowManager.Instance.escapeInputName == "Cancel" && UIWindowManager.Instance.escapedUsed)
+                {
                     return;
+                }
             }
 
             // Check if we are using the escape input for this and if we have an active modal box
             if (this.m_InputKey == InputKey.Cancel && UIModalBoxManager.Instance != null && UIModalBoxManager.Instance.activeBoxes.Length > 0)
+            {
                 return;
+            }
 
             string buttonName = string.Empty;
 
@@ -89,7 +99,7 @@ namespace DuloGames.UI
                     buttonName = "Jump";
                     break;
             }
-            
+
             if (!string.IsNullOrEmpty(buttonName) && Input.GetButtonDown(buttonName))
             {
                 this.Open();

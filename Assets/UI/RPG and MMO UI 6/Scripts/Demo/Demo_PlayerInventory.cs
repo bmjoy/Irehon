@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DuloGames.UI
 {
@@ -12,10 +10,10 @@ namespace DuloGames.UI
 
         private void Start()
         {
-            if (m_SlotsContainer != null)
+            if (this.m_SlotsContainer != null)
             {
                 // Grab all the slots in the container
-                UIItemSlot[] slots = m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
+                UIItemSlot[] slots = this.m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
 
                 // Assign slots that have ID in the player prefs
                 foreach (UIItemSlot slot in slots)
@@ -24,39 +22,41 @@ namespace DuloGames.UI
 
                     // If we have an id, assign the slot by item info from the item database
                     if (assignedID > 0)
+                    {
                         slot.Assign(UIItemDatabase.Instance.GetByID(assignedID));
+                    }
                 }
             }
         }
 
         private void OnEnable()
         {
-            if (m_SlotsContainer != null)
+            if (this.m_SlotsContainer != null)
             {
                 // Grab all the slots in the container
-                UIItemSlot[] slots = m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
+                UIItemSlot[] slots = this.m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
 
                 // Hook on assign and unassign events
                 foreach (UIItemSlot slot in slots)
                 {
-                    slot.onAssign.AddListener(OnSlotAssigned);
-                    slot.onUnassign.AddListener(OnSlotUnassigned);
+                    slot.onAssign.AddListener(this.OnSlotAssigned);
+                    slot.onUnassign.AddListener(this.OnSlotUnassigned);
                 }
             }
         }
 
         private void OnDisable()
         {
-            if (m_SlotsContainer != null)
+            if (this.m_SlotsContainer != null)
             {
                 // Grab all the slots in the container
-                UIItemSlot[] slots = m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
+                UIItemSlot[] slots = this.m_SlotsContainer.GetComponentsInChildren<UIItemSlot>();
 
                 // Unhook on assign and unassign events
                 foreach (UIItemSlot slot in slots)
                 {
-                    slot.onAssign.RemoveListener(OnSlotAssigned);
-                    slot.onUnassign.RemoveListener(OnSlotUnassigned);
+                    slot.onAssign.RemoveListener(this.OnSlotAssigned);
+                    slot.onUnassign.RemoveListener(this.OnSlotUnassigned);
                 }
             }
         }

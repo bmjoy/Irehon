@@ -1,41 +1,45 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Mirror;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerChatMessageSender : MonoBehaviour
+namespace Irehon.Chat
 {
-    [SerializeField]
-    private InputField chatInputField;
-
-
-    private bool isBeenFocused;
-
-    private void Update()
+    public class PlayerChatMessageSender : MonoBehaviour
     {
-        if (GameSession.IsListeningGameKeys && Input.GetKeyDown(KeyCode.Return))
-            chatInputField.ActivateInputField();
+        [SerializeField]
+        private InputField chatInputField;
 
-        if (chatInputField.isFocused)
+
+        private bool isBeenFocused;
+
+        private void Update()
         {
-            isBeenFocused = true;
-            GameSession.IsListeningGameKeys = false;
+            if (GameSession.IsListeningGameKeys && Input.GetKeyDown(KeyCode.Return))
+            {
+                this.chatInputField.ActivateInputField();
+            }
+
+            if (this.chatInputField.isFocused)
+            {
+                this.isBeenFocused = true;
+                GameSession.IsListeningGameKeys = false;
+            }
+            if (this.isBeenFocused && !this.chatInputField.isFocused)
+            {
+                this.isBeenFocused = false;
+                GameSession.IsListeningGameKeys = true;
+            }
         }
-        if (isBeenFocused && !chatInputField.isFocused)
+
+        public void ChatMessage()
         {
-            isBeenFocused = false;
-            GameSession.IsListeningGameKeys = true;
+            this.chatInputField.DeactivateInputField();
+            if (this.chatInputField.text == "")
+            {
+                return;
+            }
+
+            UIChatEventHolder.Instance.SendNewMessage(chatInputField.text);
+            this.chatInputField.text = "";
         }
-    }
-
-    public void ChatMessage()
-    {
-        chatInputField.DeactivateInputField();
-        if (chatInputField.text == "")
-            return;
-
-        PlayerChatHolder.instance.PlayerChatInputEvent.Invoke(chatInputField.text);
-        chatInputField.text = "";
     }
 }

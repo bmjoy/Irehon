@@ -1,8 +1,8 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using DuloGames.UI.Tweens;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -18,20 +18,20 @@ namespace DuloGames.UI
             Active
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField, Tooltip("Graphic that will have the selected transtion applied.")]
         private BaseMeshEffect m_TargetEffect;
 
         [SerializeField] private Color m_NormalColor = ColorBlock.defaultColorBlock.normalColor;
-		[SerializeField] private Color m_HighlightedColor = ColorBlock.defaultColorBlock.highlightedColor;
-		[SerializeField] private Color m_SelectedColor = ColorBlock.defaultColorBlock.highlightedColor;
+        [SerializeField] private Color m_HighlightedColor = ColorBlock.defaultColorBlock.highlightedColor;
+        [SerializeField] private Color m_SelectedColor = ColorBlock.defaultColorBlock.highlightedColor;
         [SerializeField] private Color m_PressedColor = ColorBlock.defaultColorBlock.pressedColor;
-		[SerializeField] private float m_Duration = 0.1f;
-		
+        [SerializeField] private float m_Duration = 0.1f;
+
         [SerializeField] private bool m_UseToggle = false;
         [SerializeField] private Toggle m_TargetToggle;
         [SerializeField] private Color m_ActiveColor = ColorBlock.defaultColorBlock.highlightedColor;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private bool m_Highlighted = false;
         private bool m_Selected = false;
@@ -50,7 +50,9 @@ namespace DuloGames.UI
         protected UIEffectTransition()
         {
             if (this.m_ColorTweenRunner == null)
+            {
                 this.m_ColorTweenRunner = new TweenRunner<ColorTween>();
+            }
 
             this.m_ColorTweenRunner.Init(this);
         }
@@ -60,10 +62,14 @@ namespace DuloGames.UI
             if (this.m_UseToggle)
             {
                 if (this.m_TargetToggle == null)
+                {
                     this.m_TargetToggle = this.gameObject.GetComponent<Toggle>();
+                }
 
                 if (this.m_TargetToggle != null)
+                {
                     this.m_Active = this.m_TargetToggle.isOn;
+                }
             }
 
             this.m_Selectable = this.gameObject.GetComponent<Selectable>();
@@ -72,7 +78,9 @@ namespace DuloGames.UI
         protected void OnEnable()
         {
             if (this.m_TargetToggle != null)
-                this.m_TargetToggle.onValueChanged.AddListener(OnToggleValueChange);
+            {
+                this.m_TargetToggle.onValueChanged.AddListener(this.OnToggleValueChange);
+            }
 
             this.InternalEvaluateAndTransitionToNormalState(true);
         }
@@ -80,7 +88,9 @@ namespace DuloGames.UI
         protected void OnDisable()
         {
             if (this.m_TargetToggle != null)
-                this.m_TargetToggle.onValueChanged.RemoveListener(OnToggleValueChange);
+            {
+                this.m_TargetToggle.onValueChanged.RemoveListener(this.OnToggleValueChange);
+            }
 
             this.InstantClearState();
         }
@@ -91,7 +101,9 @@ namespace DuloGames.UI
             this.m_Duration = Mathf.Max(this.m_Duration, 0f);
 
             if (this.isActiveAndEnabled)
+            {
                 this.InternalEvaluateAndTransitionToNormalState(true);
+            }
         }
 #endif
 
@@ -101,28 +113,32 @@ namespace DuloGames.UI
             // Figure out if parent groups allow interaction
             // If no interaction is alowed... then we need
             // to not do that :)
-            var groupAllowInteraction = true;
-            Transform t = transform;
+            bool groupAllowInteraction = true;
+            Transform t = this.transform;
             while (t != null)
             {
-                t.GetComponents(m_CanvasGroupCache);
+                t.GetComponents(this.m_CanvasGroupCache);
                 bool shouldBreak = false;
-                for (var i = 0; i < m_CanvasGroupCache.Count; i++)
+                for (int i = 0; i < this.m_CanvasGroupCache.Count; i++)
                 {
                     // if the parent group does not allow interaction
                     // we need to break
-                    if (!m_CanvasGroupCache[i].interactable)
+                    if (!this.m_CanvasGroupCache[i].interactable)
                     {
                         groupAllowInteraction = false;
                         shouldBreak = true;
                     }
                     // if this is a 'fresh' group, then break
                     // as we should not consider parents
-                    if (m_CanvasGroupCache[i].ignoreParentGroups)
+                    if (this.m_CanvasGroupCache[i].ignoreParentGroups)
+                    {
                         shouldBreak = true;
+                    }
                 }
                 if (shouldBreak)
+                {
                     break;
+                }
 
                 t = t.parent;
             }
@@ -137,7 +153,9 @@ namespace DuloGames.UI
         public virtual bool IsInteractable()
         {
             if (this.m_Selectable != null)
+            {
                 return this.m_Selectable.IsInteractable() && this.m_GroupsAllowInteraction;
+            }
 
             return this.m_GroupsAllowInteraction;
         }
@@ -145,12 +163,16 @@ namespace DuloGames.UI
         protected void OnToggleValueChange(bool value)
         {
             if (!this.m_UseToggle || this.m_TargetToggle == null)
+            {
                 return;
+            }
 
             this.m_Active = this.m_TargetToggle.isOn;
-            
+
             if (!this.m_TargetToggle.isOn)
+            {
                 this.DoStateTransition(this.m_Selected ? VisualState.Selected : VisualState.Normal, false);
+            }
         }
 
         /// <summary>
@@ -175,7 +197,9 @@ namespace DuloGames.UI
             this.m_Selected = true;
 
             if (this.m_Active)
+            {
                 return;
+            }
 
             this.DoStateTransition(VisualState.Selected, false);
         }
@@ -185,7 +209,9 @@ namespace DuloGames.UI
             this.m_Selected = false;
 
             if (this.m_Active)
+            {
                 return;
+            }
 
             this.DoStateTransition((this.m_Highlighted ? VisualState.Highlighted : VisualState.Normal), false);
         }
@@ -195,7 +221,9 @@ namespace DuloGames.UI
             this.m_Highlighted = true;
 
             if (!this.m_Selected && !this.m_Pressed && !this.m_Active)
+            {
                 this.DoStateTransition(VisualState.Highlighted, false);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -203,16 +231,22 @@ namespace DuloGames.UI
             this.m_Highlighted = false;
 
             if (!this.m_Selected && !this.m_Pressed && !this.m_Active)
+            {
                 this.DoStateTransition(VisualState.Normal, false);
+            }
         }
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
+            }
 
             if (!this.m_Highlighted)
+            {
                 return;
+            }
 
             this.m_Pressed = true;
             this.DoStateTransition(VisualState.Pressed, false);
@@ -221,7 +255,9 @@ namespace DuloGames.UI
         public virtual void OnPointerUp(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left)
+            {
                 return;
+            }
 
             this.m_Pressed = false;
 
@@ -252,11 +288,15 @@ namespace DuloGames.UI
         {
             // Check if active in the scene
             if (!this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             // Check if it's interactable
             if (!this.IsInteractable())
+            {
                 state = VisualState.Normal;
+            }
 
             Color color = this.m_NormalColor;
 
@@ -279,17 +319,21 @@ namespace DuloGames.UI
                     color = this.m_ActiveColor;
                     break;
             }
-            
+
             this.StartEffectColorTween(color, false);
         }
-        
+
         private void StartEffectColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetEffect == null)
+            {
                 return;
+            }
 
             if ((this.m_TargetEffect is Shadow) == false && (this.m_TargetEffect is Outline) == false)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -297,8 +341,8 @@ namespace DuloGames.UI
             }
             else
             {
-                var colorTween = new ColorTween { duration = this.m_Duration, startColor = this.GetEffectColor(), targetColor = targetColor };
-                colorTween.AddOnChangedCallback(SetEffectColor);
+                ColorTween colorTween = new ColorTween { duration = this.m_Duration, startColor = this.GetEffectColor(), targetColor = targetColor };
+                colorTween.AddOnChangedCallback(this.SetEffectColor);
                 colorTween.ignoreTimeScale = true;
 
                 this.m_ColorTweenRunner.StartTween(colorTween);
@@ -312,8 +356,10 @@ namespace DuloGames.UI
 		private void SetEffectColor(Color targetColor)
         {
             if (this.m_TargetEffect == null)
+            {
                 return;
-            
+            }
+
             if (this.m_TargetEffect is Shadow)
             {
                 (this.m_TargetEffect as Shadow).effectColor = targetColor;
@@ -327,7 +373,9 @@ namespace DuloGames.UI
         private Color GetEffectColor()
         {
             if (this.m_TargetEffect == null)
+            {
                 return Color.white;
+            }
 
             if (this.m_TargetEffect is Shadow)
             {

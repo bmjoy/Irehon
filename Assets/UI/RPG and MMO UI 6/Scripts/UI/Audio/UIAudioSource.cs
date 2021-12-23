@@ -8,15 +8,15 @@ namespace DuloGames.UI
     {
         #region Singleton
         private static UIAudioSource m_Instance;
-        public static UIAudioSource Instance { get { return m_Instance; } }
+        public static UIAudioSource Instance => m_Instance;
         #endregion
 
-        [SerializeField][Range(0f, 1f)] private float m_Volume = 1f;
+        [SerializeField] [Range(0f, 1f)] private float m_Volume = 1f;
 
         /// <summary>
         /// Gets or sets the volume level.
         /// </summary>
-        public float volume { get { return this.m_Volume; } set { this.m_Volume = value; } }
+        public float volume { get => this.m_Volume; set => this.m_Volume = value; }
 
         private AudioSource m_AudioSource;
 

@@ -4,53 +4,54 @@
 //  Contact Support: support@keviniglesias.com                           //
 ///////////////////////////////////////////////////////////////////////////
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace KevinIglesias {
-    
-    public enum VillagerIKGoal {LeftHand = 0, RightHand = 1};
-    
-	public class VillagerHandsIK : MonoBehaviour
-	{
-		public Transform retargeter;
+namespace KevinIglesias
+{
+
+    public enum VillagerIKGoal { LeftHand = 0, RightHand = 1 };
+
+    public class VillagerHandsIK : MonoBehaviour
+    {
+        public Transform retargeter;
         public Transform handEffector;
-        
+
         public VillagerIKGoal hand;
-        
-		private Animator animator;
-		private float weight;
 
-		void Awake()
-		{
-			animator = GetComponent<Animator>();
-			weight = 0f;
-		}
+        private Animator animator;
+        private float weight;
 
-		void Update()
-		{
+        private void Awake()
+        {
+            this.animator = this.GetComponent<Animator>();
+            this.weight = 0f;
+        }
 
-            weight = Mathf.Lerp(0, 1, 1f - Mathf.Cos(retargeter.localPosition.y * Mathf.PI * 0.5f));
+        private void Update()
+        {
 
-		}
-		
-		void OnAnimatorIK(int layerIndex)
-		{
-            if(hand == VillagerIKGoal.LeftHand)
+            this.weight = Mathf.Lerp(0, 1, 1f - Mathf.Cos(this.retargeter.localPosition.y * Mathf.PI * 0.5f));
+
+        }
+
+        private void OnAnimatorIK(int layerIndex)
+        {
+            if (this.hand == VillagerIKGoal.LeftHand)
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, weight);
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, handEffector.position);
-                
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, weight);
-                animator.SetIKRotation(AvatarIKGoal.LeftHand, handEffector.rotation);
-            }else{
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, weight);
-                animator.SetIKPosition(AvatarIKGoal.RightHand, handEffector.position);
-                
-                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, weight);
-                animator.SetIKRotation(AvatarIKGoal.RightHand, handEffector.rotation);
+                this.animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, this.weight);
+                this.animator.SetIKPosition(AvatarIKGoal.LeftHand, this.handEffector.position);
+
+                this.animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, this.weight);
+                this.animator.SetIKRotation(AvatarIKGoal.LeftHand, this.handEffector.rotation);
             }
-		}
-	}
+            else
+            {
+                this.animator.SetIKPositionWeight(AvatarIKGoal.RightHand, this.weight);
+                this.animator.SetIKPosition(AvatarIKGoal.RightHand, this.handEffector.position);
+
+                this.animator.SetIKRotationWeight(AvatarIKGoal.RightHand, this.weight);
+                this.animator.SetIKRotation(AvatarIKGoal.RightHand, this.handEffector.rotation);
+            }
+        }
+    }
 }

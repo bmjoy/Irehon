@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class ButtonKeyListener : MonoBehaviour
 {
@@ -12,14 +8,14 @@ public class ButtonKeyListener : MonoBehaviour
     private EventSystem system;
     private void Start()
     {
-        system = EventSystem.current;
+        this.system = EventSystem.current;
     }
     private void Update()
     {
-        if (Input.GetKeyDown(listeningKey))
+        if (Input.GetKeyDown(this.listeningKey))
         {
-            system.SetSelectedGameObject(gameObject, new BaseEventData(system));
-            GetComponent<IPointerClickHandler>()?.OnPointerClick(new PointerEventData(system));
+            this.system.SetSelectedGameObject(this.gameObject, new BaseEventData(this.system));
+            this.GetComponent<IPointerClickHandler>()?.OnPointerClick(new PointerEventData(this.system));
         }
     }
 }

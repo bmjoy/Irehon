@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Mirror;
-using SimpleJSON;
-using DuloGames.UI;
+﻿using DuloGames.UI;
+using Irehon;
+using Irehon.Entitys;
 using System;
+using UnityEngine;
 
 public class SelectFraction : MonoBehaviour
 {
@@ -14,6 +12,6 @@ public class SelectFraction : MonoBehaviour
     {
         RegisterInfo info = new RegisterInfo((Fraction)Enum.Parse(typeof(Fraction), fraction));
         PlayerPrefs.SetString("Registration", info.ToJsonString());
-        UILoadingOverlayManager.Instance.Create().LoadSceneAsync(startSceneName);
+        UILoadingOverlayManager.Instance.Create().LoadSceneAsync(this.startSceneName);
     }
 }

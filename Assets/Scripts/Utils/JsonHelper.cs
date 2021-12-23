@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Mirror;
+using System;
 using UnityEngine;
 
-namespace Utils
+namespace Irehon.Utils
 {
     public static class JsonHelper
     {

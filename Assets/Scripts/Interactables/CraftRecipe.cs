@@ -1,46 +1,51 @@
-﻿using System.Collections.Generic;
-using SimpleJSON;
+﻿using SimpleJSON;
+using System.Collections.Generic;
 
-public class CraftRecipe
+namespace Irehon.Interactable
 {
-    public int id;
-    public int itemId;
-    public int itemQuantity;
-    public int goldRequirment;
-    public CraftRecipeRequirment[] requirment;
-    public class CraftRecipeRequirment
+    public class CraftRecipe
     {
+        public int id;
         public int itemId;
         public int itemQuantity;
-
-        public CraftRecipeRequirment()
+        public int goldRequirment;
+        public CraftRecipeRequirment[] requirment;
+        public class CraftRecipeRequirment
         {
-            itemId = 0;
-            itemQuantity = 0;
+            public int itemId;
+            public int itemQuantity;
+
+            public CraftRecipeRequirment()
+            {
+                this.itemId = 0;
+                this.itemQuantity = 0;
+            }
+
+            public CraftRecipeRequirment(JSONObject json)
+            {
+                this.itemId = json["item_id"].AsInt;
+                this.itemQuantity = json["quantity"].AsInt;
+            }
         }
 
-        public CraftRecipeRequirment(JSONObject json)
+        public CraftRecipe(JSONObject json)
         {
-            itemId = json["item_id"].AsInt;
-            itemQuantity = json["quantity"].AsInt;
+            this.id = json["id"].AsInt;
+            this.itemId = json["craft_item"].AsInt;
+            this.itemQuantity = json["craft_quantity"].AsInt;
+            this.goldRequirment = json["gold_requirment"].AsInt;
+            List<CraftRecipeRequirment> requirments = new List<CraftRecipeRequirment>();
+
+            foreach (JSONObject requirmentJson in json["items_requirment"])
+            {
+                requirments.Add(new CraftRecipeRequirment(requirmentJson));
+            }
+
+            this.requirment = requirments.ToArray();
         }
-    }
 
-    public CraftRecipe(JSONObject json)
-    {
-        id = json["id"].AsInt;
-        itemId = json["craft_item"].AsInt;
-        itemQuantity = json["craft_quantity"].AsInt;
-        goldRequirment = json["gold_requirment"].AsInt;
-        List<CraftRecipeRequirment> requirments = new List<CraftRecipeRequirment>();
-
-        foreach (JSONObject requirmentJson in json["items_requirment"])
-            requirments.Add(new CraftRecipeRequirment(requirmentJson));
-
-        requirment = requirments.ToArray();
-    }
-
-    public CraftRecipe()
-    {
+        public CraftRecipe()
+        {
+        }
     }
 }

@@ -47,42 +47,36 @@ namespace UnityEngine.PostProcessing
             [Range(1, 16), Tooltip("Upper bound for the brightness range of the generated histogram (in EV). The bigger the spread between min & max, the lower the precision will be.")]
             public int logMax;
 
-            public static Settings defaultSettings
+            public static Settings defaultSettings => new Settings
             {
-                get
-                {
-                    return new Settings
-                    {
-                        lowPercent = 45f,
-                        highPercent = 95f,
+                lowPercent = 45f,
+                highPercent = 95f,
 
-                        minLuminance = -5f,
-                        maxLuminance = 1f,
-                        keyValue = 0.25f,
-                        dynamicKeyValue = true,
+                minLuminance = -5f,
+                maxLuminance = 1f,
+                keyValue = 0.25f,
+                dynamicKeyValue = true,
 
-                        adaptationType = EyeAdaptationType.Progressive,
-                        speedUp = 2f,
-                        speedDown = 1f,
+                adaptationType = EyeAdaptationType.Progressive,
+                speedUp = 2f,
+                speedDown = 1f,
 
-                        logMin = -8,
-                        logMax = 4
-                    };
-                }
-            }
+                logMin = -8,
+                logMax = 4
+            };
         }
 
         [SerializeField]
-        Settings m_Settings = Settings.defaultSettings;
+        private Settings m_Settings = Settings.defaultSettings;
         public Settings settings
         {
-            get { return m_Settings; }
-            set { m_Settings = value; }
+            get => this.m_Settings;
+            set => this.m_Settings = value;
         }
 
         public override void Reset()
         {
-            m_Settings = Settings.defaultSettings;
+            this.m_Settings = Settings.defaultSettings;
         }
     }
 }

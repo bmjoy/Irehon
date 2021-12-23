@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +17,10 @@ namespace DuloGames.UI
             get
             {
                 if (m_Instance == null)
+                {
                     m_Instance = new UISceneRegistry();
+                }
+
                 return m_Instance;
             }
         }
@@ -29,18 +31,12 @@ namespace DuloGames.UI
         /// <summary>
         /// Get all the registered scenes.
         /// </summary>
-        public UIScene[] scenes
-        {
-            get { return this.m_Scenes.ToArray(); }
-        }
+        public UIScene[] scenes => this.m_Scenes.ToArray();
 
         /// <summary>
         /// Get the last active scene before the current one.
         /// </summary>
-        public UIScene lastScene
-        {
-            get { return this.m_LastScene; }
-        }
+        public UIScene lastScene => this.m_LastScene;
 
         /// <summary>
         /// Register a scene.

@@ -7,7 +7,7 @@ namespace PsychoticLab
     public enum Gender { Male, Female }
     public enum Race { Human, Elf }
     public enum SkinColor { White, Brown, Black, Elf }
-    public enum Elements {  Yes, No }
+    public enum Elements { Yes, No }
     public enum HeadCovering { HeadCoverings_Base_Hair, HeadCoverings_No_FacialHair, HeadCoverings_No_Hair }
     public enum FacialHair { Yes, No }
 
@@ -75,16 +75,16 @@ namespace PsychoticLab
         public CharacterObjectListsAllGender allGender;
 
         // reference to camera transform, used for rotation around the model during or after a randomization (this is sourced from Camera.main, so the main camera must be in the scene for this to work)
-        Transform camHolder;
+        private Transform camHolder;
 
-		// cam rotation x
-		float x = 16;
+        // cam rotation x
+        private float x = 16;
 
-		// cam rotation y
-		float y = -30;
+        // cam rotation y
+        private float y = -30;
 
         // randomize character creating button
-        void OnGUI()
+        private void OnGUI()
         {
             /*
             if (GUI.Button(new Rect(10, 10, 150, 50), "Randomize Character"))
@@ -104,85 +104,87 @@ namespace PsychoticLab
         private void Start()
         {
             // rebuild all lists
-            BuildLists();
+            this.BuildLists();
 
             // disable any enabled objects before clear
-            if (enabledObjects.Count != 0)
+            if (this.enabledObjects.Count != 0)
             {
-                foreach (GameObject g in enabledObjects)
+                foreach (GameObject g in this.enabledObjects)
                 {
                     g.SetActive(false);
                 }
             }
 
             // clear enabled objects list
-            enabledObjects.Clear();
+            this.enabledObjects.Clear();
 
             // set default male character
-            ActivateItem(male.headAllElements[0]);
-            ActivateItem(male.eyebrow[0]);
-            ActivateItem(male.facialHair[0]);
-            ActivateItem(male.torso[0]);
-            ActivateItem(male.arm_Upper_Right[0]);
-            ActivateItem(male.arm_Upper_Left[0]);
-            ActivateItem(male.arm_Lower_Right[0]);
-            ActivateItem(male.arm_Lower_Left[0]);
-            ActivateItem(male.hand_Right[0]);
-            ActivateItem(male.hand_Left[0]);
-            ActivateItem(male.hips[0]);
-            ActivateItem(male.leg_Right[0]);
-            ActivateItem(male.leg_Left[0]);
+            this.ActivateItem(this.male.headAllElements[0]);
+            this.ActivateItem(this.male.eyebrow[0]);
+            this.ActivateItem(this.male.facialHair[0]);
+            this.ActivateItem(this.male.torso[0]);
+            this.ActivateItem(this.male.arm_Upper_Right[0]);
+            this.ActivateItem(this.male.arm_Upper_Left[0]);
+            this.ActivateItem(this.male.arm_Lower_Right[0]);
+            this.ActivateItem(this.male.arm_Lower_Left[0]);
+            this.ActivateItem(this.male.hand_Right[0]);
+            this.ActivateItem(this.male.hand_Left[0]);
+            this.ActivateItem(this.male.hips[0]);
+            this.ActivateItem(this.male.leg_Right[0]);
+            this.ActivateItem(this.male.leg_Left[0]);
 
             // setting up the camera position, rotation, and reference for use
             Transform cam = Camera.main.transform;
-            if(cam)
+            if (cam)
             {
-                cam.position = transform.position + new Vector3(0, 0.3f, 2);
+                cam.position = this.transform.position + new Vector3(0, 0.3f, 2);
                 cam.rotation = Quaternion.Euler(0, -180, 0);
-                camHolder = new GameObject().transform;
-                camHolder.position = transform.position + new Vector3(0, 1, 0);
-                cam.LookAt(camHolder);
-                cam.SetParent(camHolder);
+                this.camHolder = new GameObject().transform;
+                this.camHolder.position = this.transform.position + new Vector3(0, 1, 0);
+                cam.LookAt(this.camHolder);
+                cam.SetParent(this.camHolder);
             }
 
             // if repeat on play is checked in the inspector, repeat the randomize method based on the shuffle speed, also defined in the inspector
-            if (repeatOnPlay)
-                InvokeRepeating("Randomize", shuffleSpeed, shuffleSpeed);
+            if (this.repeatOnPlay)
+            {
+                this.InvokeRepeating("Randomize", this.shuffleSpeed, this.shuffleSpeed);
+            }
         }
 
         private void Update()
         {
-            if (camHolder)
+            if (this.camHolder)
             {
                 if (Input.GetKey(KeyCode.Mouse1))
                 {
-                    x += 1 * Input.GetAxis("Mouse X");
-                    y -= 1 * Input.GetAxis("Mouse Y");
+                    this.x += 1 * Input.GetAxis("Mouse X");
+                    this.y -= 1 * Input.GetAxis("Mouse Y");
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
                 }
                 else
                 {
-                    x -= 1 * Input.GetAxis("Horizontal");
-                    y -= 1 * Input.GetAxis("Vertical");
+                    this.x -= 1 * Input.GetAxis("Horizontal");
+                    this.y -= 1 * Input.GetAxis("Vertical");
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                 }
             }
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             // method for handling the camera rotation around the character
-            if (camHolder)
+            if (this.camHolder)
             {
-                y = Mathf.Clamp(y, -45, 15);
-                camHolder.eulerAngles = new Vector3(y, x, 0.0f);
+                this.y = Mathf.Clamp(this.y, -45, 15);
+                this.camHolder.eulerAngles = new Vector3(this.y, this.x, 0.0f);
             }
         }
 
         // character randomization method
-        void Randomize()
+        private void Randomize()
         {
             // initialize settings
             Gender gender = Gender.Male;
@@ -193,40 +195,52 @@ namespace PsychoticLab
             FacialHair facialHair = FacialHair.Yes;
 
             // disable any enabled objects before clear
-            if (enabledObjects.Count != 0)
+            if (this.enabledObjects.Count != 0)
             {
-                foreach (GameObject g in enabledObjects)
+                foreach (GameObject g in this.enabledObjects)
                 {
                     g.SetActive(false);
                 }
             }
 
             // clear enabled objects list (all objects now disabled)
-            enabledObjects.Clear();
+            this.enabledObjects.Clear();
 
             // roll for gender
-            if (!GetPercent(50))
+            if (!this.GetPercent(50))
+            {
                 gender = Gender.Female;
+            }
 
             // roll for human (70% chance, 30% chance for elf)
-            if (!GetPercent(70))
+            if (!this.GetPercent(70))
+            {
                 race = Race.Elf;
+            }
 
             // roll for facial elements (beard, eyebrows)
-            if (!GetPercent(50))
+            if (!this.GetPercent(50))
+            {
                 elements = Elements.No;
+            }
 
             // select head covering 33% chance for each
             int headCoveringRoll = Random.Range(0, 100);
             // HeadCoverings_Base_Hair
             if (headCoveringRoll <= 33)
+            {
                 headCovering = HeadCovering.HeadCoverings_Base_Hair;
+            }
             // HeadCoverings_No_FacialHair
             if (headCoveringRoll > 33 && headCoveringRoll < 66)
+            {
                 headCovering = HeadCovering.HeadCoverings_No_FacialHair;
+            }
             // HeadCoverings_No_Hair
             if (headCoveringRoll >= 66)
+            {
                 headCovering = HeadCovering.HeadCoverings_No_Hair;
+            }
 
             // select skin color if human, otherwise set skin color to elf
             switch (race)
@@ -236,13 +250,20 @@ namespace PsychoticLab
                     int colorRoll = Random.Range(0, 100);
                     // select white skin
                     if (colorRoll <= 33)
+                    {
                         skinColor = SkinColor.White;
+                    }
                     // select brown skin
                     if (colorRoll > 33 && colorRoll < 66)
+                    {
                         skinColor = SkinColor.Brown;
+                    }
                     // select black skin
                     if (colorRoll >= 66)
+                    {
                         skinColor = SkinColor.Black;
+                    }
+
                     break;
                 case Race.Elf:
                     // select elf skin
@@ -255,11 +276,13 @@ namespace PsychoticLab
             {
                 case Gender.Male:
                     // roll for facial hair if male
-                    if (!GetPercent(50))
+                    if (!this.GetPercent(50))
+                    {
                         facialHair = FacialHair.No;
+                    }
 
                     // initialize randomization
-                    RandomizeByVariable(male, gender, elements, race, facialHair, skinColor, headCovering);
+                    this.RandomizeByVariable(this.male, gender, elements, race, facialHair, skinColor, headCovering);
                     break;
 
                 case Gender.Female:
@@ -268,13 +291,13 @@ namespace PsychoticLab
                     facialHair = FacialHair.No;
 
                     // initialize randomization
-                    RandomizeByVariable(female, gender, elements, race, facialHair, skinColor, headCovering);
+                    this.RandomizeByVariable(this.female, gender, elements, race, facialHair, skinColor, headCovering);
                     break;
             }
         }
 
         // randomization method based on previously selected variables
-        void RandomizeByVariable(CharacterObjectGroups cog, Gender gender, Elements elements, Race race, FacialHair facialHair, SkinColor skinColor, HeadCovering headCovering)
+        private void RandomizeByVariable(CharacterObjectGroups cog, Gender gender, Elements elements, Race race, FacialHair facialHair, SkinColor skinColor, HeadCovering headCovering)
         {
             // if facial elements are enabled
             switch (elements)
@@ -282,43 +305,65 @@ namespace PsychoticLab
                 case Elements.Yes:
                     //select head with all elements
                     if (cog.headAllElements.Count != 0)
-                        ActivateItem(cog.headAllElements[Random.Range(0, cog.headAllElements.Count)]);
+                    {
+                        this.ActivateItem(cog.headAllElements[Random.Range(0, cog.headAllElements.Count)]);
+                    }
 
                     //select eyebrows
                     if (cog.eyebrow.Count != 0)
-                        ActivateItem(cog.eyebrow[Random.Range(0, cog.eyebrow.Count)]);
+                    {
+                        this.ActivateItem(cog.eyebrow[Random.Range(0, cog.eyebrow.Count)]);
+                    }
 
                     //select facial hair (conditional)
                     if (cog.facialHair.Count != 0 && facialHair == FacialHair.Yes && gender == Gender.Male && headCovering != HeadCovering.HeadCoverings_No_FacialHair)
-                        ActivateItem(cog.facialHair[Random.Range(0, cog.facialHair.Count)]);
+                    {
+                        this.ActivateItem(cog.facialHair[Random.Range(0, cog.facialHair.Count)]);
+                    }
 
                     // select hair attachment
                     switch (headCovering)
                     {
                         case HeadCovering.HeadCoverings_Base_Hair:
                             // set hair attachment to index 1
-                            if (allGender.all_Hair.Count != 0)
-                                ActivateItem(allGender.all_Hair[1]);
-                            if (allGender.headCoverings_Base_Hair.Count != 0)
-                                ActivateItem(allGender.headCoverings_Base_Hair[Random.Range(0, allGender.headCoverings_Base_Hair.Count)]);
+                            if (this.allGender.all_Hair.Count != 0)
+                            {
+                                this.ActivateItem(this.allGender.all_Hair[1]);
+                            }
+
+                            if (this.allGender.headCoverings_Base_Hair.Count != 0)
+                            {
+                                this.ActivateItem(this.allGender.headCoverings_Base_Hair[Random.Range(0, this.allGender.headCoverings_Base_Hair.Count)]);
+                            }
+
                             break;
                         case HeadCovering.HeadCoverings_No_FacialHair:
                             // no facial hair attachment
-                            if (allGender.all_Hair.Count != 0)
-                                ActivateItem(allGender.all_Hair[Random.Range(0, allGender.all_Hair.Count)]);
-                            if (allGender.headCoverings_No_FacialHair.Count != 0)
-                                ActivateItem(allGender.headCoverings_No_FacialHair[Random.Range(0, allGender.headCoverings_No_FacialHair.Count)]);
+                            if (this.allGender.all_Hair.Count != 0)
+                            {
+                                this.ActivateItem(this.allGender.all_Hair[Random.Range(0, this.allGender.all_Hair.Count)]);
+                            }
+
+                            if (this.allGender.headCoverings_No_FacialHair.Count != 0)
+                            {
+                                this.ActivateItem(this.allGender.headCoverings_No_FacialHair[Random.Range(0, this.allGender.headCoverings_No_FacialHair.Count)]);
+                            }
+
                             break;
                         case HeadCovering.HeadCoverings_No_Hair:
                             // select hair attachment
-                            if (allGender.headCoverings_No_Hair.Count != 0)
-                                ActivateItem(allGender.all_Hair[Random.Range(0, allGender.all_Hair.Count)]);
+                            if (this.allGender.headCoverings_No_Hair.Count != 0)
+                            {
+                                this.ActivateItem(this.allGender.all_Hair[Random.Range(0, this.allGender.all_Hair.Count)]);
+                            }
                             // if not human
                             if (race != Race.Human)
                             {
                                 // select elf ear attachment
-                                if (allGender.elf_Ear.Count != 0)
-                                    ActivateItem(allGender.elf_Ear[Random.Range(0, allGender.elf_Ear.Count)]);
+                                if (this.allGender.elf_Ear.Count != 0)
+                                {
+                                    this.ActivateItem(this.allGender.elf_Ear[Random.Range(0, this.allGender.elf_Ear.Count)]);
+                                }
                             }
                             break;
                     }
@@ -327,141 +372,196 @@ namespace PsychoticLab
                 case Elements.No:
                     //select head with no elements
                     if (cog.headNoElements.Count != 0)
-                        ActivateItem(cog.headNoElements[Random.Range(0, cog.headNoElements.Count)]);
+                    {
+                        this.ActivateItem(cog.headNoElements[Random.Range(0, cog.headNoElements.Count)]);
+                    }
+
                     break;
             }
 
             // select torso starting at index 1
             if (cog.torso.Count != 0)
-                ActivateItem(cog.torso[Random.Range(1, cog.torso.Count)]);
+            {
+                this.ActivateItem(cog.torso[Random.Range(1, cog.torso.Count)]);
+            }
 
             // determine chance for upper arms to be different and activate
             if (cog.arm_Upper_Right.Count != 0)
-                RandomizeLeftRight(cog.arm_Upper_Right, cog.arm_Upper_Left, 15);
+            {
+                this.RandomizeLeftRight(cog.arm_Upper_Right, cog.arm_Upper_Left, 15);
+            }
 
             // determine chance for lower arms to be different and activate
             if (cog.arm_Lower_Right.Count != 0)
-                RandomizeLeftRight(cog.arm_Lower_Right, cog.arm_Lower_Left, 15);
+            {
+                this.RandomizeLeftRight(cog.arm_Lower_Right, cog.arm_Lower_Left, 15);
+            }
 
             // determine chance for hands to be different and activate
             if (cog.hand_Right.Count != 0)
-                RandomizeLeftRight(cog.hand_Right, cog.hand_Left, 15);
+            {
+                this.RandomizeLeftRight(cog.hand_Right, cog.hand_Left, 15);
+            }
 
             // select hips starting at index 1
             if (cog.hips.Count != 0)
-                ActivateItem(cog.hips[Random.Range(1, cog.hips.Count)]);
+            {
+                this.ActivateItem(cog.hips[Random.Range(1, cog.hips.Count)]);
+            }
 
             // determine chance for legs to be different and activate
             if (cog.leg_Right.Count != 0)
-                RandomizeLeftRight(cog.leg_Right, cog.leg_Left, 15);
+            {
+                this.RandomizeLeftRight(cog.leg_Right, cog.leg_Left, 15);
+            }
 
             // select chest attachment
-            if (allGender.chest_Attachment.Count != 0)
-                ActivateItem(allGender.chest_Attachment[Random.Range(0, allGender.chest_Attachment.Count)]);
+            if (this.allGender.chest_Attachment.Count != 0)
+            {
+                this.ActivateItem(this.allGender.chest_Attachment[Random.Range(0, this.allGender.chest_Attachment.Count)]);
+            }
 
             // select back attachment
-            if (allGender.back_Attachment.Count != 0)
-                ActivateItem(allGender.back_Attachment[Random.Range(0, allGender.back_Attachment.Count)]);
+            if (this.allGender.back_Attachment.Count != 0)
+            {
+                this.ActivateItem(this.allGender.back_Attachment[Random.Range(0, this.allGender.back_Attachment.Count)]);
+            }
 
             // determine chance for shoulder attachments to be different and activate
-            if (allGender.shoulder_Attachment_Right.Count != 0)
-                RandomizeLeftRight(allGender.shoulder_Attachment_Right, allGender.shoulder_Attachment_Left, 10);
+            if (this.allGender.shoulder_Attachment_Right.Count != 0)
+            {
+                this.RandomizeLeftRight(this.allGender.shoulder_Attachment_Right, this.allGender.shoulder_Attachment_Left, 10);
+            }
 
             // determine chance for elbow attachments to be different and activate
-            if (allGender.elbow_Attachment_Right.Count != 0)
-                RandomizeLeftRight(allGender.elbow_Attachment_Right, allGender.elbow_Attachment_Left, 10);
+            if (this.allGender.elbow_Attachment_Right.Count != 0)
+            {
+                this.RandomizeLeftRight(this.allGender.elbow_Attachment_Right, this.allGender.elbow_Attachment_Left, 10);
+            }
 
             // select hip attachment
-            if (allGender.hips_Attachment.Count != 0)
-                ActivateItem(allGender.hips_Attachment[Random.Range(0, allGender.hips_Attachment.Count)]);
+            if (this.allGender.hips_Attachment.Count != 0)
+            {
+                this.ActivateItem(this.allGender.hips_Attachment[Random.Range(0, this.allGender.hips_Attachment.Count)]);
+            }
 
             // determine chance for knee attachments to be different and activate
-            if (allGender.knee_Attachement_Right.Count != 0)
-                RandomizeLeftRight(allGender.knee_Attachement_Right, allGender.knee_Attachement_Left, 10);
+            if (this.allGender.knee_Attachement_Right.Count != 0)
+            {
+                this.RandomizeLeftRight(this.allGender.knee_Attachement_Right, this.allGender.knee_Attachement_Left, 10);
+            }
 
             // start randomization of the random characters colors
-            RandomizeColors(skinColor);
+            this.RandomizeColors(skinColor);
         }
 
         // handle randomization of the random characters colors
-        void RandomizeColors(SkinColor skinColor)
+        private void RandomizeColors(SkinColor skinColor)
         {
             // set skin and hair colors based on skin color roll
             switch (skinColor)
             {
                 case SkinColor.White:
                     // randomize and set white skin, hair, stubble, and scar color
-                    RandomizeAndSetHairSkinColors("White", whiteSkin, whiteHair, whiteStubble, whiteScar);
+                    this.RandomizeAndSetHairSkinColors("White", this.whiteSkin, this.whiteHair, this.whiteStubble, this.whiteScar);
                     break;
 
                 case SkinColor.Brown:
                     // randomize and set brown skin, hair, stubble, and scar color
-                    RandomizeAndSetHairSkinColors("Brown", brownSkin, brownHair, brownStubble, brownScar);
+                    this.RandomizeAndSetHairSkinColors("Brown", this.brownSkin, this.brownHair, this.brownStubble, this.brownScar);
                     break;
 
                 case SkinColor.Black:
                     // randomize and black elf skin, hair, stubble, and scar color
-                    RandomizeAndSetHairSkinColors("Black", blackSkin, blackHair, blackStubble, blackScar);
+                    this.RandomizeAndSetHairSkinColors("Black", this.blackSkin, this.blackHair, this.blackStubble, this.blackScar);
                     break;
 
                 case SkinColor.Elf:
                     // randomize and set elf skin, hair, stubble, and scar color
-                    RandomizeAndSetHairSkinColors("Elf", elfSkin, elfHair, elfStubble, elfScar);
+                    this.RandomizeAndSetHairSkinColors("Elf", this.elfSkin, this.elfHair, this.elfStubble, this.elfScar);
                     break;
             }
 
             // randomize and set primary color
-            if (primary.Length != 0)
-                mat.SetColor("_Color_Primary", primary[Random.Range(0, primary.Length)]);
+            if (this.primary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Primary", this.primary[Random.Range(0, this.primary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Primary Colors Specified In The Inspector");
+            }
 
             // randomize and set secondary color
-            if (secondary.Length != 0)
-                mat.SetColor("_Color_Secondary", secondary[Random.Range(0, secondary.Length)]);
+            if (this.secondary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Secondary", this.secondary[Random.Range(0, this.secondary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Secondary Colors Specified In The Inspector");
+            }
 
             // randomize and set primary metal color
-            if (metalPrimary.Length != 0)
-                mat.SetColor("_Color_Metal_Primary", metalPrimary[Random.Range(0, metalPrimary.Length)]);
+            if (this.metalPrimary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Metal_Primary", this.metalPrimary[Random.Range(0, this.metalPrimary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Primary Metal Colors Specified In The Inspector");
+            }
 
             // randomize and set secondary metal color
-            if (metalSecondary.Length != 0)
-                mat.SetColor("_Color_Metal_Secondary", metalSecondary[Random.Range(0, metalSecondary.Length)]);
+            if (this.metalSecondary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Metal_Secondary", this.metalSecondary[Random.Range(0, this.metalSecondary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Secondary Metal Colors Specified In The Inspector");
+            }
 
             // randomize and set primary leather color
-            if (leatherPrimary.Length != 0)
-                mat.SetColor("_Color_Leather_Primary", leatherPrimary[Random.Range(0, leatherPrimary.Length)]);
+            if (this.leatherPrimary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Leather_Primary", this.leatherPrimary[Random.Range(0, this.leatherPrimary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Primary Leather Colors Specified In The Inspector");
+            }
 
             // randomize and set secondary leather color
-            if (leatherSecondary.Length != 0)
-                mat.SetColor("_Color_Leather_Secondary", leatherSecondary[Random.Range(0, leatherSecondary.Length)]);
+            if (this.leatherSecondary.Length != 0)
+            {
+                this.mat.SetColor("_Color_Leather_Secondary", this.leatherSecondary[Random.Range(0, this.leatherSecondary.Length)]);
+            }
             else
+            {
                 Debug.Log("No Secondary Leather Colors Specified In The Inspector");
+            }
 
             // randomize and set body art color
-            if (bodyArt.Length != 0)
-                mat.SetColor("_Color_BodyArt", bodyArt[Random.Range(0, bodyArt.Length)]);
+            if (this.bodyArt.Length != 0)
+            {
+                this.mat.SetColor("_Color_BodyArt", this.bodyArt[Random.Range(0, this.bodyArt.Length)]);
+            }
             else
+            {
                 Debug.Log("No Body Art Colors Specified In The Inspector");
+            }
 
             // randomize and set body art amount
-            mat.SetFloat("_BodyArt_Amount", Random.Range(0.0f, 1.0f));
+            this.mat.SetFloat("_BodyArt_Amount", Random.Range(0.0f, 1.0f));
         }
 
-        void RandomizeAndSetHairSkinColors(string info, Color[] skin, Color[] hair, Color stubble, Color scar)
+        private void RandomizeAndSetHairSkinColors(string info, Color[] skin, Color[] hair, Color stubble, Color scar)
         {
             // randomize and set elf skin color
             if (skin.Length != 0)
             {
-                mat.SetColor("_Color_Skin", skin[Random.Range(0, skin.Length)]);
+                this.mat.SetColor("_Color_Skin", skin[Random.Range(0, skin.Length)]);
             }
             else
             {
@@ -471,7 +571,7 @@ namespace PsychoticLab
             // randomize and set elf hair color
             if (hair.Length != 0)
             {
-                mat.SetColor("_Color_Hair", hair[Random.Range(0, hair.Length)]);
+                this.mat.SetColor("_Color_Hair", hair[Random.Range(0, hair.Length)]);
             }
             else
             {
@@ -479,14 +579,14 @@ namespace PsychoticLab
             }
 
             // set stubble color
-            mat.SetColor("_Color_Stubble", stubble);
+            this.mat.SetColor("_Color_Stubble", stubble);
 
             // set scar color
-            mat.SetColor("_Color_Scar", scar);
+            this.mat.SetColor("_Color_Scar", scar);
         }
 
         // method for handling the chance of left/right items to be differnt (such as shoulders, hands, legs, arms)
-        void RandomizeLeftRight(List<GameObject> objectListRight, List<GameObject> objectListLeft, int rndPercent)
+        private void RandomizeLeftRight(List<GameObject> objectListRight, List<GameObject> objectListLeft, int rndPercent)
         {
             // rndPercent = chance for left item to be different
 
@@ -494,33 +594,35 @@ namespace PsychoticLab
             int index = Random.Range(0, objectListRight.Count);
 
             // enable item from list using index
-            ActivateItem(objectListRight[index]);
+            this.ActivateItem(objectListRight[index]);
 
             // roll for left item mismatch, if true randomize index based on left item list
-            if (GetPercent(rndPercent))
+            if (this.GetPercent(rndPercent))
+            {
                 index = Random.Range(0, objectListLeft.Count);
+            }
 
             // enable left item from list using index
-            ActivateItem(objectListLeft[index]);
+            this.ActivateItem(objectListLeft[index]);
         }
 
         // enable game object and add it to the enabled objects list
-        void ActivateItem(GameObject go)
+        private void ActivateItem(GameObject go)
         {
             // enable item
             go.SetActive(true);
 
             // add item to the enabled items list
-            enabledObjects.Add(go);
+            this.enabledObjects.Add(go);
         }
 
-        Color ConvertColor(int r, int g, int b)
+        private Color ConvertColor(int r, int g, int b)
         {
             return new Color(r / 255.0f, g / 255.0f, b / 255.0f, 1);
         }
 
         // method for rolling percentages (returns true/false)
-        bool GetPercent(int pct)
+        private bool GetPercent(int pct)
         {
             bool p = false;
             int roll = Random.Range(0, 100);
@@ -535,59 +637,59 @@ namespace PsychoticLab
         private void BuildLists()
         {
             //build out male lists
-            BuildList(male.headAllElements, "Male_Head_All_Elements");
-            BuildList(male.headNoElements, "Male_Head_No_Elements");
-            BuildList(male.eyebrow, "Male_01_Eyebrows");
-            BuildList(male.facialHair, "Male_02_FacialHair");
-            BuildList(male.torso, "Male_03_Torso");
-            BuildList(male.arm_Upper_Right, "Male_04_Arm_Upper_Right");
-            BuildList(male.arm_Upper_Left, "Male_05_Arm_Upper_Left");
-            BuildList(male.arm_Lower_Right, "Male_06_Arm_Lower_Right");
-            BuildList(male.arm_Lower_Left, "Male_07_Arm_Lower_Left");
-            BuildList(male.hand_Right, "Male_08_Hand_Right");
-            BuildList(male.hand_Left, "Male_09_Hand_Left");
-            BuildList(male.hips, "Male_10_Hips");
-            BuildList(male.leg_Right, "Male_11_Leg_Right");
-            BuildList(male.leg_Left, "Male_12_Leg_Left");
+            this.BuildList(this.male.headAllElements, "Male_Head_All_Elements");
+            this.BuildList(this.male.headNoElements, "Male_Head_No_Elements");
+            this.BuildList(this.male.eyebrow, "Male_01_Eyebrows");
+            this.BuildList(this.male.facialHair, "Male_02_FacialHair");
+            this.BuildList(this.male.torso, "Male_03_Torso");
+            this.BuildList(this.male.arm_Upper_Right, "Male_04_Arm_Upper_Right");
+            this.BuildList(this.male.arm_Upper_Left, "Male_05_Arm_Upper_Left");
+            this.BuildList(this.male.arm_Lower_Right, "Male_06_Arm_Lower_Right");
+            this.BuildList(this.male.arm_Lower_Left, "Male_07_Arm_Lower_Left");
+            this.BuildList(this.male.hand_Right, "Male_08_Hand_Right");
+            this.BuildList(this.male.hand_Left, "Male_09_Hand_Left");
+            this.BuildList(this.male.hips, "Male_10_Hips");
+            this.BuildList(this.male.leg_Right, "Male_11_Leg_Right");
+            this.BuildList(this.male.leg_Left, "Male_12_Leg_Left");
 
             //build out female lists
-            BuildList(female.headAllElements, "Female_Head_All_Elements");
-            BuildList(female.headNoElements, "Female_Head_No_Elements");
-            BuildList(female.eyebrow, "Female_01_Eyebrows");
-            BuildList(female.facialHair, "Female_02_FacialHair");
-            BuildList(female.torso, "Female_03_Torso");
-            BuildList(female.arm_Upper_Right, "Female_04_Arm_Upper_Right");
-            BuildList(female.arm_Upper_Left, "Female_05_Arm_Upper_Left");
-            BuildList(female.arm_Lower_Right, "Female_06_Arm_Lower_Right");
-            BuildList(female.arm_Lower_Left, "Female_07_Arm_Lower_Left");
-            BuildList(female.hand_Right, "Female_08_Hand_Right");
-            BuildList(female.hand_Left, "Female_09_Hand_Left");
-            BuildList(female.hips, "Female_10_Hips");
-            BuildList(female.leg_Right, "Female_11_Leg_Right");
-            BuildList(female.leg_Left, "Female_12_Leg_Left");
+            this.BuildList(this.female.headAllElements, "Female_Head_All_Elements");
+            this.BuildList(this.female.headNoElements, "Female_Head_No_Elements");
+            this.BuildList(this.female.eyebrow, "Female_01_Eyebrows");
+            this.BuildList(this.female.facialHair, "Female_02_FacialHair");
+            this.BuildList(this.female.torso, "Female_03_Torso");
+            this.BuildList(this.female.arm_Upper_Right, "Female_04_Arm_Upper_Right");
+            this.BuildList(this.female.arm_Upper_Left, "Female_05_Arm_Upper_Left");
+            this.BuildList(this.female.arm_Lower_Right, "Female_06_Arm_Lower_Right");
+            this.BuildList(this.female.arm_Lower_Left, "Female_07_Arm_Lower_Left");
+            this.BuildList(this.female.hand_Right, "Female_08_Hand_Right");
+            this.BuildList(this.female.hand_Left, "Female_09_Hand_Left");
+            this.BuildList(this.female.hips, "Female_10_Hips");
+            this.BuildList(this.female.leg_Right, "Female_11_Leg_Right");
+            this.BuildList(this.female.leg_Left, "Female_12_Leg_Left");
 
             // build out all gender lists
-            BuildList(allGender.all_Hair, "All_01_Hair");
-            BuildList(allGender.all_Head_Attachment, "All_02_Head_Attachment");
-            BuildList(allGender.headCoverings_Base_Hair, "HeadCoverings_Base_Hair");
-            BuildList(allGender.headCoverings_No_FacialHair, "HeadCoverings_No_FacialHair");
-            BuildList(allGender.headCoverings_No_Hair, "HeadCoverings_No_Hair");
-            BuildList(allGender.chest_Attachment, "All_03_Chest_Attachment");
-            BuildList(allGender.back_Attachment, "All_04_Back_Attachment");
-            BuildList(allGender.shoulder_Attachment_Right, "All_05_Shoulder_Attachment_Right");
-            BuildList(allGender.shoulder_Attachment_Left, "All_06_Shoulder_Attachment_Left");
-            BuildList(allGender.elbow_Attachment_Right, "All_07_Elbow_Attachment_Right");
-            BuildList(allGender.elbow_Attachment_Left, "All_08_Elbow_Attachment_Left");
-            BuildList(allGender.hips_Attachment, "All_09_Hips_Attachment");
-            BuildList(allGender.knee_Attachement_Right, "All_10_Knee_Attachement_Right");
-            BuildList(allGender.knee_Attachement_Left, "All_11_Knee_Attachement_Left");
-            BuildList(allGender.elf_Ear, "Elf_Ear");
+            this.BuildList(this.allGender.all_Hair, "All_01_Hair");
+            this.BuildList(this.allGender.all_Head_Attachment, "All_02_Head_Attachment");
+            this.BuildList(this.allGender.headCoverings_Base_Hair, "HeadCoverings_Base_Hair");
+            this.BuildList(this.allGender.headCoverings_No_FacialHair, "HeadCoverings_No_FacialHair");
+            this.BuildList(this.allGender.headCoverings_No_Hair, "HeadCoverings_No_Hair");
+            this.BuildList(this.allGender.chest_Attachment, "All_03_Chest_Attachment");
+            this.BuildList(this.allGender.back_Attachment, "All_04_Back_Attachment");
+            this.BuildList(this.allGender.shoulder_Attachment_Right, "All_05_Shoulder_Attachment_Right");
+            this.BuildList(this.allGender.shoulder_Attachment_Left, "All_06_Shoulder_Attachment_Left");
+            this.BuildList(this.allGender.elbow_Attachment_Right, "All_07_Elbow_Attachment_Right");
+            this.BuildList(this.allGender.elbow_Attachment_Left, "All_08_Elbow_Attachment_Left");
+            this.BuildList(this.allGender.hips_Attachment, "All_09_Hips_Attachment");
+            this.BuildList(this.allGender.knee_Attachement_Right, "All_10_Knee_Attachement_Right");
+            this.BuildList(this.allGender.knee_Attachement_Left, "All_11_Knee_Attachement_Left");
+            this.BuildList(this.allGender.elf_Ear, "Elf_Ear");
         }
 
         // called from the BuildLists method
-        void BuildList(List<GameObject> targetList, string characterPart)
+        private void BuildList(List<GameObject> targetList, string characterPart)
         {
-            Transform[] rootTransform = gameObject.GetComponentsInChildren<Transform>();
+            Transform[] rootTransform = this.gameObject.GetComponentsInChildren<Transform>();
 
             // declare target root transform
             Transform targetRoot = null;
@@ -618,10 +720,12 @@ namespace PsychoticLab
                 targetList.Add(go);
 
                 // collect the material for the random character, only if null in the inspector;
-                if (!mat)
+                if (!this.mat)
                 {
                     if (go.GetComponent<SkinnedMeshRenderer>())
-                        mat = go.GetComponent<SkinnedMeshRenderer>().material;
+                    {
+                        this.mat = go.GetComponent<SkinnedMeshRenderer>().material;
+                    }
                 }
             }
         }

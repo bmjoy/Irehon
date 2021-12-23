@@ -13,15 +13,17 @@ namespace DuloGames.UI
 
         public ColorSchemeShade shade
         {
-            get { return this.m_Shade; }
-            set { this.m_Shade = value; }
+            get => this.m_Shade;
+            set => this.m_Shade = value;
         }
-        
+
         protected void Awake()
         {
             // Apply the actie color scheme to this element
             if (ColorSchemeManager.Instance != null && ColorSchemeManager.Instance.activeColorScheme != null)
+            {
                 ColorSchemeManager.Instance.activeColorScheme.ApplyToElement(this);
+            }
         }
 
 #if UNITY_EDITOR
@@ -29,7 +31,9 @@ namespace DuloGames.UI
         {
             // Apply the actie color scheme to this element
             if (ColorSchemeManager.Instance != null && ColorSchemeManager.Instance.activeColorScheme != null)
+            {
                 ColorSchemeManager.Instance.activeColorScheme.ApplyToElement(this);
+            }
         }
 #endif
 
@@ -39,14 +43,18 @@ namespace DuloGames.UI
             Graphic graphic = this.gameObject.GetComponent<Graphic>();
 
             if (graphic == null)
+            {
                 return;
-            
+            }
+
             // Keep the graphic alpha
             graphic.color = new Color(newColor.r, newColor.g, newColor.b, graphic.color.a);
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)
+            {
                 EditorUtility.SetDirty(graphic);
+            }
 #endif
         }
     }

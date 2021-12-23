@@ -4,9 +4,9 @@ namespace DuloGames.UI
 {
     public class Demo_AddChatTestMessages : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private Demo_Chat m_Chat;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         protected void Start()
         {

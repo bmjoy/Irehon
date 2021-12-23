@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FrontAttack : MonoBehaviour
@@ -29,46 +28,54 @@ public class FrontAttack : MonoBehaviour
 
     private void Update()
     {
-        if (playMeshEffect == true)
+        if (this.playMeshEffect == true)
         {
-            StartCoroutine(MeshEffect());
-            playMeshEffect = false;
+            this.StartCoroutine(this.MeshEffect());
+            this.playMeshEffect = false;
         }
     }
 
     public void PrepeareAttack(Vector3 targetPoint)
     {
-        if (effectWithAnimation)
+        if (this.effectWithAnimation)
         {
-            StartCoroutine(MeshEffect());
+            this.StartCoroutine(this.MeshEffect());
         }
         else
         {
-            if (playPS) ps.Play();
-            startSpeed = speed;
-            transform.parent = null;
-            transform.position = pivot.position;
-            var lookPos = targetPoint - transform.position;
-            lookPos.y = 0;
-            if (!playPS)
+            if (this.playPS)
             {
-                transform.rotation = Quaternion.LookRotation(lookPos);
+                this.ps.Play();
+            }
+
+            this.startSpeed = this.speed;
+            this.transform.parent = null;
+            this.transform.position = this.pivot.position;
+            Vector3 lookPos = targetPoint - this.transform.position;
+            lookPos.y = 0;
+            if (!this.playPS)
+            {
+                this.transform.rotation = Quaternion.LookRotation(lookPos);
             }
             else
             {
-                transform.rotation = Quaternion.LookRotation(lookPos) * Quaternion.Euler(startRotation);
+                this.transform.rotation = Quaternion.LookRotation(lookPos) * Quaternion.Euler(this.startRotation);
             }
-            stepPosition = pivot.position;
-            randomTimer = 0;
-            StartCoroutine(StartMove());
+            this.stepPosition = this.pivot.position;
+            this.randomTimer = 0;
+            this.StartCoroutine(this.StartMove());
         }
     }
 
     public IEnumerator MeshEffect()
     {
-        if (playPS) ps.Play();
-        yield return new WaitForSeconds(delay);
-        foreach (var animS in anim)
+        if (this.playPS)
+        {
+            this.ps.Play();
+        }
+
+        yield return new WaitForSeconds(this.delay);
+        foreach (Animator animS in this.anim)
         {
             animS.SetTrigger("Attack");
         }
@@ -78,50 +85,50 @@ public class FrontAttack : MonoBehaviour
     public IEnumerator StartMove()
     {
 
-        attackingTimer += Time.deltaTime;
+        this.attackingTimer += Time.deltaTime;
         while (true)
         {
-            randomTimer += Time.deltaTime;
-            startSpeed = startSpeed * drug;
-            transform.position += transform.forward * (startSpeed * Time.deltaTime);
+            this.randomTimer += Time.deltaTime;
+            this.startSpeed = this.startSpeed * this.drug;
+            this.transform.position += this.transform.forward * (this.startSpeed * Time.deltaTime);
 
-            var heading = transform.position - stepPosition;
-            var distance = heading.magnitude;
+            Vector3 heading = this.transform.position - this.stepPosition;
+            float distance = heading.magnitude;
 
-            if (distance > spawnRate)
+            if (distance > this.spawnRate)
             {
-                if (craterPrefab != null)
+                if (this.craterPrefab != null)
                 {
-                    Vector3 randomPosition = new Vector3(Random.Range(-positionOffset, positionOffset), 0, Random.Range(-positionOffset, positionOffset));
-                    Vector3 pos = transform.position + (randomPosition * randomTimer * 2);
+                    Vector3 randomPosition = new Vector3(Random.Range(-this.positionOffset, this.positionOffset), 0, Random.Range(-this.positionOffset, this.positionOffset));
+                    Vector3 pos = this.transform.position + (randomPosition * this.randomTimer * 2);
 
                     //to create effects on terrain
                     if (Terrain.activeTerrain != null)
                     {
-                        pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+                        pos.y = Terrain.activeTerrain.SampleHeight(this.transform.position);
                     }
 
-                    var craterInstance = Instantiate(craterPrefab, pos, Quaternion.identity);
-                    if (changeScale == true) { craterInstance.transform.localScale += new Vector3(randomTimer * 2, randomTimer * 2, randomTimer * 2); }
-                    var craterPs = craterInstance.GetComponent<ParticleSystem>();
+                    GameObject craterInstance = Instantiate(this.craterPrefab, pos, Quaternion.identity);
+                    if (this.changeScale == true) { craterInstance.transform.localScale += new Vector3(this.randomTimer * 2, this.randomTimer * 2, this.randomTimer * 2); }
+                    ParticleSystem craterPs = craterInstance.GetComponent<ParticleSystem>();
                     if (craterPs != null)
                     {
                         Destroy(craterInstance, craterPs.main.duration);
                     }
                     else
                     {
-                        var flashPsParts = craterInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+                        ParticleSystem flashPsParts = craterInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
                         Destroy(craterInstance, flashPsParts.main.duration);
                     }
                 }
                 //distance = 0;
-                stepPosition = transform.position;
+                this.stepPosition = this.transform.position;
             }
-            if (randomTimer > spawnDuration)
+            if (this.randomTimer > this.spawnDuration)
             {
-                transform.parent = pivot;
-                transform.position = pivot.position;
-                transform.rotation = Quaternion.Euler(startRotation);
+                this.transform.parent = this.pivot;
+                this.transform.position = this.pivot.position;
+                this.transform.rotation = Quaternion.Euler(this.startRotation);
                 yield break;
             }
             yield return null;

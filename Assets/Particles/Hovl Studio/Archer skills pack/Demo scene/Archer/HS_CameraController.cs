@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HS_CameraController : MonoBehaviour
 {
@@ -19,57 +15,72 @@ public class HS_CameraController : MonoBehaviour
     private float y = 0.0f;
 
     //For camera colliding
-    RaycastHit hit;
+    private RaycastHit hit;
     public LayerMask collidingLayers = ~0; //Target marker can only collide with scene layer
     private float distanceHit;
 
-    void Start()
+    private void Start()
     {
-        var angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
+        Vector3 angles = this.transform.eulerAngles;
+        this.x = angles.y;
+        this.y = angles.x;
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (currDistance < 2)
+        if (this.currDistance < 2)
         {
-            currDistance = 2;
+            this.currDistance = 2;
         }
-        
-        // (currDistance - 2) / 3.5f - constant for far camera position
-        var targetPos = Holder.position + new Vector3(0, (distanceHit - 2) / 3f + cameraPos[1], 0);
 
-        currDistance -= Input.GetAxis("Mouse ScrollWheel") * 2;
-        if (Holder)
+        // (currDistance - 2) / 3.5f - constant for far camera position
+        Vector3 targetPos = this.Holder.position + new Vector3(0, (this.distanceHit - 2) / 3f + this.cameraPos[1], 0);
+
+        this.currDistance -= Input.GetAxis("Mouse ScrollWheel") * 2;
+        if (this.Holder)
         {
-            var pos = Input.mousePosition;
+            Vector3 pos = Input.mousePosition;
             float dpiScale = 1;
-            if (Screen.dpi < 1) dpiScale = 1;
-            if (Screen.dpi < 200) dpiScale = 1;
-            else dpiScale = Screen.dpi / 200f;
-            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
+            if (Screen.dpi < 1)
+            {
+                dpiScale = 1;
+            }
+
+            if (Screen.dpi < 200)
+            {
+                dpiScale = 1;
+            }
+            else
+            {
+                dpiScale = Screen.dpi / 200f;
+            }
+
+            if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale)
+            {
+                return;
+            }
+
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            x += (float)(Input.GetAxis("Mouse X") * xRotate * 0.02);
-            y -= (float)(Input.GetAxis("Mouse Y") * yRotate * 0.02);
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0, 0, -currDistance) + targetPos;
+            this.x += (float)(Input.GetAxis("Mouse X") * this.xRotate * 0.02);
+            this.y -= (float)(Input.GetAxis("Mouse Y") * this.yRotate * 0.02);
+            this.y = ClampAngle(this.y, this.yMinLimit, this.yMaxLimit);
+            Quaternion rotation = Quaternion.Euler(this.y, this.x, 0);
+            Vector3 position = rotation * new Vector3(0, 0, -this.currDistance) + targetPos;
             //If camera collide with collidingLayers move it to this point.
-            if (Physics.Raycast(targetPos, position - targetPos, out hit, (position - targetPos).magnitude, collidingLayers))
+            if (Physics.Raycast(targetPos, position - targetPos, out this.hit, (position - targetPos).magnitude, this.collidingLayers))
             {
-                transform.position = hit.point;
+                this.transform.position = this.hit.point;
                 //Min(4) distance from ground for camera target point
-                distanceHit = Mathf.Clamp(Vector3.Distance(targetPos, hit.point), 4, 600);
+                this.distanceHit = Mathf.Clamp(Vector3.Distance(targetPos, this.hit.point), 4, 600);
 
             }
             else
             {
-                transform.position = position;
-                distanceHit = currDistance;
+                this.transform.position = position;
+                this.distanceHit = this.currDistance;
             }
-            transform.rotation = rotation;
+            this.transform.rotation = rotation;
         }
         else
         {
@@ -77,18 +88,18 @@ public class HS_CameraController : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (prevDistance != currDistance)
+        if (this.prevDistance != this.currDistance)
         {
-            prevDistance = currDistance;
-            var rot = Quaternion.Euler(y, x, 0);
+            this.prevDistance = this.currDistance;
+            Quaternion rot = Quaternion.Euler(this.y, this.x, 0);
             // (currDistance - 2) / 3.5f - constant for far camera position
-            var po = rot * new Vector3(0, 0, -currDistance) + targetPos;
-            transform.rotation = rot;
-            transform.position = po;
+            Vector3 po = rot * new Vector3(0, 0, -this.currDistance) + targetPos;
+            this.transform.rotation = rot;
+            this.transform.position = po;
         }
     }
 
-    static float ClampAngle(float angle, float min, float max)
+    private static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
         {

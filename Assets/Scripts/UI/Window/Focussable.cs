@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Focussable : MonoBehaviour, IPointerClickHandler
@@ -9,6 +7,6 @@ public class Focussable : MonoBehaviour, IPointerClickHandler
     private Transform target;
     public void OnPointerClick(PointerEventData eventData)
     {
-        target.SetAsLastSibling();
+        this.target.SetAsLastSibling();
     }
 }

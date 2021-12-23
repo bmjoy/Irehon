@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -12,7 +12,7 @@ namespace DuloGames.UI
         [System.Serializable]
         public class OnCharacterDeleteEvent : UnityEvent<Demo_CharacterSelectList_Character> { }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private Toggle m_Toggle;
         [SerializeField] private Button m_Delete;
 
@@ -22,7 +22,7 @@ namespace DuloGames.UI
         [SerializeField] private Text m_RaceText;
         [SerializeField] private Text m_ClassText;
         [SerializeField] private Image m_Avatar;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private Demo_CharacterInfo m_CharacterInfo;
         private OnCharacterSelectEvent m_OnCharacterSelected;
@@ -31,19 +31,13 @@ namespace DuloGames.UI
         /// <summary>
         /// Gets the character info.
         /// </summary>
-        public Demo_CharacterInfo characterInfo
-        {
-            get { return this.m_CharacterInfo; }
-        }
+        public Demo_CharacterInfo characterInfo => this.m_CharacterInfo;
 
         /// <summary>
         /// Gets a value indicating wheather this character is selected.
         /// </summary>
-        public bool isSelected
-        {
-            get { return (this.m_Toggle != null ? this.m_Toggle.isOn : false); }
-        }
-        
+        public bool isSelected => (this.m_Toggle != null ? this.m_Toggle.isOn : false);
+
         protected void Awake()
         {
             this.m_OnCharacterSelected = new OnCharacterSelectEvent();
@@ -55,20 +49,26 @@ namespace DuloGames.UI
             if (this.m_Toggle != null)
             {
                 this.m_Toggle.isOn = false;
-                this.m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
+                this.m_Toggle.onValueChanged.AddListener(this.OnToggleValueChanged);
             }
 
             if (this.m_Delete != null)
-                this.m_Delete.onClick.AddListener(OnDeleteClick);
+            {
+                this.m_Delete.onClick.AddListener(this.OnDeleteClick);
+            }
         }
 
         protected void OnDisable()
         {
             if (this.m_Toggle != null)
-                this.m_Toggle.onValueChanged.RemoveListener(OnToggleValueChanged);
+            {
+                this.m_Toggle.onValueChanged.RemoveListener(this.OnToggleValueChanged);
+            }
 
             if (this.m_Delete != null)
-                this.m_Delete.onClick.RemoveListener(OnDeleteClick);
+            {
+                this.m_Delete.onClick.RemoveListener(this.OnDeleteClick);
+            }
         }
 
         /// <summary>
@@ -78,12 +78,29 @@ namespace DuloGames.UI
         public void SetCharacterInfo(Demo_CharacterInfo info)
         {
             if (info == null)
+            {
                 return;
+            }
 
-            if (this.m_NameText != null) this.m_NameText.text = info.name.ToUpper();
-            if (this.m_LevelText != null) this.m_LevelText.text = info.level.ToString();
-            if (this.m_RaceText != null) this.m_RaceText.text = info.raceString;
-            if (this.m_ClassText != null) this.m_ClassText.text = info.classString;
+            if (this.m_NameText != null)
+            {
+                this.m_NameText.text = info.name.ToUpper();
+            }
+
+            if (this.m_LevelText != null)
+            {
+                this.m_LevelText.text = info.level.ToString();
+            }
+
+            if (this.m_RaceText != null)
+            {
+                this.m_RaceText.text = info.raceString;
+            }
+
+            if (this.m_ClassText != null)
+            {
+                this.m_ClassText.text = info.classString;
+            }
 
             // Set the character info
             this.m_CharacterInfo = info;
@@ -96,7 +113,9 @@ namespace DuloGames.UI
         public void SetAvatar(Sprite sprite)
         {
             if (this.m_Avatar != null)
+            {
                 this.m_Avatar.sprite = sprite;
+            }
         }
 
         /// <summary>
@@ -106,7 +125,9 @@ namespace DuloGames.UI
         public void SetToggleGroup(ToggleGroup group)
         {
             if (this.m_Toggle != null)
+            {
                 this.m_Toggle.group = group;
+            }
         }
 
         /// <summary>
@@ -116,19 +137,25 @@ namespace DuloGames.UI
         public void SetSelected(bool selected)
         {
             if (this.m_Toggle != null)
+            {
                 this.m_Toggle.isOn = selected;
+            }
         }
 
         private void OnToggleValueChanged(bool value)
         {
             if (value && this.m_OnCharacterSelected != null)
+            {
                 this.m_OnCharacterSelected.Invoke(this);
+            }
         }
 
         private void OnDeleteClick()
         {
             if (this.m_OnCharacterDelete != null)
+            {
                 this.m_OnCharacterDelete.Invoke(this);
+            }
         }
 
         /// <summary>

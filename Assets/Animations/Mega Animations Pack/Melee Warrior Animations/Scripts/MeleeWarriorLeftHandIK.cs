@@ -10,35 +10,34 @@
 // and a child called 'LeftHandIK'. 
 // More information at Documentation PDF file.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace KevinIglesias {
-	public class MeleeWarriorLeftHandIK : MonoBehaviour
-	{
-		public Transform retargeter;
+namespace KevinIglesias
+{
+    public class MeleeWarriorLeftHandIK : MonoBehaviour
+    {
+        public Transform retargeter;
         public Transform leftHandEffector;
-        
-		private Animator animator;
 
-		private float weight;
+        private Animator animator;
 
-		void Awake()
-		{
-			animator = GetComponent<Animator>();
-			weight = 0f;
-		}
+        private float weight;
 
-		void Update()
-		{
-			weight = retargeter.localPosition.y;
-		}
-		
-		void OnAnimatorIK(int layerIndex)
-		{
-			animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, weight);
-			animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandEffector.position);
-		}
-	}
+        private void Awake()
+        {
+            this.animator = this.GetComponent<Animator>();
+            this.weight = 0f;
+        }
+
+        private void Update()
+        {
+            this.weight = this.retargeter.localPosition.y;
+        }
+
+        private void OnAnimatorIK(int layerIndex)
+        {
+            this.animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, this.weight);
+            this.animator.SetIKPosition(AvatarIKGoal.LeftHand, this.leftHandEffector.position);
+        }
+    }
 }

@@ -1,64 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     [ExecuteInEditMode, DisallowMultipleComponent, AddComponentMenu("UI/Switch Select Field", 58)]
     public class UISwitchSelect : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private Text m_Text;
         [SerializeField] private Button m_PrevButton;
         [SerializeField] private Button m_NextButton;
 
         // Currently selected item
-		[HideInInspector][SerializeField] private string m_SelectedItem;
-        #pragma warning restore 0649
+        [HideInInspector] [SerializeField] private string m_SelectedItem;
+#pragma warning restore 0649
 
         /// <summary>
-		/// New line-delimited list of items.
-		/// </summary>
-		[SerializeField] private List<string> m_Options = new List<string>();
+        /// New line-delimited list of items.
+        /// </summary>
+        [SerializeField] private List<string> m_Options = new List<string>();
 
         /// <summary>
 		/// The list of options.
 		/// </summary>
-        public List<string> options
-        {
-            get
-            {
-                return this.m_Options;
-            }
-        }
+        public List<string> options => this.m_Options;
 
         /// <summary>
         /// Currently selected option.
         /// </summary>
         public string value
         {
-            get
-            {
-                return this.m_SelectedItem;
-            }
-            set
-            {
-                this.SelectOption(value);
-            }
+            get => this.m_SelectedItem;
+            set => this.SelectOption(value);
         }
 
         /// <summary>
         /// Gets the index of the selected option.
         /// </summary>
         /// <value>The index of the selected option.</value>
-        public int selectedOptionIndex
-        {
-            get
-            {
-                return this.GetOptionIndex(this.m_SelectedItem);
-            }
-        }
+        public int selectedOptionIndex => this.GetOptionIndex(this.m_SelectedItem);
 
         [System.Serializable] public class ChangeEvent : UnityEvent<int, string> { }
 
@@ -71,18 +53,28 @@ namespace DuloGames.UI
         {
             // Hook the buttons click events
             if (this.m_PrevButton != null)
-                this.m_PrevButton.onClick.AddListener(OnPrevButtonClick);
+            {
+                this.m_PrevButton.onClick.AddListener(this.OnPrevButtonClick);
+            }
+
             if (this.m_NextButton != null)
-                this.m_NextButton.onClick.AddListener(OnNextButtonClick);
+            {
+                this.m_NextButton.onClick.AddListener(this.OnNextButtonClick);
+            }
         }
 
         protected void OnDisable()
         {
             // Unhook the buttons click events
             if (this.m_PrevButton != null)
-                this.m_PrevButton.onClick.RemoveListener(OnPrevButtonClick);
+            {
+                this.m_PrevButton.onClick.RemoveListener(this.OnPrevButtonClick);
+            }
+
             if (this.m_NextButton != null)
-                this.m_NextButton.onClick.RemoveListener(OnNextButtonClick);
+            {
+                this.m_NextButton.onClick.RemoveListener(this.OnNextButtonClick);
+            }
         }
 
         protected void OnPrevButtonClick()
@@ -91,10 +83,14 @@ namespace DuloGames.UI
 
             // Check if the option index is valid
             if (prevIndex < 0)
+            {
                 prevIndex = this.m_Options.Count - 1;
+            }
 
             if (prevIndex >= this.m_Options.Count)
+            {
                 prevIndex = 0;
+            }
 
             // Select the new option
             this.SelectOptionByIndex(prevIndex);
@@ -106,10 +102,14 @@ namespace DuloGames.UI
 
             // Check if the option index is valid
             if (nextIndex < 0)
+            {
                 nextIndex = this.m_Options.Count - 1;
+            }
 
             if (nextIndex >= this.m_Options.Count)
+            {
                 nextIndex = 0;
+            }
 
             // Select the new option
             this.SelectOptionByIndex(nextIndex);
@@ -124,9 +124,15 @@ namespace DuloGames.UI
         {
             // Find the option index in the options list
             if (this.m_Options != null && this.m_Options.Count > 0 && !string.IsNullOrEmpty(optionValue))
+            {
                 for (int i = 0; i < this.m_Options.Count; i++)
+                {
                     if (optionValue.Equals(this.m_Options[i], System.StringComparison.OrdinalIgnoreCase))
+                    {
                         return i;
+                    }
+                }
+            }
 
             // Default
             return -1;
@@ -140,7 +146,9 @@ namespace DuloGames.UI
         {
             // Check if the option index is valid
             if (index < 0 || index >= this.m_Options.Count)
+            {
                 return;
+            }
 
             string newOption = this.m_Options[index];
 
@@ -162,14 +170,18 @@ namespace DuloGames.UI
         public void SelectOption(string optionValue)
         {
             if (string.IsNullOrEmpty(optionValue))
+            {
                 return;
+            }
 
             // Get the option
             int index = this.GetOptionIndex(optionValue);
 
             // Check if the option index is valid
             if (index < 0 || index >= this.m_Options.Count)
+            {
                 return;
+            }
 
             // Select the option
             this.SelectOptionByIndex(index);
@@ -182,7 +194,9 @@ namespace DuloGames.UI
         public void AddOption(string optionValue)
         {
             if (this.m_Options != null)
+            {
                 this.m_Options.Add(optionValue);
+            }
         }
 
         /// <summary>
@@ -193,7 +207,9 @@ namespace DuloGames.UI
         public void AddOptionAtIndex(string optionValue, int index)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Check if the index is outside the list
             if (index >= this.m_Options.Count)
@@ -213,7 +229,9 @@ namespace DuloGames.UI
         public void RemoveOption(string optionValue)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Remove the option if exists
             if (this.m_Options.Contains(optionValue))
@@ -230,7 +248,9 @@ namespace DuloGames.UI
         public void RemoveOptionAtIndex(int index)
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Remove the option if the index is valid
             if (index >= 0 && index < this.m_Options.Count)
@@ -246,7 +266,9 @@ namespace DuloGames.UI
         public void ValidateSelectedOption()
         {
             if (this.m_Options == null)
+            {
                 return;
+            }
 
             // Fix the selected option if it no longer exists
             if (!this.m_Options.Contains(this.m_SelectedItem))
@@ -255,19 +277,23 @@ namespace DuloGames.UI
                 this.SelectOptionByIndex(0);
             }
         }
-        
+
         /// <summary>
-		/// Tiggers the change event.
-		/// </summary>
-		protected virtual void TriggerChangeEvent()
+        /// Tiggers the change event.
+        /// </summary>
+        protected virtual void TriggerChangeEvent()
         {
             // Apply the string to the label componenet
             if (this.m_Text != null)
+            {
                 this.m_Text.text = this.m_SelectedItem;
+            }
 
             // Invoke the on change event
-            if (onChange != null)
-                onChange.Invoke(this.selectedOptionIndex, this.m_SelectedItem);
+            if (this.onChange != null)
+            {
+                this.onChange.Invoke(this.selectedOptionIndex, this.m_SelectedItem);
+            }
         }
     }
 }
