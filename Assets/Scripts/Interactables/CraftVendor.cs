@@ -90,7 +90,7 @@ namespace Irehon.Interactable
                 player.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
             }
 
-            player.inventory.GiveContainerItem(recipe.itemId, recipe.itemQuantity);
+            player.inventory.AddItem(recipe.itemId, recipe.itemQuantity);
         }
     }
 }
