@@ -72,6 +72,12 @@ namespace Irehon
                 LocalPlayerIntialize();
             }
 
+            if (isClient)
+            {
+                if (equipment != null)
+                    ShareEquipmentUpdated.Invoke(equipment);
+            }
+
             if (this.isServer)
             {
                 await ContainerData.LoadContainer(characterInfo.inventoryId);
@@ -93,6 +99,8 @@ namespace Irehon
         {
             LocalPlayer = this;
             LocalPlayerIntialized?.Invoke(this);
+            //—бросить всех после первого вызова
+            LocalPlayerIntialized = x => { };
 
             DidDamage += x => Hitmarker.Instance.ShowHitMarker();
 
@@ -129,6 +137,7 @@ namespace Irehon
 
             ShareEquipmentUpdated += UpdateArmorModifiers;
 
+            inventory.ContainerSlotsChanged += x => print($"Changed inventory slots {x.ToJson()}");
             inventory.ContainerSlotsChanged += SendInventoryTargetRPC;
             equipment.ContainerSlotsChanged += SendEquipmentClientRPC;
             equipment.ContainerSlotsChanged += container => ShareEquipmentUpdated?.Invoke(container);
@@ -284,7 +293,7 @@ namespace Irehon
             deadBody.transform.position = this.transform.position + Vector3.up;
             deadBody.transform.rotation = this.transform.rotation;
 
-            deadBody.GetComponent<DeathContainer>().AttachMultipleContainers(new List<Container> { inventory, equipment });
+            deadBody.GetComponent<DeathChest>().AttachMultipleContainers(new List<Container> { inventory, equipment });
         }
 
         public Container GetContainer(ContainerType type)

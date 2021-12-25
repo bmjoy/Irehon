@@ -22,9 +22,9 @@ namespace Irehon.UI
             this.Font = 14;
         }
 
-        public TooltipMessage(string message, int font, int maxWordsInLine = 0)
+        public TooltipMessage(Color color, string message, int font, int maxWordsInLine)
         {
-            this.Color = Color.white;
+            this.Color = color;
             this.Font = font;
 
             if (maxWordsInLine != 0)

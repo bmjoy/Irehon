@@ -11,9 +11,7 @@ GameObject:
   - component: {fileID: 4135041391929242}
   - component: {fileID: 33765002794078322}
   - component: {fileID: 23655577953864952}
-  - component: {fileID: 6567940359899418354}
-  - component: {fileID: 944821006638277011}
-  - component: {fileID: 3053295754420044246}
+  - component: {fileID: 4028363371454695099}
   m_Layer: 0
   m_Name: SM_Env_Hell_Spikes_05
   m_TagString: Untagged
@@ -82,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &6567940359899418354
-SphereCollider:
+--- !u!64 &4028363371454695099
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,32 +90,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.41
-  m_Center: {x: -0.027636707, y: 0.28, z: -0.005410135}
---- !u!135 &944821006638277011
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986913146536826}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.94
-  m_Center: {x: -0.027636707, y: 2.69, z: -0.005410135}
---- !u!135 &3053295754420044246
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986913146536826}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Center: {x: -0.027636707, y: 3.95, z: -0.005410135}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 443a5bf7b067da843bf985af76d8e47a, type: 3}

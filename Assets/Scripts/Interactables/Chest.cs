@@ -7,11 +7,11 @@ namespace Irehon.Interactable
 {
     public class Chest : NetworkBehaviour, IInteractable
     {
-        [SerializeField]
+        public delegate void ChestEventHandler();
         private Container container;
         public Container Container => this.container;
-        public InteractEventHandler Destroyed;
-        private List<Player> interacting = new List<Player>();
+        public event ChestEventHandler Destroyed;
+        protected List<Player> interacting { get; private set; } = new List<Player>();
 
         private void Awake()
         {
@@ -47,7 +47,7 @@ namespace Irehon.Interactable
 
         }
 
-        protected void SendContainerInteractingPlayer(Container container)
+        protected virtual void SendContainerInteractingPlayer(Container container)
         {
             foreach (Player player in interacting)
             {
@@ -61,15 +61,7 @@ namespace Irehon.Interactable
 
         protected virtual void OnDestroy()
         {
-            this.Destroyed?.Invoke(this);
-
-            print("dedstroy");
-            if (isClient)
-            {
-                print("is client");
-                if (PlayerInteracter.LocalInteractObject != null && PlayerInteracter.LocalInteractObject == this.gameObject)
-                    ChestWindow.Instance.CloseChest();
-            }
+            this.Destroyed?.Invoke();
         }
 
 
@@ -78,12 +70,14 @@ namespace Irehon.Interactable
         protected virtual void TargetCloseChest(NetworkConnection target)
         {
             Player.LocalInteractContainer = null;
+            Destroyed -= ChestWindow.Instance.CloseChest;
             ChestWindow.Instance.CloseChest();
         }
 
         [TargetRpc]
         protected virtual void TargetOpenChest(NetworkConnection target, Container container)
         {
+            Destroyed += ChestWindow.Instance.CloseChest;
             Player.LocalInteractContainer = container;
             ChestWindow.Instance.OpenChest(container);
         }

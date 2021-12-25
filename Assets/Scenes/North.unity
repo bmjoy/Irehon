@@ -16287,13 +16287,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  FractionBehaviourData: {fileID: 0}
+  isAlive: 0
   fraction: 7
+  FractionBehaviourData: {fileID: 0}
   respawnTime: 0
   name: Target Dummy
   maxHealth: 100
   HitboxColliders: []
-  isAlive: 0
 --- !u!114 &902134147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21462,6 +21462,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -0.000030517578
       objectReference: {fileID: 0}
+    - target: {fileID: 3445738864837410796, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 3445738864837410796, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
+        type: 3}
     - target: {fileID: 4974206232825755176, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
         type: 3}
       propertyPath: m_Name
@@ -22046,6 +22052,12 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 7305773079530937047, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
+        type: 3}
+    - target: {fileID: 8021361249631312540, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 8021361249631312540, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f7f06b7e9e42cc4b99b2b054e9da00b, type: 3}
@@ -31347,6 +31359,10 @@ PrefabInstance:
       value: SM_Env_Obelisk_02
       objectReference: {fileID: 0}
     - target: {fileID: 1424182000081172, guid: 4ed501395688d3549b34ae87147aa5d7, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1424182000081172, guid: 4ed501395688d3549b34ae87147aa5d7, type: 3}
       propertyPath: m_NavMeshLayer
       value: 1
       objectReference: {fileID: 0}
@@ -31408,7 +31424,9 @@ PrefabInstance:
       propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6465091353077057814, guid: 4ed501395688d3549b34ae87147aa5d7, type: 3}
+    - {fileID: 6014991380496007196, guid: 4ed501395688d3549b34ae87147aa5d7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4ed501395688d3549b34ae87147aa5d7, type: 3}
 --- !u!4 &1843239962 stripped
 Transform:
@@ -31416,6 +31434,47 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1843239961}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1843239963 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1424182000081172, guid: 4ed501395688d3549b34ae87147aa5d7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1843239961}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1843239964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1843239963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1097924bb5003084da2d6b894983bbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  header: Monument
+  text: THIS IS A MONUNEMT
+  font: 20
+  color: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &1843239965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1843239963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 817001764
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 4ed501395688d3549b34ae87147aa5d7
+  hasSpawned: 0
 --- !u!1001 &1849279774
 PrefabInstance:
   m_ObjectHideFlags: 0
