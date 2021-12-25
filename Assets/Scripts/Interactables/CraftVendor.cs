@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Irehon.UI;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,23 +34,23 @@ namespace Irehon.Interactable
         }
         public void Interact(Player player)
         {
-            TargetSendRecipes(player.netIdentity, recipes);
+            TargetSendRecipes(player.connectionToClient, recipes);
         }
 
         public void StopInterract(Player player)
         {
-            TargetCloseCraftWindow(player.netIdentity);
+            TargetCloseCraftWindow(player.connectionToClient);
         }
 
 
         [TargetRpc]
-        private void TargetCloseCraftWindow(NetworkIdentity target)
+        private void TargetCloseCraftWindow(NetworkConnection target)
         {
             CraftWindowManager.Instance.CloseCraftWindow();
         }
 
         [TargetRpc]
-        private void TargetSendRecipes(NetworkIdentity target, CraftRecipe[] recipes)
+        private void TargetSendRecipes(NetworkConnection target, CraftRecipe[] recipes)
         {
             CraftWindowManager.Instance.ShowRecipes(recipes);
         }

@@ -50,5 +50,10 @@ namespace Irehon.UI
             color.a = alpha;
             this.cursorHint.color = color;
         }
+
+        private void OnDestroy()
+        {
+            Mouse.CursorChanged -= this.ChangeCursorHintStatus;
+        }
     }
 }

@@ -14,6 +14,8 @@ public class EquipmentSlotUI : InventorySlotUI
 
     public override void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
     {
+        if (itemTooltip == null)
+            itemTooltip = GetComponent<ItemTooltip>();
         this.canvas = canvas;
         this.type = ContainerType.Equipment;
 
@@ -29,20 +31,15 @@ public class EquipmentSlotUI : InventorySlotUI
 
         if (this.itemId == 0)
         {
-            this.itemSprite.gameObject.SetActive(false);
-            this.baseSprite.gameObject.SetActive(true);
-
-            if (this.isPointerOverSlot)
-            {
-                TooltipWindow.HideTooltip();
-
-                this.isPointerOverSlot = false;
-            }
+            this.itemSprite?.gameObject.SetActive(false);
+            this.baseSprite?.gameObject.SetActive(true);
 
             if (this.isDragging)
             {
                 ItemDragger.Instance.GetDragger().gameObject.SetActive(false);
             }
+
+            item = ItemDatabase.GetItemById(this.itemId);
 
             return;
         }
@@ -66,5 +63,7 @@ public class EquipmentSlotUI : InventorySlotUI
                 ItemDragger.Instance.GetDraggerImage().sprite = this.itemSprite.sprite;
             }
         }
+
+        itemTooltip.SetItem(item);
     }
 }

@@ -5,8 +5,7 @@ namespace Irehon.Interactable
 {
     public class InteractLink : SerializedMonoBehaviour, IInteractable
     {
-        [SerializeField]
-        private IInteractable interactableOrigin;
+        public IInteractable interactableOrigin;
         public void Interact(Player player)
         {
             this.interactableOrigin.Interact(player);

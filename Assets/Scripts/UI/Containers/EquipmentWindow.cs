@@ -26,5 +26,10 @@ namespace Irehon.UI
                 this.equipmentSlots[i].Intialize(container[i], this.canvas, ContainerType.Equipment);
             }
         }
+
+        private void OnDestroy()
+        {
+            Player.LocalEquipmentUpdated -= UpdateEquipmentWindow;
+        }
     }
 }

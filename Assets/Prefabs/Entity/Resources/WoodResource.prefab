@@ -138,43 +138,44 @@ MonoBehaviour:
     SerializationNodes:
     - Name: lootPool
       Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
+      Data: 0|System.Collections.Generic.List`1[[Irehon.Entitys.LootGenerator+Loot,
+        Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
       Data: 2
     - Name: 
       Entry: 7
-      Data: Loot, Assembly-CSharp
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
       Data: 100
     - Name: itemId
       Entry: 3
-      Data: 80
+      Data: 56
     - Name: minQuantity
       Entry: 3
-      Data: 10
+      Data: 2
     - Name: maxQuantity
       Entry: 3
-      Data: 12
+      Data: 5
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: Loot, Assembly-CSharp
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 25
+      Data: 100
     - Name: itemId
       Entry: 3
-      Data: 81
+      Data: 76
     - Name: minQuantity
       Entry: 3
-      Data: 4
+      Data: 600
     - Name: maxQuantity
       Entry: 3
-      Data: 5
+      Data: 1200
     - Name: 
       Entry: 8
       Data: 
@@ -198,14 +199,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  FractionBehaviourData: {fileID: 0}
+  isAlive: 0
   fraction: 7
+  FractionBehaviourData: {fileID: 0}
   respawnTime: 60
   name: Wood
   maxHealth: 300
   HitboxColliders:
   - {fileID: 8740281951372727600}
-  isAlive: 0
   lootContainerPrefab: {fileID: 6753851627449734426, guid: 18da8aa5bd51780409df610dc2fa2a78,
     type: 3}
   modelParts:

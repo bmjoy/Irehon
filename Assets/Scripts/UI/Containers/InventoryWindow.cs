@@ -38,5 +38,10 @@ namespace Irehon.UI
                 this.inventorySlots[i].Intialize(container[i], this.canvas, ContainerType.Inventory);
             }
         }
+
+        private void OnDestroy()
+        {
+            Player.LocalInventorUpdated -= ReCreateInventorySlotsUI;
+        }
     }
 }

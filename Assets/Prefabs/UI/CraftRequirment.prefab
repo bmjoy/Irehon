@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 2583209468024134303}
   - component: {fileID: 1294005925010188335}
   - component: {fileID: 2612138898892806494}
+  - component: {fileID: 3514487115409629083}
   m_Layer: 0
   m_Name: CraftRequirment
   m_TagString: Untagged
@@ -277,6 +278,18 @@ MonoBehaviour:
   itemName: {fileID: 1610519622441892526}
   itemQuantity: {fileID: 4393071384733429775}
   itemIcon: {fileID: 3779794104019331231}
+--- !u!114 &3514487115409629083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6083371222888679559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21d99abc709f2d9478c210b557a08a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8811570036897769261
 GameObject:
   m_ObjectHideFlags: 0

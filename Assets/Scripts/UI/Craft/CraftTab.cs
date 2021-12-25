@@ -3,36 +3,39 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CraftTab : MonoBehaviour, IPointerClickHandler
+namespace Irehon.UI
 {
-    [SerializeField]
-    private Text recipeName;
-
-    [SerializeField]
-    private Image recipeIcon;
-
-    [SerializeField]
-    private Text quantity;
-
-    private CraftRecipe currentRecipe;
-    private Item craftingItem;
-    private int index;
-
-
-    public void OnPointerClick(PointerEventData eventData)
+    public class CraftTab : MonoBehaviour, IPointerClickHandler
     {
-        CraftWindowManager.Instance.SelectRecipe(this.currentRecipe, this.index);
-    }
+        [SerializeField]
+        private Text recipeName;
 
-    public void Intialize(CraftRecipe recipe, ToggleGroup group, int tabIndex)
-    {
-        this.index = tabIndex;
-        this.currentRecipe = recipe;
-        this.craftingItem = ItemDatabase.GetItemById(recipe.itemId);
-        this.recipeName.text = this.craftingItem.name;
-        this.quantity.text = recipe.itemQuantity > 0 ? recipe.itemQuantity.ToString() : "";
-        this.recipeIcon.sprite = this.craftingItem.sprite;
+        [SerializeField]
+        private Image recipeIcon;
 
-        this.GetComponent<Toggle>().group = group;
+        [SerializeField]
+        private Text quantity;
+
+        private CraftRecipe currentRecipe;
+        private Item craftingItem;
+        private int index;
+
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            CraftWindowManager.Instance.SelectRecipe(currentRecipe, index);
+        }
+
+        public void Intialize(CraftRecipe recipe, ToggleGroup group, int tabIndex)
+        {
+            index = tabIndex;
+            currentRecipe = recipe;
+            craftingItem = ItemDatabase.GetItemById(recipe.itemId);
+            recipeName.text = craftingItem.name;
+            quantity.text = recipe.itemQuantity > 0 ? recipe.itemQuantity.ToString() : "";
+            recipeIcon.sprite = craftingItem.sprite;
+
+            GetComponent<Toggle>().group = group;
+        }
     }
 }

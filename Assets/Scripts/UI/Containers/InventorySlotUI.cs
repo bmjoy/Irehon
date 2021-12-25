@@ -5,8 +5,12 @@ using UnityEngine.UI;
 
 namespace Irehon.UI
 {
-    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    [RequireComponent(typeof(ItemTooltip))]
+    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IDropHandler
     {
+        public ContainerType type { get; protected set; }
+        public virtual int slotId { get; protected set; }
+
         [SerializeField]
         protected Image itemSprite;
         [SerializeField]
@@ -19,10 +23,9 @@ namespace Irehon.UI
         public Item item { get; protected set; }
 
         protected bool isDragging;
-        protected bool isPointerOverSlot;
-        public ContainerType type { get; protected set; }
-        public virtual int slotId { get; protected set; }
 
+        protected ItemTooltip itemTooltip;
+        
         public virtual void OnPointerClick(PointerEventData data)
         {
             if (itemId == 0)
@@ -91,6 +94,9 @@ namespace Irehon.UI
 
         public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
         {
+            if (itemTooltip == null)
+                itemTooltip = GetComponent<ItemTooltip>();
+
             this.canvas = canvas;
             this.slotId = containerSlot.slotIndex;
             this.type = type;
@@ -111,17 +117,12 @@ namespace Irehon.UI
                 quantityText.text = "";
                 itemSprite.color = Color.clear;
 
-                if (isPointerOverSlot)
-                {
-                    TooltipWindow.HideTooltip();
-
-                    isPointerOverSlot = false;
-                }
-
                 if (isDragging)
                 {
                     ItemDragger.Instance.GetDragger().gameObject.SetActive(false);
                 }
+
+                itemTooltip.SetItem(item);
 
                 return;
             }
@@ -138,35 +139,12 @@ namespace Irehon.UI
                     ItemDragger.Instance.GetDraggerImage().sprite = itemSprite.sprite;
                 }
             }
-        }
 
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            if (itemId == 0)
-            {
-                return;
-            }
-
-            item = ItemDatabase.GetItemById(itemId);
-            TooltipWindow.ShowTooltip(item.GetStringMessage());
-
-            isPointerOverSlot = true;
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            TooltipWindow.HideTooltip();
-
-            isPointerOverSlot = false;
+            itemTooltip.SetItem(item);
         }
 
         private void OnDisable()
         {
-            if (isPointerOverSlot)
-            {
-                TooltipWindow.HideTooltip();
-                isPointerOverSlot = false;
-            }
             if (isDragging)
             {
                 ItemDragger.Instance.GetDragger().gameObject.SetActive(false);

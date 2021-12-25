@@ -84,6 +84,7 @@ GameObject:
   m_Component:
   - component: {fileID: 248375991613081706}
   - component: {fileID: 6160823249506389182}
+  - component: {fileID: -5576189373357531430}
   m_Layer: 5
   m_Name: ChatTab
   m_TagString: Untagged
@@ -126,6 +127,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avatar: {fileID: 839787803930000640}
   text: {fileID: 4371969337948848806}
+--- !u!225 &-5576189373357531430
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2784144685060831649}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4371969337948848805
 GameObject:
   m_ObjectHideFlags: 0

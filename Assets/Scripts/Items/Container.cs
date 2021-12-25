@@ -64,6 +64,11 @@ public class Container : IEquatable<Container>
         return Array.Find(this.slots, x => x.itemId == 0);
     }
 
+    public ContainerSlot[] GetEmptySlots()
+    {
+        return Array.FindAll(this.slots, x => x.itemId == 0);
+    }
+
     public int GetFilledSlotsCount()
     {
         return this.GetFilledSlots().Length;
@@ -207,6 +212,33 @@ public class Container : IEquatable<Container>
         oldContainer.ContainerSlotsChanged?.Invoke(oldContainer);
     }
 
+    public void SplitInEmptySlot(ContainerSlot slot, int itemCount)
+    {
+        if (slot == null)
+        {
+            Debug.LogError("Null slot error");
+            return;
+        }
+        if (itemCount < 0 || itemCount > slot.itemQuantity)
+        {
+
+            Debug.LogError("Slot quantity error");
+            return;
+        }
+
+        var emptySlot = GetEmptySlot();
+        if (emptySlot == null)
+            return;
+
+        emptySlot.itemId = slot.itemId;
+        emptySlot.itemQuantity = itemCount;
+        slot.itemQuantity -= itemCount;
+        if (slot.itemQuantity == 0)
+            slot.itemId = 0;
+
+        ContainerSlotsChanged?.Invoke(this);
+    }
+
     private static void SwapSlotData(ContainerSlot oldContainerSlot, ContainerSlot containerSlot)
     {
         if (oldContainerSlot == null || containerSlot == null)
@@ -236,6 +268,119 @@ public class Container : IEquatable<Container>
 
             containerSlot.itemId = oldItemId;
             containerSlot.itemQuantity = oldQuantity;
+        }
+    }
+
+    public void ClaimFromSlot(Container anotherContainer, int index, int itemCount)
+    {
+        if (anotherContainer == null || index < 0 || index >= anotherContainer.slots.Length)
+        {
+            Debug.LogError("Argument error");
+            return;
+        }
+
+        if (anotherContainer.slots[index].itemId == 0)
+        {
+            Debug.LogError("Slot doesn't contain item");
+            return;
+        }
+
+        if (itemCount <= 0 || itemCount > anotherContainer.slots[index].itemQuantity)
+        {
+            Debug.LogError("Item count argument error");
+            return;
+        }
+
+        ContainerSlot targetSlot = anotherContainer[index];
+        Item item = targetSlot.GetItem();
+
+        var slotsWithTargetItem = FindItemSlots(targetSlot.itemId);
+        if (slotsWithTargetItem.Length > 0)
+        {
+            //Обход и заполнение всех ячеек до фула, пока есть count
+            foreach (ContainerSlot containerSlot in slotsWithTargetItem)
+            {
+                if (containerSlot.itemQuantity != item.maxInStack)
+                {
+                    if (containerSlot.itemQuantity + itemCount <= item.maxInStack)
+                    {
+                        containerSlot.itemQuantity += itemCount;
+                        targetSlot.itemQuantity -= itemCount;
+                        if (targetSlot.itemQuantity == 0)
+                            targetSlot.itemId = 0;
+                        Debug.Log("invoked");
+                        ContainerSlotsChanged?.Invoke(this);
+                        anotherContainer.ContainerSlotsChanged?.Invoke(anotherContainer);
+                        return;
+                    }
+                    else
+                    {
+                        int avaliableSpace = item.maxInStack - containerSlot.itemQuantity;
+                        targetSlot.itemQuantity -= avaliableSpace;
+                        containerSlot.itemQuantity += avaliableSpace;
+                        itemCount -= avaliableSpace;
+                    }
+                }
+            }
+
+            if (itemCount > 0 && GetEmptySlot() != null)
+                ClaimInEmptySlots(anotherContainer, index, itemCount);
+        }
+        else
+        {
+            ClaimInEmptySlots(anotherContainer, index, itemCount);
+        }
+
+        if (targetSlot.itemQuantity == 0)
+            targetSlot.itemId = 0;
+        Debug.Log("invoked");
+        ContainerSlotsChanged?.Invoke(this);
+        anotherContainer.ContainerSlotsChanged?.Invoke(anotherContainer);
+    }
+
+    private void ClaimInEmptySlots(Container anotherContainer, int index, int itemCount)
+    {
+        if (anotherContainer == null || index < 0 || index >= anotherContainer.slots.Length)
+        {
+            Debug.LogError("Argument error");
+            return;
+        }
+
+        if (anotherContainer.slots[index].itemId == 0)
+        {
+            Debug.LogError("Slot doesn't contain item");
+            return;
+        }
+
+        if (itemCount <= 0 || itemCount > anotherContainer.slots[index].itemQuantity)
+        {
+            Debug.LogError("Item count argument error");
+            return;
+        }
+
+        Debug.Log($"Claimning in empty slot {itemCount} items");
+
+        ContainerSlot targetSlot = anotherContainer[index];
+        Item item = targetSlot.GetItem();
+
+        ContainerSlot emptySlot = GetEmptySlot();
+        while (itemCount > 0 && emptySlot != null)
+        {
+            if (itemCount > item.maxInStack)
+            {
+                emptySlot.itemId = item.id;
+                emptySlot.itemQuantity = item.maxInStack;
+                targetSlot.itemQuantity -= item.maxInStack;
+                itemCount -= item.maxInStack;
+            }
+            else
+            {
+                emptySlot.itemId = item.id;
+                emptySlot.itemQuantity = itemCount;
+                targetSlot.itemQuantity -= itemCount;
+                itemCount = 0;
+            }
+            emptySlot = GetEmptySlot();
         }
     }
 

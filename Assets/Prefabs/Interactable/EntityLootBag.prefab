@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4242968188959437738}
   - component: {fileID: 219078361591835287}
   - component: {fileID: 1808779876856660826}
-  - component: {fileID: 810964972116794550}
   - component: {fileID: -777266949661441785}
+  - component: {fileID: 2094775803990660463}
   m_Layer: 12
   m_Name: EntityLootBag
   m_TagString: Untagged
@@ -113,21 +113,6 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 47e50da0c2192584fa754d34fb4303c8
   hasSpawned: 0
---- !u!114 &810964972116794550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7448840332664989012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6e990f9f483f7949b3c40c4134860b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  containerId: 0
 --- !u!114 &-777266949661441785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,3 +143,17 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   ExcludeOwnerUpdate: 0
+--- !u!114 &2094775803990660463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7448840332664989012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c537552e03f45f34b9ecbca0a0e88094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1

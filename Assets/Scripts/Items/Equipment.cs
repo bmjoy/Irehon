@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 
-public enum EquipmentSlot { Helmet, Chestplate, Gloves, Leggins, Boots, Weapon, None }
 public class Equipment
 {
     public static readonly int EquipmentSlotLength = Enum.GetNames(typeof(EquipmentSlot)).Length;

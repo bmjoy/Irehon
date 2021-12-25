@@ -27,13 +27,8 @@ public class LootableEntity : Entity
 
         deadBody.transform.position = this.transform.position;
 
-        this.SpawnDeathContainer(deadBody);
-    }
+        Container lootContainer = GetComponent<LootGenerator>().GenerateLoot();
 
-    private void SpawnDeathContainer(GameObject deadBody)
-    {
-        Container lootContainer = this.GetComponent<LootGenerator>().GenerateLoot();
-
-        deadBody.GetComponent<Chest>().SetChestContainer(lootContainer);
+        deadBody.GetComponent<LootBag>().SetChestContainer(lootContainer);
     }
 }
