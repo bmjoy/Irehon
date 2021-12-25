@@ -400,7 +400,7 @@ public class Container : IEquatable<Container>
         ContainerSlot[] slotsWithItem = this.FindItemSlots(containerSlot.itemId);
     }
 
-    public void GiveContainerItem(int itemId, int count)
+    public void AddItem(int itemId, int count)
     {
         if (itemId <= 0 || count <= 0)
         {
