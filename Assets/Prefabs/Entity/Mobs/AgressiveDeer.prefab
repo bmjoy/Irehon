@@ -171,61 +171,62 @@ MonoBehaviour:
     SerializationNodes:
     - Name: lootPool
       Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
+      Data: 0|System.Collections.Generic.List`1[[Irehon.Entitys.LootGenerator+Loot,
+        Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
       Data: 3
     - Name: 
       Entry: 7
-      Data: Loot, Assembly-CSharp
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 100
+      Data: 0
     - Name: itemId
       Entry: 3
-      Data: 84
+      Data: 0
     - Name: minQuantity
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: maxQuantity
       Entry: 3
-      Data: 10
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: Loot, Assembly-CSharp
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 35
+      Data: 0
     - Name: itemId
       Entry: 3
-      Data: 85
+      Data: 0
     - Name: minQuantity
       Entry: 3
-      Data: 2
+      Data: 0
     - Name: maxQuantity
       Entry: 3
-      Data: 4
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: Loot, Assembly-CSharp
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 5
+      Data: 0
     - Name: itemId
       Entry: 3
-      Data: 86
+      Data: 0
     - Name: minQuantity
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: maxQuantity
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
@@ -279,21 +280,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  isAlive: 0
   fraction: 5
   FractionBehaviourData: {fileID: 11400000, guid: 3c095e742e7acf349ba5926d1f044aa4,
     type: 2}
   respawnTime: 5
   name: Aggressive deer
   maxHealth: 3000
-  hitboxColliders:
-  - {fileID: 5620363889738219970}
-  - {fileID: 1040844599505592592}
-  - {fileID: 8717842100170292251}
-  - {fileID: 9097872291919782048}
-  - {fileID: 6795102607826613082}
-  - {fileID: 366899272775900117}
-  - {fileID: 1610267942864949927}
-  - {fileID: 6983917908475305744}
+  HitboxColliders: []
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
   modelParts:
@@ -329,6 +323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeDamage: 150
   MeleeWeaponCollider: {fileID: 1241974074402480543}
+  OnAttackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4853755964241498176
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,10 +1854,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4853755964241464774}
   - component: {fileID: 4853755964255165664}
-  - component: {fileID: 4853755964241498593}
   m_Layer: 10
   m_Name: deer
-  m_TagString: Entity
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1971,20 +1967,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.5673601, y: -0.016367197, z: -0.00000020861626}
     m_Extent: {x: 1.234539, y: 1.2757428, z: 0.49670768}
   m_DirtyAABB: 0
---- !u!114 &4853755964241498593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4853755964241498598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df13cb3a310a874fa9ddc1a3228875f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageMultiplier: 1
-  parent: {fileID: 0}
 --- !u!1 &4853755964241498602
 GameObject:
   m_ObjectHideFlags: 0

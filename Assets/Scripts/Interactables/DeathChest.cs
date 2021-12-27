@@ -46,6 +46,7 @@ public class DeathChest : Chest
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        this.Container.ContainerSlotsChanged -= this.CheckIsContainerEmpty;
+        if (isServer)
+            this.Container.ContainerSlotsChanged -= this.CheckIsContainerEmpty;
     }
 }

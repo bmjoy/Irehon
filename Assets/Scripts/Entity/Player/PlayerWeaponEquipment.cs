@@ -10,7 +10,7 @@ namespace Irehon
         private void Awake()
         {
             abilitySystem = GetComponent<AbilitySystem>();
-            this.GetComponent<Player>().ShareEquipmentUpdated += this.UpdateWeapon;
+            this.GetComponent<PlayerContainers>().ShareEquipmentUpdated += this.UpdateWeapon;
         }
 
         public void UpdateWeapon(Container equipment)

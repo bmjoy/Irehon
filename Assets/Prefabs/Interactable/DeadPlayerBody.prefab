@@ -41445,19 +41445,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d450e07b72fb51d4fb61763b999b1f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8978666586812128191}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: interactableOrigin
-      Entry: 10
-      Data: 0
+  syncMode: 0
+  syncInterval: 0.1
+  interactableOrigin: {fileID: 8978666586812128191}
 --- !u!1 &7200870311162401222
 GameObject:
   m_ObjectHideFlags: 0

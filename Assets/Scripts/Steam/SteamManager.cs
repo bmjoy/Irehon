@@ -59,7 +59,6 @@ namespace Irehon.Steam
 
                 if (!SteamServer.LoggedOn)
                 {
-                    print("Steam server log on");
                     SteamServer.LogOnAnonymous();
                 }
 

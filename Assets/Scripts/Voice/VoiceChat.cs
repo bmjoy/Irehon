@@ -24,18 +24,20 @@ namespace Irehon.Voice
 
         private void Start()
         {
-            this.optimalRate = 24000;
+            if (isClient)
+            {
+                this.optimalRate = 24000;
 
-            this.clipBufferSize = this.optimalRate * 5;
-            this.clipBuffer = new float[this.clipBufferSize];
+                this.clipBufferSize = this.optimalRate * 5;
+                this.clipBuffer = new float[this.clipBufferSize];
 
-            this.stream = new MemoryStream();
-            this.output = new MemoryStream();
-            this.input = new MemoryStream();
-
-            this.source.clip = AudioClip.Create("VoiceData", 256, 1, this.optimalRate, true, this.OnAudioRead, null);
-            this.source.loop = true;
-            this.source.Play();
+                this.stream = new MemoryStream();
+                this.output = new MemoryStream();
+                this.input = new MemoryStream();
+                this.source.clip = AudioClip.Create("VoiceData", 256, 1, this.optimalRate, true, this.OnAudioRead, null);
+                this.source.loop = true;
+                this.source.Play();
+            }
         }
 
         [ClientCallback]

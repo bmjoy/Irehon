@@ -44,8 +44,7 @@ namespace Irehon.UI
                 return;
             }
 
-            this.entity.Dead += () => this.SetActive(false);
-            this.entity.Respawned += () => this.SetActive(true);
+            this.entity.IsAliveValueChanged += isAlive => SetActive(isAlive);
 
             this.StartCoroutine(this.WaitCameraControllerIntialize());
             this.nickname.text = this.entity.NickName;

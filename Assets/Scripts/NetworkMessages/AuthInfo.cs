@@ -7,5 +7,6 @@ namespace Irehon
         public ulong Id;
         public byte[] AuthData;
         public RegisterInfo registerInfo;
+        public string version;
     }
 }

@@ -16,8 +16,6 @@ namespace Irehon.UI
         [SerializeField]
         protected Text quantityText;
         [SerializeField]
-        protected Canvas canvas;
-        [SerializeField]
         protected int itemId;
         protected int itemQuantity;
         public Item item { get; protected set; }
@@ -77,7 +75,7 @@ namespace Irehon.UI
             }
 
             TooltipWindow.HideTooltip();
-            ItemDragger.Instance.GetDragger().anchoredPosition += data.delta / canvas.scaleFactor;
+            ItemDragger.Instance.GetDragger().anchoredPosition += data.delta / ItemDragger.Instance.GetCanvasScaleFactor();
         }
 
         public void OnEndDrag(PointerEventData data)
@@ -92,12 +90,11 @@ namespace Irehon.UI
             isDragging = false;
         }
 
-        public virtual void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
+        public virtual void Intialize(ContainerSlot containerSlot, ContainerType type)
         {
             if (itemTooltip == null)
                 itemTooltip = GetComponent<ItemTooltip>();
 
-            this.canvas = canvas;
             this.slotId = containerSlot.slotIndex;
             this.type = type;
 

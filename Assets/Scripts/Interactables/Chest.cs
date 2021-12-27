@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Irehon.Interactable
 {
-    public class Chest : NetworkBehaviour, IInteractable
+    public class Chest : Interactable
     {
         public delegate void ChestEventHandler();
         private Container container;
@@ -13,27 +13,23 @@ namespace Irehon.Interactable
         public event ChestEventHandler Destroyed;
         protected List<Player> interacting { get; private set; } = new List<Player>();
 
-        private void Awake()
-        {
-            this.gameObject.layer = 12;
-        }
         public virtual void SetChestContainer(Container container)
         {
             this.container = container;
             this.OnContainerSet();
         }
 
-        public virtual void Interact(Player player)
+        public override void Interact(Player player)
         {
             TargetOpenChest(player.connectionToClient, this.container);
-            player.interactContainer = this.container;
+            player.GetComponent<PlayerContainers>().interactContainer = this.container;
             interacting.Add(player);
         }
 
-        public virtual void StopInterract(Player player)
+        public override void StopInterract(Player player)
         {
             TargetCloseChest(player.connectionToClient);
-            player.interactContainer = null;
+            player.GetComponent<PlayerContainers>().interactContainer = null;
             interacting.Remove(player);
         }
 
@@ -61,15 +57,16 @@ namespace Irehon.Interactable
 
         protected virtual void OnDestroy()
         {
+            if (isClient && PlayerInteracter.LocalInteractObject == gameObject)
+                ChestWindow.Instance.CloseChest();
+
             this.Destroyed?.Invoke();
         }
-
-
 
         [TargetRpc]
         protected virtual void TargetCloseChest(NetworkConnection target)
         {
-            Player.LocalInteractContainer = null;
+            PlayerContainers.LocalInteractContainer = null;
             Destroyed -= ChestWindow.Instance.CloseChest;
             ChestWindow.Instance.CloseChest();
         }
@@ -78,7 +75,7 @@ namespace Irehon.Interactable
         protected virtual void TargetOpenChest(NetworkConnection target, Container container)
         {
             Destroyed += ChestWindow.Instance.CloseChest;
-            Player.LocalInteractContainer = container;
+            PlayerContainers.LocalInteractContainer = container;
             ChestWindow.Instance.OpenChest(container);
         }
     }

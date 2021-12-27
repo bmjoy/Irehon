@@ -13,7 +13,7 @@ namespace Irehon.UI
 
         private void Awake()
         {
-            Player.LocalEquipmentUpdated += UpdateEquipmentWindow;
+            PlayerContainers.LocalEquipmentUpdated += UpdateEquipmentWindow;
             canvas = GetComponentInParent<Canvas>();
             if (canvas == null)
                 Debug.LogError("Equipment window not intialized, missing canvas");
@@ -23,13 +23,13 @@ namespace Irehon.UI
         {
             for (int i = 0; i < this.equipmentSlots.Count; i++)
             {
-                this.equipmentSlots[i].Intialize(container[i], this.canvas, ContainerType.Equipment);
+                this.equipmentSlots[i].Intialize(container[i], ContainerType.Equipment);
             }
         } 
 
         private void OnDestroy()
         {
-            Player.LocalEquipmentUpdated -= UpdateEquipmentWindow;
+            PlayerContainers.LocalEquipmentUpdated -= UpdateEquipmentWindow;
         }
     }
 }

@@ -13,29 +13,17 @@ namespace Irehon
     public class Player : Entity
     {
         public delegate void PlayerEventHandler(Player player);
-        public delegate void PlayerContainerEventHandler(Container container);
         public delegate void CharacterInfoUpdateEventHandler(CharacterInfo characterInfo);
         
         public static event PlayerEventHandler LocalPlayerIntialized;
-        public static event PlayerContainerEventHandler LocalInventorUpdated;
-        public static event PlayerContainerEventHandler LocalEquipmentUpdated;
         public static Player LocalPlayer { get; private set; }
 
-        public static Container LocalInventory { get; private set; }
-        public static Container LocalEquipment { get; private set; }
-        public static Container LocalInteractContainer;
-
-        public event PlayerContainerEventHandler ShareEquipmentUpdated;
         public event CharacterInfoUpdateEventHandler CharacterInfoUpdated;
         public PlayerBonesLinks PlayerBonesLinks { get; private set; }
         public bool isDataAlreadyRecieved { get; private set; } = false;
         
         [SyncVar(hook = nameof(GetName))]
         public SteamId Id;
-        [SyncVar]
-        public Container equipment;
-        public Container inventory;
-        public Container interactContainer;
 
         [SerializeField]
         private FractionBehaviourData northData;
@@ -46,6 +34,7 @@ namespace Irehon
 
         private PlayerStateMachine stateMachine;
         private CharacterController controller;
+        private PlayerContainers playerContainers;
         private CharacterInfo characterInfo;
 
         private List<PlayerCollider> playerColliders = new List<PlayerCollider>();
@@ -53,6 +42,7 @@ namespace Irehon
         protected override void Awake()
         { 
             base.Awake();
+            playerContainers = GetComponent<PlayerContainers>();
             stateMachine = GetComponent<PlayerStateMachine>();
             this.PlayerBonesLinks = GetComponent<PlayerBonesLinks>();
             controller = GetComponent<CharacterController>();
@@ -72,26 +62,13 @@ namespace Irehon
                 LocalPlayerIntialize();
             }
 
-            if (isClient)
-            {
-                if (equipment != null)
-                    ShareEquipmentUpdated.Invoke(equipment);
-            }
-
             if (this.isServer)
             {
-                await ContainerData.LoadContainer(characterInfo.inventoryId);
-                await ContainerData.LoadContainer(characterInfo.equipmentId);
-
-                inventory = ContainerData.LoadedContainers[characterInfo.inventoryId];
-                equipment = ContainerData.LoadedContainers[characterInfo.equipmentId];
-
                 IntializeServerEvents();
 
                 InvokeRepeating(nameof(PassiveRegenerateHealth), 1, 1);
 
-                SendInventoryTargetRPC(inventory);
-                SendEquipmentClientRPC(equipment);
+                SetHealth(characterInfo.health);
             }
         }
 
@@ -134,14 +111,6 @@ namespace Irehon
             Respawned += SetDefaultState;
 
             KilledByEntity += SendAllKillMesagge;
-
-            ShareEquipmentUpdated += UpdateArmorModifiers;
-
-            inventory.ContainerSlotsChanged += x => print($"Changed inventory slots {x.ToJson()}");
-            inventory.ContainerSlotsChanged += SendInventoryTargetRPC;
-            equipment.ContainerSlotsChanged += SendEquipmentClientRPC;
-            equipment.ContainerSlotsChanged += container => ShareEquipmentUpdated?.Invoke(container);
-            ShareEquipmentUpdated?.Invoke(equipment);
         }
 
         private void SendAllKillMesagge(Entity murder)
@@ -158,31 +127,11 @@ namespace Irehon
             }
         }
 
-        private void UpdateArmorModifiers(Container equipment)
+        public void UpdateArmorModifiers(Container equipment)
         {
             foreach (PlayerCollider playerCollider in playerColliders)
             {
                 playerCollider.UpdateModifier(equipment);
-            }
-        }
-
-        [TargetRpc]
-        private void SendInventoryTargetRPC(Container inventory)
-        {
-            this.inventory = inventory;
-            LocalInventory = this.inventory;
-            LocalInventorUpdated?.Invoke(inventory);
-        }
-
-        [ClientRpc]
-        private void SendEquipmentClientRPC(Container equipment)
-        {
-            this.equipment = equipment;
-            ShareEquipmentUpdated?.Invoke(equipment);
-            if (isLocalPlayer)
-            {
-                LocalEquipment = this.equipment;
-                LocalEquipmentUpdated?.Invoke(equipment);
             }
         }
 
@@ -293,58 +242,7 @@ namespace Irehon
             deadBody.transform.position = this.transform.position + Vector3.up;
             deadBody.transform.rotation = this.transform.rotation;
 
-            deadBody.GetComponent<DeathChest>().AttachMultipleContainers(new List<Container> { inventory, equipment });
-        }
-
-        public Container GetContainer(ContainerType type)
-        {
-            if (type == ContainerType.Inventory)
-                return inventory;
-            if (type == ContainerType.Equipment)
-                return equipment;
-            if (type == ContainerType.Interact)
-                return interactContainer;
-            return null;
-        }
-
-
-        [Command]
-        public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
-        {
-            Container firstContainer = GetContainer(firstType);
-            if (firstContainer == null)
-                return;
-
-            Container secondContainer = GetContainer(secondType);
-            if (secondContainer == null)
-                return;
-
-            if (secondType == ContainerType.Equipment)
-            {
-                Equip(secondSlot, firstSlot);
-            }
-            else
-            {
-                Container.MoveSlotData(firstContainer, firstSlot, secondContainer, secondSlot);
-            }
-        }
-
-        [Server]
-        private void Equip(int equipmentSlot, int inventorySlot)
-        {
-            Item equipableItem = this.inventory[inventorySlot].GetItem();
-
-            if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
-            {
-                return;
-            }
-
-            if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
-            {
-                return;
-            }
-
-            Container.MoveSlotData(this.inventory, inventorySlot, this.equipment, equipmentSlot);
+            deadBody.GetComponent<DeathChest>().AttachMultipleContainers(new List<Container> { playerContainers.inventory, playerContainers.equipment});
         }
     }
 }

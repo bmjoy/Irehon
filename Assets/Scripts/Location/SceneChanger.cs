@@ -27,7 +27,7 @@ public class SceneChanger : MonoBehaviour
 
     public static void ChangeCharacterScene(Player player, string newScene, Vector3 newPosition)
     {
-        Irehon.PlayerSession data = (Irehon.PlayerSession)player.connectionToClient.authenticationData;
+        PlayerSession data = (PlayerSession)player.connectionToClient.authenticationData;
 
         if (data.character.sceneChangeInfo != null)
         {
@@ -41,8 +41,8 @@ public class SceneChanger : MonoBehaviour
         };
 
         ServerManager.Log(data.steamId, $"Sended self reconnect to change scene on {newScene}");
-        Irehon.ServerManager.SendReconnectToThisServer(player.connectionToClient);
+        ServerManager.SendReconnectToThisServer(player.connectionToClient);
         player.connectionToClient.authenticationData = data;
-        Irehon.ServerManager.WaitBeforeDisconnect(player.connectionToClient);
+        ServerManager.WaitBeforeDisconnect(player.connectionToClient);
     }
 }

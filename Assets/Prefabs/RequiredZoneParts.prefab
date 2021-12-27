@@ -542,7 +542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -637,7 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -742,7 +742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -841,7 +841,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -6942,6 +6942,7 @@ GameObject:
   - component: {fileID: 1480492422737524972}
   - component: {fileID: 1480492422737524974}
   - component: {fileID: 1480492422737524975}
+  - component: {fileID: 7411980594228157599}
   m_Layer: 9
   m_Name: AimTransform
   m_TagString: Untagged
@@ -7010,6 +7011,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1480492422737524973}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &7411980594228157599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492422737524973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1480492422746991637
 GameObject:
   m_ObjectHideFlags: 0
@@ -7713,6 +7726,7 @@ GameObject:
   - component: {fileID: 606208790995614219}
   - component: {fileID: 6073491339549115697}
   - component: {fileID: 1543982913112569731}
+  - component: {fileID: 4876790564390378506}
   m_Layer: 9
   m_Name: Main Camera (1)
   m_TagString: MainCamera
@@ -7728,7 +7742,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1480492422936643983}
   m_LocalRotation: {x: 0.008637935, y: -0.9834321, z: 0.17439619, w: 0.04871118}
-  m_LocalPosition: {x: 325.17484, y: 129.4, z: 1542.6102}
+  m_LocalPosition: {x: 325.17484, y: 153.9759, z: 1542.6102}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1480492422737524972}
@@ -7774,7 +7788,7 @@ Camera:
   m_HDR: 1
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
+  m_ForceIntoRT: 1
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -7949,6 +7963,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimCamera: {fileID: 1480492422103527895}
   mainCamera: {fileID: 1480492422712378061}
+--- !u!114 &4876790564390378506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492422936643983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb42831ee5422f409e7f24f9e7488ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stage: 1
+  renderingStrategy: 0
+  renderTargetName: 
+  renderingMode: 0
+  outlineLayerMask: -1
+  primaryBufferSizeMode: 0
+  primaryRendererScale: 0.75
+  primarySizeReference: 800
+  blurShift: 1
+  dilateShift: 1
+  dilateIterations: 1
+  dilateQuality: 1
+  blurIterations: 1
+  blurType: 3
 --- !u!1 &1480492422949103538
 GameObject:
   m_ObjectHideFlags: 0
@@ -14545,7 +14585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -15971,7 +16011,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -18545,7 +18585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -19695,7 +19735,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733449043806014}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 5
   baseSprite: {fileID: 2084534972892892617}
@@ -19856,7 +19895,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733449405478527}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 4
   baseSprite: {fileID: 2084534972550380680}
@@ -20017,7 +20055,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733449349468828}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 0
   baseSprite: {fileID: 2084534972601915499}
@@ -20178,7 +20215,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733449894416699}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 2
   baseSprite: {fileID: 2084534972040190924}
@@ -20339,7 +20375,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733450507701053}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 3
   baseSprite: {fileID: 2084534971714470346}
@@ -20500,7 +20535,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 2183733450882836738}
   quantityText: {fileID: 0}
-  canvas: {fileID: 0}
   itemId: 0
   equipmentSlotType: 1
   baseSprite: {fileID: 2084534971049944053}
@@ -30422,7 +30456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 

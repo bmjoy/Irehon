@@ -50,7 +50,6 @@ namespace Irehon.Chat
         {
             if (GameSession.IsListeningGameKeys && Input.GetKeyDown(KeyCode.Return))
             {
-                print("pressed");
                 chatInputField.interactable = true;
                 this.chatInputField.ActivateInputField();
             }

@@ -11,6 +11,7 @@ public class MobWanderState : MobState
 
     public override void Enter()
     {
+        this.mobMovement.SetSpeed(this.mobMovement.WalkingSpeed);
         this.mobMovement.Wander();
         this.mob.GetComponent<Animator>().SetBool("isWalking", true);
     }

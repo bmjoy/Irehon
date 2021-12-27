@@ -110,6 +110,7 @@ namespace Irehon.Client
             print("Redirect");
             this.isRedirected = true;
             LoginSceneUI.HidePlayButton();
+            SceneManager.LoadScene("LoginScene");
             this.GetComponent<NetworkManager>().StopClient();
             await Task.Delay(1000);
             string port = msg.message.Split(':')[1];

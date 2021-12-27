@@ -38,7 +38,6 @@ namespace Irehon.Abilitys
 
         public Arrow GetArrowFromQuiver()
         {
-            print(this.arrowsInQuiever.Count);
             if (this.arrowsInQuiever.Count > 0)
             {
                 Arrow arrow = this.arrowsInQuiever.Dequeue();

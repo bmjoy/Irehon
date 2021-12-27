@@ -12,10 +12,10 @@ public class AggressiveMob : Mob
 
     public OnAgro OnAgroEvent = new OnAgro();
 
-    [Tooltip("При каком расстоянии моб может преследовать другого, пока не потеряет его из виду")]
-    public float UnagroRadius = 8;
-    [Tooltip("С какого радиуса от его спавна моба отагрит и вернет на его спавнпоинт")]
-    public float AvoidRadius = 30;
+    [HideInInspector]
+    public float UnagroRadius;
+    [HideInInspector]
+    public float AvoidRadius;
     [Tooltip("Какая дистанция должна быть, чтоб начать атаковать, например если ближник то 1 метр (1)")]
     public float RequiredAttackDistance = 2;
     protected override void Start()
@@ -30,10 +30,8 @@ public class AggressiveMob : Mob
         SphereCollider collider = this.GetComponent<SphereCollider>();
         if (collider != null && collider.isTrigger)
         {
-            if (collider.radius > this.UnagroRadius)
-            {
-                this.UnagroRadius = collider.radius + 1;
-            }
+            UnagroRadius = collider.radius + 10;
+            AvoidRadius = UnagroRadius * 2;
         }
     }
 
@@ -50,6 +48,9 @@ public class AggressiveMob : Mob
 
     public void Agro(Entity entity)
     {
+        if (!entity.isAlive)
+            return;
+
         this.target = entity;
         this.OnAgroEvent.Invoke(entity);
     }

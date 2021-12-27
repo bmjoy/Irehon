@@ -52,9 +52,9 @@ namespace Irehon.UI
 
         public void Intialize(Player player)
         {
-            UpdateInventory(Player.LocalInventory);
+            UpdateInventory(PlayerContainers.LocalInventory);
 
-            Player.LocalInventorUpdated += UpdateInventory;
+            PlayerContainers.LocalInventorUpdated += UpdateInventory;
         }
 
         private void UpdateInventory(Container inventory)
@@ -142,7 +142,7 @@ namespace Irehon.UI
 
         private void OnDestroy()
         {
-            Player.LocalInventorUpdated -= UpdateInventory;
+            PlayerContainers.LocalInventorUpdated -= UpdateInventory;
         }
     }
 }

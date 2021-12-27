@@ -38,7 +38,7 @@ namespace Irehon.Interactable
 
             TargetOpenChest(player.connectionToClient, personalContainer);
             
-            player.interactContainer = personalContainer;
+            player.GetComponent<PlayerContainers>().interactContainer = personalContainer;
             
             personalContainer.ContainerSlotsChanged += SendPersonalChest;
 

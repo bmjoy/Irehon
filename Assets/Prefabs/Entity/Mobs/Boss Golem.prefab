@@ -753,6 +753,7 @@ GameObject:
   - component: {fileID: 805834232321811911}
   - component: {fileID: 1658063788974668585}
   - component: {fileID: 6854967796378739640}
+  - component: {fileID: 6757152774496894771}
   m_Layer: 0
   m_Name: Root
   m_TagString: Untagged
@@ -803,6 +804,102 @@ MonoBehaviour:
   entityCollidersInZone: []
   collectedCollidersInZone: []
   selfColliders: []
+--- !u!82 &6757152774496894771
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805834232321560661}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.551
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 23.9
+  MaxDistance: 214.4
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &805834232321560973
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,6 +1316,8 @@ GameObject:
   - component: {fileID: 3713147861610594158}
   - component: {fileID: 1742790552528502019}
   - component: {fileID: -6157782045439774063}
+  - component: {fileID: 393330605675794673}
+  - component: {fileID: -3804761915808800245}
   m_Layer: 11
   m_Name: Boss Golem
   m_TagString: EntityBase
@@ -1313,44 +1412,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
+    SerializedFormat: 0
+    SerializedBytes: 0101080000006c006f006f00740050006f006f006c002f000000000161000000530079007300740065006d002e0043006f006c006c0065006300740069006f006e0073002e00470065006e0065007200690063002e004c00690073007400600031005b005b0049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070005d005d002c0020006d00730063006f0072006c006900620000000000060900000000000000042f01000000013200000049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000200000017010b0000006d00610078005100750061006e00740069007400790002000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000200000017010b0000006d00610078005100750061006e00740069007400790002000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000200000017010b0000006d00610078005100750061006e00740069007400790002000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000200000017010b0000006d00610078005100750061006e00740069007400790002000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000200000017010b0000006d00610078005100750061006e00740069007400790002000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e007400000070421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e007400000070421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050430010000001f010d0000006300680061006e0063006500500065007200630065006e007400000070421701060000006900740065006d00490064005800000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050705
     ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: lootPool
-      Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: Loot, Assembly-CSharp
-    - Name: chancePercent
-      Entry: 4
-      Data: 100
-    - Name: itemId
-      Entry: 3
-      Data: 88
-    - Name: minQuantity
-      Entry: 3
-      Data: 15
-    - Name: maxQuantity
-      Entry: 3
-      Data: 15
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
 --- !u!114 &3773275343904821158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1365,7 +1434,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
-  visible: 0
+  visible: 2
   m_AssetId: 67f9ee5c49522ab44a749a0a96b4db3d
   hasSpawned: 0
 --- !u!114 &-2521420849225498537
@@ -1382,9 +1451,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  isAlive: 0
+  fraction: 3
   FractionBehaviourData: {fileID: 11400000, guid: 3c095e742e7acf349ba5926d1f044aa4,
     type: 2}
-  fraction: 3
   respawnTime: 300
   name: Lava Golem
   maxHealth: 30000
@@ -1404,11 +1474,8 @@ MonoBehaviour:
   - {fileID: 6916187000255870924}
   - {fileID: 5396158701582139833}
   - {fileID: 6699784497844081056}
-  isAlive: 0
   lootContainerPrefab: {fileID: 6129513291549583990, guid: 6ab2f6c6579ca494ca10728530a0b967,
     type: 3}
-  modelParts:
-  - {fileID: 805834232326789043}
   target: {fileID: 0}
   UnagroRadius: 18
   AvoidRadius: 18
@@ -1431,6 +1498,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5958028136417081600}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -3804761915808800245}
         m_MethodName: Play
         m_Mode: 1
         m_Arguments:
@@ -1531,6 +1609,121 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &393330605675794673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805834232321588179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ea2bdb024a0324ba3cec80fb1d3d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepPool:
+  - {fileID: 8300000, guid: 593b5495e3d2a0044bab2932fb42a2cc, type: 3}
+  - {fileID: 8300000, guid: 61090b700c5195c449ce4eb72fc9a988, type: 3}
+  - {fileID: 8300000, guid: d26918161093be34cbf96fdc3a750c65, type: 3}
+  - {fileID: 8300000, guid: 71b61dbb63189ed47a5e2ac7ba268a8a, type: 3}
+  - {fileID: 8300000, guid: 67d488c9d651efe489ba3e2c951392d8, type: 3}
+  stepSource: {fileID: 6757152774496894771}
+--- !u!82 &-3804761915808800245
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805834232321588179}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: c53b3763471b0cd47891cedd8d865b47, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.4
+  m_Pitch: 0.6
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 25
+  MaxDistance: 120
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &805834232321592703
 GameObject:
   m_ObjectHideFlags: 0

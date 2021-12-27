@@ -13,12 +13,13 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Irehon.Entitys;
 using Irehon;
+using Irehon.Steam;
 
 namespace Irehon
 {
     public class ServerManager : NetworkManager
     {
-        public static ServerManager i;
+        public static ServerManager Instance;
 
         [SerializeField]
         private ServerData serverData;
@@ -32,11 +33,11 @@ namespace Irehon
 
         public override void Awake()
         {
-            if (i != null && i != this || ClientManager.i != null)
+            if (Instance != null && Instance != this || ClientManager.i != null)
                 Destroy(gameObject);
             else
             {
-                i = this;
+                Instance = this;
                 connections = new List<NetworkConnection>();
                 LoadDatabase();
             }
@@ -54,7 +55,7 @@ namespace Irehon
                 yield return new WaitForSeconds(0.2f);
                 con.Disconnect();
             }
-            i.StartCoroutine(WaitBeforeDisconnect());
+            Instance.StartCoroutine(WaitBeforeDisconnect());
         }
 
         private async void CreateServerInDB()
@@ -190,7 +191,6 @@ namespace Irehon
 
             Player playerComponent = playerObject.GetComponent<Player>();
 
-
             Log(characterInfo.steamId, $"Spawning on map {characterInfo.position}");
 
             playerComponent.SetName(characterInfo.name);
@@ -210,7 +210,7 @@ namespace Irehon
         //Send characters and make him to choose one of them
         public override async void OnServerConnect(NetworkConnection con)
         {
-            Irehon.PlayerSession data = (Irehon.PlayerSession)con.authenticationData;
+            PlayerSession data = (PlayerSession)con.authenticationData;
 
             Log(data.steamId, $"Connected from {con.address}");
 
@@ -263,7 +263,7 @@ namespace Irehon
             CreateServerInDB();
         }
 
-        private async Task UpdateCharacterPositions(CharacterInfo info, Transform player)
+        private async Task UpdateCharacter(CharacterInfo info, Transform player)
         {
             if (player == null)
             {
@@ -287,6 +287,7 @@ namespace Irehon
             var www = Api.Request($"/characters/{info.steamId}?" +
                 $"p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&" +
                 $"location={info.location}&" +
+                $"health={(info.health > 0 ? info.health : 1000)}&" +
                 $"personal_chests={PersonalChestInfo.ToJson(info.personalChests)}", ApiMethod.PUT);
             await www.SendWebRequest();
 
@@ -300,13 +301,14 @@ namespace Irehon
             }
         }
 
-        private async Task UpdateCharacterData(Irehon.PlayerSession info)
+        private async Task UpdateCharacterData(PlayerSession info)
         {
-            await UpdateCharacterPositions(info.character, info.playerPrefab);
+            info.character.health = info.playerPrefab.GetComponent<Player>().Health;
+            await UpdateCharacter(info.character, info.playerPrefab);
             await UnloadPlayerContainers(info);
         }
 
-        private async Task LoadPlayerContainers(Irehon.PlayerSession info)
+        private async Task LoadPlayerContainers(PlayerSession info)
         {
             await ContainerData.LoadContainerAsync(info.character.inventoryId);
             await ContainerData.LoadContainerAsync(info.character.equipmentId);
@@ -317,7 +319,7 @@ namespace Irehon
             Log(info.steamId, $"Containers loaded");
         }
 
-        private async Task UnloadPlayerContainers(Irehon.PlayerSession info)
+        private async Task UnloadPlayerContainers(PlayerSession info)
         {
             await ContainerData.UpdateLoadedContainer(info.character.inventoryId);
             await ContainerData.UpdateLoadedContainer(info.character.equipmentId);
@@ -341,11 +343,12 @@ namespace Irehon
             {
                 Log(0, $"Disconnect: auth data null");
                 base.OnServerDisconnect(conn);
-                connections.Remove(conn);
+                if (connections.Contains(conn))
+                    connections.Remove(conn);
                 return;
             }
 
-            Irehon.PlayerSession data = (Irehon.PlayerSession)conn.authenticationData;
+            PlayerSession data = (PlayerSession)conn.authenticationData;
 
             if (!data.isAuthorized)
             {
@@ -383,7 +386,7 @@ namespace Irehon
 
         public static void SendReconnectToThisServer(NetworkConnection con) 
         {
-            SendMessage(con, $"{i.networkAddress}:{i.port}", MessageType.ServerRedirect);
+            SendMessage(con, $"{Instance.networkAddress}:{Instance.port}", MessageType.ServerRedirect);
         }
 
         public void RemoveUserFromConnections(ulong steamId) => connections.Remove(GetConnection(steamId));
@@ -391,9 +394,11 @@ namespace Irehon
 
         public void AddConection(ulong steamId, NetworkConnection con) 
         {
+            con.connectedTime = Time.time;
             con.steamId = steamId;
             connections.Add(con);
         }
+        public List<NetworkConnection> GetConnections() => connections;
         public NetworkConnection GetConnection(ulong steamId) => connections.Find(con => con.steamId == steamId);
     }
 }

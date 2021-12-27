@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,32 +10,23 @@ public class OnDestinationChangeEvent : UnityEvent<Vector3> { }
 [RequireComponent(typeof(NavMeshAgent), typeof(MobStateMachine))]
 public class Mob : LootableEntity
 {
-    public List<Renderer> ModelParts => this.modelParts;
-
-    [SyncVar(hook = nameof(IsModelShownHook))]
-    private bool isModelShown = true;
-
-    [SerializeField, Tooltip("Object that contains mesh renderer for this mob")]
-    private List<Renderer> modelParts;
     protected MobStateMachine stateMachine;
+    private Collider[] collisionColliders;
+    private Renderer[] renderers;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        collisionColliders = Array.FindAll(GetComponentsInChildren<Collider>(), c => !c.isTrigger);
+        renderers = Array.FindAll(GetComponentsInChildren<Renderer>(), renderer => renderer.enabled);
+
+        IsAliveValueChanged += UpdateModel;
+    }
 
     protected override void Start()
     {
         this.stateMachine = this.GetComponent<MobStateMachine>();
-        Dead += () =>
-        {
-            foreach (Renderer model in this.ModelParts)
-            {
-                model.enabled = false;
-            }
-        };
-        Respawned += () =>
-        {
-            foreach (Renderer model in this.ModelParts)
-            {
-                model.enabled = true;
-            }
-        };
+
         if (this.isServer)
         {
             Dead += () => this.stateMachine.SetNewState(new MobDeathState(this));
@@ -43,30 +35,20 @@ public class Mob : LootableEntity
         base.Start();
     }
 
-    private void OnEnable()
+    private void UpdateModel(bool isAlive)
     {
-        foreach (Renderer model in this.ModelParts)
-        {
-            model.enabled = this.isModelShown;
-        }
-    }
+        foreach (var collider in collisionColliders)
+            collider.isTrigger = !isAlive;
 
-    protected void IsModelShownHook(bool oldValue, bool newValue)
-    {
-        foreach (Renderer model in this.ModelParts)
-        {
-            model.enabled = newValue;
-        }
-    }
-
-    public void ChangeModelState(bool newState)
-    {
-        this.isModelShown = newState;
+        foreach (var renderer in renderers)
+            renderer.enabled = isAlive;
     }
 
     public override void SetDefaultState()
     {
-        this.isAlive = true;
+        if (isServer)
+            this.isAlive = true;
+        IsAliveHook(isAlive, isAlive);
         this.SetHealth(this.maxHealth);
         this.GetComponent<NavMeshAgent>().Warp(this.startPosition);
         this.stateMachine.SetNewState(new MobIdleState(this));

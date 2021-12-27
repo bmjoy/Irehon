@@ -15,7 +15,7 @@ namespace Irehon
 
         private void Awake()
         {
-            GetComponent<Player>().ShareEquipmentUpdated += this.UpdateEquipmentModel;
+            GetComponent<PlayerContainers>().ShareEquipmentUpdated += this.UpdateEquipmentModel;
         }
 
         private string GetBaseSlugModel(EquipmentSlot slot)

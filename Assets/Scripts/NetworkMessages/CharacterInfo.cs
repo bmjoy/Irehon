@@ -18,6 +18,7 @@ namespace Irehon
         public List<PersonalChestInfo> personalChests;
         public string location;
         public Vector3 position;
+        public int health;
         public SceneChangeInfo sceneChangeInfo;
         public Vector3 spawnPoint;
         public string spawnSceneName;
@@ -33,6 +34,7 @@ namespace Irehon
             this.equipmentId = json["equipment_id"].AsInt;
             JSONNode pos = json["position"];
             this.location = json["location"];
+            this.health = json["health"].AsInt;
             this.serverId = json["server"].AsInt;
 
             this.personalChests = PersonalChestInfo.GetChests(json);

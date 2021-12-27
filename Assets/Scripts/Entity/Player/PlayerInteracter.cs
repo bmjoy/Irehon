@@ -7,7 +7,7 @@ public class PlayerInteracter : NetworkBehaviour
 {
     public static GameObject LocalInteractObject;
     public static PlayerInteracter LocalInstance { get; private set; }
-    public IInteractable currentInteractable { get; private set; }
+    public Interactable currentInteractable { get; private set; }
 
     [SyncVar, HideInInspector]
     public bool isInteracting;
@@ -47,7 +47,7 @@ public class PlayerInteracter : NetworkBehaviour
             return;
         }
 
-        this.currentInteractable = interactObjectIdentity.GetComponent<IInteractable>();
+        this.currentInteractable = interactObjectIdentity.GetComponent<Interactable>();
 
         if (this.currentInteractable == null)
         {

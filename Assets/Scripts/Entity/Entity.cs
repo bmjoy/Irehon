@@ -6,14 +6,16 @@ namespace Irehon.Entitys
 {
     public class Entity : NetworkBehaviour
     {
+        public delegate void EntityDamageQuerryProcess(ref DamageMessage message);
         public delegate void EntityVoidEventHandler();
+        public delegate void EntityAliveEventHandler(bool isAlive);
         public delegate void EntityEventHandler(Entity sender);
         public delegate void EntityIntEventHandler(int value);
         public delegate void EntityStateIntEventHandler(int old, int current);
         public string NickName => this.name;
         public int Health => this.health;
 
-        [SyncVar(hook = nameof(IsAlivHook))]
+        [SyncVar(hook = nameof(IsAliveHook))]
         public bool isAlive;
         [SyncVar]
         public Fraction fraction;
@@ -30,6 +32,8 @@ namespace Irehon.Entitys
         public int maxHealth = 100;
 
         public List<Collider> HitboxColliders = new List<Collider>();
+        public List<EntityDamageQuerryProcess> doDamageProcessQuerry = new List<EntityDamageQuerryProcess>();
+        public List<EntityDamageQuerryProcess> takeDamageProcessQuerry = new List<EntityDamageQuerryProcess>();
         /// <summary>
         /// Invoked only on server, pass entity that been killed by this entity
         /// </summary>
@@ -37,6 +41,7 @@ namespace Irehon.Entitys
         /// <summary>
         /// Invoked only on server, pass entity that killed this entity
         /// </summary>
+        public event EntityAliveEventHandler IsAliveValueChanged;
         public event EntityEventHandler KilledByEntity;
         public event EntityIntEventHandler DidDamage;
         public event EntityIntEventHandler GotDamage;
@@ -69,6 +74,7 @@ namespace Irehon.Entitys
             {
                 DidDamage += this.OnDoDamageRpc;
                 GotDamage += this.OnTakeDamageRpc;
+                takeDamageProcessQuerry.Add(NonAliveDamageBlocker);
             }
             this.SetDefaultState();
         }
@@ -99,7 +105,9 @@ namespace Irehon.Entitys
 
         public virtual void SetDefaultState()
         {
-            this.isAlive = true;
+            if (isServer)
+                this.isAlive = true;
+            IsAliveValueChanged?.Invoke(isAlive);
             this.SetHealth(this.maxHealth);
             this.transform.position = this.startPosition;
         }
@@ -122,6 +130,7 @@ namespace Irehon.Entitys
             }
 
             this.isAlive = false;
+            IsAliveValueChanged?.Invoke(isAlive);
 
             Dead?.Invoke();
 
@@ -139,6 +148,7 @@ namespace Irehon.Entitys
             }
 
             this.isAlive = true;
+            IsAliveValueChanged?.Invoke(isAlive);
 
             Respawned?.Invoke();
 
@@ -191,13 +201,25 @@ namespace Irehon.Entitys
             HealthChanged?.Invoke(this.maxHealth, this.health);
         }
 
+        private void NonAliveDamageBlocker(ref DamageMessage damageMessage)
+        {
+            if (!isAlive)
+                damageMessage.damage = 0;
+        }
+
         [Server]
         public virtual void TakeDamage(DamageMessage damageMessage)
         {
-            if (!this.isAlive)
+            foreach (var process in takeDamageProcessQuerry)
             {
-                return;
+                if (damageMessage.damage > 0)
+                    process(ref damageMessage);
             }
+
+            if (damageMessage.damage <= 0)
+                return;
+
+            ServerManager.Log($"{damageMessage.source} did {damageMessage.damage} damage to {damageMessage.target.name}");
 
             this.health -= damageMessage.damage;
 
@@ -233,6 +255,18 @@ namespace Irehon.Entitys
                 source = this,
                 target = target
             };
+
+            foreach (var process in doDamageProcessQuerry)
+            {
+                if (damageMessage.damage > 0)
+                    process(ref damageMessage);
+            }
+            
+            if (damageMessage.damage <= 0)
+                return false;
+
+            ServerManager.Log($"{damageMessage.source} sended Damage Message with {damageMessage.damage} damage to {damageMessage.target.name}");
+
             target.TakeDamage(damageMessage);
             return true;
         }
@@ -242,9 +276,9 @@ namespace Irehon.Entitys
             PlayerLooked?.Invoke();
         }
 
-        protected virtual void IsAlivHook(bool oldValue, bool newValue)
+        protected virtual void IsAliveHook(bool oldValue, bool newValue)
         {
-
+            IsAliveValueChanged?.Invoke(newValue);
         }
     }
 }

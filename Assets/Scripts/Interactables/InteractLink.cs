@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace Irehon.Interactable
 {
-    public class InteractLink : SerializedMonoBehaviour, IInteractable
+    public class InteractLink : Interactable
     {
-        public IInteractable interactableOrigin;
-        public void Interact(Player player)
+        public Interactable interactableOrigin;
+        public override void Interact(Player player)
         {
             this.interactableOrigin.Interact(player);
         }
 
-        public void StopInterract(Player player)
+        public override void StopInterract(Player player)
         {
             this.interactableOrigin.StopInterract(player);
         }

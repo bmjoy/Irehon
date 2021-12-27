@@ -8,6 +8,11 @@ public class StepSoundManager : MonoBehaviour
     [SerializeField]
     private AudioSource stepSource;
 
+    private void Start()
+    {
+        
+    }
+
     public void Step()
     {
         this.stepSource.clip = this.stepPool[Random.Range(0, this.stepPool.Length)];

@@ -26,6 +26,8 @@ namespace Irehon.UI
             return dragger;
         }
 
+        public float GetCanvasScaleFactor() => canvas.scaleFactor;
+
         public Image GetDraggerImage()
         {
             return draggerImage;

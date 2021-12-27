@@ -1180,6 +1180,8 @@ GameObject:
   - component: {fileID: -7278094125743329136}
   - component: {fileID: 6841340060423218336}
   - component: {fileID: 396755322633661299}
+  - component: {fileID: 5931671809972876215}
+  - component: {fileID: 4405716368642397423}
   m_Layer: 14
   m_Name: North Guardian
   m_TagString: EntityBase
@@ -1232,11 +1234,11 @@ NavMeshAgent:
   m_GameObject: {fileID: 2593460411217528525}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_Speed: 1
-  m_Acceleration: 4.5
+  m_Acceleration: 10
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 300
   m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -1273,26 +1275,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
+    SerializedFormat: 0
+    SerializedBytes: 0101080000006c006f006f00740050006f006f006c002f000000000161000000530079007300740065006d002e0043006f006c006c0065006300740069006f006e0073002e00470065006e0065007200690063002e004c00690073007400600031005b005b0049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070005d005d002c0020006d00730063006f0072006c0069006200000000000600000000000000000705
     ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: lootPool
-      Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
 --- !u!114 &2579173743767197958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1352,9 +1342,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  FractionBehaviourData: {fileID: 11400000, guid: 26c931b9b1128ee4b93a9285c9fd8192,
-    type: 2}
+  isAlive: 0
   fraction: 1
+  FractionBehaviourData: {fileID: 11400000, guid: 9c9e74ceeab3dbd498822c5c01a78c4f,
+    type: 2}
   respawnTime: 60
   name: Royal Guardian
   maxHealth: 4000
@@ -1376,17 +1367,12 @@ MonoBehaviour:
   - {fileID: 2265009812305642198}
   - {fileID: 1617377191066711628}
   - {fileID: 372716873152023620}
-  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
-  modelParts:
-  - {fileID: 2593460411214534171}
-  - {fileID: 2010218016490792290}
-  - {fileID: 1882153979333407329}
   target: {fileID: 0}
   UnagroRadius: 8
   AvoidRadius: 30
-  RequiredAttackDistance: 1.5
+  RequiredAttackDistance: 2.4
 --- !u!114 &3012861520733811002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1399,11 +1385,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab390760dec2f1449a1d0fabdb233689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 100
+  meleeDamage: 300
   MeleeWeaponCollider: {fileID: 308370034080127258}
   OnAttackEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4405716368642397423}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &-3306970961158178022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1480,6 +1477,122 @@ CapsuleCollider:
   m_Height: 1.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.86, z: 0}
+--- !u!114 &5931671809972876215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2593460411217528525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ea2bdb024a0324ba3cec80fb1d3d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepPool:
+  - {fileID: 8300000, guid: 3693ebecff58b694ebc00f97310beec3, type: 3}
+  - {fileID: 8300000, guid: 0f98fcf673a0c7f41864acd298a1d234, type: 3}
+  - {fileID: 8300000, guid: 941b1f2622cc9314ab867d55319f63a9, type: 3}
+  - {fileID: 8300000, guid: 82db64c03c7bdd649a0241c32ea10489, type: 3}
+  - {fileID: 8300000, guid: 55ff476b142306f4a97bae2991fb80b4, type: 3}
+  - {fileID: 8300000, guid: f21586d9634f1ac4c92100603c09842c, type: 3}
+  stepSource: {fileID: 1003643192014806655}
+--- !u!82 &4405716368642397423
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2593460411217528525}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 1b5d0d4477b1b044181a4c1d54f6c58b, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.67
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 4
+  MaxDistance: 40
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2593460411217529967
 GameObject:
   m_ObjectHideFlags: 0
@@ -1829,6 +1942,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2593460411217790189}
   - component: {fileID: 2593460411214534171}
+  - component: {fileID: 1003643192014806655}
   m_Layer: 0
   m_Name: Character_Knight_02
   m_TagString: Untagged
@@ -1950,6 +2064,102 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.000030517578, y: 87.85565, z: -6.8702393}
     m_Extent: {x: 102.53844, y: 96.346176, z: 28.83677}
   m_DirtyAABB: 0
+--- !u!82 &1003643192014806655
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2593460411217718005}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.025
+  m_Pitch: 0.8
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 3
+  MaxDistance: 42
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2593460411217720455
 GameObject:
   m_ObjectHideFlags: 0
@@ -2651,12 +2861,6 @@ PrefabInstance:
       objectReference: {fileID: 9185569311390891373}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d867368c40a0c054ab0823c437378be5, type: 3}
---- !u!23 &1882153979333407329 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2685810234783583868, guid: d867368c40a0c054ab0823c437378be5,
-    type: 3}
-  m_PrefabInstance: {fileID: 4565290200152095773}
-  m_PrefabAsset: {fileID: 0}
 --- !u!65 &7332595794473851020 stripped
 BoxCollider:
   m_CorrespondingSourceObject: {fileID: 6528449493992481937, guid: d867368c40a0c054ab0823c437378be5,
@@ -2738,6 +2942,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cff29e9613fb7ba488a0db6d0ce9eb2b, type: 3}
+--- !u!4 &2010218016492678058 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4825955435543180271, guid: cff29e9613fb7ba488a0db6d0ce9eb2b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6421154799219660869}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &308370034080127258 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6726982208230310239, guid: cff29e9613fb7ba488a0db6d0ce9eb2b,
@@ -2750,15 +2960,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037aaaee56b365b42ad44299cafe5168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!23 &2010218016490792290 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4825955435541331239, guid: cff29e9613fb7ba488a0db6d0ce9eb2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 6421154799219660869}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &2010218016492678058 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4825955435543180271, guid: cff29e9613fb7ba488a0db6d0ce9eb2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 6421154799219660869}
-  m_PrefabAsset: {fileID: 0}

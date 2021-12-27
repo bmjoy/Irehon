@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Irehon.Interactable
 {
-    public class LootBag : NetworkBehaviour, IInteractable
+    public class LootBag : Interactable
     {
         public delegate void ChestEventHandler();
         public event ChestEventHandler Destroyed;
@@ -14,13 +14,13 @@ namespace Irehon.Interactable
         public Container Container => this.container;
         protected List<Player> interacting { get; private set; } = new List<Player>();
 
-        public void Interact(Player player)
+        public override void Interact(Player player)
         {
             TargetSendLootBag(player.connectionToClient, this.container);
             interacting.Add(player);
         }
 
-        public void StopInterract(Player player)
+        public override void StopInterract(Player player)
         {
             TargetCloseLootBag(player.connectionToClient);
             interacting.Remove(player);
@@ -67,13 +67,15 @@ namespace Irehon.Interactable
 
         protected virtual void OnDestroy()
         {
+            if (isClient && PlayerInteracter.LocalInteractObject == gameObject)
+                LootWindow.Instance.CloseLootBag();
+
             this.Destroyed?.Invoke();
         }
 
         [Command(requiresAuthority = false)]
         public void ClaimItem(int index, int count, NetworkConnectionToClient sender = null)
         {
-            print($"{index} claimning {count}");
             Player player = sender.identity.gameObject.GetComponent<Player>();
 
             if (player.GetComponent<PlayerInteracter>().currentInteractable != this)
@@ -83,9 +85,8 @@ namespace Irehon.Interactable
             {
                 return;
             }
-            print($"{index} claimning slot {count}");
 
-            player.inventory.ClaimFromSlot(container, index, count);
+            player.GetComponent<PlayerContainers>().inventory.ClaimFromSlot(container, index, count);
         }
     }
 }

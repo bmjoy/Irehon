@@ -11,15 +11,11 @@ namespace Irehon.UI
         [SerializeField]
         private GameObject inventorySlotPrefab;
 
-        private Canvas canvas;
         private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
 
         private void Awake()
         {
-            Player.LocalInventorUpdated += ReCreateInventorySlotsUI;
-            canvas = GetComponentInParent<Canvas>();
-            if (canvas == null)
-                Debug.LogError("Equipment window not intialized, missing canvas");
+            PlayerContainers.LocalInventorUpdated += ReCreateInventorySlotsUI;
         }
         public void ReCreateInventorySlotsUI(Container container)
         {
@@ -35,13 +31,13 @@ namespace Irehon.UI
             }
             for (int i = 0; i < container.slots.Length; i++)
             {
-                this.inventorySlots[i].Intialize(container[i], this.canvas, ContainerType.Inventory);
+                this.inventorySlots[i].Intialize(container[i], ContainerType.Inventory);
             }
         }
 
         private void OnDestroy()
         {
-            Player.LocalInventorUpdated -= ReCreateInventorySlotsUI;
+            PlayerContainers.LocalInventorUpdated -= ReCreateInventorySlotsUI;
         }
     }
 }

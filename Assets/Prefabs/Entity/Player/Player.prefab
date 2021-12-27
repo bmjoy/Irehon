@@ -57930,6 +57930,7 @@ GameObject:
   - component: {fileID: 5870177393942306459}
   - component: {fileID: 800734768963644131}
   - component: {fileID: 8017936590340873017}
+  - component: {fileID: -5320226842384632361}
   m_Layer: 14
   m_Name: Player
   m_TagString: EntityBase
@@ -57968,7 +57969,7 @@ Animator:
   m_GameObject: {fileID: 3622006752709158442}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 038320a534bd8b444b43734860d1a211, type: 3}
-  m_Controller: {fileID: 22100000, guid: d811ede694aca874aa5ef5920f965d5a, type: 2}
+  m_Controller: {fileID: 22100000, guid: 63ecb8ede2145ac45a16c0630ffbb3e5, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -60287,6 +60288,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   source: {fileID: 800734768963644131}
+--- !u!114 &-5320226842384632361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3622006752709158442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f6abc019c784de4f958b0dad98a702c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &3622008918210396344
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,17 +6,12 @@ using UnityEngine;
 
 namespace Irehon.Interactable
 {
-    public class CraftVendor : NetworkBehaviour, IInteractable
+    public class CraftVendor : Interactable
     {
         [SerializeField]
         private List<int> recipesId;
 
         private CraftRecipe[] recipes;
-
-        private void Awake()
-        {
-            this.gameObject.layer = 12;
-        }
 
         private void Start()
         {
@@ -32,12 +27,12 @@ namespace Irehon.Interactable
 
             this.recipes = CraftDatabase.GetRecipes(this.recipesId);
         }
-        public void Interact(Player player)
+        public override void Interact(Player player)
         {
             TargetSendRecipes(player.connectionToClient, recipes);
         }
 
-        public void StopInterract(Player player)
+        public override void StopInterract(Player player)
         {
             TargetCloseCraftWindow(player.connectionToClient);
         }
@@ -63,6 +58,8 @@ namespace Irehon.Interactable
             if (player.GetComponent<PlayerInteracter>().currentInteractable != this)
                 return;
 
+            var playerContainers = player.GetComponent<PlayerContainers>();
+
             if (index < 0 || index >= recipes.Length)
             {
                 return;
@@ -70,7 +67,7 @@ namespace Irehon.Interactable
 
             CraftRecipe recipe = recipes[index];
 
-            Container inventory = player.inventory;
+            Container inventory = playerContainers.inventory;
 
             if (!inventory.IsEnoughSpaceForItem(recipe.itemId, recipe.itemQuantity))
             {
@@ -87,10 +84,10 @@ namespace Irehon.Interactable
 
             foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
             {
-                player.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
+                playerContainers.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
             }
 
-            player.inventory.AddItem(recipe.itemId, recipe.itemQuantity);
+            playerContainers.inventory.AddItem(recipe.itemId, recipe.itemQuantity);
         }
     }
 }

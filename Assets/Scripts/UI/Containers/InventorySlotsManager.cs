@@ -21,11 +21,11 @@ namespace Irehon.UI
             switch (type)
             {
                 case ContainerType.Inventory:
-                    return Player.LocalInventory;
+                    return PlayerContainers.LocalInventory;
                 case ContainerType.Equipment:
-                    return Player.LocalEquipment;
+                    return PlayerContainers.LocalEquipment;
                 case ContainerType.Interact:
-                    return Player.LocalInteractContainer;
+                    return PlayerContainers.LocalInteractContainer;
                 default:
                     throw new ArgumentException("Invalid container type exception");
             }
@@ -33,28 +33,28 @@ namespace Irehon.UI
 
         public void MoveSlots(InventorySlotUI from, InventorySlotUI to)
         {
-            Player.LocalPlayer.MoveItem(from.type, from.slotId, to.type, to.slotId);
+            PlayerContainers.LocalInstance.MoveItem(from.type, from.slotId, to.type, to.slotId);
         }
 
         public void FastMoveSlot(InventorySlotUI from)
         {
             if (from.type == ContainerType.Interact)
             {
-                ContainerSlot slot = Player.LocalInventory.GetEmptySlot();
+                ContainerSlot slot = PlayerContainers.LocalInventory.GetEmptySlot();
                 if (slot != null)
                 {
-                    Player.LocalPlayer.MoveItem(from.type, from.slotId, ContainerType.Inventory, slot.slotIndex);
+                    PlayerContainers.LocalInstance.MoveItem(from.type, from.slotId, ContainerType.Inventory, slot.slotIndex);
                 }
             }
 
             if (from.type == ContainerType.Inventory)
             {
-                if (Player.LocalInteractContainer != null)
+                if (PlayerContainers.LocalInteractContainer != null)
                 {
-                    ContainerSlot slot = Player.LocalInteractContainer.GetEmptySlot();
+                    ContainerSlot slot = PlayerContainers.LocalInteractContainer.GetEmptySlot();
                     if (slot != null)
                     {
-                        Player.LocalPlayer.MoveItem(from.type, from.slotId, ContainerType.Interact, slot.slotIndex);
+                        PlayerContainers.LocalInstance.MoveItem(from.type, from.slotId, ContainerType.Interact, slot.slotIndex);
                     }
                 }
             }
@@ -67,12 +67,12 @@ namespace Irehon.UI
             if (item.type == ItemType.Weapon || item.type == ItemType.Armor)
             {
                 if (slot.type != ContainerType.Equipment)
-                    Player.LocalPlayer.MoveItem(slot.type, slot.slotId, ContainerType.Equipment, (int)item.equipmentSlot);
+                    PlayerContainers.LocalInstance.MoveItem(slot.type, slot.slotId, ContainerType.Equipment, (int)item.equipmentSlot);
                 else
                 {
-                    var emptySlot = Player.LocalInventory.GetEmptySlot();
+                    var emptySlot = PlayerContainers.LocalInventory.GetEmptySlot();
                     if (emptySlot != null)
-                        Player.LocalPlayer.MoveItem(slot.type, slot.slotId, ContainerType.Inventory, emptySlot.slotIndex);
+                        PlayerContainers.LocalInstance.MoveItem(slot.type, slot.slotId, ContainerType.Inventory, emptySlot.slotIndex);
                 }
             }
         }

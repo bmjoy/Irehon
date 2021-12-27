@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-public class SceneChangeInfo
+namespace Irehon
 {
-    public Vector3 spawnPosition;
-    public string sceneName;
+    public class SceneChangeInfo
+    {
+        public Vector3 spawnPosition;
+        public string sceneName;
+    }
 }

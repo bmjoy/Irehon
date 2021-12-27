@@ -45,7 +45,7 @@ namespace Irehon.UI
 
             for (int i = 0; i < container.slots.Length; i++)
             {
-                this.inventorySlots[i].Intialize(container[i], this.canvas, ContainerType.Inventory);
+                this.inventorySlots[i].Intialize(container[i], ContainerType.Inventory);
             }
         }
     }

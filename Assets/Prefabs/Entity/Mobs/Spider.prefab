@@ -929,7 +929,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 3972859783832237328}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.35
   m_Speed: 2.5
   m_Acceleration: 5
   avoidancePriority: 50
@@ -1015,44 +1015,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
+    SerializedFormat: 0
+    SerializedBytes: 0101080000006c006f006f00740050006f006f006c002f000000000161000000530079007300740065006d002e0043006f006c006c0065006300740069006f006e0073002e00470065006e0065007200690063002e004c00690073007400600031005b005b0049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070005d005d002c0020006d00730063006f0072006c006900620000000000060100000000000000042f01000000013200000049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005b00000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050705
     ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: lootPool
-      Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Loot, Assembly-CSharp]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: Loot, Assembly-CSharp
-    - Name: chancePercent
-      Entry: 4
-      Data: 100
-    - Name: itemId
-      Entry: 3
-      Data: 91
-    - Name: minQuantity
-      Entry: 3
-      Data: 1
-    - Name: maxQuantity
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
 --- !u!114 &3658942216765433830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1067,9 +1037,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  isAlive: 0
+  fraction: 5
   FractionBehaviourData: {fileID: 11400000, guid: 3c095e742e7acf349ba5926d1f044aa4,
     type: 2}
-  fraction: 5
   respawnTime: 60
   name: Sand Spider
   maxHealth: 2000
@@ -1092,11 +1063,8 @@ MonoBehaviour:
   - {fileID: 3317836863036728298}
   - {fileID: 8171520742763530009}
   - {fileID: 6517300593957318225}
-  isAlive: 0
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
-  modelParts:
-  - {fileID: 3948734326744061554}
   target: {fileID: 0}
   UnagroRadius: 10
   AvoidRadius: 31

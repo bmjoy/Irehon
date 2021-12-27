@@ -12,11 +12,10 @@ public class EquipmentSlotUI : InventorySlotUI
     [SerializeField]
     private Image baseSprite;
 
-    public override void Intialize(ContainerSlot containerSlot, Canvas canvas, ContainerType type)
+    public override void Intialize(ContainerSlot containerSlot, ContainerType type)
     {
         if (itemTooltip == null)
             itemTooltip = GetComponent<ItemTooltip>();
-        this.canvas = canvas;
         this.type = ContainerType.Equipment;
 
         bool isSlotUpdated = true;

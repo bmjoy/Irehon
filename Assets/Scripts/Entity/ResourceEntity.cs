@@ -1,48 +1,28 @@
 ﻿using Mirror;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceEntity : LootableEntity
 {
-    [SerializeField, Tooltip("Object that contains mesh renderer for this mob")]
-    private List<Renderer> modelParts;
-    [SyncVar(hook = nameof(IsModelShownHook))]
-    private bool isModelShown = true;
+    private Collider[] collisionColliders;
+    private Renderer[] renderers;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
-        Dead += (() =>
-        {
-            foreach (Renderer model in this.modelParts)
-            {
-                model.enabled = false;
-            }
+        base.Awake();
+        collisionColliders = Array.FindAll(GetComponentsInChildren<Collider>(), c => !c.isTrigger);
+        renderers = GetComponentsInChildren<Renderer>();
 
-            if (this.isServer)
-            {
-                this.isModelShown = false;
-            }
-        });
-        Respawned += (() =>
-        {
-            foreach (Renderer model in this.modelParts)
-            {
-                model.enabled = true;
-            }
-
-            if (this.isServer)
-            {
-                this.isModelShown = true;
-            }
-        });
+        IsAliveValueChanged += UpdateModel;
     }
 
-    protected void IsModelShownHook(bool oldValue, bool newValue)
+    private void UpdateModel(bool isAlive)
     {
-        foreach (Renderer model in this.modelParts)
-        {
-            model.enabled = newValue;
-        }
+        foreach (var collider in collisionColliders)
+            collider.isTrigger = !isAlive;
+
+        foreach (var renderer in renderers)
+            renderer.enabled = isAlive;
     }
 }

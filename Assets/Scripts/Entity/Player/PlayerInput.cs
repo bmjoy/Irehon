@@ -1,5 +1,6 @@
 ﻿using Irehon;
 using Irehon.Camera;
+using Irehon.Interactable;
 using Irehon.UI;
 using Mirror;
 using System.Collections.Generic;
@@ -111,7 +112,14 @@ public class PlayerInput : NetworkBehaviour
         KeyCode key = KeyCode.E;
         if (this.IsKeySinglePressed(key) && CameraController.Instance.InteractTarget != null)
         {
-            NetworkIdentity identity = CameraController.Instance.InteractTarget.GetComponent<NetworkIdentity>();
+            NetworkIdentity identity;
+            if (CameraController.Instance.InteractTarget.GetComponent<InteractLink>() != null)
+            {
+                identity = CameraController.Instance.InteractTarget.GetComponent<InteractLink>().interactableOrigin.netIdentity;
+            }
+            else
+                identity = CameraController.Instance.InteractTarget.GetComponent<NetworkIdentity>();
+
             if (identity != null)
             {
                 input.interactionTarget = identity;

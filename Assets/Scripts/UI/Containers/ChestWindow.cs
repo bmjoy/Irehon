@@ -59,7 +59,7 @@ namespace Irehon.UI
             for (int i = 0; i < container.slots.Length; i++)
             {
                 var slot = spawnedSlots[i];
-                slot.Intialize(container[i], this.canvas, ContainerType.Interact);
+                slot.Intialize(container[i], ContainerType.Interact);
             }
         }
 

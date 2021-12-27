@@ -7,7 +7,7 @@ using Irehon.UI;
 
 namespace Irehon.Interactable
 {
-    public class TextShower : NetworkBehaviour, IInteractable
+    public class TextShower : Interactable
     {
         [SerializeField]
         private string header;
@@ -18,12 +18,12 @@ namespace Irehon.Interactable
         [SerializeField]
         private Color color;
 
-        public void Interact(Player player)
+        public override void Interact(Player player)
         {
             TargetOpenTextWindow(player.connectionToClient, header, text, font, color);
         }
 
-        public void StopInterract(Player player)
+        public override void StopInterract(Player player)
         {
             TargetCloseTextWindow(player.connectionToClient);
         }

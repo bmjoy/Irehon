@@ -71,13 +71,13 @@ public class AbilitySystem : NetworkBehaviour
     [ClientRpc]
     private void AbilityKeyDownClientRpc(Vector3 target)
     {
-        this.currentAbility.TriggerKeyDown(target);
+        this.currentAbility?.TriggerKeyDown(target);
     }
 
     [ClientRpc]
     private void AbilityKeyUpClientRpc(Vector3 target)
     {
-        this.currentAbility.TriggerKeyUp(target);
+        this.currentAbility?.TriggerKeyUp(target);
     }
 
     public void AllowTrigger()

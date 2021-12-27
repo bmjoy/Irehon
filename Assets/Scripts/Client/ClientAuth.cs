@@ -19,6 +19,7 @@ namespace Irehon.Client
             print("Client authenticate request");
             this.currentRequest = new AuthInfo()
             {
+                version = Application.version,
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
@@ -57,19 +58,26 @@ namespace Irehon.Client
                 ServerMessageNotificator.ShowMessage($"Client play error: {exception.Message}");
                 return;
             }
+
         }
 
         private void OnAuthResponseMessage(ServerMessage msg)
         {
             if (msg.messageType == MessageType.AuthAccept)
             {
+                Debug.Log("Accepted");
                 LoginSceneUI.HidePlayButton();
                 LoginSceneUI.ShowLoadingBar();
                 this.ClientAccept();
             }
             else if (msg.messageType == MessageType.AuthReject)
             {
-                this.ClientReject();
+                if (!NetworkClient.isConnected)
+                    return;
+                ServerMessageNotificator.ShowMessage($"Client authentication error: {msg.message}");
+                Debug.Log("Rejected");
+                NetworkClient.Disconnect();
+                //this.ClientReject();
             }
         }
     }

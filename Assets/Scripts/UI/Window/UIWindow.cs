@@ -60,7 +60,7 @@ public class UIWindow : SerializedMonoBehaviour
         this.OnCloseWindow?.Invoke();
         if (this.isClosingStoppingInterract)
         {
-            Player.LocalPlayer.GetComponent<PlayerInteracter>().StopInterractCommand();
+            Player.LocalPlayer?.GetComponent<PlayerInteracter>().StopInterractCommand();
         }
     }
 
