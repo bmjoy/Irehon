@@ -303,7 +303,8 @@ namespace Irehon
 
         private async Task UpdateCharacterData(PlayerSession info)
         {
-            info.character.health = info.playerPrefab.GetComponent<Player>().Health;
+            if (info.playerPrefab != null && info.playerPrefab.GetComponent<Player>() != null)
+                info.character.health = info.playerPrefab.GetComponent<Player>().Health;
             await UpdateCharacter(info.character, info.playerPrefab);
             await UnloadPlayerContainers(info);
         }
