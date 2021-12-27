@@ -19,7 +19,6 @@ namespace Irehon
         public string location;
         public Vector3 position;
         public int health;
-        public SceneChangeInfo sceneChangeInfo;
         public Vector3 spawnPoint;
         public string spawnSceneName;
         public bool isSpawnPointChanged;
@@ -42,7 +41,6 @@ namespace Irehon
             this.position = new Vector3(pos["x"].AsFloat, pos["y"].AsFloat, pos["z"].AsFloat);
             this.spawnPoint = new Vector3(pos["spawn_x"].AsFloat, pos["spawn_y"].AsFloat, pos["spawn_z"].AsFloat);
             this.spawnSceneName = pos["spawn_location"];
-            this.sceneChangeInfo = null;
             this.isSpawnPointChanged = false;
         }
     }

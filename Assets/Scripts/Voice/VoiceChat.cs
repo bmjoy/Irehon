@@ -62,10 +62,6 @@ namespace Irehon.Voice
         [Command]
         public void CmdVoice(byte[] compressed, int bytesWritten)
         {
-            if (compressed != null)
-            {
-                this.RpcVoiceData(compressed, bytesWritten);
-            }
         }
 
 

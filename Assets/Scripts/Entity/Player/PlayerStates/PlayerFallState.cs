@@ -23,7 +23,6 @@ public class PlayerFallState : PlayerRotatableState
             return;
         }
 
-        this.playerInteracter.StopInterracting();
         this.animator.SetBool("Falling", true);
     }
 

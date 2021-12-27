@@ -93,8 +93,6 @@ public class AbilitySystem : NetworkBehaviour
     [ServerCallback]
     public void AbilityInterrupt()
     {
-        this.currentAbility?.Interrupt();
-        this.AbilityInterruptRpc();
     }
 
     [ClientRpc]
@@ -106,8 +104,6 @@ public class AbilitySystem : NetworkBehaviour
     [ServerCallback]
     public void AnimationEventTrigger()
     {
-        this.currentAbility.AnimationEvent();
-        this.AnimationEventRPC();
     }
 
     [ClientRpc]
@@ -119,8 +115,6 @@ public class AbilitySystem : NetworkBehaviour
     [ServerCallback]
     public void SubEvent()
     {
-        this.currentAbility?.SubEvent();
-        this.SubEventRpc();
     }
 
     [ClientRpc]

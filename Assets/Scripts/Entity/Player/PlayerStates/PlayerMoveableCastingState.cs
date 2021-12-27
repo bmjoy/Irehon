@@ -43,11 +43,6 @@ public class PlayerMoveableCastingState : PlayerRotatableState
             return PlayerStateType.Jump;
         }
 
-        if (isServer && input.interactionTarget != null)
-        {
-            this.playerInteracter.InterractAttemp(input.interactionTarget);
-        }
-
         if (input.GetMoveVector() == Vector2.zero)
         {
             return PlayerStateType.Idle;

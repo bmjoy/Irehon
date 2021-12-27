@@ -24,11 +24,6 @@ public class PlayerDeathState : PlayerState
 
         this.abilitySystem.AbilityInterrupt();
         Canvases.Instance.HideStatusCanvas();
-        this.playerInteracter.StopInterracting();
-        if (this.player.isServer)
-        {
-            this.player.HideModel();
-        }
     }
 
     public override void Exit(bool isResimulating)

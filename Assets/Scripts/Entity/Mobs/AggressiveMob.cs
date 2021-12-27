@@ -85,17 +85,6 @@ public class AggressiveMob : Mob
         }
     }
 
-    public override void TakeDamage(DamageMessage damageMessage)
-    {
-        if (!this.isAlive)
-        {
-            return;
-        }
-
-        this.Agro(damageMessage.source);
-        base.TakeDamage(damageMessage);
-    }
-
     public override void SetDefaultState()
     {
         base.SetDefaultState();

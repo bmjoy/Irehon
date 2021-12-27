@@ -25,11 +25,6 @@ public class PlayerIdleState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
-        if (isServer)
-        {
-            this.abilitySystem.SendAbilityKeyStatus(input.IsKeyPressed(this.abilitySystem.ListeningKey), input.TargetPoint);
-        }
-
         if (input.IsKeyPressed(KeyCode.Space))
         {
             return PlayerStateType.Jump;
@@ -38,11 +33,6 @@ public class PlayerIdleState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.V))
         {
             return PlayerStateType.Dance;
-        }
-
-        if (isServer && input.interactionTarget != null)
-        {
-            this.playerInteracter.InterractAttemp(input.interactionTarget);
         }
 
         if (input.GetMoveVector() != Vector2.zero)

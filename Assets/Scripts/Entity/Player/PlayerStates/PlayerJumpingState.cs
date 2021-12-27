@@ -33,7 +33,6 @@ public class PlayerJumpingState : PlayerRotatableState
         }
 
         this.abilitySystem.AbilityInterrupt();
-        this.playerInteracter.StopInterracting();
         if (this.playerMovement.IsGrounded)
         {
             this.playerMovement.yVelocity = jump_force;

@@ -72,11 +72,6 @@ public class PlayerStateMachine : NetworkBehaviour
     public void ChangePlayerState(PlayerStateType state)
     {
         this.SetNewState(state);
-
-        if (this.isServer)
-        {
-            this.ChangePlayerStateRpc(state);
-        }
     }
 
     [TargetRpc]

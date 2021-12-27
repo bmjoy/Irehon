@@ -130,20 +130,7 @@ public class PlayerInput : NetworkBehaviour
     [Command]
     private void SendInputOnServer(InputInfo input)
     {
-        if (this.avaliablePackets <= 0)
-        {
-            this.DropInput();
-            return;
-        }
-
-        this.avaliablePackets--;
-
-        this.playerStateMachine.InputInState(input);
-
-        input.Position = this.transform.position;
-        input.PlayerStateType = this.playerStateMachine.CurrentState.Type;
-
-        this.RecieveInputResponse(input);
+        
     }
 
     [TargetRpc]

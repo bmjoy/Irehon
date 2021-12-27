@@ -34,33 +34,8 @@ namespace Irehon
                     ShareEquipmentUpdated.Invoke(equipment);
             }
 
-            if (this.isServer)
-            {
-                await ContainerData.LoadContainer(player.GetCharacterInfo().inventoryId);
-                await ContainerData.LoadContainer(player.GetCharacterInfo().equipmentId);
-
-                inventory = ContainerData.LoadedContainers[player.GetCharacterInfo().inventoryId];
-                equipment = ContainerData.LoadedContainers[player.GetCharacterInfo().equipmentId];
-
-                IntializeServerEvents();
-
-                SendInventoryTargetRPC(inventory);
-                SendEquipmentClientRPC(equipment);
-            }
-
             if (isLocalPlayer)
                 LocalInstance = this;
-        }
-
-        [Server]
-        private void IntializeServerEvents()
-        {
-            ShareEquipmentUpdated += player.UpdateArmorModifiers;
-
-            inventory.ContainerSlotsChanged += SendInventoryTargetRPC;
-            equipment.ContainerSlotsChanged += SendEquipmentClientRPC;
-            equipment.ContainerSlotsChanged += container => ShareEquipmentUpdated?.Invoke(container);
-            ShareEquipmentUpdated?.Invoke(equipment);
         }
 
         [TargetRpc]
@@ -98,40 +73,6 @@ namespace Irehon
         [Command]
         public void MoveItem(ContainerType firstType, int firstSlot, ContainerType secondType, int secondSlot)
         {
-            Container firstContainer = GetContainer(firstType);
-            if (firstContainer == null)
-                return;
-
-            Container secondContainer = GetContainer(secondType);
-            if (secondContainer == null)
-                return;
-
-            if (secondType == ContainerType.Equipment)
-            {
-                Equip(secondSlot, firstContainer, firstSlot);
-            }
-            else
-            {
-                Container.MoveSlotData(firstContainer, firstSlot, secondContainer, secondSlot);
-            }
-        }
-
-        [Server]
-        private void Equip(int equipmentSlot, Container container, int index)
-        {
-            Item equipableItem = container[index].GetItem();
-
-            if (equipableItem.type != ItemType.Armor && equipableItem.type != ItemType.Weapon)
-            {
-                return;
-            }
-
-            if ((EquipmentSlot)equipmentSlot != equipableItem.equipmentSlot)
-            {
-                return;
-            }
-
-            Container.MoveSlotData(container, index, this.equipment, equipmentSlot);
         }
     }
 }

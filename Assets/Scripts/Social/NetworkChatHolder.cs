@@ -32,14 +32,7 @@ namespace Irehon.Chat
         [Command]
         public void SendChatMessage(string message)
         {
-            if (this.lastMessageTimer > 0)
-            {
-                ServerManager.SendMessage(this.connectionToClient, "Don't spam messages", MessageType.Notification);
-                return;
-            }
-            this.lastMessageTimer = 0.75f;
-            ServerManager.Log(this.GetComponent<Player>().Id, $"Chat message: {message}");
-            this.RecieveChatMessageRpc(message);
+            
         }
 
         [ClientRpc]

@@ -50,21 +50,6 @@ namespace Irehon.Abilitys
             {
                 this.abilitySystem.PlaySoundClip(this.onImpactSound);
             }
-
-            if (!this.isServer)
-            {
-                return;
-            }
-
-            foreach (KeyValuePair<Entity, EntityCollider> entity in this.leftHandCollider.GetCollectedInZoneEntities())
-            {
-                this.abilitySystem.player.DoDamage(entity.Key, Mathf.RoundToInt(this.GetDamage() * entity.Value.damageMultiplier));
-            }
-
-            this.leftHandCollider.StopCollectColliders();
-
-            this.abilitySystem.animator.ResetTrigger("Skill1");
-            this.AbilityEnd();
         }
 
         private int GetDamage()

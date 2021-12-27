@@ -19,7 +19,6 @@ public class PlayerRunState : PlayerRotatableState
     public override void Enter(bool isResimulating)
     {
         this.abilitySystem.AbilityInterrupt();
-        this.playerInteracter.StopInterracting();
         this.animator.SetBool("Sprint", true);
         this.animator.SetBool("Walking", true);
     }

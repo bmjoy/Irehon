@@ -20,11 +20,6 @@ public class MobAnimationAttackHolder : MonoBehaviour
 
     public virtual void AttackEvent()
     {
-        foreach (KeyValuePair<Entity, EntityCollider> entity in this.MeleeWeaponCollider.GetCollectedInZoneEntities())
-        {
-            this.mob.DoDamage(entity.Key, Mathf.RoundToInt(this.meleeDamage * entity.Value.damageMultiplier));
-        }
-
         this.MeleeWeaponCollider.StopCollectColliders();
         this.MeleeWeaponCollider.StartCollectColliders();
         this.OnAttackEvent.Invoke();

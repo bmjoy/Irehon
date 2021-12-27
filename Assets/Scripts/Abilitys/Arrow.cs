@@ -101,7 +101,6 @@ namespace Irehon.Abilitys
             if (collider.CompareTag("Entity"))
             {
                 EntityCollider entityCollider = collider.GetComponent<EntityCollider>();
-                this.arrowOwner.DoDamage(entityCollider.GetParentEntityComponent(), Mathf.RoundToInt(entityCollider.damageMultiplier * this.GetDamage()));
             }
         }
 
