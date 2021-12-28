@@ -1,4 +1,4 @@
-﻿using Client;
+using Client;
 using kcp2k;
 using Mirror;
 using Steamworks;
@@ -21,7 +21,7 @@ namespace Server
 
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
-        private List<NetworkConnection> connections;
+        public List<NetworkConnection> connections;
 
         private int serverId;
         private ushort port;
