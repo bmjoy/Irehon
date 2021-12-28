@@ -153,10 +153,13 @@ public class PlayerInput : NetworkBehaviour
         Quaternion rot = this.transform.rotation;
 
         Physics.autoSimulation = false;
+        int simulationCount = 0;
         foreach (InputInfo sendedInput in this.sendedInputs)
         {
             this.playerStateMachine.InputInState(sendedInput);
-            Physics.Simulate(.0000001f);
+            simulationCount++;
+            if (simulationCount % 7 == 0)
+                Physics.Simulate(.0000001f);
         }
         Physics.autoSimulation = true;
 
