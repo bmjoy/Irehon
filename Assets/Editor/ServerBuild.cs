@@ -69,7 +69,9 @@ public class ServerBuild : Editor
         List<string> scenes = new List<string>{ "Assets/Scenes/LoginScene.unity", "Assets/Scenes/FractionSelect.unity" };
         foreach (string zone in gameZones)
             scenes.Add($"Assets/Scenes/{zone}.unity");
-        var report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        var report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientMac/Irehon.app", BuildTarget.StandaloneOSX, BuildOptions.None);
+        report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientLinux/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.None);
         Debug.Log("Client build done");
         return report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded;
     }
