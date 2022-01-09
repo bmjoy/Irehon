@@ -9,7 +9,7 @@ using UnityEngine;
 public class ServerAuth : NetworkAuthenticator
 {
     public override void OnStartServer()
-    {
+    { 
         SteamServer.OnValidateAuthTicketResponse += OnAuthTicketResponse;
         NetworkServer.RegisterHandler<AuthInfo>(OnAuthRequestMessage, false);
         InvokeRepeating(nameof(AuthTimeoutChecker), 2, 2);
