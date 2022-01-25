@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public enum PlayerStateType { Idle, Fall, Jump, Walk, Run, Death, Dance }
+public enum PlayerStateType { Idle, Fall, Jump, Walk, Run, Death, Dance, Block }
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -35,6 +35,7 @@ public class PlayerStateMachine : NetworkBehaviour
         this.PlayerStates.Add(PlayerStateType.Walk, new PlayerWalkState(this.player));
         this.PlayerStates.Add(PlayerStateType.Run, new PlayerRunState(this.player));
         this.PlayerStates.Add(PlayerStateType.Dance, new PlayerDanceState(this.player));
+        this.PlayerStates.Add(PlayerStateType.Block, new PlayerBlockState(this.player));
     }
 
     private void FixedUpdate()

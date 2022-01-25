@@ -25,6 +25,11 @@ public class PlayerIdleState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
+        if (input.IsKeyPressed(KeyCode.Mouse1))
+        {
+            return PlayerStateType.Block;
+        }
+
         if (isServer)
         {
             this.abilitySystem.SendAbilityKeyStatus(input.IsKeyPressed(this.abilitySystem.ListeningKey), input.TargetPoint);
