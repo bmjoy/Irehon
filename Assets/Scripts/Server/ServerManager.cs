@@ -1,4 +1,4 @@
-﻿using Irehon.CloudAPI;
+using Irehon.CloudAPI;
 using Irehon.Client;
 using Irehon.Utils;
 using kcp2k;
@@ -26,7 +26,7 @@ namespace Irehon
 
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
-        private List<NetworkConnection> connections;
+        public List<NetworkConnection> connections;
 
         private int serverId;
         private ushort port;
