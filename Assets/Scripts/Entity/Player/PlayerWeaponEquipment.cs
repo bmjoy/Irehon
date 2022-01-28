@@ -7,10 +7,25 @@ namespace Irehon
     {
         private Weapon currentWeapon;
         private AbilitySystem abilitySystem;
+        public int CurrentBlockPoints;
+        public int MaxBlockPoints;
+        public bool CanBlock;
+        public float BlockResistance;
         private void Awake()
         {
             abilitySystem = GetComponent<AbilitySystem>();
             this.GetComponent<PlayerContainers>().ShareEquipmentUpdated += this.UpdateWeapon;
+            InvokeRepeating(nameof(IncreaseBlockPoints), .2f, .2f);
+        }
+
+        private void IncreaseBlockPoints()
+        {
+            if (!CanBlock)
+                return;
+            if (CurrentBlockPoints < MaxBlockPoints - 10)
+                CurrentBlockPoints += 10;
+            else
+                CurrentBlockPoints = MaxBlockPoints;
         }
 
         public void UpdateWeapon(Container equipment)
@@ -32,6 +47,17 @@ namespace Irehon
 
         private void EquipWeapon(GameObject weaponPrefab)
         {
+            Weapon weapon = weaponPrefab.GetComponent<Weapon>();
+            if (weapon is MeleeWeapon)
+            {
+                Item weaponItem = ItemDatabase.GetItemBySlug(weapon.slug);
+                CurrentBlockPoints = 0;
+                MaxBlockPoints = weaponItem.metadata["BlockPoints"].AsInt;
+                BlockResistance = weaponItem.metadata["BlockResistance"].AsFloat;
+                CanBlock = true;
+            }
+            else
+                CanBlock = false;
             if (currentWeapon != null)
             {
                 currentWeapon.UnSetup(abilitySystem);

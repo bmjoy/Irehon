@@ -55,6 +55,7 @@ public class PlayerInput : NetworkBehaviour
     {
         this.CheckInteractionAttemp(ref input);
         this.CheckInputKey(this.abilitySystem.ListeningKey, ref input);
+        this.CheckInputKey(KeyCode.Mouse1, ref input);
         this.CheckInputKey(KeyCode.W, ref input);
         this.CheckInputKey(KeyCode.A, ref input);
         this.CheckInputKey(KeyCode.S, ref input);

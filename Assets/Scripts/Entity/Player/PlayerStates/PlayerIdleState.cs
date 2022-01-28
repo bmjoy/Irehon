@@ -27,6 +27,7 @@ public class PlayerIdleState : PlayerRotatableState
 
         if (input.IsKeyPressed(KeyCode.Mouse1))
         {
+            Debug.Log("Key pressed");
             return PlayerStateType.Block;
         }
 

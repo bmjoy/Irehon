@@ -27,6 +27,7 @@ class PlayerBlockState : PlayerRotatableState
         if (!isResimulating)
         {
             this.abilitySystem.animator.SetBool("isBlocking", true);
+            player.takeDamageProcessQuerry.Add(PlayerCombatMath.BlockDamageProcess);
         }
     }
 
@@ -35,6 +36,7 @@ class PlayerBlockState : PlayerRotatableState
         if (!isResimulating)
         {
             this.abilitySystem.animator.SetBool("isBlocking", false);
+            player.takeDamageProcessQuerry.Remove(PlayerCombatMath.BlockDamageProcess);
         }
     }
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
@@ -44,6 +46,11 @@ class PlayerBlockState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.Space))
         {
             return PlayerStateType.Jump;
+        }
+
+        if (!input.IsKeyPressed(KeyCode.Mouse1))
+        {
+            return PlayerStateType.Idle;
         }
 
         if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)

@@ -244,5 +244,14 @@ namespace Irehon
 
             deadBody.GetComponent<DeathChest>().AttachMultipleContainers(new List<Container> { playerContainers.inventory, playerContainers.equipment});
         }
+
+        private void OnDrawGizmos()
+        {
+            Vector3 position = transform.position;
+            float angle = transform.localEulerAngles.y;
+            Vector3 other = position + new Vector3(Mathf.Cos(angle) * 5, 0, Mathf.Sin(angle) * 5);
+
+            Debug.DrawLine(position, other, Color.red);
+        }
     }
 }
