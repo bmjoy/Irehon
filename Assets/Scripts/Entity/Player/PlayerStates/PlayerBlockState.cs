@@ -8,6 +8,7 @@ using UnityEngine;
 
 class PlayerBlockState : PlayerRotatableState
 {
+    public const int StaminaCost = 2000;
     public PlayerBlockState(Player player) : base(player)
     {
         animator = player.GetComponent<Animator>();
@@ -43,7 +44,12 @@ class PlayerBlockState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
-        if (input.IsKeyPressed(KeyCode.Space))
+        if (player.staminaPoints < StaminaCost)
+        {
+            return PlayerStateType.Idle;
+        }
+
+        if (input.IsKeyPressed(KeyCode.Space) && player.staminaPoints > PlayerJumpingState.JumpCost)
         {
             return PlayerStateType.Jump;
         }
@@ -53,7 +59,7 @@ class PlayerBlockState : PlayerRotatableState
             return PlayerStateType.Idle;
         }
 
-        if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)
+        if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0 && player.staminaPoints > PlayerRunState.MinimalStamina)
         {
             return PlayerStateType.Run;
         }

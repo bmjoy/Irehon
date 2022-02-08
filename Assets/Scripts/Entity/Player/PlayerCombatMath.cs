@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon;
 using UnityEngine;
 
 public static class PlayerCombatMath
@@ -24,6 +23,10 @@ public static class PlayerCombatMath
 
     public static void BlockDamageProcess(ref DamageMessage damageMessage)
     {
+        Player player = damageMessage.target as Player;
+        if (player != null && player.staminaPoints < PlayerBlockState.StaminaCost)
+            return;
+
         Vector3 blockerPosition = damageMessage.source.transform.position;
         Vector3 attackerPosition = damageMessage.target.transform.position;
         float blockerAngle = damageMessage.source.transform.rotation.eulerAngles.y;
@@ -31,6 +34,8 @@ public static class PlayerCombatMath
         bool isBlocking = IsTargetOnFOV(blockerPosition, attackerPosition, 120, blockerAngle);
         if (isBlocking)
         {
+            if (player != null)
+                player.staminaPoints -= PlayerBlockState.StaminaCost;
             float damage = damageMessage.damage;
             damage *= .1f;
 

@@ -14,16 +14,22 @@ namespace Irehon
     {
         public delegate void PlayerEventHandler(Player player);
         public delegate void CharacterInfoUpdateEventHandler(CharacterInfo characterInfo);
-        
+        public delegate void StatusEventHandler(int current);
+
         public static event PlayerEventHandler LocalPlayerIntialized;
         public static Player LocalPlayer { get; private set; }
 
         public event CharacterInfoUpdateEventHandler CharacterInfoUpdated;
+        public event StatusEventHandler StaminaUpdated;
+
         public PlayerBonesLinks PlayerBonesLinks { get; private set; }
         public bool isDataAlreadyRecieved { get; private set; } = false;
         
         [SyncVar(hook = nameof(GetName))]
         public SteamId Id;
+        [SyncVar(hook = nameof(StaminaHook))]
+        public int staminaPoints = 0;
+        private int maxStaminaPoints = 10000;
 
         [SerializeField]
         private FractionBehaviourData northData;
@@ -48,7 +54,7 @@ namespace Irehon
             controller = GetComponent<CharacterController>();
         }
 
-        protected override async void Start()
+        protected override void Start()
         {
             SetDefaultState();
 
@@ -67,6 +73,7 @@ namespace Irehon
                 IntializeServerEvents();
 
                 InvokeRepeating(nameof(PassiveRegenerateHealth), 1, 1);
+                InvokeRepeating(nameof(PassiveRegenerateStamina), 0.125f, 0.125f);
 
                 SetHealth(characterInfo.health);
             }
@@ -83,7 +90,8 @@ namespace Irehon
 
             this.gameObject.layer = 1 << 1;
 
-            HealthChanged += (oldHealth, newHealth) => PlayerHealthbar.Instance.SetHealthBarValue(1f * newHealth / maxHealth);
+            HealthChanged += (oldHealth, newHealth) => PlayerHealthBar.Instance.SetBarValue(1f * newHealth / maxHealth);
+            StaminaUpdated += (stamina) => PlayerStaminaBar.Instance.SetBarValue(1f * stamina / maxStaminaPoints);
 
             GotDamage += x => CameraShake.Instance.CreateShake(5f, .3f);
 
@@ -127,6 +135,11 @@ namespace Irehon
             }
         }
 
+        private void StaminaHook(int oldStamina, int newStamina)
+        {
+            StaminaUpdated?.Invoke(newStamina);
+        }
+
         public void UpdateArmorModifiers(Container equipment)
         {
             foreach (PlayerCollider playerCollider in playerColliders)
@@ -140,6 +153,16 @@ namespace Irehon
             if (isAlive)
             {
                 SetHealth(health + 10);
+            }
+        }
+
+        private void PassiveRegenerateStamina()
+        {
+            if (isAlive)
+            {
+                staminaPoints += 200;
+                if (staminaPoints > maxStaminaPoints)
+                    staminaPoints = maxStaminaPoints;
             }
         }
 

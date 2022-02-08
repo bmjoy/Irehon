@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerRunState : PlayerRotatableState
 {
+    public const int StaminaTickCost = 46;
+    public const int MinimalStamina = 4000;
     public PlayerRunState(Player player) : base(player)
     {
         this.animator = player.GetComponent<Animator>();
@@ -35,8 +37,13 @@ public class PlayerRunState : PlayerRotatableState
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
-
-        if (input.IsKeyPressed(KeyCode.Space))
+        player.staminaPoints -= StaminaTickCost;
+        if (player.staminaPoints < 0)
+        {
+            player.staminaPoints = 0;
+            return PlayerStateType.Idle;
+        }
+        if (input.IsKeyPressed(KeyCode.Space) && player.staminaPoints > PlayerJumpingState.JumpCost)
         {
             return PlayerStateType.Jump;
         }

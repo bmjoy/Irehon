@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Irehon.UI
 {
-    public class PlayerHealthBar : PlayerStatusBar
+    public class PlayerStaminaBar : PlayerStatusBar
     {
-        public static PlayerHealthBar Instance;
+        public static PlayerStaminaBar Instance;
 
         private void Awake() => Instance = this;
     }

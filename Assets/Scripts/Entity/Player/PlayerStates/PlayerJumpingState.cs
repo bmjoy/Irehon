@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerJumpingState : PlayerRotatableState
 {
+    public const int JumpCost = 2500;
     public PlayerJumpingState(Player player) : base(player)
     {
         this.animator = player.GetComponent<Animator>();
@@ -31,11 +32,11 @@ public class PlayerJumpingState : PlayerRotatableState
         {
             return;
         }
-
         this.abilitySystem.AbilityInterrupt();
         this.playerInteracter.StopInterracting();
         if (this.playerMovement.IsGrounded)
         {
+            player.staminaPoints -= JumpCost;
             this.playerMovement.yVelocity = jump_force;
             this.animator.SetTrigger("Jump");
         }
