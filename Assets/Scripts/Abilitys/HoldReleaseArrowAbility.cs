@@ -81,6 +81,10 @@ namespace Irehon.Abilitys
 
         protected override void Ability(Vector3 target)
         {
+            if (abilitySystem.player.staminaPoints < Weapon.GetStaminaCost(weapon.GetType()))
+            {
+                return;
+            }
             this.holdingTime = 0;
             this.additionalyChestOffsetTime = 5f;
             this.abilitySystem.BlockTrigger();
@@ -137,6 +141,7 @@ namespace Irehon.Abilitys
             {
                 this.animator.SetTrigger("Shoot");
                 this.ShootArrow(target);
+                abilitySystem.player.staminaPoints -= Weapon.GetStaminaCost(weapon.GetType());
                 this.additionalyChestOffsetTime = 0.8f;
             }
             else

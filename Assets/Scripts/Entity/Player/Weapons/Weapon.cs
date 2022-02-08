@@ -26,6 +26,25 @@ public abstract class Weapon : MonoBehaviour
         }
     }
 
+    public static int GetStaminaCost(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.Sword:
+                return 2000;
+            case WeaponType.Dagger:
+                return 1500;
+            case WeaponType.Bow:
+                return 2500;
+            case WeaponType.TwoHandSword:
+                return 2600;
+            case WeaponType.TwoHandAxe:
+                return 3000;
+            default:
+                return 1200;
+        }
+    }
+
     private static float GetRequiredSpeedModifier(WeaponType weaponType, float targetSpeed)
     {
         return GetAnimationLength(weaponType) / targetSpeed;
