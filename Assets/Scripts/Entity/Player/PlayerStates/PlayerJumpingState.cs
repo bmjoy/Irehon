@@ -36,6 +36,7 @@ public class PlayerJumpingState : PlayerRotatableState
         this.playerInteracter.StopInterracting();
         if (this.playerMovement.IsGrounded)
         {
+            Debug.Log(player.staminaPoints);
             player.staminaPoints -= JumpCost;
             this.playerMovement.yVelocity = jump_force;
             this.animator.SetTrigger("Jump");

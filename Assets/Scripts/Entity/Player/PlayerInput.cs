@@ -62,7 +62,7 @@ public class PlayerInput : NetworkBehaviour
         this.CheckInputKey(KeyCode.D, ref input);
         this.CheckInputKey(KeyCode.V, ref input);
         this.CheckInputKey(KeyCode.LeftShift, ref input);
-        this.CheckInputKey(KeyCode.Space, ref input);
+        this.CheckSinglePressKey(KeyCode.Space, ref input);
     }
 
     private void FillCameraInput(ref InputInfo input)

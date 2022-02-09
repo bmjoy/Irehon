@@ -76,7 +76,6 @@ namespace Irehon
             timer += Time.deltaTime;
             if (timer > 1)
             {
-                print(cpuUsage.NextValue() + "%");
                 timer = 0;
             }
         }
