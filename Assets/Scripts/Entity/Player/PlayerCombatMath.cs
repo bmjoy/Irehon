@@ -37,7 +37,7 @@ public static class PlayerCombatMath
             if (player != null)
                 player.staminaPoints -= PlayerBlockState.StaminaCost;
             float damage = damageMessage.damage;
-            damage *= .1f;
+            damage *= .35f;
 
             damageMessage.damage = Mathf.RoundToInt(damage);
         }
