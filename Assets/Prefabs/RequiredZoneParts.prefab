@@ -9979,7 +9979,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 3081215010343585180}
         m_MethodName: CraftSelectedRecipe
         m_Mode: 1
         m_Arguments:
@@ -10736,8 +10736,8 @@ GameObject:
   - component: {fileID: 5401107827798941881}
   - component: {fileID: 5563657715996357042}
   - component: {fileID: 473701395408086169}
-  - component: {fileID: 296209602967551874}
   - component: {fileID: 2571508768182623164}
+  - component: {fileID: 3982275972561114766}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -10840,20 +10840,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitMarker: {fileID: 1480492423270080581}
   hitMarkerSound: {fileID: 1480492423270080586}
---- !u!114 &296209602967551874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1480492423336540618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c69709ad10e69c5459d80d8331829062, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bar: {fileID: 1480492422478006405}
-  postBar: {fileID: 1480492423815577924}
 --- !u!114 &2571508768182623164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10868,6 +10854,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 8558629122024057940}
   postBar: {fileID: 5995753175535577700}
+--- !u!114 &3982275972561114766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492423336540618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c69709ad10e69c5459d80d8331829062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bar: {fileID: 1480492422478006405}
+  postBar: {fileID: 1480492423815577924}
 --- !u!1 &1480492423377682896
 GameObject:
   m_ObjectHideFlags: 0
