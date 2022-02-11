@@ -18,6 +18,8 @@ namespace Irehon
             InvokeRepeating(nameof(IncreaseBlockPoints), .2f, .2f);
         }
 
+        public Weapon GetWeapon() => currentWeapon;
+
         private void IncreaseBlockPoints()
         {
             if (!CanBlock)

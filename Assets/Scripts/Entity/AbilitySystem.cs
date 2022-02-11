@@ -8,6 +8,7 @@ public class AbilitySystem : NetworkBehaviour
 {
     public GameObject AbilityPoolObject => this.abilityPoolObject;
     public PlayerBonesLinks playerBonesLinks { get; private set; }
+    public PlayerWeaponEquipment playerWeaponEquipment { get; private set; }
     public PlayerMovement playerMovement { get; private set; }
     public Player player { get; private set; }
     public Animator animator { get; private set; }
@@ -31,6 +32,7 @@ public class AbilitySystem : NetworkBehaviour
         this.playerBonesLinks = this.GetComponent<PlayerBonesLinks>();
         this.playerMovement = this.GetComponent<PlayerMovement>();
         this.animator = this.GetComponent<Animator>();
+        playerWeaponEquipment = GetComponent<PlayerWeaponEquipment>();
         this.audioSources = this.abilityPoolObject.GetComponents<AudioSource>();
         this.isAbilityCasting = false;
     }
