@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 //This code destroys the particle's GameObject once it's Start Time is over.
 public class AutoDestroyPS : MonoBehaviour
@@ -9,10 +7,10 @@ public class AutoDestroyPS : MonoBehaviour
 
     private void Awake()
     {
-        ParticleSystem system = GetComponent<ParticleSystem>();
-        var main = system.main;
-        timeLeft = main.startLifetimeMultiplier + main.duration;
-        Destroy(gameObject, timeLeft);
+        ParticleSystem system = this.GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule main = system.main;
+        this.timeLeft = main.startLifetimeMultiplier + main.duration;
+        Destroy(this.gameObject, this.timeLeft);
     }
 
     /*--------------------------bad variant------------------------

@@ -8,13 +8,18 @@ namespace DuloGames.UI
 
         protected void Awake()
         {
-            if (this.m_Camera == null) this.m_Camera = Camera.main;
+            if (this.m_Camera == null)
+            {
+                this.m_Camera = Camera.main;
+            }
         }
 
-        void Update()
+        private void Update()
         {
             if (this.m_Camera)
-                transform.rotation = Quaternion.LookRotation(this.m_Camera.transform.forward);
+            {
+                this.transform.rotation = Quaternion.LookRotation(this.m_Camera.transform.forward);
+            }
         }
     }
 }

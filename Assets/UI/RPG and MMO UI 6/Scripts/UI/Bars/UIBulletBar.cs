@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -15,7 +15,7 @@ namespace DuloGames.UI
             Radial
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private BarType m_BarType = BarType.Horizontal;
 
         [SerializeField] private bool m_FixedSize = false;
@@ -28,26 +28,27 @@ namespace DuloGames.UI
 
         [SerializeField] private float m_SpriteRotation = 0f;
         [SerializeField] private Vector2 m_ActivePosition = Vector2.zero;
-        
-        [SerializeField][Range(0f, 360f)] private float m_AngleMin = 0f;
-        [SerializeField][Range(0f, 360f)] private float m_AngleMax = 360f;
+
+        [SerializeField] [Range(0f, 360f)] private float m_AngleMin = 0f;
+        [SerializeField] [Range(0f, 360f)] private float m_AngleMax = 360f;
         [SerializeField] private int m_BulletCount = 10;
         [SerializeField] private float m_Distance = 100f;
 
-        [SerializeField][Range(0f, 1f)] private float m_FillAmount = 1f;
+        [SerializeField] [Range(0f, 1f)] private float m_FillAmount = 1f;
         [SerializeField] private bool m_InvertFill = true;
 
-        [SerializeField][HideInInspector] private GameObject m_BulletsContainer = null;
-        [SerializeField][HideInInspector] private List<GameObject> m_FillBullets;
-        #pragma warning restore 0649
+        [SerializeField] [HideInInspector] private GameObject m_BulletsContainer = null;
+        [SerializeField] [HideInInspector] private List<GameObject> m_FillBullets;
+#pragma warning restore 0649
 
         /// <summary>
         /// Gets or sets the fill amount (0 to 1).
         /// </summary>
         public float fillAmount
         {
-            get { return this.m_FillAmount; }
-            set {
+            get => this.m_FillAmount;
+            set
+            {
                 this.m_FillAmount = Mathf.Clamp01(value);
                 this.UpdateFill();
             }
@@ -58,8 +59,9 @@ namespace DuloGames.UI
         /// </summary>
         public bool invertFill
         {
-            get { return this.m_InvertFill; }
-            set {
+            get => this.m_InvertFill;
+            set
+            {
                 this.m_InvertFill = value;
                 this.UpdateFill();
             }
@@ -68,10 +70,7 @@ namespace DuloGames.UI
         /// <summary>
         /// Gets the rect transform.
         /// </summary>
-        public RectTransform rectTransform
-        {
-            get { return this.transform as RectTransform; }
-        }
+        public RectTransform rectTransform => this.transform as RectTransform;
 
         protected override void Start()
         {
@@ -95,7 +94,7 @@ namespace DuloGames.UI
         protected override void OnValidate()
         {
             base.OnValidate();
-            
+
             // Update the bar fill
             this.UpdateFill();
         }
@@ -107,7 +106,9 @@ namespace DuloGames.UI
         public void UpdateFill()
         {
             if (!this.isActiveAndEnabled || this.m_FillBullets == null || this.m_FillBullets.Count == 0)
+            {
                 return;
+            }
 
             GameObject[] list = this.m_FillBullets.ToArray();
 
@@ -119,8 +120,8 @@ namespace DuloGames.UI
             int index = 0;
             foreach (GameObject go in list)
             {
-                float currentPct = (float)index / (float)this.m_BulletCount;
-                
+                float currentPct = index / (float)this.m_BulletCount;
+
                 Image img = go.GetComponent<Image>();
                 if (img != null)
                 {
@@ -137,7 +138,9 @@ namespace DuloGames.UI
         public void ConstructBullets()
         {
             if (this.m_BulletSprite == null || this.m_BulletSpriteActive == null || !this.isActiveAndEnabled)
+            {
                 return;
+            }
 
             // Destroy the old bullets
             this.DestroyBullets();
@@ -156,7 +159,7 @@ namespace DuloGames.UI
             // Create new bullets
             for (int i = 0; i < this.m_BulletCount; i++)
             {
-                float pct = (float)i / (float)this.m_BulletCount;
+                float pct = i / (float)this.m_BulletCount;
 
                 // Create the background
                 GameObject obj = new GameObject("Bullet " + i.ToString(), typeof(RectTransform));
@@ -172,9 +175,13 @@ namespace DuloGames.UI
                 img.color = this.m_BulletSpriteColor;
 
                 if (this.m_FixedSize)
+                {
                     rt.sizeDelta = this.m_BulletSize;
+                }
                 else
+                {
                     img.SetNativeSize();
+                }
 
                 // Position the bullet
                 if (this.m_BarType == BarType.Radial)
@@ -197,7 +204,7 @@ namespace DuloGames.UI
                     float occupiedSpace = rt.sizeDelta.x * this.m_BulletCount;
                     float freeSpace = this.rectTransform.rect.width - occupiedSpace;
                     float spacing = freeSpace / (this.m_BulletCount - 1);
-                    
+
                     float offsetX = (rt.sizeDelta.x * i) + (spacing * i);
 
                     Vector2 pos;
@@ -218,7 +225,7 @@ namespace DuloGames.UI
                     float spacing = freeSpace / (this.m_BulletCount - 1);
 
                     float offsetY = (rt.sizeDelta.y * i) + (spacing * i);
-                    
+
                     Vector2 pos;
                     pos.x = 0f;
                     pos.y = (offsetY + (rt.sizeDelta.y / 2f)) * -1f;
@@ -243,10 +250,14 @@ namespace DuloGames.UI
                 imgFill.color = this.m_BulletSpriteActiveColor;
 
                 if (this.m_FixedSize)
+                {
                     rtFill.sizeDelta = this.m_BulletSize;
+                }
                 else
+                {
                     imgFill.SetNativeSize();
-                
+                }
+
                 // Add the fill bullet to the list
                 this.m_FillBullets.Add(objFill);
             }
@@ -272,7 +283,10 @@ namespace DuloGames.UI
                 };
 #endif
             }
-            else Destroy(go);
+            else
+            {
+                Destroy(go);
+            }
 
             // Null the variable
             this.m_BulletsContainer = null;

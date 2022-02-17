@@ -1,8 +1,7 @@
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using DuloGames.UI.Tweens;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -34,7 +33,9 @@ namespace DuloGames.UI
         protected UILoadingOverlay()
         {
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_FloatTweenRunner.Init(this);
         }
@@ -53,27 +54,33 @@ namespace DuloGames.UI
                 if (!canvas.Equals(currentCanvas))
                 {
                     if (canvas.sortingOrder > currentCanvas.sortingOrder)
+                    {
                         currentCanvas.sortingOrder = canvas.sortingOrder + 1;
+                    }
                 }
             }
 
             // Update the progress bar
             if (this.m_ProgressBar != null)
+            {
                 this.m_ProgressBar.fillAmount = 0f;
+            }
 
             // Update the canvas group
             if (this.m_CanvasGroup != null)
+            {
                 this.m_CanvasGroup.alpha = 0f;
+            }
         }
 
         protected void OnEnable()
         {
-            SceneManager.sceneLoaded += OnSceneFinishedLoading;
+            SceneManager.sceneLoaded += this.OnSceneFinishedLoading;
         }
 
         protected void OnDisable()
         {
-            SceneManager.sceneLoaded -= OnSceneFinishedLoading;
+            SceneManager.sceneLoaded -= this.OnSceneFinishedLoading;
         }
 
         /// <summary>
@@ -88,7 +95,7 @@ namespace DuloGames.UI
         public void LoadSceneAsync(string sceneName)
         {
             SceneManager.LoadSceneAsync(sceneName);
-            ShowSceneLoadOverlay(sceneName);
+            this.ShowSceneLoadOverlay(sceneName);
         }
 
         public void ShowSceneLoadOverlay(string sceneName)
@@ -98,11 +105,15 @@ namespace DuloGames.UI
             this.m_Showing = true;
 
             if (this.m_ProgressBar != null)
+            {
                 this.m_ProgressBar.fillAmount = 0f;
+            }
 
             // Update the canvas group
             if (this.m_CanvasGroup != null)
+            {
                 this.m_CanvasGroup.alpha = 0f;
+            }
 
             this.StartAlphaTween(1f, this.m_TransitionDuration, true);
         }
@@ -116,11 +127,13 @@ namespace DuloGames.UI
         public void StartAlphaTween(float targetAlpha, float duration, bool ignoreTimeScale)
         {
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
-            var floatTween = new FloatTween { duration = duration, startFloat = this.m_CanvasGroup.alpha, targetFloat = targetAlpha };
-            floatTween.AddOnChangedCallback(SetCanvasAlpha);
-            floatTween.AddOnFinishCallback(OnTweenFinished);
+            FloatTween floatTween = new FloatTween { duration = duration, startFloat = this.m_CanvasGroup.alpha, targetFloat = targetAlpha };
+            floatTween.AddOnChangedCallback(this.SetCanvasAlpha);
+            floatTween.AddOnFinishCallback(this.OnTweenFinished);
             floatTween.ignoreTimeScale = ignoreTimeScale;
             floatTween.easing = this.m_TransitionEasing;
             this.m_FloatTweenRunner.StartTween(floatTween);
@@ -133,7 +146,9 @@ namespace DuloGames.UI
         protected void SetCanvasAlpha(float alpha)
         {
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
             // Set the alpha
             this.m_CanvasGroup.alpha = alpha;
@@ -159,7 +174,9 @@ namespace DuloGames.UI
         private void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
         {
             if (scene.name != this.m_LoadSceneName)
+            {
                 return;
+            }
 
             // Hide the loading overlay
             this.m_Showing = false;

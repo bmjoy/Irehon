@@ -23,14 +23,8 @@ namespace DuloGames.UI
 		/// <value>The target graphic.</value>
 		public Graphic targetGraphic
         {
-            get
-            {
-                return this.m_TargetGraphic;
-            }
-            set
-            {
-                this.m_TargetGraphic = value;
-            }
+            get => this.m_TargetGraphic;
+            set => this.m_TargetGraphic = value;
         }
 
         /// <summary>
@@ -39,14 +33,8 @@ namespace DuloGames.UI
         /// <value>The target game object.</value>
         public GameObject targetGameObject
         {
-            get
-            {
-                return this.m_TargetGameObject;
-            }
-            set
-            {
-                this.m_TargetGameObject = value;
-            }
+            get => this.m_TargetGameObject;
+            set => this.m_TargetGameObject = value;
         }
 
         /// <summary>
@@ -58,20 +46,22 @@ namespace DuloGames.UI
             get
             {
                 if (this.m_TargetGameObject != null)
+                {
                     return this.m_TargetGameObject.GetComponent<Animator>();
+                }
 
                 // Default
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the transition type.
         /// </summary>
         public Selectable.Transition transition
         {
-            get { return this.m_Transition; }
-            set { this.m_Transition = value; }
+            get => this.m_Transition;
+            set => this.m_Transition = value;
         }
 
         /// <summary>
@@ -79,8 +69,8 @@ namespace DuloGames.UI
         /// </summary>
         public ColorBlockExtended colors
         {
-            get { return this.m_Colors; }
-            set { this.m_Colors = value; }
+            get => this.m_Colors;
+            set => this.m_Colors = value;
         }
 
         /// <summary>
@@ -88,8 +78,8 @@ namespace DuloGames.UI
         /// </summary>
         public SpriteStateExtended spriteState
         {
-            get { return this.m_SpriteState; }
-            set { this.m_SpriteState = value; }
+            get => this.m_SpriteState;
+            set => this.m_SpriteState = value;
         }
 
         /// <summary>
@@ -97,8 +87,8 @@ namespace DuloGames.UI
         /// </summary>
         public AnimationTriggersExtended animationTriggers
         {
-            get { return this.m_AnimationTriggers; }
-            set { this.m_AnimationTriggers = value; }
+            get => this.m_AnimationTriggers;
+            set => this.m_AnimationTriggers = value;
         }
 
         /// <summary>
@@ -115,7 +105,7 @@ namespace DuloGames.UI
         {
             if (this.m_Select != null)
             {
-                this.m_Select.onTransition.AddListener(OnTransition);
+                this.m_Select.onTransition.AddListener(this.OnTransition);
             }
 
             this.OnTransition(UISelectField.VisualState.Normal, true);
@@ -125,7 +115,7 @@ namespace DuloGames.UI
         {
             if (this.m_Select != null)
             {
-                this.m_Select.onTransition.RemoveListener(OnTransition);
+                this.m_Select.onTransition.RemoveListener(this.OnTransition);
             }
 
             this.InstantClearState();
@@ -150,12 +140,14 @@ namespace DuloGames.UI
         public void OnTransition(UISelectField.VisualState state, bool instant)
         {
             if ((this.targetGraphic == null && this.targetGameObject == null) || !this.gameObject.activeInHierarchy || this.m_Transition == Selectable.Transition.None)
+            {
                 return;
+            }
 
             Color color = this.colors.normalColor;
             Sprite newSprite = null;
             string triggername = this.animationTriggers.normalTrigger;
-            
+
             // Prepare the state values
             switch (state)
             {
@@ -214,7 +206,9 @@ namespace DuloGames.UI
         private void StartColorTween(Color color, bool instant)
         {
             if (this.targetGraphic == null)
+            {
                 return;
+            }
 
             if (instant)
             {
@@ -229,12 +223,16 @@ namespace DuloGames.UI
         private void DoSpriteSwap(Sprite newSprite)
         {
             if (this.targetGraphic == null)
+            {
                 return;
+            }
 
             Image image = this.targetGraphic as Image;
 
             if (image != null)
+            {
                 image.overrideSprite = newSprite;
+            }
         }
 
         private void TriggerAnimation(string trigger)
@@ -242,7 +240,9 @@ namespace DuloGames.UI
             Animator animator = this.GetComponent<Animator>();
 
             if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables || string.IsNullOrEmpty(trigger))
+            {
                 return;
+            }
 
             animator.ResetTrigger(this.animationTriggers.normalTrigger);
             animator.ResetTrigger(this.animationTriggers.pressedTrigger);

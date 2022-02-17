@@ -1,9 +1,5 @@
-﻿using Mirror;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon.Client;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class LoginSceneUI : MonoBehaviour
 {
@@ -19,10 +15,12 @@ public class LoginSceneUI : MonoBehaviour
         i = this;
         if (isPlayButtonShowable)
         {
-            playButton.gameObject.SetActive(true);
+            this.playButton.gameObject.SetActive(true);
         }
         else
-            loadingBar.gameObject.SetActive(true);
+        {
+            this.loadingBar.gameObject.SetActive(true);
+        }
     }
 
     public static void ShowPlayButton()
@@ -34,18 +32,22 @@ public class LoginSceneUI : MonoBehaviour
     {
         isPlayButtonShowable = false;
         if (i != null && i.playButton != null)
+        {
             i.playButton?.SetActive(false);
+        }
     }
 
     public static void ShowLoadingBar()
     {
         if (i != null && i.loadingBar != null)
+        {
             i.loadingBar?.SetActive(true);
+        }
     }
 
     public void Play()
     {
-        Client.ClientManager.i.GetComponent<Client.ClientAuth>().PlayButton();
+        ClientManager.i.GetComponent<ClientAuth>().PlayButton();
     }
-    
+
 }

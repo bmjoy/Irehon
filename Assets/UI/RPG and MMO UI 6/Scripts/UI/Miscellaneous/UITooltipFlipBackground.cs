@@ -5,44 +5,54 @@ namespace DuloGames.UI
 {
     public class UITooltipFlipBackground : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UITooltip m_Tooltip;
         [SerializeField] private Graphic m_Graphic;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private UIFlippable m_Flippable;
 
         protected void Awake()
         {
             if (this.m_Graphic == null || this.m_Tooltip == null)
+            {
                 return;
+            }
 
             this.m_Flippable = this.m_Graphic.gameObject.GetComponent<UIFlippable>();
 
             if (this.m_Flippable == null)
+            {
                 this.m_Flippable = this.m_Graphic.gameObject.AddComponent<UIFlippable>();
+            }
         }
 
         protected void OnEnable()
         {
             if (this.m_Graphic == null || this.m_Tooltip == null)
+            {
                 return;
+            }
 
-            this.m_Tooltip.onAnchorEvent.AddListener(OnAnchor);
+            this.m_Tooltip.onAnchorEvent.AddListener(this.OnAnchor);
         }
 
         protected void OnDisable()
         {
             if (this.m_Graphic == null || this.m_Tooltip == null)
+            {
                 return;
+            }
 
-            this.m_Tooltip.onAnchorEvent.RemoveListener(OnAnchor);
+            this.m_Tooltip.onAnchorEvent.RemoveListener(this.OnAnchor);
         }
 
         public void OnAnchor(UITooltip.Anchor anchor)
         {
             if (this.m_Graphic == null || this.m_Flippable == null)
+            {
                 return;
+            }
 
             switch (anchor)
             {

@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     public class UITooltipFlipTransform : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UITooltip m_Tooltip;
         [SerializeField] private RectTransform m_Transform;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private Vector2 m_OriginalPivot;
         private Vector2 m_OriginalAnchorMin;
@@ -18,8 +17,10 @@ namespace DuloGames.UI
         protected void Awake()
         {
             if (this.m_Transform == null || this.m_Tooltip == null)
+            {
                 return;
-            
+            }
+
             this.m_OriginalPivot = this.m_Transform.pivot;
             this.m_OriginalAnchorMin = this.m_Transform.anchorMin;
             this.m_OriginalAnchorMax = this.m_Transform.anchorMax;
@@ -29,23 +30,29 @@ namespace DuloGames.UI
         protected void OnEnable()
         {
             if (this.m_Transform == null || this.m_Tooltip == null)
+            {
                 return;
+            }
 
-            this.m_Tooltip.onAnchorEvent.AddListener(OnAnchor);
+            this.m_Tooltip.onAnchorEvent.AddListener(this.OnAnchor);
         }
 
         protected void OnDisable()
         {
             if (this.m_Transform == null || this.m_Tooltip == null)
+            {
                 return;
+            }
 
-            this.m_Tooltip.onAnchorEvent.RemoveListener(OnAnchor);
+            this.m_Tooltip.onAnchorEvent.RemoveListener(this.OnAnchor);
         }
 
         public void OnAnchor(UITooltip.Anchor anchor)
         {
             if (this.m_Transform == null)
+            {
                 return;
+            }
 
             switch (anchor)
             {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -28,7 +28,7 @@ namespace DuloGames.UI
             public ScrollRect scrollRect;
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private InputField m_InputField;
         [Header("Buttons")]
         [SerializeField] private Button m_Submit;
@@ -48,7 +48,7 @@ namespace DuloGames.UI
         [SerializeField] private TextEffect m_TextEffect = TextEffect.None;
         [SerializeField] private Color m_TextEffectColor = Color.black;
         [SerializeField] private Vector2 m_TextEffectDistance = new Vector2(1f, -1f);
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         [Header("Events")]
         /// <summary>
@@ -81,43 +81,43 @@ namespace DuloGames.UI
                 }
             }
         }
-        
+
         protected void OnEnable()
         {
             // Hook the submit button click event
             if (this.m_Submit != null)
             {
-                this.m_Submit.onClick.AddListener(OnSubmitClick);
+                this.m_Submit.onClick.AddListener(this.OnSubmitClick);
             }
 
             // Hook the scroll up button click event
             if (this.m_ScrollUpButton != null)
             {
-                this.m_ScrollUpButton.onClick.AddListener(OnScrollUpClick);
+                this.m_ScrollUpButton.onClick.AddListener(this.OnScrollUpClick);
             }
 
             // Hook the scroll down button click event
             if (this.m_ScrollDownButton != null)
             {
-                this.m_ScrollDownButton.onClick.AddListener(OnScrollDownClick);
+                this.m_ScrollDownButton.onClick.AddListener(this.OnScrollDownClick);
             }
 
             // Hook the scroll to top button click event
             if (this.m_ScrollTopButton != null)
             {
-                this.m_ScrollTopButton.onClick.AddListener(OnScrollToTopClick);
+                this.m_ScrollTopButton.onClick.AddListener(this.OnScrollToTopClick);
             }
 
             // Hook the scroll to bottom button click event
             if (this.m_ScrollBottomButton != null)
             {
-                this.m_ScrollBottomButton.onClick.AddListener(OnScrollToBottomClick);
+                this.m_ScrollBottomButton.onClick.AddListener(this.OnScrollToBottomClick);
             }
 
             // Hook the input field end edit event
             if (this.m_InputField != null)
             {
-                this.m_InputField.onEndEdit.AddListener(OnInputEndEdit);
+                this.m_InputField.onEndEdit.AddListener(this.OnInputEndEdit);
             }
 
             // Hook the tab toggle change events
@@ -128,7 +128,7 @@ namespace DuloGames.UI
                     // if we have a button
                     if (info.button != null)
                     {
-                        info.button.onValueChanged.AddListener(OnTabStateChange);
+                        info.button.onValueChanged.AddListener(this.OnTabStateChange);
                     }
                 }
             }
@@ -139,31 +139,31 @@ namespace DuloGames.UI
             // Unhook the submit button click event
             if (this.m_Submit != null)
             {
-                this.m_Submit.onClick.RemoveListener(OnSubmitClick);
+                this.m_Submit.onClick.RemoveListener(this.OnSubmitClick);
             }
 
             // Unhook the scroll up button click event
             if (this.m_ScrollUpButton != null)
             {
-                this.m_ScrollUpButton.onClick.RemoveListener(OnScrollUpClick);
+                this.m_ScrollUpButton.onClick.RemoveListener(this.OnScrollUpClick);
             }
 
             // Unhook the scroll down button click event
             if (this.m_ScrollDownButton != null)
             {
-                this.m_ScrollDownButton.onClick.RemoveListener(OnScrollDownClick);
+                this.m_ScrollDownButton.onClick.RemoveListener(this.OnScrollDownClick);
             }
 
             // Unhook the scroll to top button click event
             if (this.m_ScrollTopButton != null)
             {
-                this.m_ScrollTopButton.onClick.RemoveListener(OnScrollToTopClick);
+                this.m_ScrollTopButton.onClick.RemoveListener(this.OnScrollToTopClick);
             }
 
             // Unhook the scroll to bottom button click event
             if (this.m_ScrollBottomButton != null)
             {
-                this.m_ScrollBottomButton.onClick.RemoveListener(OnScrollToBottomClick);
+                this.m_ScrollBottomButton.onClick.RemoveListener(this.OnScrollToBottomClick);
             }
 
             // Unhook the tab toggle change events
@@ -174,7 +174,7 @@ namespace DuloGames.UI
                     // if we have a button
                     if (info.button != null)
                     {
-                        info.button.onValueChanged.RemoveListener(OnTabStateChange);
+                        info.button.onValueChanged.RemoveListener(this.OnTabStateChange);
                     }
                 }
             }
@@ -205,8 +205,10 @@ namespace DuloGames.UI
         public void OnScrollUpClick()
         {
             if (this.m_ActiveTabInfo == null || this.m_ActiveTabInfo.scrollRect == null)
+            {
                 return;
-            
+            }
+
             PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
             pointerEventData.scrollDelta = new Vector2(0f, 1f);
 
@@ -219,7 +221,9 @@ namespace DuloGames.UI
         public void OnScrollDownClick()
         {
             if (this.m_ActiveTabInfo == null || this.m_ActiveTabInfo.scrollRect == null)
+            {
                 return;
+            }
 
             PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
             pointerEventData.scrollDelta = new Vector2(0f, -1f);
@@ -233,7 +237,9 @@ namespace DuloGames.UI
         public void OnScrollToTopClick()
         {
             if (this.m_ActiveTabInfo == null || this.m_ActiveTabInfo.scrollRect == null)
+            {
                 return;
+            }
 
             // Scroll to top
             this.m_ActiveTabInfo.scrollRect.verticalNormalizedPosition = 1f;
@@ -245,7 +251,9 @@ namespace DuloGames.UI
         public void OnScrollToBottomClick()
         {
             if (this.m_ActiveTabInfo == null || this.m_ActiveTabInfo.scrollRect == null)
+            {
                 return;
+            }
 
             // Scroll to bottom
             this.m_ActiveTabInfo.scrollRect.verticalNormalizedPosition = 0f;
@@ -268,7 +276,7 @@ namespace DuloGames.UI
                 }
             }
         }
-        
+
         /// <summary>
         /// Fired when a tab button is toggled.
         /// </summary>
@@ -364,7 +372,9 @@ namespace DuloGames.UI
 
             // Make sure we have tab info
             if (tabInfo == null || tabInfo.content == null)
+            {
                 return;
+            }
 
             // Create the text line
             GameObject obj = new GameObject("Text " + tabInfo.content.childCount.ToString(), typeof(RectTransform));

@@ -57,8 +57,8 @@ namespace DuloGames.UI
         /// <value>The target.</value>
         public RectTransform target
         {
-            get { return this.m_Target; }
-            set { this.m_Target = value; }
+            get => this.m_Target;
+            set => this.m_Target = value;
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace DuloGames.UI
         /// <value><c>true</c> if horizontal; otherwise, <c>false</c>.</value>
         public bool horizontal
         {
-            get { return this.m_Horizontal; }
-            set { this.m_Horizontal = value; }
+            get => this.m_Horizontal;
+            set => this.m_Horizontal = value;
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace DuloGames.UI
         /// <value><c>true</c> if vertical; otherwise, <c>false</c>.</value>
         public bool vertical
         {
-            get { return this.m_Vertical; }
-            set { this.m_Vertical = value; }
+            get => this.m_Vertical;
+            set => this.m_Vertical = value;
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace DuloGames.UI
         /// <value><c>true</c> if intertia; otherwise, <c>false</c>.</value>
         public bool inertia
         {
-            get { return this.m_Inertia; }
-            set { this.m_Inertia = value; }
+            get => this.m_Inertia;
+            set => this.m_Inertia = value;
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace DuloGames.UI
         /// <value>The dampening rate.</value>
         public float dampeningRate
         {
-            get { return this.m_DampeningRate; }
-            set { this.m_DampeningRate = value; }
+            get => this.m_DampeningRate;
+            set => this.m_DampeningRate = value;
         }
 
         /// <summary>
@@ -107,22 +107,28 @@ namespace DuloGames.UI
         /// <value><c>true</c> if constrain within canvas; otherwise, <c>false</c>.</value>
         public bool constrainWithinCanvas
         {
-            get { return this.m_ConstrainWithinCanvas; }
-            set { this.m_ConstrainWithinCanvas = value; }
+            get => this.m_ConstrainWithinCanvas;
+            set => this.m_ConstrainWithinCanvas = value;
         }
 
         protected override void Awake()
         {
             base.Awake();
             this.m_Canvas = UIUtility.FindInParents<Canvas>((this.m_Target != null) ? this.m_Target.gameObject : this.gameObject);
-            if (this.m_Canvas != null) this.m_CanvasRectTransform = this.m_Canvas.transform as RectTransform;
+            if (this.m_Canvas != null)
+            {
+                this.m_CanvasRectTransform = this.m_Canvas.transform as RectTransform;
+            }
         }
 
         protected override void OnTransformParentChanged()
         {
             base.OnTransformParentChanged();
             this.m_Canvas = UIUtility.FindInParents<Canvas>((this.m_Target != null) ? this.m_Target.gameObject : this.gameObject);
-            if (this.m_Canvas != null) this.m_CanvasRectTransform = this.m_Canvas.transform as RectTransform;
+            if (this.m_Canvas != null)
+            {
+                this.m_CanvasRectTransform = this.m_Canvas.transform as RectTransform;
+            }
         }
 
         public override bool IsActive()
@@ -145,7 +151,9 @@ namespace DuloGames.UI
         public void OnBeginDrag(PointerEventData data)
         {
             if (!this.IsActive())
+            {
                 return;
+            }
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(this.m_CanvasRectTransform, data.position, data.pressEventCamera, out this.m_PointerStartPosition);
             this.m_TargetStartPosition = this.m_Target.anchoredPosition;
@@ -154,7 +162,9 @@ namespace DuloGames.UI
 
             // Invoke the event
             if (this.onBeginDrag != null)
-                this.onBeginDrag.Invoke(data as BaseEventData);
+            {
+                this.onBeginDrag.Invoke(data);
+            }
         }
 
         /// <summary>
@@ -166,11 +176,15 @@ namespace DuloGames.UI
             this.m_Dragging = false;
 
             if (!this.IsActive())
+            {
                 return;
+            }
 
             // Invoke the event
             if (this.onEndDrag != null)
-                this.onEndDrag.Invoke(data as BaseEventData);
+            {
+                this.onEndDrag.Invoke(data);
+            }
         }
 
         /// <summary>
@@ -180,7 +194,9 @@ namespace DuloGames.UI
         public void OnDrag(PointerEventData data)
         {
             if (!this.IsActive() || this.m_Canvas == null)
+            {
                 return;
+            }
 
             Vector2 mousePos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(this.m_CanvasRectTransform, data.position, data.pressEventCamera, out mousePos);
@@ -207,7 +223,9 @@ namespace DuloGames.UI
 
             // Invoke the event
             if (this.onDrag != null)
-                this.onDrag.Invoke(data as BaseEventData);
+            {
+                this.onDrag.Invoke(data);
+            }
         }
 
         /// <summary>
@@ -216,7 +234,9 @@ namespace DuloGames.UI
         protected virtual void LateUpdate()
         {
             if (!this.m_Target)
+            {
                 return;
+            }
 
             // Capture the velocity of our drag to be used for the inertia
             if (this.m_Dragging && this.m_Inertia)

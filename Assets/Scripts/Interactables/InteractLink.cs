@@ -1,19 +1,19 @@
 ﻿using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractLink : SerializedMonoBehaviour, IInteractable
+namespace Irehon.Interactable
 {
-    [SerializeField]
-    private IInteractable interactableOrigin;
-    public void Interact(Player player)
+    public class InteractLink : Interactable
     {
-        interactableOrigin.Interact(player);
-    }
+        public Interactable interactableOrigin;
+        public override void Interact(Player player)
+        {
+            this.interactableOrigin.Interact(player);
+        }
 
-    public void StopInterract(Player player)
-    {
-        interactableOrigin.StopInterract(player);
+        public override void StopInterract(Player player)
+        {
+            this.interactableOrigin.StopInterract(player);
+        }
     }
 }

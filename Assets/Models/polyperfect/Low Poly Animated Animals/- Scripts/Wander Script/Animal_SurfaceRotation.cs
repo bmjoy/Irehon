@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace PolyPerfect
+﻿namespace PolyPerfect
 {
     public class Animal_SurfaceRotation : Common_SurfaceRotation { }
 }

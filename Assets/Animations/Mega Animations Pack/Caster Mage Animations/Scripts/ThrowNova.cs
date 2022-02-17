@@ -1,25 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace KevinIglesias {
+namespace KevinIglesias
+{
 
-    public class ThrowNova : StateMachineBehaviour {
+    public class ThrowNova : StateMachineBehaviour
+    {
+        private CastSpells cS;
 
-        CastSpells cS;
-    
         public float spawnDelay;
-        
-        override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-            
-            if(cS == null)
+
+        public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+
+            if (this.cS == null)
             {
-                cS = animator.GetComponent<CastSpells>();
+                this.cS = animator.GetComponent<CastSpells>();
             }
-            
-            if(cS != null)
+
+            if (this.cS != null)
             {
-               cS.ThrowNova(spawnDelay);
+                this.cS.ThrowNova(this.spawnDelay);
             }
         }
     }

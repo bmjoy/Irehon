@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
@@ -13,10 +13,10 @@ namespace DuloGames.UI
         [System.Serializable]
         public class OnCharacterDeleteEvent : UnityEvent<Demo_CharacterInfo> { }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private GameObject m_CharacterPrefab;
         [SerializeField] private Transform m_CharactersContainer;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         [Header("Demo Properties")]
         [SerializeField] private bool m_IsDemo = false;
@@ -40,7 +40,9 @@ namespace DuloGames.UI
             if (this.m_CharactersContainer != null)
             {
                 foreach (Transform t in this.m_CharactersContainer)
+                {
                     Destroy(t.gameObject);
+                }
             }
 
             // Add characters for the demo
@@ -56,13 +58,13 @@ namespace DuloGames.UI
                     info.name = names[Random.Range(0, 10)];
                     info.raceString = races[Random.Range(0, 5)];
                     info.classString = classes[Random.Range(0, 5)];
-                    info.level = (int)Random.Range(1, 61);
+                    info.level = Random.Range(1, 61);
 
                     this.AddCharacter(info, (i == 0));
                 }
             }
         }
-        
+
         /// <summary>
         /// Adds a character to the character list.
         /// </summary>
@@ -71,8 +73,10 @@ namespace DuloGames.UI
         public void AddCharacter(Demo_CharacterInfo info, bool selected)
         {
             if (this.m_CharacterPrefab == null || this.m_CharactersContainer == null)
+            {
                 return;
-            
+            }
+
             // Add the character
             GameObject model = Instantiate<GameObject>(this.m_CharacterPrefab);
             model.layer = this.m_CharactersContainer.gameObject.layer;
@@ -80,10 +84,10 @@ namespace DuloGames.UI
             model.transform.localScale = this.m_CharacterPrefab.transform.localScale;
             model.transform.localPosition = this.m_CharacterPrefab.transform.localPosition;
             model.transform.localRotation = this.m_CharacterPrefab.transform.localRotation;
-            
+
             // Get the character component
             Demo_CharacterSelectList_Character character = model.GetComponent<Demo_CharacterSelectList_Character>();
-            
+
             if (character != null)
             {
                 // Set the info
@@ -96,10 +100,10 @@ namespace DuloGames.UI
                 character.SetSelected(selected);
 
                 // Add on select listener
-                character.AddOnSelectListener(OnCharacterSelected);
+                character.AddOnSelectListener(this.OnCharacterSelected);
 
                 // Add on delete listener
-                character.AddOnDeleteListener(OnCharacterDeleteRequested);
+                character.AddOnDeleteListener(this.OnCharacterDeleteRequested);
             }
         }
 
@@ -110,7 +114,9 @@ namespace DuloGames.UI
         private void OnCharacterSelected(Demo_CharacterSelectList_Character character)
         {
             if (this.m_OnCharacterSelected != null)
+            {
                 this.m_OnCharacterSelected.Invoke(character.characterInfo);
+            }
         }
 
         /// <summary>
@@ -130,8 +136,8 @@ namespace DuloGames.UI
                 box.SetText2("You wont be able to reverse this operation and yourcharcater will be permamently removed.");
                 box.SetConfirmButtonText("DELETE");
                 //box.SetCancelButtonText(string.Empty);
-                box.onConfirm.AddListener(OnCharacterDeleteConfirm);
-                box.onCancel.AddListener(OnCharacterDeleteCancel);
+                box.onConfirm.AddListener(this.OnCharacterDeleteConfirm);
+                box.onCancel.AddListener(this.OnCharacterDeleteCancel);
                 box.Show();
             }
         }
@@ -142,7 +148,9 @@ namespace DuloGames.UI
         private void OnCharacterDeleteConfirm()
         {
             if (this.m_DeletingCharacter == null)
+            {
                 return;
+            }
 
             // If this character is selected
             if (this.m_DeletingCharacter.isSelected && this.m_CharactersContainer != null)
@@ -163,7 +171,9 @@ namespace DuloGames.UI
 
             // Invoke the on delete event
             if (this.m_OnCharacterDelete != null)
+            {
                 this.m_OnCharacterDelete.Invoke(this.m_DeletingCharacter.characterInfo);
+            }
 
             // Delete the character game object
             Destroy(this.m_DeletingCharacter.gameObject);

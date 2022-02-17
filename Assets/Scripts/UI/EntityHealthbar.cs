@@ -1,128 +1,146 @@
-﻿using Mirror;
+﻿using Irehon.Camera;
+using Irehon.Entitys;
+using Mirror;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EntityHealthbar : MonoBehaviour
+namespace Irehon.UI
 {
-    [SerializeField]
-    private Canvas canvas;
-    [SerializeField]
-    private Image healthBarFiller;
-    [SerializeField]
-    private Image healthBarPostFiller;
-    [SerializeField]
-    private TextMeshPro nickname;
-    [SerializeField]
-    private float reducingPostBarAmmount = 3f;
-    [SerializeField]
-    private float updateDelay;
-    [SerializeField]
-    private float showingDistance = 6f;
-
-    private float disablingDelay;
-    private Transform cameraTransform;
-    private Entity entity;
-    private void Start()
+    public class EntityHealthbar : MonoBehaviour
     {
-        entity = transform.parent.GetComponent<Entity>();
+        [SerializeField]
+        private Canvas canvas;
+        [SerializeField]
+        private Image healthBarFiller;
+        [SerializeField]
+        private Image healthBarPostFiller;
+        [SerializeField]
+        private TextMeshPro nickname;
+        [SerializeField]
+        private float reducingPostBarAmmount = 3f;
+        [SerializeField]
+        private float updateDelay;
+        [SerializeField]
+        private float showingDistance = 6f;
 
-        if (entity == null)
+        private float disablingDelay;
+        private Transform cameraTransform;
+        private Entity entity;
+        private void Start()
         {
-            Destroy(gameObject);
-            return;
-        }
+            this.entity = this.transform.parent.GetComponent<Entity>();
 
-        if (entity.GetComponent<NetworkIdentity>().isLocalPlayer && !entity.GetComponent<NetworkIdentity>().isServer)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        entity.OnDeathEvent.AddListener(() => SetActive(false));
-        entity.OnRespawnEvent.AddListener(() => SetActive(true));
-
-        StartCoroutine(WaitCameraControllerIntialize());
-        nickname.text = entity.NickName;
-        entity.OnHealthChangeEvent.AddListener(ChangeHealthOnBar);
-        entity.OnPlayerLookingEvent.AddListener(() => EnableForTime(5f));
-    }
-
-    private void Update()
-    {
-        if (cameraTransform == null)
-            return;
-
-        RepositionBar();
-        if (Vector3.Distance(transform.position, cameraTransform.position) < showingDistance && entity.isAlive)
-        {
-            disablingDelay = 2f;
-            SetActive(true);
-        }
-        disablingDelay -= Time.deltaTime;
-        if (disablingDelay < 0)
-            SetActive(false);
-    }
-
-    public void EnableForTime(float time)
-    {
-        if (entity.isAlive)
-        {
-            disablingDelay = time;
-            SetActive(true);
-        }
-    }
-
-    public void SetActive(bool isActive)
-    {
-        canvas.enabled = isActive;
-        nickname.enabled = isActive;
-    }
-
-    private IEnumerator WaitCameraControllerIntialize()
-    {
-        while (CameraController.i == null)
-            yield return null;
-
-        cameraTransform = CameraController.i.transform;
-        canvas.worldCamera = CameraController.i.cameraComponent;
-    }
-
-    private void ChangeHealthOnBar(int maxHealth, int health)
-    {
-        if (health == 0)
-            return;
-
-        float fill = 1.0f * health / maxHealth;
-
-        healthBarFiller.fillAmount = fill;
-
-        float passedTime = 0f;
-
-        StopAllCoroutines();
-
-        if (isActiveAndEnabled && healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
-            StartCoroutine(ChangeFillAmount());
-        else
-            healthBarPostFiller.fillAmount = healthBarFiller.fillAmount;
-
-        IEnumerator ChangeFillAmount()
-        {
-            while (healthBarPostFiller.fillAmount > healthBarFiller.fillAmount)
+            if (this.entity == null)
             {
-                passedTime += Time.deltaTime;
-                if (passedTime > updateDelay)
-                    healthBarPostFiller.fillAmount -= reducingPostBarAmmount * Time.deltaTime;
-                yield return null;
+                Destroy(this.gameObject);
+                return;
+            }
+
+            if (this.entity.GetComponent<NetworkIdentity>().isLocalPlayer && !this.entity.GetComponent<NetworkIdentity>().isServer)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+
+            this.entity.IsAliveValueChanged += isAlive => SetActive(isAlive);
+
+            this.StartCoroutine(this.WaitCameraControllerIntialize());
+            this.nickname.text = this.entity.NickName;
+            this.entity.HealthChanged += this.ChangeHealthOnBar;
+            this.entity.PlayerLooked += () => this.EnableForTime(5f);
+        }
+
+        private void Update()
+        {
+            if (this.cameraTransform == null)
+            {
+                return;
+            }
+
+            this.RepositionBar();
+            if (Vector3.Distance(this.transform.position, this.cameraTransform.position) < this.showingDistance && this.entity.isAlive)
+            {
+                this.disablingDelay = 2f;
+                this.SetActive(true);
+            }
+            this.disablingDelay -= Time.deltaTime;
+            if (this.disablingDelay < 0)
+            {
+                this.SetActive(false);
             }
         }
-    }
 
-    private void RepositionBar()
-    {
-        transform.LookAt(cameraTransform);
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+        public void EnableForTime(float time)
+        {
+            if (this.entity.isAlive)
+            {
+                this.disablingDelay = time;
+                this.SetActive(true);
+            }
+        }
+
+        public void SetActive(bool isActive)
+        {
+            this.canvas.enabled = isActive;
+            this.nickname.enabled = isActive;
+        }
+
+        private IEnumerator WaitCameraControllerIntialize()
+        {
+            while (CameraController.Instance == null)
+            {
+                yield return null;
+            }
+
+            this.cameraTransform = CameraController.Instance.transform;
+            this.canvas.worldCamera = PlayerCamera.Instance.Camera;
+        }
+
+        private void ChangeHealthOnBar(int maxHealth, int health)
+        {
+            if (health == 0)
+            {
+                return;
+            }
+
+            float fill = 1.0f * health / maxHealth;
+
+            this.healthBarFiller.fillAmount = fill;
+
+            float passedTime = 0f;
+
+            this.StopAllCoroutines();
+
+            if (this.isActiveAndEnabled && this.healthBarPostFiller.fillAmount > this.healthBarFiller.fillAmount)
+            {
+                this.StartCoroutine(ChangeFillAmount());
+            }
+            else
+            {
+                this.healthBarPostFiller.fillAmount = this.healthBarFiller.fillAmount;
+            }
+
+            IEnumerator ChangeFillAmount()
+            {
+                while (this.healthBarPostFiller.fillAmount > this.healthBarFiller.fillAmount)
+                {
+                    passedTime += Time.deltaTime;
+                    if (passedTime > this.updateDelay)
+                    {
+                        this.healthBarPostFiller.fillAmount -= this.reducingPostBarAmmount * Time.deltaTime;
+                    }
+
+                    yield return null;
+                }
+            }
+        }
+
+        private void RepositionBar()
+        {
+            this.transform.LookAt(this.cameraTransform);
+            this.transform.rotation = Quaternion.Euler(this.transform.rotation.eulerAngles.x, this.transform.rotation.eulerAngles.y, 0);
+        }
     }
 }

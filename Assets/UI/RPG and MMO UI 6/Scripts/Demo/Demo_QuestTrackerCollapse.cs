@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     [ExecuteInEditMode]
     public class Demo_QuestTrackerCollapse : UIBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private GameObject m_Content;
         [SerializeField] private Toggle m_Toggle;
         [SerializeField] private UIFlippable m_ArrowFlippable;
@@ -15,10 +15,10 @@ namespace DuloGames.UI
         [SerializeField] private bool m_ArrowInvertFlip = false;
         [SerializeField] private Vector2 m_ActiveOffset = Vector2.zero;
         [SerializeField] private Vector2 m_InactiveOffset = Vector2.zero;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         #region Unity Lifetime calls
-        
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -26,7 +26,7 @@ namespace DuloGames.UI
             // Hook the toggle change event
             if (this.m_Toggle != null)
             {
-                this.m_Toggle.onValueChanged.AddListener(OnToggleStateChange);
+                this.m_Toggle.onValueChanged.AddListener(this.OnToggleStateChange);
             }
 
             // Apply the current toggle state
@@ -43,7 +43,7 @@ namespace DuloGames.UI
             // Unhook the toggle change event
             if (this.m_Toggle != null)
             {
-                this.m_Toggle.onValueChanged.RemoveListener(OnToggleStateChange);
+                this.m_Toggle.onValueChanged.RemoveListener(this.OnToggleStateChange);
             }
 
             // Expand the view
@@ -51,16 +51,20 @@ namespace DuloGames.UI
         }
 
         #endregion
-        
+
         public void OnToggleStateChange(bool state)
         {
-            if (!IsActive())
+            if (!this.IsActive())
+            {
                 return;
+            }
 
             if (state)
             {
                 if (this.m_Content != null)
+                {
                     this.m_Content.SetActive(true);
+                }
 
                 if (this.m_ArrowFlippable != null)
                 {
@@ -69,12 +73,16 @@ namespace DuloGames.UI
                 }
 
                 if (this.m_ArrowFlippable2 != null)
+                {
                     this.m_ArrowFlippable2.vertical = (this.m_ArrowInvertFlip ? false : true);
+                }
             }
             else
             {
                 if (this.m_Content != null)
+                {
                     this.m_Content.SetActive(false);
+                }
 
                 if (this.m_ArrowFlippable != null)
                 {
@@ -83,7 +91,9 @@ namespace DuloGames.UI
                 }
 
                 if (this.m_ArrowFlippable2 != null)
+                {
                     this.m_ArrowFlippable2.vertical = (this.m_ArrowInvertFlip ? true : false);
+                }
             }
         }
     }

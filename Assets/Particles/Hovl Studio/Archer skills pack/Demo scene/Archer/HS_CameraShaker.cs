@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HS_CameraShaker : MonoBehaviour
@@ -13,64 +12,69 @@ public class HS_CameraShaker : MonoBehaviour
     private Vector3 noise;
     private AnimationCurve smoothCurve = new AnimationCurve(new Keyframe(0.0f, 0.0f, Mathf.Deg2Rad * 0.0f, Mathf.Deg2Rad * 720.0f), new Keyframe(0.2f, 1.0f), new Keyframe(1.0f, 0.0f));
 
-    void Start()
+    private void Start()
     {
         float rand = 32.0f;
-        noiseOffset.x = Random.Range(0.0f, rand);
-        noiseOffset.y = Random.Range(0.0f, rand);
-        noiseOffset.z = Random.Range(0.0f, rand);
+        this.noiseOffset.x = Random.Range(0.0f, rand);
+        this.noiseOffset.y = Random.Range(0.0f, rand);
+        this.noiseOffset.z = Random.Range(0.0f, rand);
     }
 
     public IEnumerator Shake(float amp, float freq, float dur, float wait)
     {
         yield return new WaitForSeconds(wait);
         float rand = 32.0f;
-        noiseOffset.x = Random.Range(0.0f, rand);
-        noiseOffset.y = Random.Range(0.0f, rand);
-        noiseOffset.z = Random.Range(0.0f, rand);
-        amplitude = amp;
-        frequency = freq;
-        duration = dur;
-        timeRemaining += dur;
-        if (timeRemaining > dur)
+        this.noiseOffset.x = Random.Range(0.0f, rand);
+        this.noiseOffset.y = Random.Range(0.0f, rand);
+        this.noiseOffset.z = Random.Range(0.0f, rand);
+        this.amplitude = amp;
+        this.frequency = freq;
+        this.duration = dur;
+        this.timeRemaining += dur;
+        if (this.timeRemaining > dur)
         {
-            timeRemaining = dur;
+            this.timeRemaining = dur;
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (timeRemaining <= 0)
+        if (this.timeRemaining <= 0)
+        {
             return;
+        }
 
         float deltaTime = Time.deltaTime;
-        timeRemaining -= deltaTime;
-        float noiseOffsetDelta = deltaTime * frequency;
+        this.timeRemaining -= deltaTime;
+        float noiseOffsetDelta = deltaTime * this.frequency;
 
-        noiseOffset.x += noiseOffsetDelta;
-        noiseOffset.y += noiseOffsetDelta;
-        noiseOffset.z += noiseOffsetDelta;
+        this.noiseOffset.x += noiseOffsetDelta;
+        this.noiseOffset.y += noiseOffsetDelta;
+        this.noiseOffset.z += noiseOffsetDelta;
 
-        noise.x = Mathf.PerlinNoise(noiseOffset.x, 0.0f);
-        noise.y = Mathf.PerlinNoise(noiseOffset.y, 1.0f);
-        noise.z = Mathf.PerlinNoise(noiseOffset.z, 2.0f);
+        this.noise.x = Mathf.PerlinNoise(this.noiseOffset.x, 0.0f);
+        this.noise.y = Mathf.PerlinNoise(this.noiseOffset.y, 1.0f);
+        this.noise.z = Mathf.PerlinNoise(this.noiseOffset.z, 2.0f);
 
-        noise -= Vector3.one * 0.5f;
-        noise *= amplitude;
+        this.noise -= Vector3.one * 0.5f;
+        this.noise *= this.amplitude;
 
-        float agePercent = 1.0f - (timeRemaining / duration);
-        noise *= smoothCurve.Evaluate(agePercent);
+        float agePercent = 1.0f - (this.timeRemaining / this.duration);
+        this.noise *= this.smoothCurve.Evaluate(agePercent);
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (timeRemaining <= 0)
+        if (this.timeRemaining <= 0)
+        {
             return;
+        }
+
         Vector3 positionOffset = Vector3.zero;
         Vector3 rotationOffset = Vector3.zero;
-        positionOffset += noise;
-        rotationOffset += noise;
-        cameraObject.transform.localPosition = positionOffset;
-        cameraObject.transform.localEulerAngles = rotationOffset;
+        positionOffset += this.noise;
+        rotationOffset += this.noise;
+        this.cameraObject.transform.localPosition = positionOffset;
+        this.cameraObject.transform.localEulerAngles = rotationOffset;
     }
 }

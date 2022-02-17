@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     [RequireComponent(typeof(UIWindow)), RequireComponent(typeof(UIAlwaysOnTop))]
     public class UIModalBox : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [Header("Texts")]
         [SerializeField] private Text m_Text1;
         [SerializeField] private Text m_Text2;
@@ -19,7 +19,7 @@ namespace DuloGames.UI
         [Header("Inputs")]
         [SerializeField] private string m_ConfirmInput = "Submit";
         [SerializeField] private string m_CancelInput = "Cancel";
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private UIWindow m_Window;
         private bool m_IsActive = false;
@@ -31,10 +31,7 @@ namespace DuloGames.UI
         /// <summary>
         /// Gets a value indicating whether this modal box is active.
         /// </summary>
-        public bool isActive
-        {
-            get { return this.m_IsActive; }
-        }
+        public bool isActive => this.m_IsActive;
 
         protected void Awake()
         {
@@ -49,7 +46,7 @@ namespace DuloGames.UI
             this.m_Window.escapeKeyAction = UIWindow.EscapeKeyAction.None;
 
             // Hook an event to the window
-            this.m_Window.onTransitionComplete.AddListener(OnWindowTransitionEnd);
+            this.m_Window.onTransitionComplete.AddListener(this.OnWindowTransitionEnd);
 
             // Prepare the always on top component
             UIAlwaysOnTop aot = this.gameObject.GetComponent<UIAlwaysOnTop>();
@@ -58,22 +55,26 @@ namespace DuloGames.UI
             // Hook the button click event
             if (this.m_ConfirmButton != null)
             {
-                this.m_ConfirmButton.onClick.AddListener(Confirm);
+                this.m_ConfirmButton.onClick.AddListener(this.Confirm);
             }
 
             if (this.m_CancelButton != null)
             {
-                this.m_CancelButton.onClick.AddListener(Close);
+                this.m_CancelButton.onClick.AddListener(this.Close);
             }
         }
 
         protected void Update()
         {
             if (!string.IsNullOrEmpty(this.m_CancelInput) && Input.GetButtonDown(this.m_CancelInput))
+            {
                 this.Close();
-            
+            }
+
             if (!string.IsNullOrEmpty(this.m_ConfirmInput) && Input.GetButtonDown(this.m_ConfirmInput))
+            {
                 this.Confirm();
+            }
         }
 
         /// <summary>
@@ -134,7 +135,9 @@ namespace DuloGames.UI
             this.m_IsActive = true;
 
             if (UIModalBoxManager.Instance != null)
+            {
                 UIModalBoxManager.Instance.RegisterActiveBox(this);
+            }
 
             // Show the modal
             if (this.m_Window != null)
@@ -173,7 +176,9 @@ namespace DuloGames.UI
             this.m_IsActive = false;
 
             if (UIModalBoxManager.Instance != null)
+            {
                 UIModalBoxManager.Instance.UnregisterActiveBox(this);
+            }
 
             // Hide the modal
             if (this.m_Window != null)

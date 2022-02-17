@@ -18,7 +18,10 @@ namespace DuloGames.UI
 
         public void ModifyMesh(VertexHelper vertexHelper)
         {
-            if (this.mesh == null) this.mesh = new Mesh();
+            if (this.mesh == null)
+            {
+                this.mesh = new Mesh();
+            }
 
             vertexHelper.FillMesh(this.mesh);
         }
@@ -27,7 +30,10 @@ namespace DuloGames.UI
 
         public void OnDrawGizmos()
         {
-            if (this.mesh == null) return;
+            if (this.mesh == null)
+            {
+                return;
+            }
 
             Gizmos.color = this.color;
             Gizmos.DrawWireMesh(this.mesh, this.transform.position);

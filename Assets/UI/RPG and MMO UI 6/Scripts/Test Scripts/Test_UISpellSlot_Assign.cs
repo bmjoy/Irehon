@@ -4,18 +4,20 @@ namespace DuloGames.UI
 {
     public class Test_UISpellSlot_Assign : MonoBehaviour
     {
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private UISpellSlot slot;
         [SerializeField] private int assignSpell;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
-        void Awake()
+        private void Awake()
         {
             if (this.slot == null)
+            {
                 this.slot = this.GetComponent<UISpellSlot>();
+            }
         }
 
-        void Start()
+        private void Start()
         {
             if (this.slot == null || UISpellDatabase.Instance == null)
             {

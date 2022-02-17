@@ -1,52 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon.Interactable;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-
-public class CraftRequirmentTab : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+namespace Irehon.UI
 {
-    [SerializeField]
-    private Text itemName;
-    [SerializeField]
-    private Text itemQuantity;
-    [SerializeField]
-    private Image itemIcon;
-    private Item requirmentItem;
-    private bool isPointerOverSlot;
-
-    public void Intialize(Container inventory, CraftRecipe.CraftRecipeRequirment requirment)
+    [RequireComponent(typeof(ItemTooltip))]
+    public class CraftRequirmentTab : MonoBehaviour
     {
-        requirmentItem = ItemDatabase.GetItemById(requirment.itemId);
-        itemName.text = requirmentItem.name;
-        itemQuantity.text = $"{inventory.GetItemCount(requirmentItem.id)}/{requirment.itemQuantity}";
-        itemIcon.sprite = requirmentItem.sprite;
-    }
+        [SerializeField]
+        private Text itemName;
+        [SerializeField]
+        private Text itemQuantity;
+        [SerializeField]
+        private Image itemIcon;
+        private Item requirmentItem;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (requirmentItem == null)
-            return;
-
-        TooltipWindowController.ShowTooltip(requirmentItem.GetStringMessage());
-
-        isPointerOverSlot = true;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        TooltipWindowController.HideTooltip();
-
-        isPointerOverSlot = false;
-    }
-
-    private void OnDisable()
-    {
-        if (isPointerOverSlot)
+        public void Intialize(Container inventory, CraftRecipe.CraftRecipeRequirment requirment)
         {
-            TooltipWindowController.HideTooltip();
-            isPointerOverSlot = false;
+            requirmentItem = ItemDatabase.GetItemById(requirment.itemId);
+            itemName.text = requirmentItem.name;
+            itemQuantity.text = $"{inventory.GetItemCount(requirmentItem.id)}/{requirment.itemQuantity}";
+            itemIcon.sprite = requirmentItem.sprite;
+            GetComponent<ItemTooltip>().SetItem(requirmentItem);
         }
     }
 }

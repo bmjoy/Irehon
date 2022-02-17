@@ -1,13 +1,13 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using DuloGames.UI.Tweens;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace DuloGames.UI
 {
     [ExecuteInEditMode, AddComponentMenu("UI/Press Transition")]
-    public class UIPressTransition : MonoBehaviour, IEventSystemHandler, IPointerDownHandler, IPointerUpHandler 
+    public class UIPressTransition : MonoBehaviour, IEventSystemHandler, IPointerDownHandler, IPointerUpHandler
     {
 
         public enum VisualState
@@ -25,7 +25,7 @@ namespace DuloGames.UI
             TextColor
         }
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private Transition m_Transition = Transition.None;
 
         [SerializeField] private Color m_NormalColor = ColorBlock.defaultColorBlock.normalColor;
@@ -44,7 +44,7 @@ namespace DuloGames.UI
 
         [SerializeField, Tooltip("GameObject that will have the selected transtion applied.")]
         private GameObject m_TargetGameObject;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         private Selectable m_Selectable;
         private bool m_GroupsAllowInteraction = true;
@@ -55,14 +55,8 @@ namespace DuloGames.UI
         /// <value>The transition.</value>
         public Transition transition
         {
-            get
-            {
-                return this.m_Transition;
-            }
-            set
-            {
-                this.m_Transition = value;
-            }
+            get => this.m_Transition;
+            set => this.m_Transition = value;
         }
 
         /// <summary>
@@ -71,14 +65,8 @@ namespace DuloGames.UI
         /// <value>The target graphic.</value>
         public Graphic targetGraphic
         {
-            get
-            {
-                return this.m_TargetGraphic;
-            }
-            set
-            {
-                this.m_TargetGraphic = value;
-            }
+            get => this.m_TargetGraphic;
+            set => this.m_TargetGraphic = value;
         }
 
         /// <summary>
@@ -87,14 +75,8 @@ namespace DuloGames.UI
         /// <value>The target game object.</value>
         public GameObject targetGameObject
         {
-            get
-            {
-                return this.m_TargetGameObject;
-            }
-            set
-            {
-                this.m_TargetGameObject = value;
-            }
+            get => this.m_TargetGameObject;
+            set => this.m_TargetGameObject = value;
         }
 
         /// <summary>
@@ -106,7 +88,9 @@ namespace DuloGames.UI
             get
             {
                 if (this.m_TargetGameObject != null)
+                {
                     return this.m_TargetGameObject.GetComponent<Animator>();
+                }
 
                 // Default
                 return null;
@@ -122,7 +106,9 @@ namespace DuloGames.UI
         protected UIPressTransition()
         {
             if (this.m_ColorTweenRunner == null)
+            {
                 this.m_ColorTweenRunner = new TweenRunner<ColorTween>();
+            }
 
             this.m_ColorTweenRunner.Init(this);
         }
@@ -161,28 +147,32 @@ namespace DuloGames.UI
             // Figure out if parent groups allow interaction
             // If no interaction is alowed... then we need
             // to not do that :)
-            var groupAllowInteraction = true;
-            Transform t = transform;
+            bool groupAllowInteraction = true;
+            Transform t = this.transform;
             while (t != null)
             {
-                t.GetComponents(m_CanvasGroupCache);
+                t.GetComponents(this.m_CanvasGroupCache);
                 bool shouldBreak = false;
-                for (var i = 0; i < m_CanvasGroupCache.Count; i++)
+                for (int i = 0; i < this.m_CanvasGroupCache.Count; i++)
                 {
                     // if the parent group does not allow interaction
                     // we need to break
-                    if (!m_CanvasGroupCache[i].interactable)
+                    if (!this.m_CanvasGroupCache[i].interactable)
                     {
                         groupAllowInteraction = false;
                         shouldBreak = true;
                     }
                     // if this is a 'fresh' group, then break
                     // as we should not consider parents
-                    if (m_CanvasGroupCache[i].ignoreParentGroups)
+                    if (this.m_CanvasGroupCache[i].ignoreParentGroups)
+                    {
                         shouldBreak = true;
+                    }
                 }
                 if (shouldBreak)
+                {
                     break;
+                }
 
                 t = t.parent;
             }
@@ -197,7 +187,9 @@ namespace DuloGames.UI
         public virtual bool IsInteractable()
         {
             if (this.m_Selectable != null)
+            {
                 return this.m_Selectable.IsInteractable() && this.m_GroupsAllowInteraction;
+            }
 
             return this.m_GroupsAllowInteraction;
         }
@@ -229,12 +221,12 @@ namespace DuloGames.UI
         {
             this.DoStateTransition(VisualState.Normal, instant);
         }
-        
+
         /// <summary>
-		/// Raises the pointer down event.
-		/// </summary>
-		/// <param name="eventData">Event data.</param>
-		public virtual void OnPointerDown(PointerEventData eventData)
+        /// Raises the pointer down event.
+        /// </summary>
+        /// <param name="eventData">Event data.</param>
+        public virtual void OnPointerDown(PointerEventData eventData)
         {
             this.DoStateTransition(VisualState.Pressed, false);
         }
@@ -257,11 +249,15 @@ namespace DuloGames.UI
         {
             // Check if the script is enabled
             if (!this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             // Check if it's interactable
             if (!this.IsInteractable())
+            {
                 state = VisualState.Normal;
+            }
 
             Color color = this.m_NormalColor;
             Sprite newSprite = null;
@@ -308,7 +304,9 @@ namespace DuloGames.UI
         private void StartColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -325,7 +323,9 @@ namespace DuloGames.UI
             Image image = this.m_TargetGraphic as Image;
 
             if (image == null)
+            {
                 return;
+            }
 
             image.overrideSprite = newSprite;
         }
@@ -333,10 +333,14 @@ namespace DuloGames.UI
         private void TriggerAnimation(string triggername)
         {
             if (this.targetGameObject == null)
+            {
                 return;
+            }
 
             if (this.animator == null || !this.animator.enabled || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || !this.animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
+            {
                 return;
+            }
 
             this.animator.ResetTrigger(this.m_PressedTrigger);
             this.animator.SetTrigger(triggername);
@@ -345,10 +349,14 @@ namespace DuloGames.UI
         private void StartTextColorTween(Color targetColor, bool instant)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if ((this.m_TargetGraphic is Text) == false)
+            {
                 return;
+            }
 
             if (instant || this.m_Duration == 0f || !Application.isPlaying)
             {
@@ -356,8 +364,8 @@ namespace DuloGames.UI
             }
             else
             {
-                var colorTween = new ColorTween { duration = this.m_Duration, startColor = (this.m_TargetGraphic as Text).color, targetColor = targetColor };
-                colorTween.AddOnChangedCallback(SetTextColor);
+                ColorTween colorTween = new ColorTween { duration = this.m_Duration, startColor = (this.m_TargetGraphic as Text).color, targetColor = targetColor };
+                colorTween.AddOnChangedCallback(this.SetTextColor);
                 colorTween.ignoreTimeScale = true;
 
                 this.m_ColorTweenRunner.StartTween(colorTween);
@@ -371,7 +379,9 @@ namespace DuloGames.UI
 		private void SetTextColor(Color targetColor)
         {
             if (this.m_TargetGraphic == null)
+            {
                 return;
+            }
 
             if (this.m_TargetGraphic is Text)
             {

@@ -17,6 +17,7 @@ namespace Mirror
         // assigned by transport, this id is unique for every connection on server.
         // clients don't know their own id and they don't know other client's ids.
         public readonly int connectionId;
+        public float connectedTime;
         public ulong steamId;
 
         /// <summary>Flag that indicates the client has been authenticated.</summary>

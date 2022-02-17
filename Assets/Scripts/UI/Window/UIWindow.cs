@@ -1,6 +1,6 @@
-﻿using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Irehon;
+using Irehon.UI;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -22,55 +22,90 @@ public class UIWindow : SerializedMonoBehaviour
     private GameObject windowObject;
 
     private static int openedWindowsCount = 0;
+    private static int updateWindowsCount = 0;
 
     private void Awake()
     {
-        windowObject = transform.GetChild(0).gameObject;
+        this.windowObject = this.transform.GetChild(0).gameObject;
     }
 
     public void Open()
     {
-        if (!isEnabled)
+        if (!this.isEnabled)
+        {
             openedWindowsCount++;
+        }
 
-        isEnabled = true;
-        windowObject.SetActive(true);
-        OnOpenWindow?.Invoke();
-        CameraController.EnableCursor();
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)windowObject.transform);
+        this.isEnabled = true;
+        this.windowObject.SetActive(true);
+        this.OnOpenWindow?.Invoke();
+        Mouse.EnableCursor();
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)this.windowObject.transform);
     }
 
     public void Close()
     {
-        if (isEnabled)
+        if (this.isEnabled)
+        {
             openedWindowsCount--;
-        
-        if (openedWindowsCount == 0)
-            CameraController.DisableCursor();
+        }
 
-        isEnabled = false;
-        windowObject.SetActive(false);
-        OnCloseWindow?.Invoke();
-        if (isClosingStoppingInterract)
-            ContainerWindowManager.i.StopInterractOnServer();
-        
+        if (openedWindowsCount == 0)
+        {
+            Mouse.DisableCursor();
+        }
+
+        this.isEnabled = false;
+        this.windowObject.SetActive(false);
+        this.OnCloseWindow?.Invoke();
+        if (this.isClosingStoppingInterract)
+        {
+            Player.LocalPlayer?.GetComponent<PlayerInteracter>().StopInterractCommand();
+        }
     }
 
     private void Update()
     {
         if (!GameSession.IsListeningGameKeys)
+        {
             return;
-        if (Input.GetKeyDown(KeyCode.Escape) && TriggerKey != KeyCode.Escape)
-            Close();
-        if (Input.GetKeyDown(TriggerKey))
-            SwitchWindowState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount == 0)
+        {
+            if (this.TriggerKey != KeyCode.Escape)
+            {
+                this.Close();
+            }
+            else
+            {
+                this.Open();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && updateWindowsCount != 0)
+        {
+            this.Close();
+        }
+        else if (Input.GetKeyDown(this.TriggerKey))
+        {
+            this.SwitchWindowState();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        updateWindowsCount = openedWindowsCount;
     }
 
     public void SwitchWindowState()
     {
-        if (isEnabled)
-            Close();
+        if (this.isEnabled)
+        {
+            this.Close();
+        }
         else
-            Open();
+        {
+            this.Open();
+        }
     }
 }

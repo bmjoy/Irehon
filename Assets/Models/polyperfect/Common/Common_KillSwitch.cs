@@ -1,28 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PolyPerfect
 {
     public class Common_KillSwitch : MonoBehaviour
     {
-
-        Animator anim;
+        private Animator anim;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
 
-            anim = GetComponent<Animator>();
+            this.anim = this.GetComponent<Animator>();
 
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
-                anim.SetBool("isDead", true);
-
+            {
+                this.anim.SetBool("isDead", true);
+            }
         }
     }
 }

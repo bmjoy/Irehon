@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 namespace DuloGames.UI
 {
@@ -26,7 +26,7 @@ namespace DuloGames.UI
         public UITooltipTextEffectType Effect;
         public Color EffectColor;
         public Vector2 EffectDistance;
-		public bool UseGraphicAlpha;
+        public bool UseGraphicAlpha;
 
         public UITooltipTextEffect()
         {

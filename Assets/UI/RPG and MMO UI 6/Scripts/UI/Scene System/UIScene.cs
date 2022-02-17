@@ -1,8 +1,8 @@
+using DuloGames.UI.Tweens;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using DuloGames.UI.Tweens;
-using System;
 
 namespace DuloGames.UI
 {
@@ -26,60 +26,54 @@ namespace DuloGames.UI
             SlideFromTop,
             SlideFromBottom
         }
-        
+
         [Serializable] public class OnActivateEvent : UnityEvent<UIScene> { }
         [Serializable] public class OnDeactivateEvent : UnityEvent<UIScene> { }
 
         private UISceneRegistry m_SceneManager;
         private bool m_AnimationState = false;
 
-        #pragma warning disable 0649
+#pragma warning disable 0649
         [SerializeField] private int m_Id = 0;
         [SerializeField] private bool m_IsActivated = true;
         [SerializeField] private Type m_Type = Type.Preloaded;
         [SerializeField] private Transform m_Content;
         [SerializeField] private GameObject m_Prefab;
-        [SerializeField][ResourcePath] private string m_Resource;
+        [SerializeField] [ResourcePath] private string m_Resource;
         [SerializeField] private Transition m_Transition = Transition.None;
         [SerializeField] private float m_TransitionDuration = 0.2f;
         [SerializeField] private TweenEasing m_TransitionEasing = TweenEasing.InOutQuint;
         [SerializeField] private string m_AnimateInTrigger = "AnimateIn";
         [SerializeField] private string m_AnimateOutTrigger = "AnimateOut";
         [SerializeField] private GameObject m_FirstSelected;
-        #pragma warning restore 0649
+#pragma warning restore 0649
 
         /// <summary>
         /// Gets the scene id.
         /// </summary>
-        public int id
-        {
-            get { return this.m_Id; }
-        }
+        public int id => this.m_Id;
 
         /// <summary>
         /// Gets or sets value indicating whether the scene is activated.
         /// </summary>
         public bool isActivated
         {
-            get { return this.m_IsActivated; }
+            get => this.m_IsActivated;
             set { if (value) { this.Activate(); } else { this.Deactivate(); } }
         }
 
         /// <summary>
         /// Gets the scene type.
         /// </summary>
-        public Type type
-        {
-            get { return this.m_Type; }
-        }
+        public Type type => this.m_Type;
 
         /// <summary>
         /// Gets or sets the scene content holder.
         /// </summary>
         public Transform content
         {
-            get { return this.m_Content; }
-            set { this.m_Content = value; }
+            get => this.m_Content;
+            set => this.m_Content = value;
         }
 
         /// <summary>
@@ -87,8 +81,8 @@ namespace DuloGames.UI
         /// </summary>
         public Transition transition
         {
-            get { return this.m_Transition; }
-            set { this.m_Transition = value; }
+            get => this.m_Transition;
+            set => this.m_Transition = value;
         }
 
         /// <summary>
@@ -96,8 +90,8 @@ namespace DuloGames.UI
         /// </summary>
         public float transitionDuration
         {
-            get { return this.m_TransitionDuration; }
-            set { this.m_TransitionDuration = value; }
+            get => this.m_TransitionDuration;
+            set => this.m_TransitionDuration = value;
         }
 
         /// <summary>
@@ -105,8 +99,8 @@ namespace DuloGames.UI
         /// </summary>
         public TweenEasing transitionEasing
         {
-            get { return this.m_TransitionEasing; }
-            set { this.m_TransitionEasing = value; }
+            get => this.m_TransitionEasing;
+            set => this.m_TransitionEasing = value;
         }
 
         /// <summary>
@@ -114,8 +108,8 @@ namespace DuloGames.UI
         /// </summary>
         public string animateInTrigger
         {
-            get { return this.m_AnimateInTrigger; }
-            set { this.m_AnimateInTrigger = value; }
+            get => this.m_AnimateInTrigger;
+            set => this.m_AnimateInTrigger = value;
         }
 
         /// <summary>
@@ -123,8 +117,8 @@ namespace DuloGames.UI
         /// </summary>
         public string animateOutTrigger
         {
-            get { return this.m_AnimateOutTrigger; }
-            set { this.m_AnimateOutTrigger = value; }
+            get => this.m_AnimateOutTrigger;
+            set => this.m_AnimateOutTrigger = value;
         }
 
         /// <summary>
@@ -140,19 +134,13 @@ namespace DuloGames.UI
         /// <summary>
         /// Gets the rect transform.
         /// </summary>
-        public RectTransform rectTransform
-        {
-            get { return (this.transform as RectTransform); }
-        }
+        public RectTransform rectTransform => (this.transform as RectTransform);
 
         /// <summary>
-		/// Gets the animator.
-		/// </summary>
-		/// <value>The animator.</value>
-		public Animator animator
-        {
-            get { return this.gameObject.GetComponent<Animator>(); }
-        }
+        /// Gets the animator.
+        /// </summary>
+        /// <value>The animator.</value>
+        public Animator animator => this.gameObject.GetComponent<Animator>();
 
         // The canvas group
         private CanvasGroup m_CanvasGroup;
@@ -166,7 +154,9 @@ namespace DuloGames.UI
         protected UIScene()
         {
             if (this.m_FloatTweenRunner == null)
+            {
                 this.m_FloatTweenRunner = new TweenRunner<FloatTween>();
+            }
 
             this.m_FloatTweenRunner.Init(this);
         }
@@ -212,7 +202,9 @@ namespace DuloGames.UI
 
             // Trigger the on activate event
             if (this.isActivated && this.onActivate != null)
+            {
                 this.onActivate.Invoke(this);
+            }
         }
 
         protected virtual void OnDisable()
@@ -223,7 +215,7 @@ namespace DuloGames.UI
                 this.m_SceneManager.UnregisterScene(this);
             }
         }
-        
+
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
@@ -250,13 +242,17 @@ namespace DuloGames.UI
                 {
                     // Enable the game object
                     if (this.m_Content != null)
+                    {
                         this.m_Content.gameObject.SetActive(true);
+                    }
                 }
                 else
                 {
                     // Disable the game object
                     if (this.m_Content != null)
+                    {
                         this.m_Content.gameObject.SetActive(false);
+                    }
                 }
             }
 
@@ -303,7 +299,9 @@ namespace DuloGames.UI
         {
             // Make sure the scene is active and enabled
             if (!this.isActiveAndEnabled || !this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             // If it's prefab
             if (this.m_Type == Type.Prefab || this.m_Type == Type.Resource)
@@ -339,7 +337,7 @@ namespace DuloGames.UI
                 {
                     // Instantiate the prefab
                     GameObject obj = Instantiate<GameObject>(prefab);
-                    
+
                     // Set the content variable
                     this.m_Content = obj.transform;
 
@@ -442,7 +440,9 @@ namespace DuloGames.UI
         {
             // Make sure the scene is active and enabled
             if (!this.isActiveAndEnabled || !this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             if (this.m_SceneManager != null)
             {
@@ -468,10 +468,14 @@ namespace DuloGames.UI
         {
             // Make sure the scene is active and enabled
             if (!this.isActiveAndEnabled || !this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
             // If no transition is used
             if (transition == Transition.None)
@@ -515,31 +519,31 @@ namespace DuloGames.UI
                     this.m_CanvasGroup.alpha = 0f;
                     floatTween.startFloat = 0f;
                     floatTween.targetFloat = 1f;
-                    floatTween.AddOnChangedCallback(SetCanvasAlpha);
+                    floatTween.AddOnChangedCallback(this.SetCanvasAlpha);
                     break;
                 case Transition.SlideFromRight:
                     this.rectTransform.anchoredPosition = new Vector2(rectSize.x, 0f);
                     floatTween.startFloat = rectSize.x;
                     floatTween.targetFloat = 0f;
-                    floatTween.AddOnChangedCallback(SetPositionX);
+                    floatTween.AddOnChangedCallback(this.SetPositionX);
                     break;
                 case Transition.SlideFromLeft:
                     this.rectTransform.anchoredPosition = new Vector2((rectSize.x * -1f), 0f);
                     floatTween.startFloat = (rectSize.x * -1f);
                     floatTween.targetFloat = 0f;
-                    floatTween.AddOnChangedCallback(SetPositionX);
+                    floatTween.AddOnChangedCallback(this.SetPositionX);
                     break;
                 case Transition.SlideFromBottom:
                     this.rectTransform.anchoredPosition = new Vector2(0f, (rectSize.y * -1f));
                     floatTween.startFloat = (rectSize.y * -1f);
                     floatTween.targetFloat = 0f;
-                    floatTween.AddOnChangedCallback(SetPositionY);
+                    floatTween.AddOnChangedCallback(this.SetPositionY);
                     break;
                 case Transition.SlideFromTop:
                     this.rectTransform.anchoredPosition = new Vector2(0f, rectSize.y);
                     floatTween.startFloat = rectSize.y;
                     floatTween.targetFloat = 0f;
-                    floatTween.AddOnChangedCallback(SetPositionY);
+                    floatTween.AddOnChangedCallback(this.SetPositionY);
                     break;
             }
 
@@ -547,7 +551,7 @@ namespace DuloGames.UI
             this.Activate();
 
             // Start the transition
-            floatTween.AddOnFinishCallback(OnTransitionIn);
+            floatTween.AddOnFinishCallback(this.OnTransitionIn);
             floatTween.ignoreTimeScale = true;
             floatTween.easing = easing;
             this.m_FloatTweenRunner.StartTween(floatTween);
@@ -571,10 +575,14 @@ namespace DuloGames.UI
         {
             // Make sure the scene is active and enabled
             if (!this.isActiveAndEnabled || !this.gameObject.activeInHierarchy)
+            {
                 return;
+            }
 
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
             // If no transition is used
             if (transition == Transition.None)
@@ -582,7 +590,7 @@ namespace DuloGames.UI
                 this.Deactivate();
                 return;
             }
-            
+
             // If the transition is animation
             if (transition == Transition.Animation)
             {
@@ -619,36 +627,36 @@ namespace DuloGames.UI
                     // Start the tween
                     floatTween.startFloat = this.m_CanvasGroup.alpha;
                     floatTween.targetFloat = 0f;
-                    floatTween.AddOnChangedCallback(SetCanvasAlpha);
+                    floatTween.AddOnChangedCallback(this.SetCanvasAlpha);
                     break;
                 case Transition.SlideFromRight:
                     // Start the tween
                     floatTween.startFloat = 0f;
                     floatTween.targetFloat = (rectSize.x * -1f);
-                    floatTween.AddOnChangedCallback(SetPositionX);
+                    floatTween.AddOnChangedCallback(this.SetPositionX);
                     break;
                 case Transition.SlideFromLeft:
                     // Start the tween
                     floatTween.startFloat = 0f;
                     floatTween.targetFloat = rectSize.x;
-                    floatTween.AddOnChangedCallback(SetPositionX);
+                    floatTween.AddOnChangedCallback(this.SetPositionX);
                     break;
                 case Transition.SlideFromBottom:
                     // Start the tween
                     floatTween.startFloat = 0f;
                     floatTween.targetFloat = rectSize.y;
-                    floatTween.AddOnChangedCallback(SetPositionY);
+                    floatTween.AddOnChangedCallback(this.SetPositionY);
                     break;
                 case Transition.SlideFromTop:
                     // Start the tween
                     floatTween.startFloat = 0f;
                     floatTween.targetFloat = (rectSize.y * -1f);
-                    floatTween.AddOnChangedCallback(SetPositionY);
+                    floatTween.AddOnChangedCallback(this.SetPositionY);
                     break;
             }
 
             // Start the transition
-            floatTween.AddOnFinishCallback(OnTransitionOut);
+            floatTween.AddOnFinishCallback(this.OnTransitionOut);
             floatTween.ignoreTimeScale = true;
             floatTween.easing = easing;
             this.m_FloatTweenRunner.StartTween(floatTween);
@@ -665,11 +673,13 @@ namespace DuloGames.UI
 		public void StartAlphaTween(float targetAlpha, float duration, TweenEasing easing, bool ignoreTimeScale, UnityAction callback)
         {
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
             // Start the tween
-            var floatTween = new FloatTween { duration = duration, startFloat = this.m_CanvasGroup.alpha, targetFloat = targetAlpha };
-            floatTween.AddOnChangedCallback(SetCanvasAlpha);
+            FloatTween floatTween = new FloatTween { duration = duration, startFloat = this.m_CanvasGroup.alpha, targetFloat = targetAlpha };
+            floatTween.AddOnChangedCallback(this.SetCanvasAlpha);
             floatTween.AddOnFinishCallback(callback);
             floatTween.ignoreTimeScale = ignoreTimeScale;
             floatTween.easing = easing;
@@ -683,7 +693,9 @@ namespace DuloGames.UI
 		public void SetCanvasAlpha(float alpha)
         {
             if (this.m_CanvasGroup == null)
+            {
                 return;
+            }
 
             // Set the alpha
             this.m_CanvasGroup.alpha = alpha;
@@ -717,7 +729,9 @@ namespace DuloGames.UI
             Animator animator = this.gameObject.GetComponent<Animator>();
 
             if (animator == null || !animator.enabled || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null || !animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
+            {
                 return;
+            }
 
             animator.ResetTrigger(this.m_AnimateInTrigger);
             animator.ResetTrigger(this.m_AnimateOutTrigger);
