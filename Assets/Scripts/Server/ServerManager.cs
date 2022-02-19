@@ -236,6 +236,16 @@ namespace Irehon
 
             con.authenticationData = data;
 
+            www = Api.Request($"/whitelist/{data.steamId}");
+            await www.SendWebRequest();
+            if (Api.GetResult(www) == null)
+            {
+                Log(data.steamId, $"Disconnect error: not in whitelist");
+                SendMessage(con, "You are not in whitelist", MessageType.Notification);
+                WaitBeforeDisconnect(con);
+                return;
+            }
+
             PlayerPlayRequest(con, data.character);
         }
 

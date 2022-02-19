@@ -8,7 +8,7 @@ namespace Irehon.CloudAPI
     public enum ApiMethod { GET, POST, PUT, DELETE };
     public static class Api
     {
-        private const string API_KEY_COOKIE = "AUTH=#i#Li`f2D[W?{$pSL`@4=gvy?1[?gLOyMOUc*TpPdIPHBUJKPUIPYFG&FUGI(FHFG&*FGUIF&IGFYU&FIGUYILFUZYKZhj`#%@D^CQ<aR@XwJM";
+        private const string API_KEY_COOKIE = "AUTH=B!A@SF#AD#F&DAB&VFA&DAHDFODGJIOOOFGDKOHUIHYQEBNVVCIO#3414ODKB4451PPIGP88519876j15hiUJ";
 
 
         public static UnityWebRequest Request(string request, ApiMethod method = ApiMethod.GET)
