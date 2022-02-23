@@ -114,7 +114,7 @@ namespace Irehon
 
             if (data.authInfo.registerInfo.fraction != Fraction.None)
             {
-                var www = Api.Request($"/users/{data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
+                var www = Api.Request($"/users/{data.steamId}?fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
 
                 await www.SendWebRequest();
 
