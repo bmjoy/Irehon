@@ -25,7 +25,17 @@ public class PlayerIdleState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
-        if (input.IsKeyPressed(KeyCode.Space))
+        if (input.IsKeyPressed(KeyCode.Mouse1))
+        {
+            return PlayerStateType.Block;
+        }
+
+        if (isServer)
+        {
+            this.abilitySystem.SendAbilityKeyStatus(input.IsKeyPressed(this.abilitySystem.ListeningKey), input.TargetPoint);
+        }
+
+        if (input.IsKeyPressed(KeyCode.Space) && player.staminaPoints > PlayerJumpingState.JumpCost)
         {
             return PlayerStateType.Jump;
         }
@@ -37,7 +47,7 @@ public class PlayerIdleState : PlayerRotatableState
 
         if (input.GetMoveVector() != Vector2.zero)
         {
-            if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0)
+            if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0 && player.staminaPoints > PlayerRunState.MinimalStamina)
             {
                 return PlayerStateType.Run;
             }

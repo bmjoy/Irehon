@@ -8,12 +8,5 @@ public class TargetDummy : Entity
     {
         this.animator = this.GetComponent<Animator>();
         base.Start();
-
-        takeDamageProcessQuerry.Add(DamageMessageNuller);
-    }
-
-    private void DamageMessageNuller(ref DamageMessage message)
-    {
-        message.damage = 0;
     }
 }

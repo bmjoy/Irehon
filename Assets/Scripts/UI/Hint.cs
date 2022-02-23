@@ -32,14 +32,14 @@ namespace Irehon.UI
 
         public void ShowHint(string header, string content)
         {
-            this.interactableHint.SetActive(true);
+            this.interactableHint?.SetActive(true);
             this.header.text = header;
             this.content.text = content;
         }
 
         public void HideHint()
         {
-            this.interactableHint.SetActive(false);
+            this.interactableHint?.SetActive(false);
         }
 
         private void ChangeCursorHintStatus(bool isCursorEnabled)

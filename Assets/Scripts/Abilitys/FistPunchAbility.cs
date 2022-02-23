@@ -30,6 +30,11 @@ namespace Irehon.Abilitys
         }
         protected override void Ability(Vector3 target)
         {
+            if (abilitySystem.player.staminaPoints < Weapon.GetStaminaCost(weapon.GetType()))
+            {
+                return;
+            }
+            abilitySystem.player.staminaPoints -= Weapon.GetStaminaCost(weapon.GetType());
             this.abilitySystem.animator.SetTrigger("Skill1");
             this.leftHandCollider.StartCollectColliders();
             this.AbilityStart();
