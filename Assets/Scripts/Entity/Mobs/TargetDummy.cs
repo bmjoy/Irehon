@@ -9,19 +9,13 @@ public class TargetDummy : Entity
         this.animator = this.GetComponent<Animator>();
         base.Start();
 
-        takeDamageProcessQuerry.Add(DamageMessageNuller);
+        SetMaxHealth(0, 0);
+
+        HealthChanged += SetMaxHealth;
     }
 
-    private void DamageMessageNuller(ref DamageMessage message)
+    private void SetMaxHealth(int old, int current)
     {
-        message.damage = 0;
-    }
-
-    public override void TakeDamage(DamageMessage damageMessage)
-    {
-        Debug.LogError("Ne nastroen!!");
-        //animator.SetTrigger("GotDamage");
-        //if (damageMessage.source != null)
-        //    damageMessage.source.OnDoDamageEvent.Invoke(damageMessage.damage);
+        health = 10000;
     }
 }
