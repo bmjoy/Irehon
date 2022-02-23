@@ -86,7 +86,7 @@ namespace Irehon
         {
             if (serverId == 0)
                 return;
-            var www = Api.Request($"/servers/?id={serverId}&online={connections.Count}", ApiMethod.PUT);
+            var www = Api.Request($"/servers/{serverId}?quantity={connections.Count}", ApiMethod.PUT);
             await www.SendWebRequest();
         }
 
@@ -114,7 +114,7 @@ namespace Irehon
 
             if (data.authInfo.registerInfo.fraction != Fraction.None)
             {
-                var www = Api.Request($"/characters/?steam_id={data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
+                var www = Api.Request($"/users/{data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
 
                 await www.SendWebRequest();
 
@@ -143,13 +143,21 @@ namespace Irehon
                 return;
             }
 
+            var www = Api.Request($"/balancer/{characterInfo.steamId}");
+
+            await www.SendWebRequest();
+
+            var result = Api.GetResult(www);
+
+            int avaliableServerId = result == null ? 0 : result["id"].AsInt;
+
 #if !UNITY_EDITOR
-            if (characterInfo.serverId != serverId)
+            if (avaliableServerId != serverId)
 #else
             if (characterInfo.location != SceneManager.GetActiveScene().name)
 #endif
             {
-                if (characterInfo.serverId == 0)
+                if (avaliableServerId == 0)
                 {
                     Log(data.steamId, $"Not founded server for {characterInfo.location} location");
                     SendMessage(con, "Server unavalible", MessageType.Notification);
@@ -157,11 +165,11 @@ namespace Irehon
                     return;
                 }
 
-                var www = Api.Request($"/servers/{characterInfo.serverId}");
+                www = Api.Request($"/servers/{avaliableServerId}");
 
                 await www.SendWebRequest();
 
-                var result = Api.GetResult(www);
+                result = Api.GetResult(www);
 
                 Log(data.steamId, $"Redirected to {result["ip"].Value}:{result["port"].Value}");
 
@@ -232,6 +240,12 @@ namespace Irehon
                 await www.SendWebRequest();
             }
 
+            
+
+            var wwwUpdate = Api.Request($"/session/{data.steamId}?status=1", ApiMethod.PUT);
+            await wwwUpdate.SendWebRequest();
+            Log(data.steamId, $"Setted online status");
+
             data.character = new CharacterInfo(Api.GetResult(www));
 
             con.authenticationData = data;
@@ -275,11 +289,13 @@ namespace Irehon
 
         private async Task UpdateCharacter(CharacterInfo info, Transform player)
         {
+            var wwwUpdate = Api.Request($"/session/{info.steamId}?status=0", ApiMethod.PUT);
+            await wwwUpdate.SendWebRequest();
+            Log(info.steamId, $"Setted offline status");
+
             if (player == null)
             {
-                var wwwUpdate = Api.Request($"/users/{info.steamId}", ApiMethod.PUT);
-                Log(info.steamId, $"Disconnected without character, setted to offline on DB");
-                await wwwUpdate.SendWebRequest();
+                Log(info.steamId, $"Disconnected without spawned character");
                 return;
             }
 
@@ -294,18 +310,21 @@ namespace Irehon
                 pos = player.transform.position;
             }
 
-            var www = Api.Request($"/characters/{info.steamId}?" +
-                $"p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&" +
+            var www = Api.Request($"/users/{info.steamId}?" +
+                //$"p_x={pos.x}&p_y={pos.y}&p_z={pos.z}&" +
                 $"location={info.location}&" +
                 $"health={(info.health > 0 ? info.health : 1000)}&" +
                 $"personal_chests={PersonalChestInfo.ToJson(info.personalChests)}", ApiMethod.PUT);
             await www.SendWebRequest();
 
             Log(info.steamId, $"Setted disconnect position to {info.location} {pos}");
+            www = Api.Request($"/positions/{info.steamId}?" +
+                $"x={pos.x}&y={pos.y}&z={pos.z}");
+            await www.SendWebRequest();
 
             if (info.isSpawnPointChanged)
             {
-                www = Api.Request($"/users/{info.steamId}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
+                www = Api.Request($"/spawnpositions/{info.steamId}?x={info.spawnPoint.x}&y={info.spawnPoint.y}&z={info.spawnPoint.z}&location={info.spawnSceneName}", ApiMethod.PUT);
                 await www.SendWebRequest();
                 Log(info.steamId, $"Changed spawn point to {info.spawnSceneName} {info.spawnPoint}");
             }
