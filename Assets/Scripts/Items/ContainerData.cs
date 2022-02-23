@@ -3,6 +3,7 @@ using Irehon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class PairValue<T, A>
 {
@@ -24,21 +25,13 @@ public static class ContainerData
     {
         if (!LoadedContainers.ContainsKey(id))
             return;
-        string sqlCommand = $"UPDATE containers SET slots = '{LoadedContainers[id].ToJson()}' WHERE id = '{id}';";
-
-        await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
+        
+        var www = Api.Request($"/container/{id}", ApiMethod.PUT, LoadedContainers[id].ToJson().ToString());
+        await www.SendWebRequest();
     }
-
-    public static async Task UpdateCloudContainer(Container container, int id)
-    {
-        string sqlCommand = $"UPDATE containers SET slots = '{container.ToJson()}' WHERE id = '{id}';";
-
-        await Api.SqlRequest($"/sql/?request={sqlCommand}").SendWebRequest();
-    }
-
     public static async Task<int> CreateCloudContainer(int quantity = 1)
     {
-        var www = Api.Request($"/containers/?quantity={quantity}", ApiMethod.POST);
+        var www = Api.Request($"/container?quantity={quantity}", ApiMethod.POST);
         await www.SendWebRequest();
         return Api.GetResult(www)["id"].AsInt;
     }
@@ -49,7 +42,7 @@ public static class ContainerData
         if (LoadedContainers.ContainsKey(containerId))
             return;
 
-        var www = Api.Request($"/containers/{containerId}");
+        var www = Api.Request($"/container/{containerId}");
         await www.SendWebRequest();
         var result = Api.GetResult(www);
 
@@ -66,7 +59,7 @@ public static class ContainerData
             return;
         }
 
-        var www = Api.Request($"/containers/{containerId}");
+        var www = Api.Request($"/container/{containerId}");
         await www.SendWebRequest();
         var result = Api.GetResult(www);
 

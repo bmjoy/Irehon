@@ -23,7 +23,7 @@ namespace Irehon.Interactable
             {
                 personalChest = new PersonalChestInfo(this.chestName);
 
-                var www = Api.Request($"/containers/?quantity={this.containerCapacity}", ApiMethod.POST);
+                var www = Api.Request($"/container?quantity={this.containerCapacity}", ApiMethod.POST);
                 await www.SendWebRequest();
 
                 personalChest.ContainerId = Api.GetResult(www)["id"].AsInt;
