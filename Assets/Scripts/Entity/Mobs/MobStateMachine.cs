@@ -26,7 +26,6 @@ public class MobStateMachine : MonoBehaviour
         }
 
         MobState newState = this.currentState?.Update(this.currentTimeInState);
-        Debug.Log(nameof(newState));
         if (newState != this.currentState)
         {
             this.SetNewState(newState);

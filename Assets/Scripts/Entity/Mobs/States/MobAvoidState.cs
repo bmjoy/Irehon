@@ -19,12 +19,11 @@ class MobAvoidState : MobState
     public override bool CanAgro { get => false; }
     public override void Enter()
     {
-        Debug.Log("Enter avoid state");
         this.mob.ResetAgro();
         this.mob.takeDamageProcessQuerry.Add(TakeZeroDamage);
         this.mobMovement.SetSpeed(this.mobMovement.RunSpeed);
-        this.mobMovement.SetDestination(this.mob.startPosition);
         this.mob.GetComponent<Animator>().SetBool("isRunning", true);
+        this.mobMovement.SetDestination(this.mob.startPosition);
     }
 
     public override void Exit()

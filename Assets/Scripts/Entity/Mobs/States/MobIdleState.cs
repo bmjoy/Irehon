@@ -9,7 +9,6 @@ public class MobIdleState : MobState
     private float wanderTimer;
     public override void Enter()
     {
-        Debug.Log("Enter idle state");
     }
 
     public override void Exit()
