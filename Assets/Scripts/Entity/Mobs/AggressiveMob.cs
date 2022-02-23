@@ -55,9 +55,6 @@ public class AggressiveMob : Mob
         if (!entity.isAlive || !stateMachine.CurrentState.CanAgro)
             return;
 
-        Debug.Log("Agro");
-
-
         this.target = entity;
         this.OnAgroEvent.Invoke(entity);
     }

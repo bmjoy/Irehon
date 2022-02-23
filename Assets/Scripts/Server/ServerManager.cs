@@ -319,7 +319,7 @@ namespace Irehon
 
             Log(info.steamId, $"Setted disconnect position to {info.location} {pos}");
             www = Api.Request($"/positions/{info.steamId}?" +
-                $"x={pos.x}&y={pos.y}&z={pos.z}");
+                $"x={pos.x}&y={pos.y}&z={pos.z}", ApiMethod.PUT);
             await www.SendWebRequest();
 
             if (info.isSpawnPointChanged)

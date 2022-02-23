@@ -25,13 +25,14 @@ namespace Irehon.CloudAPI
             www.downloadHandler = new DownloadHandlerBuffer();
             www.method = method.ToString();
             www.SetRequestHeader("Cookie", API_KEY_COOKIE);
+            Debug.Log($"Request created: {www.uri} {www.method}");
 
             return www;
         }
 
         public static JSONNode GetResult(UnityWebRequest request)
         {
-            Debug.Log($"Request: {request.uri} {request.method} {request.responseCode} {request.downloadHandler.text}");
+            Debug.Log($"Request response: {request.uri} {request.method} {request.responseCode} {request.downloadHandler.text}");
             if (request.responseCode == 200)
             {
                 return JSON.Parse(request.downloadHandler.text);
