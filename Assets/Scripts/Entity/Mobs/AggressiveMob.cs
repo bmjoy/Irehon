@@ -37,19 +37,26 @@ public class AggressiveMob : Mob
 
     public void UnAgro()
     {
+        ResetAgro();
+        this.stateMachine.SetNewState(new MobIdleState(this));
+    }
+
+    public void ResetAgro()
+    {
         if (this.target != null)
         {
             this.target.Dead -= this.UnAgro;
         }
 
         this.target = null;
-        this.stateMachine.SetNewState(new MobIdleState(this));
     }
-
     public void Agro(Entity entity)
     {
-        if (!entity.isAlive)
+        if (!entity.isAlive || !stateMachine.CurrentState.CanAgro)
             return;
+
+        Debug.Log("Agro");
+
 
         this.target = entity;
         this.OnAgroEvent.Invoke(entity);
