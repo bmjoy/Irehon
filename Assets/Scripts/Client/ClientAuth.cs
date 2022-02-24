@@ -9,10 +9,15 @@ namespace Irehon.Client
 {
     public class ClientAuth : NetworkAuthenticator
     {
+        public static bool isShouldAutoLoad = false;
         private AuthInfo currentRequest = new AuthInfo();
         private void Start()
         {
-
+            if (isShouldAutoLoad)
+            {
+                PlayButton();
+                isShouldAutoLoad = false;
+            }
         }
         public override void OnClientAuthenticate()
         {
@@ -52,6 +57,7 @@ namespace Irehon.Client
             try
             {
                 this.GetComponent<NetworkManager>().StartClient();
+                print("Started client");
             }
             catch (Exception exception)
             {
