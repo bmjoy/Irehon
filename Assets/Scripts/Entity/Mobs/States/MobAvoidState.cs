@@ -37,7 +37,6 @@ class MobAvoidState : MobState
     {
         if (Vector3.Distance(this.mob.transform.position, this.mob.startPosition) < 2)
         {
-            Debug.Log(Vector3.Distance(this.mob.transform.position, this.mob.startPosition));
             return new MobIdleState(this.mob);
         }
         return this;
