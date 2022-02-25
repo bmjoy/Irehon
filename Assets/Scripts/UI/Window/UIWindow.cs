@@ -29,6 +29,8 @@ public class UIWindow : SerializedMonoBehaviour
         this.windowObject = this.transform.GetChild(0).gameObject;
     }
 
+    public static void ResetWindowsCount() => updateWindowsCount = 0;
+
     public void Open()
     {
         if (!this.isEnabled)

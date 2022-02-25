@@ -6,7 +6,7 @@ public class MobStateMachine : MonoBehaviour
 {
     [HideInInspector]
     public UnityEvent OnChangeState = new UnityEvent();
-
+    public MobState CurrentState => currentState;
     private MobState currentState;
     private MobState previousState;
 

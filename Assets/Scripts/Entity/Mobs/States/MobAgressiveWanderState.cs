@@ -39,8 +39,8 @@ public class MobAgressiveWanderState : MobState
 
         if (Vector3.Distance(this.mob.transform.position, this.mob.startPosition) > this.mob.AvoidRadius)
         {
-            this.mob.SetDefaultState();
-            return new MobIdleState(this.mob);
+            //this.mob.SetDefaultState();
+            return new MobAvoidState(this.mob);
         }
         if (Vector3.Distance(this.mob.transform.position, this.mob.target.transform.position) < this.mob.RequiredAttackDistance)
         {

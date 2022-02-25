@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 7371440756481095402}
   - component: {fileID: 6953927287571778500}
   - component: {fileID: 1417326943}
+  - component: {fileID: 2399531740922576554}
   m_Layer: 10
   m_Name: AgressiveDeer
   m_TagString: EntityBase
@@ -36,7 +37,7 @@ Transform:
   m_GameObject: {fileID: 3919035401023001458}
   m_LocalRotation: {x: 0, y: -0.7057047, z: 0, w: 0.7085061}
   m_LocalPosition: {x: -2.52359, y: 3.2806396, z: 20.658691}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 4853755964241464820}
   - {fileID: 4853755964241464706}
@@ -181,16 +182,16 @@ MonoBehaviour:
       Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 0
+      Data: 100
     - Name: itemId
       Entry: 3
-      Data: 0
+      Data: 84
     - Name: minQuantity
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: maxQuantity
       Entry: 3
-      Data: 0
+      Data: 5
     - Name: 
       Entry: 8
       Data: 
@@ -199,16 +200,16 @@ MonoBehaviour:
       Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 0
+      Data: 80
     - Name: itemId
       Entry: 3
-      Data: 0
+      Data: 85
     - Name: minQuantity
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: maxQuantity
       Entry: 3
-      Data: 0
+      Data: 4
     - Name: 
       Entry: 8
       Data: 
@@ -217,16 +218,16 @@ MonoBehaviour:
       Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
     - Name: chancePercent
       Entry: 4
-      Data: 0
+      Data: 60
     - Name: itemId
       Entry: 3
-      Data: 0
+      Data: 86
     - Name: minQuantity
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: maxQuantity
       Entry: 3
-      Data: 0
+      Data: 4
     - Name: 
       Entry: 8
       Data: 
@@ -284,14 +285,12 @@ MonoBehaviour:
   fraction: 5
   FractionBehaviourData: {fileID: 11400000, guid: 3c095e742e7acf349ba5926d1f044aa4,
     type: 2}
-  respawnTime: 5
+  respawnTime: 60
   name: Aggressive deer
   maxHealth: 3000
   HitboxColliders: []
   lootContainerPrefab: {fileID: 7448840332664989012, guid: 47e50da0c2192584fa754d34fb4303c8,
     type: 3}
-  modelParts:
-  - {fileID: 4853755964255165664}
   target: {fileID: 0}
   UnagroRadius: 15
   AvoidRadius: 40
@@ -326,6 +325,25 @@ MonoBehaviour:
   OnAttackEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2399531740922576554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3919035401023001458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ea2bdb024a0324ba3cec80fb1d3d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepPool:
+  - {fileID: 8300000, guid: d63744ac716dc024ab0a92988f155bd8, type: 3}
+  - {fileID: 8300000, guid: 9a5d9c1d3b299ed47af0cb6ea1161739, type: 3}
+  - {fileID: 8300000, guid: e6b0f845eb79ed14ba41e8901c3d3d9a, type: 3}
+  - {fileID: 8300000, guid: 3cebdf00bb92d2147b0a5421f91ad19a, type: 3}
+  - {fileID: 8300000, guid: 19cd5520450b20d478101fd333538bb4, type: 3}
+  stepSource: {fileID: 340282454325449228}
 --- !u!1 &4853755964241498176
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,6 +1283,7 @@ GameObject:
   - component: {fileID: 4853755964241464712}
   - component: {fileID: 1241974074402480543}
   - component: {fileID: 6983917908475305744}
+  - component: {fileID: 340282454325449228}
   m_Layer: 0
   m_Name: Root_M
   m_TagString: Untagged
@@ -1318,6 +1337,102 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.118017, y: 2.6992507, z: 1.4301629}
   m_Center: {x: -1.0589881, y: 0.07798709, z: 0.08025022}
+--- !u!82 &340282454325449228
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4853755964241498536}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.05
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4853755964241498538
 GameObject:
   m_ObjectHideFlags: 0

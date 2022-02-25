@@ -45,4 +45,10 @@ public class Mob : LootableEntity
         this.GetComponent<NavMeshAgent>().Warp(this.startPosition);
         this.stateMachine.SetNewState(new MobIdleState(this));
     }
+
+    public void SetMaxHealth()
+    {
+        this.SetHealth(this.maxHealth);
+    }
+
 }
