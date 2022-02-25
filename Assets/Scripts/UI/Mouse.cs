@@ -13,6 +13,7 @@ namespace Irehon.UI
         private void Start()
         {
             DisableCursor();
+            UIWindow.ResetWindowsCount();
         }
 
         private void Update()

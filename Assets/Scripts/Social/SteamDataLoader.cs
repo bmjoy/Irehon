@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Irehon.Chat
+namespace Irehon.Steam
 {
     public static class SteamDataLoader
     {

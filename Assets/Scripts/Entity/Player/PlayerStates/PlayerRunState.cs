@@ -36,8 +36,9 @@ public class PlayerRunState : PlayerRotatableState
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
-        player.staminaPoints -= StaminaTickCost;
-        if (player.staminaPoints < 0)
+        if (isServer)
+            player.staminaPoints -= StaminaTickCost;
+        if ((!isServer && player.staminaPoints < 500) || player.staminaPoints < 0)
         {
             player.staminaPoints = 0;
             return PlayerStateType.Idle;

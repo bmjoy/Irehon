@@ -10,14 +10,23 @@ namespace Irehon.UI
         private Slider bar;
         [SerializeField]
         private Slider postBar;
+        [SerializeField]
+        private Text statusCount;
 
+        [SerializeField]
         private float reducingAmount = 0.7f;
+        [SerializeField]
         private float healthBarUpdateDelay = 0.5f;
         private Coroutine barCoroutine;
 
         public void SetBarValue(float value)
         {
             this.bar.value = value;
+
+            if (statusCount != null)
+            {
+                statusCount.text = $"{Mathf.FloorToInt(value * 100f)}%";
+            }
 
             float passedTime = 0f;
 

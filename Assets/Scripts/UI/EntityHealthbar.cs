@@ -17,7 +17,9 @@ namespace Irehon.UI
         [SerializeField]
         private Image healthBarPostFiller;
         [SerializeField]
-        private TextMeshPro nickname;
+        private Text nickname;
+        [SerializeField]
+        private Text healthPercentage;
         [SerializeField]
         private float reducingPostBarAmmount = 3f;
         [SerializeField]
@@ -108,6 +110,11 @@ namespace Irehon.UI
             float fill = 1.0f * health / maxHealth;
 
             this.healthBarFiller.fillAmount = fill;
+
+            if (healthPercentage != null)
+            {
+                healthPercentage.text = $"{Mathf.FloorToInt(fill * 100f)}%";
+            }
 
             float passedTime = 0f;
 

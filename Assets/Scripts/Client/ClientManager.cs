@@ -140,6 +140,7 @@ namespace Irehon.Client
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
+            print(newSceneName);
             if (SceneManager.GetActiveScene().name == "LoginScene")
             {
                 LoginSceneUI.HidePlayButton();

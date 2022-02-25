@@ -39,6 +39,7 @@ public class EquipmentSlotUI : InventorySlotUI
             }
 
             item = ItemDatabase.GetItemById(this.itemId);
+            itemTooltip.SetItem(item);
 
             return;
         }

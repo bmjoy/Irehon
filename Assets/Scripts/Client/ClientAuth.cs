@@ -11,6 +11,9 @@ namespace Irehon.Client
     {
         public static bool isShouldAutoLoad = false;
         private AuthInfo currentRequest = new AuthInfo();
+
+        public static RegisterInfo RegisterInfo = new RegisterInfo(Entitys.Fraction.None);
+
         private void Start()
         {
             if (isShouldAutoLoad)
@@ -28,9 +31,9 @@ namespace Irehon.Client
                 Id = SteamManager.GetSteamId(),
                 AuthData = SteamManager.GetAuthTicket().Data
             };
-            if (PlayerPrefs.GetString("Registration") != "")
+            if (RegisterInfo.fraction != Entitys.Fraction.None)
             {
-                this.currentRequest.registerInfo = new RegisterInfo(JSON.Parse(PlayerPrefs.GetString("Registration")));
+                this.currentRequest.registerInfo = RegisterInfo;
             }
             NetworkClient.Send(this.currentRequest);
         }

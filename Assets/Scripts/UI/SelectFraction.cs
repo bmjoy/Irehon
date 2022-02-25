@@ -47,9 +47,7 @@ public class SelectFraction : MonoBehaviour
             return;
 
         RegisterInfo info = new RegisterInfo(selectedFraction);
-        PlayerPrefs.SetString("Registration", info.ToJsonString());
-        Irehon.Client.ClientAuth.isShouldAutoLoad = true;
-        LoginSceneUI.HidePlayButton();
+        Irehon.Client.ClientAuth.RegisterInfo = info;
         UILoadingOverlayManager.Instance.Create().LoadSceneAsync(this.startSceneName);
     }
 }
