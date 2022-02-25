@@ -46,9 +46,4 @@ public class Mob : LootableEntity
         this.stateMachine.SetNewState(new MobIdleState(this));
     }
 
-    public void SetMaxHealth()
-    {
-        this.SetHealth(this.maxHealth);
-    }
-
 }

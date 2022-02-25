@@ -44,6 +44,9 @@ namespace Irehon.Client
             {
                 i = this;
             }
+#if !UNITY_EDITOR
+            networkAddress = "game.irehon.com";
+#endif
         }
 
         public override void Start()

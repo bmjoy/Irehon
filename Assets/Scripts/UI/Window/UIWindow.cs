@@ -45,7 +45,6 @@ public class UIWindow : SerializedMonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)this.windowObject.transform);
     }
 
-    public static void ResetWindowsCount() => openedWindowsCount = 0;
 
     public void Close()
     {
