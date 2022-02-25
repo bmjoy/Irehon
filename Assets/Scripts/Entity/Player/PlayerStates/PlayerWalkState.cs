@@ -33,7 +33,7 @@ public class PlayerWalkState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
-        if (input.IsKeyPressed(KeyCode.Mouse1))
+        if (input.IsKeyPressed(KeyCode.Mouse1) && this.abilitySystem.playerWeaponEquipment.GetWeapon().GetType() != WeaponType.Bow)
         {
             return PlayerStateType.Block;
         }
