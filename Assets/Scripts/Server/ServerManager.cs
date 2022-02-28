@@ -28,6 +28,8 @@ namespace Irehon
 
         public List<NetworkConnection> connections;
 
+        public bool isWhiteListEnabled = false;
+
         private int serverId;
         private ushort port;
 
@@ -250,14 +252,17 @@ namespace Irehon
 
             con.authenticationData = data;
 
-            www = Api.Request($"/whitelist/{data.steamId}");
-            await www.SendWebRequest();
-            if (Api.GetResult(www) == null)
+            if (isWhiteListEnabled)
             {
-                Log(data.steamId, $"Disconnect error: not in whitelist");
-                SendMessage(con, "You are not in whitelist", MessageType.Notification);
-                WaitBeforeDisconnect(con);
-                return;
+                www = Api.Request($"/whitelist/{data.steamId}");
+                await www.SendWebRequest();
+                if (Api.GetResult(www) == null)
+                {
+                    Log(data.steamId, $"Disconnect error: not in whitelist");
+                    SendMessage(con, "You are not in whitelist", MessageType.Notification);
+                    WaitBeforeDisconnect(con);
+                    return;
+                }
             }
 
             PlayerPlayRequest(con, data.character);
