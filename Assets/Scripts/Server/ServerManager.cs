@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using Irehon.Entitys;
 using Irehon;
 using Irehon.Steam;
+using System.Threading;
 
 namespace Irehon
 {
@@ -45,19 +46,31 @@ namespace Irehon
             }
         }
 
+        public async void ManuallyStopServer()
+        {
+            foreach (var con in Instance.connections.ToArray())
+            {
+                if (con != null)
+                    SendMessage(con, "We're sorry, the server was stopped by the administrator", MessageType.Notification);
+            }
+            await Task.Delay(200);
+            StopServer();
+        }
+
         public static void Log(SteamId id, string message) => Debug.Log($"{DateTime.Now} [{id}] {message}");
         public static void Log(string message) => Debug.Log($"{DateTime.Now} [server] {message}");
 
 
-        public static void WaitBeforeDisconnect(NetworkConnection con)
+        public static void DisconnectWithDelay(NetworkConnection con)
         {
             Debug.Log("Disconnecting");
-            IEnumerator WaitBeforeDisconnect()
-            {
-                yield return new WaitForSeconds(0.2f);
-                con.Disconnect();
-            }
-            Instance.StartCoroutine(WaitBeforeDisconnect());
+            Instance.StartCoroutine(WaitBeforeDisconnectCoroutine(con));
+        }
+        private static IEnumerator WaitBeforeDisconnectCoroutine(NetworkConnection con)
+        {
+            Debug.Log("Disconnecting");
+            yield return new WaitForSeconds(0.2f);
+            con.Disconnect();
         }
 
         private async void CreateServerInDB()
@@ -141,7 +154,7 @@ namespace Irehon
             {
                 Log(data.steamId, $"Disconnect error: already connected");
                 SendMessage(con, "Already connected to another server", MessageType.Notification);
-                WaitBeforeDisconnect(con);
+                DisconnectWithDelay(con);
                 return;
             }
 
@@ -163,7 +176,7 @@ namespace Irehon
                 {
                     Log(data.steamId, $"Not founded server for {characterInfo.location} location");
                     SendMessage(con, "Server unavalible", MessageType.Notification);
-                    WaitBeforeDisconnect(con);
+                    DisconnectWithDelay(con);
                     return;
                 }
 
@@ -176,7 +189,7 @@ namespace Irehon
                 Log(data.steamId, $"Redirected to {result["ip"].Value}:{result["port"].Value}");
 
                 SendMessage(con, $"{result["ip"].Value}:{result["port"].Value}", MessageType.ServerRedirect);
-                WaitBeforeDisconnect(con);
+                DisconnectWithDelay(con);
                 return;
             }
 
@@ -233,7 +246,7 @@ namespace Irehon
                 bool isCreated = await PlayerCharacterCreateRequest(con);
                 if (!isCreated)
                 {
-                    WaitBeforeDisconnect(con);
+                    DisconnectWithDelay(con);
                     return;
                 }
 
@@ -260,7 +273,7 @@ namespace Irehon
                 {
                     Log(data.steamId, $"Disconnect error: not in whitelist");
                     SendMessage(con, "You are not in whitelist", MessageType.Notification);
-                    WaitBeforeDisconnect(con);
+                    DisconnectWithDelay(con);
                     return;
                 }
             }
