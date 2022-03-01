@@ -35,7 +35,7 @@ class MobAvoidState : MobState
 
     public override MobState Update(float timeInState)
     {
-        if (Vector3.Distance(this.mob.transform.position, this.mob.startPosition) < 10)
+        if (Vector3.Distance(this.mob.transform.position, this.mob.startPosition) < 3)
         {
             return new MobIdleState(this.mob);
         }
