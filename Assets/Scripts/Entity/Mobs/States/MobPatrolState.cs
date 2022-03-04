@@ -10,7 +10,6 @@ public class MobPatrolState : MobState
 
 	protected new AgressivePatrolMob mob;
 	protected MobMovement mobMovement;
-	private bool reachTheEnd;
 
 	public override void Enter()
 	{
@@ -29,7 +28,6 @@ public class MobPatrolState : MobState
 	{
 		if (mob.countOfMoves >= mob.pointsToMove.Length - 1)
 		{
-			Debug.Log(Vector3.Distance(this.mob.transform.position, mob.startPosition));
 			if(Vector3.Distance(this.mob.transform.position, mob.pointsToMove[mob.countOfMoves]) < 1)
 			{
 				mob.countOfMoves = 0;
@@ -42,8 +40,7 @@ public class MobPatrolState : MobState
 
 	public override MobState Update(float timeInState)
 	{
-		Debug.Log(mob.countOfMoves);
-		if (Vector3.Distance(this.mob.transform.position, mob.pointsToMove[mob.countOfMoves]) < 3 && (mob.countOfMoves < mob.pointsToMove.Length - 1))
+		if (Vector3.Distance(this.mob.transform.position, mob.pointsToMove[mob.countOfMoves]) < 1 && (mob.countOfMoves < mob.pointsToMove.Length - 1))
 		{
 			mob.countOfMoves++;
 			this.mobMovement.SetDestination(mob.pointsToMove[mob.countOfMoves]);

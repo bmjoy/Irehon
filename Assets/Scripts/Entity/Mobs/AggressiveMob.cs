@@ -35,7 +35,7 @@ public class AggressiveMob : Mob
         }
     }
 
-    public void UnAgro()
+    public virtual void UnAgro()
     {
         ResetAgro();
         this.stateMachine.SetNewState(new MobIdleState(this));
