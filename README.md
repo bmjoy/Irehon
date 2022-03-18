@@ -36,8 +36,6 @@ We have decided to publish the source code of our work
 
 - [👤 **Alexandr Pikhenko**](https://github.com/sjacki)
 
-- Github: [@lex-cmd](https://github.com/lex-cmd) 
-
 
 ## 🚀Installation on dedicated server
 
