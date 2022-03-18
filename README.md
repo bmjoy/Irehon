@@ -12,6 +12,7 @@
     - [Docker image](#docker-image)
     - [Run multiple docker images of server](#run-multiple-docker-images-of-server)
 - [Install client](#install-client)
+- [Task list](#code-task-list)
 
 ## 📙Game description
 
