@@ -2,7 +2,16 @@
 
 #### This is a repository with source code of Irehon server and client both
 
-- [🎮 Irehon on steam](https://store.steampowered.com/app/1759510)
+### [🎮 Irehon on steam](https://store.steampowered.com/app/1759510)
+
+---
+- [Game description](#game-description)
+- [Project status](#project-status)
+- [Credits](#credits)
+- [Installation on dedicated server](#installation-on-dedicated-server)
+    - [Docker image](#docker-image)
+    - [Run multiple docker images of server](#run-multiple-docker-images-of-server)
+- [Install client](#install-client)
 
 ## 📙Game description
 
