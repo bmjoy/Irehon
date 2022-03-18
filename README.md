@@ -36,6 +36,8 @@ We have decided to publish the source code of our work
 
 - [👤 **Alexandr Pikhenko**](https://github.com/sjacki)
 
+- [👤 **Alexander Karikh**](https://github.com/lex-cmd)
+
 
 ## 🚀Installation on dedicated server
 
@@ -152,3 +154,17 @@ Switch to `client` branch
 git checkout client
 ```
 Build on platform that you need
+
+## Code task-list
+
+- ✅ Entity-Player system
+- ✅ Ability system
+- ✅ Saving progress via api
+- ✅ Inventory system
+- ✅ Armor system
+- ✅ Craft system
+- ✅ Mobs, Resources, Map
+- ✅ Stamina, Block system
+- ⬜ Quests
+- ⬜ Vendor, gold system
+- ⬜ Achievements, statistics
