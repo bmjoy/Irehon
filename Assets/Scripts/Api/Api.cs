@@ -13,7 +13,7 @@ namespace Irehon.CloudAPI
 
         public static UnityWebRequest Request(string request, ApiMethod method = ApiMethod.GET)
         {
-            string uri = "https://api.irehon.com/api" + request;
+            string uri = "http://51.250.71.234" + request;
             var www = new UnityWebRequest(uri);
             www.downloadHandler = new DownloadHandlerBuffer();
             www.method = method.ToString();
@@ -24,7 +24,7 @@ namespace Irehon.CloudAPI
 
         public static UnityWebRequest SqlRequest(string request, ApiMethod method = ApiMethod.GET)
         {
-            string uri = "https://api.irehon.com" + request;
+            string uri = "http://51.250.71.234" + request;
             var www = new UnityWebRequest(uri);
             www.downloadHandler = new DownloadHandlerBuffer();
             www.method = method.ToString();

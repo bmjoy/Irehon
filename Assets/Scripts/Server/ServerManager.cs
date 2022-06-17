@@ -67,7 +67,7 @@ namespace Irehon
             networkAddress = externalIpAddres;
             port = (transport as TelepathyTransport).port;
 
-            www = Api.Request($"/servers/?ip={externalIpAddres}" +
+            www = Api.Request($"/servers?ip={externalIpAddres}" +
                 $"&port={(transport as TelepathyTransport).port}" +
                 $"&location={SceneManager.GetActiveScene().name}", ApiMethod.POST);
             await www.SendWebRequest();
@@ -214,7 +214,7 @@ namespace Irehon
 
             Log(data.steamId, $"Connected from {con.address}");
 
-            var www = Api.Request($"/characters/{data.steamId}");
+            var www = Api.Request($"/users/{data.steamId}");
 
             await www.SendWebRequest();
 
@@ -227,7 +227,7 @@ namespace Irehon
                     return;
                 }
 
-                www = Api.Request($"/characters/{data.steamId}");
+                www = Api.Request($"/users/{data.steamId}");
 
                 await www.SendWebRequest();
             }
@@ -277,7 +277,7 @@ namespace Irehon
         {
             if (player == null)
             {
-                var wwwUpdate = Api.Request($"/characters/{info.steamId}", ApiMethod.PUT);
+                var wwwUpdate = Api.Request($"/users/{info.steamId}", ApiMethod.PUT);
                 Log(info.steamId, $"Disconnected without character, setted to offline on DB");
                 await wwwUpdate.SendWebRequest();
                 return;
@@ -305,7 +305,7 @@ namespace Irehon
 
             if (info.isSpawnPointChanged)
             {
-                www = Api.Request($"/characters/{info.steamId}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
+                www = Api.Request($"/users/{info.steamId}?sp_x={info.spawnPoint.x}&sp_y={info.spawnPoint.y}&p_z={info.spawnPoint.z}&sp_location={info.spawnSceneName}", ApiMethod.PUT);
                 await www.SendWebRequest();
                 Log(info.steamId, $"Changed spawn point to {info.spawnSceneName} {info.spawnPoint}");
             }
