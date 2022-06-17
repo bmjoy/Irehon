@@ -56,6 +56,14 @@ public class ServerBuild : Editor
         popUp.ShowPopup();
     }
 
+    [MenuItem("Build/Build mac client")]
+    static void BuildMac()
+    {
+        var popUp = CreateInstance<BuildVersionPopUp>();
+        popUp.SetButtonAction(BuildClientZones);
+        popUp.ShowPopup();
+    }
+
     static bool BuildServerZone(string zone)
     {
         string[] scenes = { $"Assets/Scenes/{zone}.unity" };

@@ -25,51 +25,6 @@ namespace Irehon.Steam
             DontDestroyOnLoad(this.gameObject);
         }
 
-        public static void StartServer()
-        {
-            if (i.isIntialized)
-            {
-                return;
-            }
-
-            try
-            {
-                int port = int.Parse(Environment.GetEnvironmentVariable("SERVERPORT"));
-                SteamServerInit init = new SteamServerInit()
-                {
-                    IpAddress = System.Net.IPAddress.Any,
-                    Secure = true,
-                    DedicatedServer = true,
-                    GameDescription = "a",
-                    GamePort = (ushort)(port + 1),
-                    QueryPort = (ushort)(port + 2),
-                    SteamPort = (ushort)(port + 3),
-                    ModDir = "DedicatedTest",
-                    VersionString = "1.0.0.0"
-                };
-                init.WithRandomSteamPort();
-
-                i.isServer = true;
-                i.isIntialized = true;
-                SteamServer.OnSteamServerConnectFailure += (x, y) => Debug.Log($"Connection failed {x} {y}"); ;
-                SteamServer.OnSteamServersDisconnected += x => Debug.Log($"Steam server disconnected {x}");
-                SteamServer.OnSteamServersConnected += () => Debug.Log("Steam server connected");
-
-                SteamServer.Init(1007, init, true);
-
-                if (!SteamServer.LoggedOn)
-                {
-                    SteamServer.LogOnAnonymous();
-                }
-
-                Debug.Log("Steam server intaialized");
-            }
-            catch (Exception exception)
-            {
-                Debug.Log("Can't intialize steam client " + exception.ToString());
-            }
-        }
-
         public static bool StartClient()
         {
             if (i.isIntialized)
@@ -77,7 +32,7 @@ namespace Irehon.Steam
                 return true;
             }
 
-            SteamClient.Init(1007, true);
+            SteamClient.Init(1759510, true);
             i.isServer = false;
             i.isIntialized = true;
 
