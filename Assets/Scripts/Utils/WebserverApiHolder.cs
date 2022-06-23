@@ -11,33 +11,41 @@ using EmbedIO.WebApi;
 using System.Diagnostics;
 using SimpleJSON;
 using Irehon.Client;
+using Irehon.Utils;
+using UnityEngine.Networking;
+using Debug = UnityEngine.Debug;
 
 namespace Irehon
 {
     public class WebserverApiHolder : MonoBehaviour
     {
-        private static string url = "http://localhost:8283/";
+        private static readonly string urlPostfix = ":8283/";
+        private static readonly string urlPrefix = "http://";
 
-        private WebServer server = CreateWebServer();
+        private WebServer server;
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
         /// <param name="args">The arguments.</param>
-        private void StartServerApi()
+        private void StartServerApi(string url)
         {
+            server = CreateWebServer(url);
             server.RunAsync();
+            Debug.Log("API Server started on" + url);
         }
 
         // Create and configure our web server.
-        private static WebServer CreateWebServer()
+        private static WebServer CreateWebServer(string url)
         {
             var webserver = new WebServer(o => o
                     .WithUrlPrefix(url)
+                    .WithUrlPrefix(urlPrefix + "localhost" + urlPostfix)
                     .WithMode(HttpListenerMode.EmbedIO))
                     .WithLocalSessionManager()
                         .WithWebApi("/", m => m
                         .WithController<PlayerApiController>()
                         .WithController<ServerApiController>());
+            
 
             // Listen for state changes.
 
@@ -49,9 +57,14 @@ namespace Irehon
         }
 
         // Start is called before the first frame update
-        void Start()
+        async void Start()
         {
-            StartServerApi();
+            UnityWebRequest www = UnityWebRequest.Get("ifconfig.me/all.json");
+            await www.SendWebRequest();
+            JSONNode response = JSON.Parse(www.downloadHandler.text);
+            
+            string ip = response["ip_addr"].Value;
+            StartServerApi(urlPrefix + ip + urlPostfix);
         }
     }
 
