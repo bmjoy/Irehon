@@ -32,7 +32,7 @@ namespace Irehon.Steam
                 return true;
             }
 
-            SteamClient.Init(1759510, true);
+            SteamClient.Init(1007, true);
             i.isServer = false;
             i.isIntialized = true;
 
