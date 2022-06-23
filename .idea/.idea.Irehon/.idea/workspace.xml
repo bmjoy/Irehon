@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6c5a1a8b-ae2b-4bcd-b1a7-70c1de5d03be" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Irehon/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Irehon/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Steam/SteamManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Steam/SteamManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Models/Models/PolygonDungeonRealms/Materials/PolygonDungeonRealms_Mat_01_A.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/Models/PolygonDungeonRealms/Materials/PolygonDungeonRealms_Mat_01_A.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Entity/Mobs/AgressivePatrolBandit.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Entity/Mobs/AgressivePatrolBandit.prefab.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/LoginScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/LoginScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utils/PlayerApiMonobehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utils/PlayerApiMonobehaviour.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utils/ServerApiMonobehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utils/ServerApiMonobehaviour.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utils/WebserverApiHolder.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +27,9 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.collab-proxy@1.14.1/Editor/PlasticSCM/AssetsUtils/Processor/PlasticAssetsProcessor.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -29,14 +38,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Discover.Launch.Via.Unity": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "rider.run.widget.enabled.cache": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Discover.Launch.Via.Unity&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="$PROJECT_DIR$/Builds/ClientWindows\Irehon.exe" />
@@ -64,10 +73,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="25644">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="25644" />
+      <option name="pid" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -116,27 +125,13 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/Server/ServerManager.cs</url>
           <line>73</line>
-          <properties documentPath="D:\UnityProjects\Irehon\Assets\Scripts\Server\ServerManager.cs" initialLine="73" containingFunctionPresentation="method 'CreateServerInDB'">
-            <startOffsets>
-              <option value="2350" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2392" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="D:\UnityProjects\Irehon\Assets\Scripts\Server\ServerManager.cs" initialLine="73" containingFunctionPresentation="method 'CreateServerInDB'" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/Server/ServerManager.cs</url>
           <line>69</line>
-          <properties documentPath="D:\UnityProjects\Irehon\Assets\Scripts\Server\ServerManager.cs" initialLine="69" containingFunctionPresentation="method 'CreateServerInDB'">
-            <startOffsets>
-              <option value="2092" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2297" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="D:\UnityProjects\Irehon\Assets\Scripts\Server\ServerManager.cs" initialLine="69" containingFunctionPresentation="method 'CreateServerInDB'" />
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
