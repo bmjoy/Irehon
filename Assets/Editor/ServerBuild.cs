@@ -16,6 +16,14 @@ public class ServerBuild : Editor
         popUp.ShowPopup();
     }
 
+    [MenuItem("Build/Build North server")]
+    static void BuildServerNorth()
+    {
+        var popUp = CreateInstance<BuildVersionPopUp>();
+        popUp.SetButtonAction(() => BuildServerZone("North"));
+        popUp.ShowPopup();
+    }
+    
     static void BuildAllServerZones()
     {
         foreach (string zone in gameZones)

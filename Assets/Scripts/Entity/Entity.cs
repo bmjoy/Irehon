@@ -59,6 +59,7 @@ namespace Irehon.Entitys
         protected virtual void Start()
         {
             this.startPosition = this.transform.position;
+            startPosition = new Vector3(startPosition.x, startPosition.y + 0.5f, startPosition.z);
             Respawned += this.SetDefaultState;
 
             this.SetDefaultState();
