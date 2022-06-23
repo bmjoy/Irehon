@@ -55,7 +55,7 @@ namespace Irehon.Steam
                 SteamServer.OnSteamServersDisconnected += x => Debug.Log($"Steam server disconnected {x}");
                 SteamServer.OnSteamServersConnected += () => Debug.Log("Steam server connected");
 
-                SteamServer.Init(1759510, init, true);
+                SteamServer.Init(1007, init, true);
 
                 if (!SteamServer.LoggedOn)
                 {
@@ -77,7 +77,7 @@ namespace Irehon.Steam
                 return true;
             }
 
-            SteamClient.Init(1759510, true);
+            SteamClient.Init(1007, true);
             i.isServer = false;
             i.isIntialized = true;
 
