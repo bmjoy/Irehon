@@ -43,6 +43,6 @@ public class SceneChanger : MonoBehaviour
         ServerManager.Log(data.steamId, $"Sended self reconnect to change scene on {newScene}");
         ServerManager.SendReconnectToThisServer(player.connectionToClient);
         player.connectionToClient.authenticationData = data;
-        ServerManager.WaitBeforeDisconnect(player.connectionToClient);
+        ServerManager.DisconnectWithDelay(player.connectionToClient);
     }
 }

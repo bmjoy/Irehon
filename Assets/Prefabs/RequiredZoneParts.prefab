@@ -5027,6 +5027,9 @@ GameObject:
   - component: {fileID: 5770218253936633284}
   - component: {fileID: 6537443977088816980}
   - component: {fileID: 6146095233515217275}
+  - component: {fileID: 5210795596072451309}
+  - component: {fileID: 4178286316637043188}
+  - component: {fileID: 3650950067537453842}
   m_Layer: 0
   m_Name: NetworkManager Auth
   m_TagString: Untagged
@@ -5076,6 +5079,7 @@ MonoBehaviour:
   autoCreatePlayer: 0
   playerSpawnMethod: 0
   serverData: {fileID: 11400000, guid: c6927a4891e325742be522846941fb84, type: 2}
+  isWhiteListEnabled: 0
 --- !u!114 &1480492422517579646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5157,6 +5161,44 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b8455797d4eb4ad9b1a6c2c9edb2b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5210795596072451309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492422517579618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fc85d39de9b78e488197c08a19ffa4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4178286316637043188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492422517579618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20ef98888538bee479c648c78b92c556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kickQuery: 
+  isServerShouldStop: 0
+--- !u!114 &3650950067537453842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480492422517579618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e4bb2d81911284e82cc82ca4173b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1480492422520729306
@@ -7842,7 +7884,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1480492422936643983}
   m_LocalRotation: {x: 0.008637935, y: -0.9834321, z: 0.17439619, w: 0.04871118}
-  m_LocalPosition: {x: 325.17484, y: 129.4, z: 1542.6102}
+  m_LocalPosition: {x: 325.17484, y: 153.9759, z: 1542.6102}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1480492422737524972}
@@ -10737,7 +10779,6 @@ GameObject:
   - component: {fileID: 5563657715996357042}
   - component: {fileID: 473701395408086169}
   - component: {fileID: 2571508768182623164}
-  - component: {fileID: 3982275972561114766}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -10854,20 +10895,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 8558629122024057940}
   postBar: {fileID: 5995753175535577700}
---- !u!114 &3982275972561114766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1480492423336540618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c69709ad10e69c5459d80d8331829062, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bar: {fileID: 1480492422478006405}
-  postBar: {fileID: 1480492423815577924}
 --- !u!1 &1480492423377682896
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using Irehon.Entitys;
 using Irehon;
 using Irehon.Steam;
+using System.Threading;
 
 namespace Irehon
 {
@@ -27,6 +28,8 @@ namespace Irehon
         public override List<GameObject> spawnPrefabs => serverData.spawnablePrefabs;
 
         public List<NetworkConnection> connections;
+
+        public bool isWhiteListEnabled = false;
 
         private int serverId;
         private ushort port;
@@ -43,19 +46,31 @@ namespace Irehon
             }
         }
 
+        public async void ManuallyStopServer()
+        {
+            foreach (var con in Instance.connections.ToArray())
+            {
+                if (con != null)
+                    SendMessage(con, "We're sorry, the server was stopped by the administrator", MessageType.Notification);
+            }
+            await Task.Delay(200);
+            StopServer();
+        }
+
         public static void Log(SteamId id, string message) => Debug.Log($"{DateTime.Now} [{id}] {message}");
         public static void Log(string message) => Debug.Log($"{DateTime.Now} [server] {message}");
 
 
-        public static void WaitBeforeDisconnect(NetworkConnection con)
+        public static void DisconnectWithDelay(NetworkConnection con)
         {
             Debug.Log("Disconnecting");
-            IEnumerator WaitBeforeDisconnect()
-            {
-                yield return new WaitForSeconds(0.2f);
-                con.Disconnect();
-            }
-            Instance.StartCoroutine(WaitBeforeDisconnect());
+            Instance.StartCoroutine(WaitBeforeDisconnectCoroutine(con));
+        }
+        private static IEnumerator WaitBeforeDisconnectCoroutine(NetworkConnection con)
+        {
+            Debug.Log("Disconnecting");
+            yield return new WaitForSeconds(0.2f);
+            con.Disconnect();
         }
 
         private async void CreateServerInDB()
@@ -114,7 +129,7 @@ namespace Irehon
 
             if (data.authInfo.registerInfo.fraction != Fraction.None)
             {
-                var www = Api.Request($"/users/{data.steamId}&fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
+                var www = Api.Request($"/users/{data.steamId}?fraction={data.authInfo.registerInfo.fraction}", ApiMethod.POST);
 
                 await www.SendWebRequest();
 
@@ -139,7 +154,7 @@ namespace Irehon
             {
                 Log(data.steamId, $"Disconnect error: already connected");
                 SendMessage(con, "Already connected to another server", MessageType.Notification);
-                WaitBeforeDisconnect(con);
+                DisconnectWithDelay(con);
                 return;
             }
 
@@ -161,7 +176,7 @@ namespace Irehon
                 {
                     Log(data.steamId, $"Not founded server for {characterInfo.location} location");
                     SendMessage(con, "Server unavalible", MessageType.Notification);
-                    WaitBeforeDisconnect(con);
+                    DisconnectWithDelay(con);
                     return;
                 }
 
@@ -174,7 +189,7 @@ namespace Irehon
                 Log(data.steamId, $"Redirected to {result["ip"].Value}:{result["port"].Value}");
 
                 SendMessage(con, $"{result["ip"].Value}:{result["port"].Value}", MessageType.ServerRedirect);
-                WaitBeforeDisconnect(con);
+                DisconnectWithDelay(con);
                 return;
             }
 
@@ -231,7 +246,7 @@ namespace Irehon
                 bool isCreated = await PlayerCharacterCreateRequest(con);
                 if (!isCreated)
                 {
-                    WaitBeforeDisconnect(con);
+                    DisconnectWithDelay(con);
                     return;
                 }
 
@@ -250,14 +265,17 @@ namespace Irehon
 
             con.authenticationData = data;
 
-            www = Api.Request($"/whitelist/{data.steamId}");
-            await www.SendWebRequest();
-            if (Api.GetResult(www) == null)
+            if (isWhiteListEnabled)
             {
-                Log(data.steamId, $"Disconnect error: not in whitelist");
-                SendMessage(con, "You are not in whitelist", MessageType.Notification);
-                WaitBeforeDisconnect(con);
-                return;
+                www = Api.Request($"/whitelist/{data.steamId}");
+                await www.SendWebRequest();
+                if (Api.GetResult(www) == null)
+                {
+                    Log(data.steamId, $"Disconnect error: not in whitelist");
+                    SendMessage(con, "You are not in whitelist", MessageType.Notification);
+                    DisconnectWithDelay(con);
+                    return;
+                }
             }
 
             PlayerPlayRequest(con, data.character);
@@ -319,7 +337,7 @@ namespace Irehon
 
             Log(info.steamId, $"Setted disconnect position to {info.location} {pos}");
             www = Api.Request($"/positions/{info.steamId}?" +
-                $"x={pos.x}&y={pos.y}&z={pos.z}");
+                $"x={pos.x}&y={pos.y}&z={pos.z}", ApiMethod.PUT);
             await www.SendWebRequest();
 
             if (info.isSpawnPointChanged)
