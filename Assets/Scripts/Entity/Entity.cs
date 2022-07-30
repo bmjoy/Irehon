@@ -59,38 +59,10 @@ namespace Irehon.Entitys
         protected virtual void Start()
         {
             this.startPosition = this.transform.position;
+            startPosition = new Vector3(startPosition.x, startPosition.y + 0.5f, startPosition.z);
             Respawned += this.SetDefaultState;
 
-            if (this.respawnTime == 0)
-            {
-                Dead += this.SelfDestroy;
-            }
-            else
-            {
-                Dead += this.InitiateRespawn;
-            }
-
-            if (this.isServer)
-            {
-                DidDamage += this.OnDoDamageRpc;
-                GotDamage += this.OnTakeDamageRpc;
-                takeDamageProcessQuerry.Add(NonAliveDamageBlocker);
-            }
             this.SetDefaultState();
-        }
-        private void Update()
-        {
-            if (this.transform.position.y < 0f && this.isAlive)
-            {
-                this.Death();
-            }
-        }
-        protected void InitiateRespawn()
-        {
-            if (this.isServer)
-            {
-                this.Invoke("Respawn", this.respawnTime);
-            }
         }
 
         protected void ChangeHealthHook(int oldValue, int newValue)
@@ -105,21 +77,8 @@ namespace Irehon.Entitys
 
         public virtual void SetDefaultState()
         {
-            if (isServer)
-                this.isAlive = true;
             IsAliveValueChanged?.Invoke(isAlive);
-            this.SetHealth(this.maxHealth);
             this.transform.position = this.startPosition;
-        }
-
-
-        private async void SelfDestroy()
-        {
-            if (this.isServer)
-            {
-                await System.Threading.Tasks.Task.Delay(500);
-                NetworkServer.Destroy(this.gameObject);
-            }
         }
 
         protected virtual void Death()
@@ -133,11 +92,6 @@ namespace Irehon.Entitys
             IsAliveValueChanged?.Invoke(isAlive);
 
             Dead?.Invoke();
-
-            if (this.isServer)
-            {
-                this.DeathClientRpc();
-            }
         }
 
         protected virtual void Respawn()
@@ -151,11 +105,6 @@ namespace Irehon.Entitys
             IsAliveValueChanged?.Invoke(isAlive);
 
             Respawned?.Invoke();
-
-            if (this.isServer)
-            {
-                this.RespawnClientRpc();
-            }
         }
 
         [ClientRpc]
@@ -180,95 +129,6 @@ namespace Irehon.Entitys
         protected void OnTakeDamageRpc(int damage)
         {
             GotDamage?.Invoke(damage);
-        }
-
-        [Server]
-        protected virtual void SetHealth(int health)
-        {
-            this.health = health;
-
-            if (this.health > this.maxHealth)
-            {
-                this.health = this.maxHealth;
-            }
-
-            if (this.health <= 0)
-            {
-                this.health = 0;
-                this.Death();
-            }
-
-            HealthChanged?.Invoke(this.maxHealth, this.health);
-        }
-
-        private void NonAliveDamageBlocker(ref DamageMessage damageMessage)
-        {
-            if (!isAlive)
-                damageMessage.damage = 0;
-        }
-
-        [Server]
-        public virtual void TakeDamage(DamageMessage damageMessage)
-        {
-            foreach (var process in takeDamageProcessQuerry)
-            {
-                if (damageMessage.damage > 0)
-                    process(ref damageMessage);
-            }
-
-            if (damageMessage.damage <= 0)
-                return;
-
-            ServerManager.Log($"{damageMessage.source} did {damageMessage.damage} damage to {damageMessage.target.name}");
-
-            this.health -= damageMessage.damage;
-
-            if (this.health <= 0)
-            {
-                KilledByEntity?.Invoke(damageMessage.source);
-                damageMessage.source.OnKillEvent?.Invoke(this);
-                this.Death();
-                this.health = 0;
-            }
-
-            HealthChanged?.Invoke(this.maxHealth, this.health);
-            GotDamage?.Invoke(damageMessage.damage);
-
-            if (damageMessage.source != this)
-            {
-                damageMessage.source?.DidDamage?.Invoke(damageMessage.damage);
-            }
-        }
-
-        [Server]
-        public bool DoDamage(Entity target, int damage)
-        {
-            if (this.FractionBehaviourData != null && this.FractionBehaviourData.Behaviours.ContainsKey(target.fraction) &&
-                   this.FractionBehaviourData.Behaviours[target.fraction] == FractionBehaviour.Friendly)
-            {
-                return false;
-            }
-
-            DamageMessage damageMessage = new DamageMessage
-            {
-                damage = damage,
-                source = this,
-                target = target
-            };
-
-            foreach (var process in doDamageProcessQuerry)
-            {
-                if (damageMessage.damage > 0)
-                    process(ref damageMessage);
-            }
-            
-            if (damageMessage.damage <= 0)
-                return false;
-
-            ServerManager.Log($"{damageMessage.source} sended Damage Message with {damageMessage.damage} damage to {damageMessage.target.name}");
-
-            target.TakeDamage(damageMessage);
-            return true;
         }
 
         public void InvokePlayerLookingEvent()

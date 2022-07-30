@@ -226,7 +226,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.31481507
   m_Direction: 0
   m_Center: {x: 0.17426027, y: -0.000000039486395, z: 0.00000001034277}
@@ -318,7 +318,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.24241336
   m_Direction: 0
   m_Center: {x: -0.099478304, y: -0.000000047297533, z: -1.05288236e-10}
@@ -441,7 +441,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.2681678
   m_Direction: 0
   m_Center: {x: 0.13197263, y: -0.0000002283646, z: -0.000000046929554}
@@ -564,7 +564,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.26012588
   m_Direction: 0
   m_Center: {x: -0.11529539, y: -0.00000242989, z: 0.00000021132239}
@@ -717,7 +717,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.25564423
   m_Direction: 0
   m_Center: {x: -0.12725933, y: 0.00000008540577, z: -0.00000005900658}
@@ -778,7 +778,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.04
+  m_Radius: 0.06
   m_Height: 0.36548328
   m_Direction: 0
   m_Center: {x: -0.15330535, y: 0.000000011013759, z: 0.00000006771836}
@@ -854,7 +854,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.14
+  m_Radius: 0.21
   m_Center: {x: -0.06, y: 0, z: 0}
 --- !u!1 &3972859783832237328
 GameObject:
@@ -1015,14 +1015,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
-    SerializedBytes: 0101080000006c006f006f00740050006f006f006c002f000000000161000000530079007300740065006d002e0043006f006c006c0065006300740069006f006e0073002e00470065006e0065007200690063002e004c00690073007400600031005b005b0049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070005d005d002c0020006d00730063006f0072006c006900620000000000060100000000000000042f01000000013200000049007200650068006f006e002e0045006e00740069007400790073002e004c006f006f007400470065006e0065007200610074006f0072002b004c006f006f0074002c00200041007300730065006d0062006c0079002d004300530068006100720070001f010d0000006300680061006e0063006500500065007200630065006e0074000000c8421701060000006900740065006d00490064005b00000017010b0000006d0069006e005100750061006e0074006900740079000100000017010b0000006d00610078005100750061006e00740069007400790001000000050705
+    SerializedFormat: 2
+    SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: lootPool
+      Entry: 7
+      Data: 0|System.Collections.Generic.List`1[[Irehon.Entitys.LootGenerator+Loot,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: Irehon.Entitys.LootGenerator+Loot, Assembly-CSharp
+    - Name: chancePercent
+      Entry: 4
+      Data: 100
+    - Name: itemId
+      Entry: 3
+      Data: 91
+    - Name: minQuantity
+      Entry: 3
+      Data: 1
+    - Name: maxQuantity
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
 --- !u!114 &3658942216765433830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1189,7 +1220,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.02
+  m_Radius: 0.06
   m_Height: 0.34514493
   m_Direction: 0
   m_Center: {x: -0.16108377, y: 0.000000080903966, z: -0.00000025203244}
@@ -1311,7 +1342,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.3139418
   m_Direction: 0
   m_Center: {x: -0.10441755, y: -0.000000021308965, z: -0.000000072667035}
@@ -1432,7 +1463,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.20090687
   m_Direction: 0
   m_Center: {x: 0.10229499, y: 0.00000053211807, z: 0.00000009008325}
@@ -1493,7 +1524,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.02
+  m_Radius: 0.06
   m_Height: 0.32385358
   m_Direction: 0
   m_Center: {x: -0.17796856, y: 0.00000083877933, z: -0.0000017187022}
@@ -1676,7 +1707,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.3416382
   m_Direction: 0
   m_Center: {x: 0.1567127, y: -0.00000010303252, z: 0.00000007706182}
@@ -1828,7 +1859,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.30723152
   m_Direction: 0
   m_Center: {x: 0.14994356, y: 0.00000018804793, z: -0.0000006810963}
@@ -2077,7 +2108,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.23796256
   m_Direction: 0
   m_Center: {x: 0.10878541, y: -0.00000019937444, z: -0.000000024231134}
@@ -2231,7 +2262,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.02
+  m_Radius: 0.06
   m_Height: 0.30856907
   m_Direction: 0
   m_Center: {x: -0.14347227, y: -0.00000007318286, z: -0.000000034062147}
@@ -2306,7 +2337,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.24050842
   m_Direction: 0
   m_Center: {x: 0.12470488, y: 0.00000008637628, z: -0.000000042214136}
@@ -2406,7 +2437,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.03
+  m_Radius: 0.06
   m_Height: 0.31336564
   m_Direction: 0
   m_Center: {x: 0.1465562, y: 0.000000048344862, z: -0.000000029318754}

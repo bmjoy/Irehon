@@ -35,7 +35,7 @@ public class AggressiveMob : Mob
         }
     }
 
-    public void UnAgro()
+    public virtual void UnAgro()
     {
         ResetAgro();
         this.stateMachine.SetNewState(new MobIdleState(this));
@@ -87,17 +87,6 @@ public class AggressiveMob : Mob
                 this.Agro(entity);
             }
         }
-    }
-
-    public override void TakeDamage(DamageMessage damageMessage)
-    {
-        if (!this.isAlive)
-        {
-            return;
-        }
-
-        this.Agro(damageMessage.source);
-        base.TakeDamage(damageMessage);
     }
 
     public override void SetDefaultState()

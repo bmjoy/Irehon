@@ -28,49 +28,6 @@ public class PlayerInteracter : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (this.isServer && this.currentInteractable != null && Vector3.Distance(this.interractPosition, this.model.position) > 10f)
-        {
-            this.StopInterracting();
-        }
-    }
-
-    [ServerCallback]
-    public void InterractAttemp(NetworkIdentity interactObjectIdentity)
-    {
-        if (this.currentInteractable != null)
-        {
-            return;
-        }
-
-        if (Vector3.Distance(interactObjectIdentity.transform.position, this.model.position) > 10f)
-        {
-            return;
-        }
-
-        this.currentInteractable = interactObjectIdentity.GetComponent<Interactable>();
-
-        if (this.currentInteractable == null)
-        {
-            return;
-        }
-
-        this.isInteracting = true;
-        this.interractPosition = interactObjectIdentity.transform.position;
-        this.currentInteractable.Interact(this.player);
-        TargetSetInteractObject(interactObjectIdentity.gameObject);
-    }
-
-    [ServerCallback]
-    public void StopInterracting()
-    {
-        if (this.currentInteractable != null)
-        {
-            this.currentInteractable.StopInterract(this.player);
-        }
-
-        this.currentInteractable = null;
-        this.isInteracting = false;
-        TargetSetInteractObject(null);
     }
 
     [TargetRpc]
@@ -82,6 +39,5 @@ public class PlayerInteracter : NetworkBehaviour
     [Command]
     public void StopInterractCommand()
     {
-        this.StopInterracting();
     }
 }

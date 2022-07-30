@@ -16,6 +16,14 @@ public class ServerBuild : Editor
         popUp.ShowPopup();
     }
 
+    [MenuItem("Build/Build North server")]
+    static void BuildServerNorth()
+    {
+        var popUp = CreateInstance<BuildVersionPopUp>();
+        popUp.SetButtonAction(() => BuildServerZone("North"));
+        popUp.ShowPopup();
+    }
+    
     static void BuildAllServerZones()
     {
         foreach (string zone in gameZones)
@@ -56,6 +64,14 @@ public class ServerBuild : Editor
         popUp.ShowPopup();
     }
 
+    [MenuItem("Build/Build mac client")]
+    static void BuildMac()
+    {
+        var popUp = CreateInstance<BuildVersionPopUp>();
+        popUp.SetButtonAction(BuildClientZones);
+        popUp.ShowPopup();
+    }
+
     static bool BuildServerZone(string zone)
     {
         string[] scenes = { $"Assets/Scenes/{zone}.unity" };
@@ -70,6 +86,8 @@ public class ServerBuild : Editor
         foreach (string zone in gameZones)
             scenes.Add($"Assets/Scenes/{zone}.unity");
         var report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientWindows/Irehon.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientMac/Irehon.app", BuildTarget.StandaloneOSX, BuildOptions.None);
+        report = BuildPipeline.BuildPlayer(scenes.ToArray(), "Builds/ClientLinux/Irehon", BuildTarget.StandaloneLinux64, BuildOptions.None);
         Debug.Log("Client build done");
         return report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded;
     }

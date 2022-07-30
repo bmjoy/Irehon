@@ -67,23 +67,13 @@ namespace Irehon
             {
                 LocalPlayerIntialize();
             }
-
-            if (this.isServer)
-            {
-                IntializeServerEvents();
-
-                InvokeRepeating(nameof(PassiveRegenerateHealth), 1, 1);
-                InvokeRepeating(nameof(PassiveRegenerateStamina), 0.125f, 0.125f);
-
-                SetHealth(characterInfo.health);
-            }
         }
 
         private void LocalPlayerIntialize()
         {
             LocalPlayer = this;
             LocalPlayerIntialized?.Invoke(this);
-            //Сбросить всех после первого вызова
+            //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             LocalPlayerIntialized = x => { };
 
             DidDamage += x => Hitmarker.Instance.ShowHitMarker();
@@ -103,22 +93,6 @@ namespace Irehon
             {
                 FractionBehaviourData = southData;
             }
-        }
-
-        [Server]
-        private void IntializeServerEvents()
-        {
-            DidDamage += OnDoDamageRpc;
-            GotDamage += OnTakeDamageRpc;
-
-            Dead += () => stateMachine.ChangePlayerState(PlayerStateType.Death);
-            Dead += () => SpawnDeathContainer();
-            Dead += InitiateRespawn;
-
-            Respawned += TeleportToSpawnPoint;
-            Respawned += SetDefaultState;
-
-            KilledByEntity += SendAllKillMesagge;
         }
 
         private void SendAllKillMesagge(Entity murder)
@@ -148,29 +122,6 @@ namespace Irehon
             }
         }
 
-        private void PassiveRegenerateHealth()
-        {
-            if (isAlive)
-            {
-                SetHealth(health + 10);
-            }
-        }
-
-        private void PassiveRegenerateStamina()
-        {
-            if (isAlive)
-            {
-                staminaPoints += 200;
-                if (staminaPoints > maxStaminaPoints)
-                    staminaPoints = maxStaminaPoints;
-            }
-        }
-
-        public void SelfKill()
-        {
-            Death();
-        }
-
         [TargetRpc]
         public void SetPositionRpc(Vector3 position)
         {
@@ -179,34 +130,10 @@ namespace Irehon
 
         private async void GetName(SteamId oldId, SteamId newId)
         {
-            if (this.isServer)
-            {
-                return;
-            }
-
             Friend friend = new Friend(newId);
             await friend.RequestInfoAsync();
 
             name = friend.Name;
-        }
-
-        [Server]
-        public void SetCharacterInfo(CharacterInfo data)
-        {
-            this.isDataAlreadyRecieved = true;
-
-            characterInfo = data;
-            fraction = characterInfo.fraction;
-            if (fraction == Fraction.North)
-            {
-                FractionBehaviourData = northData;
-            }
-            else
-            {
-                FractionBehaviourData = southData;
-            }
-
-            UpdateCharacterData(characterInfo);
         }
 
         [ClientRpc]
@@ -237,44 +164,7 @@ namespace Irehon
         public override void SetDefaultState()
         {
             isAlive = true;
-            SetHealth(maxHealth);
             stateMachine.ChangePlayerState(PlayerStateType.Idle);
-        }
-
-        [Server]
-        private void TeleportToSpawnPoint()
-        {
-            CharacterInfo currentCharacterInfo = ((PlayerSession)this.connectionToClient.authenticationData).character;
-            if (SceneManager.GetActiveScene().name != currentCharacterInfo.spawnSceneName)
-            {
-                SceneChanger.ChangeCharacterScene(this, currentCharacterInfo.spawnSceneName, currentCharacterInfo.spawnPoint);
-            }
-            else
-            {
-                controller.SetPosition(currentCharacterInfo.spawnPoint);
-                SetPositionRpc(currentCharacterInfo.spawnPoint);
-            }
-        }
-
-        [Server]
-        private void SpawnDeathContainer()
-        {
-            GameObject deadBody = Instantiate(deathContainerPrefab);
-            NetworkServer.Spawn(deadBody);
-
-            deadBody.transform.position = this.transform.position + Vector3.up;
-            deadBody.transform.rotation = this.transform.rotation;
-
-            deadBody.GetComponent<DeathChest>().AttachMultipleContainers(new List<Container> { playerContainers.inventory, playerContainers.equipment});
-        }
-
-        private void OnDrawGizmos()
-        {
-            Vector3 position = transform.position;
-            float angle = transform.localEulerAngles.y;
-            Vector3 other = position + new Vector3(Mathf.Cos(angle) * 5, 0, Mathf.Sin(angle) * 5);
-
-            Debug.DrawLine(position, other, Color.red);
         }
     }
 }

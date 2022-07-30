@@ -21,7 +21,6 @@ public class PlayerRunState : PlayerRotatableState
     public override void Enter(bool isResimulating)
     {
         this.abilitySystem.AbilityInterrupt();
-        this.playerInteracter.StopInterracting();
         this.animator.SetBool("Sprint", true);
         this.animator.SetBool("Walking", true);
     }
@@ -37,8 +36,9 @@ public class PlayerRunState : PlayerRotatableState
     public override PlayerStateType HandleInput(InputInfo input, bool isServer)
     {
         base.HandleInput(input, isServer);
-        player.staminaPoints -= StaminaTickCost;
-        if (player.staminaPoints < 0)
+        if (isServer)
+            player.staminaPoints -= StaminaTickCost;
+        if ((!isServer && player.staminaPoints < 500) || player.staminaPoints < 0)
         {
             player.staminaPoints = 0;
             return PlayerStateType.Idle;

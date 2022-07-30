@@ -45,11 +45,6 @@ public class PlayerIdleState : PlayerRotatableState
             return PlayerStateType.Dance;
         }
 
-        if (isServer && input.interactionTarget != null)
-        {
-            this.playerInteracter.InterractAttemp(input.interactionTarget);
-        }
-
         if (input.GetMoveVector() != Vector2.zero)
         {
             if (input.IsKeyPressed(KeyCode.LeftShift) && input.GetMoveVector().x == 0 && input.GetMoveVector().y > 0 && player.staminaPoints > PlayerRunState.MinimalStamina)

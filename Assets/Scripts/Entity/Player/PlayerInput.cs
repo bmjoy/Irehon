@@ -131,20 +131,7 @@ public class PlayerInput : NetworkBehaviour
     [Command]
     private void SendInputOnServer(InputInfo input)
     {
-        if (this.avaliablePackets <= 0)
-        {
-            this.DropInput();
-            return;
-        }
-
-        this.avaliablePackets--;
-
-        this.playerStateMachine.InputInState(input);
-
-        input.Position = this.transform.position;
-        input.PlayerStateType = this.playerStateMachine.CurrentState.Type;
-
-        this.RecieveInputResponse(input);
+        
     }
 
     [TargetRpc]
@@ -167,10 +154,13 @@ public class PlayerInput : NetworkBehaviour
         Quaternion rot = this.transform.rotation;
 
         Physics.autoSimulation = false;
+        int simulationCount = 0;
         foreach (InputInfo sendedInput in this.sendedInputs)
         {
             this.playerStateMachine.InputInState(sendedInput);
-            Physics.Simulate(.0000001f);
+            simulationCount++;
+            if (simulationCount % 7 == 0)
+                Physics.Simulate(.0000001f);
         }
         Physics.autoSimulation = true;
 

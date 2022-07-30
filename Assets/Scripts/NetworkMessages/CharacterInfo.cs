@@ -6,6 +6,12 @@ using UnityEngine;
 
 namespace Irehon
 {
+    public class SceneChangeInfo
+    {
+        public Vector3 spawnPosition;
+        public string sceneName;
+    }
+
     public struct CharacterInfo
     {
         public Fraction fraction;
@@ -38,11 +44,10 @@ namespace Irehon
             this.serverId = json["server"].AsInt;
 
             this.personalChests = PersonalChestInfo.GetChests(json);
-
+            this.sceneChangeInfo = null;
             this.position = new Vector3(pos["x"].AsFloat, pos["y"].AsFloat, pos["z"].AsFloat);
             this.spawnPoint = new Vector3(pos["spawn_x"].AsFloat, pos["spawn_y"].AsFloat, pos["spawn_z"].AsFloat);
             this.spawnSceneName = pos["spawn_location"];
-            this.sceneChangeInfo = null;
             this.isSpawnPointChanged = false;
         }
     }

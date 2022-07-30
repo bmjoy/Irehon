@@ -29,12 +29,10 @@ namespace Irehon.Interactable
         }
         public override void Interact(Player player)
         {
-            TargetSendRecipes(player.connectionToClient, recipes);
         }
 
         public override void StopInterract(Player player)
         {
-            TargetCloseCraftWindow(player.connectionToClient);
         }
 
 
@@ -53,41 +51,7 @@ namespace Irehon.Interactable
         [Command(requiresAuthority = false)]
         public void Craft(int index, NetworkConnectionToClient sender = null)
         {
-            Player player = sender.identity.gameObject.GetComponent<Player>();
-
-            if (player.GetComponent<PlayerInteracter>().currentInteractable != this)
-                return;
-
-            var playerContainers = player.GetComponent<PlayerContainers>();
-
-            if (index < 0 || index >= recipes.Length)
-            {
-                return;
-            }
-
-            CraftRecipe recipe = recipes[index];
-
-            Container inventory = playerContainers.inventory;
-
-            if (!inventory.IsEnoughSpaceForItem(recipe.itemId, recipe.itemQuantity))
-            {
-                return;
-            }
-
-            foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
-            {
-                if (inventory.GetItemCount(requirment.itemId) < requirment.itemQuantity)
-                {
-                    return;
-                }
-            }
-
-            foreach (CraftRecipe.CraftRecipeRequirment requirment in recipe.requirment)
-            {
-                playerContainers.inventory.RemoveItemFromInventory(requirment.itemId, requirment.itemQuantity);
-            }
-
-            playerContainers.inventory.AddItem(recipe.itemId, recipe.itemQuantity);
+            
         }
     }
 }

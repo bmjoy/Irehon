@@ -1,0 +1,21 @@
+pipeline {
+    agent {
+        node {
+            label 'TestNode' 
+        }
+    }
+
+    parameters {
+        booleanParam(defaultValue: true, description: 'Build Server', name: 'BUILD')
+        booleanParam(defaultValue: false, description: 'Deploy Server', name: 'DEPLOY')
+    }
+
+
+    stages {
+        stage('Checkout') { }
+
+        stage ('Build') { }
+
+        stage('Deploy') { }
+    }
+}

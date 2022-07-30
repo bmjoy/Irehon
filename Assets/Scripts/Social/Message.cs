@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Irehon.Steam;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Irehon.Chat

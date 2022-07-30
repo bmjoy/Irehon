@@ -27,11 +27,6 @@ public class Mob : LootableEntity
     {
         this.stateMachine = this.GetComponent<MobStateMachine>();
 
-        if (this.isServer)
-        {
-            Dead += () => this.stateMachine.SetNewState(new MobDeathState(this));
-            Respawned += () => this.stateMachine.SetNewState(new MobIdleState(this));
-        }
         base.Start();
     }
 
@@ -46,17 +41,9 @@ public class Mob : LootableEntity
 
     public override void SetDefaultState()
     {
-        if (isServer)
-            this.isAlive = true;
         IsAliveHook(isAlive, isAlive);
-        this.SetHealth(this.maxHealth);
         this.GetComponent<NavMeshAgent>().Warp(this.startPosition);
         this.stateMachine.SetNewState(new MobIdleState(this));
-    }
-
-    public void SetMaxHealth()
-    {
-        this.SetHealth(this.maxHealth);
     }
 
 }

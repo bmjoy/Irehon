@@ -33,7 +33,7 @@ public class PlayerWalkState : PlayerRotatableState
     {
         base.HandleInput(input, isServer);
 
-        if (input.IsKeyPressed(KeyCode.Mouse1) && this.abilitySystem.playerWeaponEquipment.GetWeapon().GetType() != WeaponType.Bow)
+        if (input.IsKeyPressed(KeyCode.Mouse1) && abilitySystem.playerWeaponEquipment.GetWeapon().GetType() != WeaponType.Bow)
         {
             return PlayerStateType.Block;
         }
@@ -46,11 +46,6 @@ public class PlayerWalkState : PlayerRotatableState
         if (input.IsKeyPressed(KeyCode.Space) && player.staminaPoints > PlayerJumpingState.JumpCost)
         {
             return PlayerStateType.Jump;
-        }
-
-        if (isServer && input.interactionTarget != null)
-        {
-            this.playerInteracter.InterractAttemp(input.interactionTarget);
         }
 
         if (input.GetMoveVector() == Vector2.zero)

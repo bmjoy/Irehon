@@ -44,6 +44,9 @@ namespace Irehon.Client
             {
                 i = this;
             }
+#if !UNITY_EDITOR
+            networkAddress = "game.irehon.com";
+#endif
         }
 
         public override void Start()
@@ -117,14 +120,14 @@ namespace Irehon.Client
             (this.transport as TelepathyTransport).port = ushort.Parse(port);
             this.networkAddress = msg.message.Split(':')[0];
 #if UNITY_EDITOR
-            UnityWebRequest www = UnityWebRequest.Get("ifconfig.me/all.json");
-            await www.SendWebRequest();
-            SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
-            string externalIpAddres = response["ip_addr"].Value;
-            if (externalIpAddres == this.networkAddress)
-            {
-                this.networkAddress = "localhost";
-            }
+            //UnityWebRequest www = UnityWebRequest.Get("ifconfig.me/all.json");
+            //await www.SendWebRequest();
+            //SimpleJSON.JSONNode response = SimpleJSON.JSON.Parse(www.downloadHandler.text);
+            //string externalIpAddres = response["ip_addr"].Value;
+            //if (externalIpAddres == this.networkAddress)
+            //{
+            //    this.networkAddress = "localhost";
+            //}
 #endif
             this.GetComponent<NetworkManager>().StartClient();
         }
@@ -140,6 +143,7 @@ namespace Irehon.Client
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
+            print(newSceneName);
             if (SceneManager.GetActiveScene().name == "LoginScene")
             {
                 LoginSceneUI.HidePlayButton();

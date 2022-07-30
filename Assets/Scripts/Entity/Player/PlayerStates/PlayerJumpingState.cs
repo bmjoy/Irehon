@@ -33,7 +33,6 @@ public class PlayerJumpingState : PlayerRotatableState
             return;
         }
         this.abilitySystem.AbilityInterrupt();
-        this.playerInteracter.StopInterracting();
         if (this.playerMovement.IsGrounded)
         {
             player.staminaPoints -= JumpCost;

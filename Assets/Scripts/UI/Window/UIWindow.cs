@@ -45,6 +45,7 @@ public class UIWindow : SerializedMonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)this.windowObject.transform);
     }
 
+
     public void Close()
     {
         if (this.isEnabled)

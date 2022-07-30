@@ -9,23 +9,12 @@ namespace Irehon.Interactable
 {
     public class TextShower : Interactable
     {
-        [SerializeField]
-        private string header;
-        [SerializeField]
-        private string text;
-        [SerializeField]
-        private int font = 20;
-        [SerializeField]
-        private Color color;
-
         public override void Interact(Player player)
         {
-            TargetOpenTextWindow(player.connectionToClient, header, text, font, color);
         }
 
         public override void StopInterract(Player player)
         {
-            TargetCloseTextWindow(player.connectionToClient);
         }
 
         [TargetRpc]

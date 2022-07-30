@@ -28,8 +28,6 @@ namespace Irehon.Abilitys
             this.currentAnimationEvent = this.DamageEntitiesInArea;
 
             abilitySystem.player.DidDamage += this.ImpactSound;
-
-            this.meleeCollider.OnNewCollectedEntityEvent.AddListener(this.DamageEntity);
         }
         protected override void Ability(Vector3 target)
         {
@@ -62,21 +60,6 @@ namespace Irehon.Abilitys
             {
                 CameraShake.Instance.CreateShake(1, .3f);
             }
-
-            if (!this.isServer)
-            {
-                return;
-            }
-
-            this.meleeCollider.StopCollectColliders();
-
-            this.abilitySystem.animator.ResetTrigger("Skill1");
-            this.AbilityEnd();
-        }
-
-        private void DamageEntity(Entity entity, EntityCollider entityCollider)
-        {
-            this.abilitySystem.player.DoDamage(entity, Mathf.RoundToInt(this.GetDamage() * entityCollider.damageMultiplier));
         }
 
         private void ImpactSound(int damage)
